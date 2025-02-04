@@ -70,11 +70,11 @@ export const LabelHeightInput = ({ element }: LabelSubmenuItemProps) => {
     <MenuItem stayAfterClick noPadding>
       <InputNumber
         addonBefore={<LabelAddonBefore>{i18n.t('labelSubMenu.LabelHeight', lang) + ':'}</LabelAddonBefore>}
-        min={element.lz / 2 + 0.2}
+        min={0.2}
         max={100}
         step={1}
         precision={1}
-        value={element.labelHeight ?? element.lz / 2 + 0.2}
+        value={element.labelHeight ?? 0.2}
         onChange={(value) => setLabelHeight(value!)}
       />
     </MenuItem>

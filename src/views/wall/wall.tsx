@@ -2127,13 +2127,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           }
           break;
         }
-        case ObjectType.BatteryStorage: {
-          if (pointer && body) {
-            const p = getRelativePosOnWall(pointer, wallModel);
-            newElement = ElementModelFactory.makeBatteryStorage(wallModel, p.x / lx, 0, p.z / lz);
-          }
-          break;
-        }
       }
       if (newElement) {
         handleUndoableAdd(newElement);

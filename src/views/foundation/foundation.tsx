@@ -82,6 +82,7 @@ import WallAuxiliaryLine, { WallAuxiliaryType } from './wallAuxiliaryLine';
 import SolarPanelWrapper from '../solarPanel/solarPanelWrapper';
 import { useTransparent } from '../roof/hooks';
 import SolarWaterHeaterWrapper from '../solarWaterHeater/solarWaterHeaterWrapper';
+import BatteryStorageWrapper from '../batteryStorage/batteryStorageWrapper';
 
 interface SnapTargetType {
   id: string | null;
@@ -620,6 +621,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
       case ObjectType.Heliostat:
       case ObjectType.WindTurbine:
       case ObjectType.Wall:
+      case ObjectType.BatteryStorage:
         return true;
       default:
         return false;
@@ -3101,6 +3103,8 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
         />
 
         <SolarWaterHeaterWrapper foundationId={id} wrapperType={ObjectType.Foundation} />
+
+        <BatteryStorageWrapper foundationId={id} hz={hz} />
 
         {/* draw rectangle */}
         <Box

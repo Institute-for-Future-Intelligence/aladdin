@@ -837,6 +837,14 @@ export const i18n_zh_tw = {
       SolarUpdraftTowerTurbineEfficiency: '太陽能上升氣流塔的渦輪機效率',
     },
 
+    batteryStorageMenu: {
+      BatteryStorage: '蓄電池',
+      OnlyThisBatteryStorage: '只這個蓄電池',
+      AllBatteryStoragesAboveSameBase: '同一地基上的蓄電池',
+      AllSelectedBatteryStorages: '所有選中的蓄電池',
+      AllBatteryStorages: '所有蓄電池',
+    },
+
     cuboidMenu: {
       Texture01: '一號材質',
       Texture02: '二號材質',

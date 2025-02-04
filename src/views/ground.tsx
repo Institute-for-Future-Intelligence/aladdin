@@ -1382,6 +1382,7 @@ const Ground = React.memo(() => {
                       absPosMapRef.current.set(e.id, centerAbsPos);
                       break;
                     }
+                    case ObjectType.BatteryStorage:
                     case ObjectType.SolarPanel: {
                       const center = new Vector3(e.cx, e.cy, e.cz).applyEuler(new Euler(0, 0, a)).add(foundationCenter);
                       absPosMapRef.current.set(e.id, center);
@@ -1931,8 +1932,9 @@ const Ground = React.memo(() => {
                     }
                   } else {
                     if (
-                      (childClone.type === ObjectType.SolarPanel || childClone.type === ObjectType.SolarWaterHeater) &&
-                      (childClone as SolarPanelModel).parentType === ObjectType.Roof
+                      ((childClone.type === ObjectType.SolarPanel || childClone.type === ObjectType.SolarWaterHeater) &&
+                        (childClone as SolarPanelModel).parentType === ObjectType.Roof) ||
+                      childClone.type === ObjectType.BatteryStorage
                     ) {
                       const centerAbsPos = absPosMapRef.current.get(c.id);
                       if (centerAbsPos) {
@@ -2045,6 +2047,17 @@ const Ground = React.memo(() => {
                   }
                   wall.leftPoint = [leftPointRelativePos.x, leftPointRelativePos.y, 0];
                   wall.rightPoint = [rightPointRelativePos.x, rightPointRelativePos.y, 0];
+                }
+                break;
+              }
+              case ObjectType.BatteryStorage: {
+                const centerAbsPos = absPosMapRef.current.get(e.id);
+                if (centerAbsPos) {
+                  const relativePos = new Vector2()
+                    .subVectors(new Vector2(centerAbsPos.x, centerAbsPos.y), center)
+                    .rotateAround(ORIGIN_VECTOR2, -grabRef.current!.rotation[2]);
+                  e.cx = relativePos.x;
+                  e.cy = relativePos.y;
                 }
                 break;
               }

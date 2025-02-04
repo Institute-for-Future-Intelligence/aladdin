@@ -64,6 +64,7 @@ const legalToPasteOnFoundation = () => {
       e.type === ObjectType.FresnelReflector ||
       e.type === ObjectType.ParabolicTrough ||
       e.type === ObjectType.WindTurbine ||
+      e.type === ObjectType.BatteryStorage ||
       e.type === ObjectType.Wall
     ) {
       return true;

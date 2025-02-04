@@ -16,6 +16,8 @@ export const useLabel = (element: ElementModel | undefined) => {
   useEffect(() => {
     if (element?.label) {
       setLabelText(element.label);
+    } else {
+      setLabelText('');
     }
   }, [element?.id]);
   return { labelText, setLabelText };

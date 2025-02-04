@@ -157,3 +157,11 @@ export interface UnoableResizeSolarPanel extends Undoable {
   oldNor: number[];
   newNor: number[];
 }
+
+export interface UndoableResizeBatteryStorage extends Undoable {
+  id: string;
+  oldPos: number[];
+  newPos: number[];
+  oldDms: number[];
+  newDms: number[];
+}

@@ -69,7 +69,7 @@ export const Auxiliary = React.memo(() => {
     handle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null,
   ) => {
     return (
-      Util.isTopResizeHandle(handle) ||
+      (Util.isTopResizeHandle(handle) && element?.type !== ObjectType.BatteryStorage) ||
       (element?.type === ObjectType.Wall && Util.isTopResizeHandleOfWall(handle)) ||
       (element?.type === ObjectType.Roof && Util.isRiseHandleOfRoof(handle))
     );

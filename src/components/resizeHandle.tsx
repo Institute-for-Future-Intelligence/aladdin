@@ -48,7 +48,7 @@ const ResizeHandle = React.memo(({ handleType, position, size, onPointerOver, on
       args={[size, size, size]}
       position={[cx, cy, cz]}
       onPointerDown={handlePointerDown}
-      onPointerOver={(e) => {
+      onPointerMove={(e) => {
         onPointerOver(e, handleType);
       }}
       onPointerOut={onPointerOut}

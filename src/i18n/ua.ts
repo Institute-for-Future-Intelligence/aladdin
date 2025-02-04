@@ -856,6 +856,14 @@ export const i18n_ua = {
       SolarUpdraftTowerTurbineEfficiency: 'Ефективність турбіни сонячної вежі з тяговим потоком',
     },
 
+    batteryStorageMenu: {
+      BatteryStorage: 'Battery Storage',
+      OnlyThisBatteryStorage: 'Only This Battery Storage',
+      AllBatteryStoragesAboveSameBase: 'All Battery Storages Above Same Base',
+      AllSelectedBatteryStorages: 'All Selected Battery Storages',
+      AllBatteryStorages: 'All Battery Storages',
+    },
+
     cuboidMenu: {
       Texture01: 'Текстура 1',
       Texture02: 'Текстура 2',

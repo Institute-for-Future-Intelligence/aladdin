@@ -68,6 +68,7 @@ import { CUBOID_STACKABLE_CHILD, CUBOID_WRAPPER_NAME } from './views/cuboid';
 import { ViewState } from './stores/ViewState';
 import { WindTurbineModel } from './models/WindTurbineModel';
 import { HvacSystem } from './models/HvacSystem';
+import { BatteryStorageModel } from './models/BatteryStorageModel';
 
 export class Util {
   static getHeatingSetpoint(now: Date, hvac: HvacSystem | undefined) {
@@ -1012,13 +1013,46 @@ export class Util {
             }
           }
           break;
-        case ObjectType.Wall:
+        case ObjectType.Wall: {
           if (!Util.isWallWithin(e as WallModel, parent)) {
             return false;
           }
           break;
+        }
+        case ObjectType.BatteryStorage: {
+          return Util.isBatteryStorageWithin(e as BatteryStorageModel, parent);
+        }
       }
     }
+    return true;
+  }
+
+  static isBatteryStorageWithin(element: BatteryStorageModel, parent: ElementModel) {
+    const x0 = element.cx;
+    const y0 = element.cy;
+    const cosaz = Math.cos(element.rotation[2]);
+    const sinaz = Math.sin(element.rotation[2]);
+    const dx = parent.lx * 0.5;
+    const dy = parent.ly * 0.5;
+    const rx = element.lx * 0.5;
+    const ry = element.ly * 0.5;
+    // vertex 1
+    let x = x0 + rx * cosaz - ry * sinaz;
+    let y = y0 + rx * sinaz + ry * cosaz;
+    if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
+    // vertex 2
+    x = x0 + rx * cosaz + ry * sinaz;
+    y = y0 + rx * sinaz - ry * cosaz;
+    if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
+    // vertex 3
+    x = x0 - rx * cosaz - ry * sinaz;
+    y = y0 - rx * sinaz + ry * cosaz;
+    if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
+    // vertex 4
+    x = x0 - rx * cosaz + ry * sinaz;
+    y = y0 - rx * sinaz - ry * cosaz;
+    if (Math.abs(x) > dx || Math.abs(y) > dy) return false;
+    // all in
     return true;
   }
 
@@ -1215,6 +1249,7 @@ export class Util {
 
   static isPositionRelative(objectType: ObjectType): boolean {
     return (
+      objectType === ObjectType.BatteryStorage ||
       objectType === ObjectType.SolarPanel ||
       objectType === ObjectType.ParabolicTrough ||
       objectType === ObjectType.ParabolicDish ||

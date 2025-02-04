@@ -370,6 +370,10 @@ export interface CommonStoreState {
   cuboidActionScope: Scope;
   setCuboidActionScope: (scope: Scope) => void;
 
+  // for battery Storage
+  batteryStorageActionScope: Scope;
+  setBatteryStorageActionScope: (scope: Scope) => void;
+
   // for polygons
   polygonActionScope: Scope;
   setPolygonActionScope: (scope: Scope) => void;
@@ -1590,7 +1594,12 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   e.rotation[0] = x;
                   e.rotation[1] = y;
                   e.rotation[2] = z;
-                } else if (e.parentId === id && !isStackableModel(e) && e.type !== ObjectType.SolarPanel) {
+                } else if (
+                  e.parentId === id &&
+                  !isStackableModel(e) &&
+                  e.type !== ObjectType.SolarPanel &&
+                  e.type !== ObjectType.BatteryStorage
+                ) {
                   e.rotation[0] = x;
                   e.rotation[1] = y;
                   e.rotation[2] = z;
@@ -2044,6 +2053,14 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           setCuboidActionScope(scope) {
             immerSet((state: CommonStoreState) => {
               state.cuboidActionScope = scope;
+            });
+          },
+
+          // for battery Storages
+          batteryStorageActionScope: Scope.OnlyThisObject,
+          setBatteryStorageActionScope(scope) {
+            immerSet((state: CommonStoreState) => {
+              state.batteryStorageActionScope = scope;
             });
           },
 
@@ -2778,6 +2795,15 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   state.elements.push(wall);
                   state.selectedElement = wall;
                   model = wall;
+                  break;
+                }
+                case ObjectType.BatteryStorage: {
+                  const parentModel = parent as FoundationModel;
+                  const { x, y, z } = Util.relativeCoordinates(p.x, p.y, p.z, parentModel, true);
+                  const batteryStorage = ElementModelFactory.makeBatteryStorage(parentModel, x, y, z);
+                  state.elements.push(batteryStorage);
+                  state.selectedElement = batteryStorage;
+                  model = batteryStorage;
                   break;
                 }
               }
@@ -3552,7 +3578,10 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       if (elemToPaste.type !== ObjectType.Foundation) {
                         elemToPaste.parentId = newParent.id;
                         if (Util.isPositionRelative(elemToPaste.type)) {
-                          if (elemToPaste.type === ObjectType.SolarPanel) {
+                          if (
+                            elemToPaste.type === ObjectType.SolarPanel ||
+                            elemToPaste.type === ObjectType.BatteryStorage
+                          ) {
                             m = Util.relativeCoordinates(m.x, m.y, m.z, newParent, true);
                           } else {
                             m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
@@ -4834,6 +4863,12 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
                       approved = true;
                       break;
+                    }
+                    case ObjectType.BatteryStorage: {
+                      e.cx += e.lx * 1.25;
+                      state.elements.push(e);
+                      state.elementsToPaste = [e];
+                      approved = true;
                     }
                   }
                   if (state.elementsToPaste.length === 1 && approved) {

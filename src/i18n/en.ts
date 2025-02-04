@@ -854,6 +854,14 @@ export const i18n_en = {
       SolarUpdraftTowerTurbineEfficiency: 'Solar Updraft Tower Turbine Efficiency',
     },
 
+    batteryStorageMenu: {
+      BatteryStorage: 'Battery Storage',
+      OnlyThisBatteryStorage: 'Only This Battery Storage',
+      AllBatteryStoragesAboveSameBase: 'All Battery Storages Above Same Base',
+      AllSelectedBatteryStorages: 'All Selected Battery Storages',
+      AllBatteryStorages: 'All Battery Storages',
+    },
+
     cuboidMenu: {
       Texture01: 'Texture 1',
       Texture02: 'Texture 2',

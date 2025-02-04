@@ -854,6 +854,14 @@ export const i18n_tr = {
       SolarUpdraftTowerTurbineEfficiency: 'Solar Updraft Kulesi Türbin Verimliliği',
     },
 
+    batteryStorageMenu: {
+      BatteryStorage: 'Battery Storage',
+      OnlyThisBatteryStorage: 'Only This Battery Storage',
+      AllBatteryStoragesAboveSameBase: 'All Battery Storages Above Same Base',
+      AllSelectedBatteryStorages: 'All Selected Battery Storages',
+      AllBatteryStorages: 'All Battery Storages',
+    },
+
     cuboidMenu: {
       Texture01: 'Doku 1',
       Texture02: 'Doku 2',

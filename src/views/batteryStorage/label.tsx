@@ -2,38 +2,27 @@ import React, { useEffect, useState } from 'react';
 import { tempVector3_0 } from 'src/helpers';
 import { useLanguage } from 'src/hooks';
 import i18n from 'src/i18n/i18n';
-import { SolarPanelModel } from 'src/models/SolarPanelModel';
-import { Group, Object3DEventMap } from 'three';
+import { ElementModel } from 'src/models/ElementModel';
+import { Group } from 'three';
 
 interface LabelProps {
-  solarPanel: SolarPanelModel;
-  boxRef: React.MutableRefObject<Group<Object3DEventMap>>;
+  element: ElementModel;
+  groupRef: React.MutableRefObject<Group>;
 }
 
-const Label = React.memo(({ solarPanel, boxRef }: LabelProps) => {
-  const {
-    ly,
-    tiltAngle,
-    label,
-    locked,
-    labelColor = 'white',
-    labelFontSize = 20,
-    labelSize = 0.2,
-    labelHeight,
-  } = solarPanel;
+const Label = React.memo(({ element, groupRef }: LabelProps) => {
+  const { lz, label, locked, labelColor = 'white', labelFontSize = 20, labelSize = 0.2, labelHeight = 0.2 } = element;
 
-  const hy = ly / 2;
   const lang = useLanguage();
-
   const [text, setText] = useState('');
 
+  const test = '';
+
   useEffect(() => {
-    if (!boxRef.current) return;
-
-    const { x, y, z } = boxRef.current.getWorldPosition(tempVector3_0);
-
+    if (!groupRef.current) return;
+    const { x, y, z } = groupRef.current.getWorldPosition(tempVector3_0.set(0, 0, 0));
     setText(
-      (label || i18n.t('shared.SolarPanelElement', lang)) +
+      (label || i18n.t('batteryStorageMenu.BatteryStorage', lang)) +
         (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
         (label
           ? ''
@@ -44,13 +33,11 @@ const Label = React.memo(({ solarPanel, boxRef }: LabelProps) => {
             ', ' +
             y.toFixed(1) +
             ', ' +
-            z.toFixed(1) +
+            (z + lz / 2).toFixed(1) +
             ') ' +
             i18n.t('word.MeterAbbreviation', lang)),
     );
   }, [label, locked, lang]);
-
-  const _labelHeight = labelHeight ?? Math.max(hy * Math.abs(Math.sin(tiltAngle)) + 0.1, 0.2);
 
   return (
     <textSprite
@@ -61,7 +48,7 @@ const Label = React.memo(({ solarPanel, boxRef }: LabelProps) => {
       color={labelColor}
       fontSize={labelFontSize}
       textHeight={labelSize}
-      position={[0, 0, _labelHeight]}
+      position={[0, 0, labelHeight + lz]}
     />
   );
 });

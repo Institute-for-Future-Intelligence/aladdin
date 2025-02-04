@@ -35,6 +35,7 @@ import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { ElementModel } from 'src/models/ElementModel';
 import './style.css';
 import { createSolarWaterHeaterMenu } from './elementMenu/solarWaterHeaterMenu/solarWaterHeaterMenu';
+import { createBatteryStorageMenu } from './elementMenu/batteryStorageMenu/batteryStorageMenu';
 export interface ContextMenuProps {
   [key: string]: any;
 }
@@ -112,6 +113,8 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
         return createWindTurbineMenu(selectedElement);
       case ObjectType.SolarWaterHeater:
         return createSolarWaterHeaterMenu(selectedElement);
+      case ObjectType.BatteryStorage:
+        return createBatteryStorageMenu(selectedElement);
       default:
         return { items: [] };
     }

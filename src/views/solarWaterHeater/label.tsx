@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { tempVector3_0 } from 'src/helpers';
 import { useLanguage } from 'src/hooks';
 import i18n from 'src/i18n/i18n';
-import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
+import { ElementModel } from 'src/models/ElementModel';
 import { Group } from 'three';
 
 interface LabelProps {
-  solarWaterHeater: SolarWaterHeaterModel;
+  solarWaterHeater: ElementModel;
   groupRef: React.MutableRefObject<Group>;
 }
 
@@ -27,7 +27,7 @@ const Label = React.memo(({ solarWaterHeater, groupRef }: LabelProps) => {
     if (!groupRef.current) return;
     const { x, y, z } = groupRef.current.getWorldPosition(tempVector3_0);
     setText(
-      (label ?? i18n.t('shared.SolarWaterHeaterElement', lang)) +
+      (label || i18n.t('shared.SolarWaterHeaterElement', lang)) +
         (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
         (label
           ? ''

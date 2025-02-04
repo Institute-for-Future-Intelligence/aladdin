@@ -346,6 +346,10 @@ export const cuboidActionScope = (state: CommonStoreState) => state.cuboidAction
 
 export const setCuboidActionScope = (state: CommonStoreState) => state.setCuboidActionScope;
 
+export const batteryStorageActionScope = (state: CommonStoreState) => state.batteryStorageActionScope;
+
+export const setBatteryStorageActionScope = (state: CommonStoreState) => state.setBatteryStorageActionScope;
+
 export const solarPanelActionScope = (state: CommonStoreState) => state.solarPanelActionScope;
 
 export const setSolarPanelActionScope = (state: CommonStoreState) => state.setSolarPanelActionScope;

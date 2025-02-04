@@ -37,6 +37,7 @@ import { WindTurbineModel } from './WindTurbineModel';
 import { FlowerModel } from './FlowerModel';
 import { LightModel } from './LightModel';
 import { SolarWaterHeaterModel } from './SolarWaterHeaterModel';
+import { BatteryStorageModel } from './BatteryStorageModel';
 
 export class ElementModelCloner {
   static clone(
@@ -150,6 +151,11 @@ export class ElementModelCloner {
         const parentId = parent ? parent.id : GROUND_ID;
         clone = ElementModelCloner.cloneCuboid(parentId, e as CuboidModel, x, y);
         break;
+      }
+      case ObjectType.BatteryStorage: {
+        if (parent) {
+          clone = ElementModelCloner.cloneBatteryStorage(parent.id, e as BatteryStorageModel, x, y);
+        }
       }
     }
     return clone;
@@ -687,6 +693,23 @@ export class ElementModelCloner {
       parentId: parentId,
       id: short.generate() as string,
     } as CuboidModel;
+  }
+
+  private static cloneBatteryStorage(parentId: string, batteryStorage: BatteryStorageModel, x: number, y: number) {
+    return {
+      type: ObjectType.BatteryStorage,
+      cx: x,
+      cy: y,
+      cz: batteryStorage.cz,
+      lx: batteryStorage.lx,
+      ly: batteryStorage.ly,
+      lz: batteryStorage.lz,
+      rotation: [...batteryStorage.rotation],
+      color: batteryStorage.color,
+      parentId: parentId,
+      foundationId: parentId,
+      id: short.generate() as string,
+    } as BatteryStorageModel;
   }
 
   private static cloneWall(parent: ElementModel, wall: WallModel, x: number, y: number, z?: number) {
