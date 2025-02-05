@@ -41,10 +41,9 @@ import Waiting from './waiting';
 import Panels from './panels';
 import Simulations from './simulations';
 import { usePrimitiveStore } from './stores/commonPrimitive';
-import { Badge, Button, Space } from 'antd';
+import { Badge, Button, Space, Splitter } from 'antd';
 import ProjectGallery from './panels/projectGallery';
 import GroupMasterWrapper from './components/groupMaster';
-import SplitPane from './components/splitPane';
 import { useRefStore } from './stores/commonRef';
 import { PerspectiveCamera, Vector2 } from 'three';
 import { useLanguage } from './hooks';
@@ -323,32 +322,37 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
       <DropdownContextMenu>
         {/* must specify the height here for the floating window to have correct boundary check*/}
         <div style={{ height: `calc(100vh - ${HEADER_HEIGHT}px)` }}>
-          <SplitPane
-            showGallery={projectView}
-            defaultSize={projectView ? 50 : 0}
-            onChange={(size) => {
-              setCanvasRelativeWidth(Math.round(100 - size));
-              const canvas = useRefStore.getState().canvas;
-              if (canvas) {
-                const { gl, camera } = canvas;
-                const newWidth = ((100 - size) * window.innerWidth) / 100;
-                gl.getSize(v);
-                gl.setSize(newWidth, v.y);
-                if (camera instanceof PerspectiveCamera) {
-                  camera.aspect = newWidth / v.y;
-                  camera.updateProjectionMatrix();
-                  invalidate();
+          {projectView ? (
+            <Splitter
+              onResizeEnd={(sizes) => {
+                if (sizes[0] === 0) {
+                  setCommonStore((state) => {
+                    state.projectView = false;
+                  });
                 }
-              }
-            }}
-          >
-            {projectView ? (
-              <ProjectGallery canvas={canvasRef.current} relativeWidth={1 - canvasPercentWidth * 0.01} />
-            ) : (
-              <></>
-            )}
-            {createCanvas()}
-          </SplitPane>
+                setCanvasRelativeWidth(Math.round((sizes[1] / window.innerWidth) * 100));
+                const canvas = useRefStore.getState().canvas;
+                if (canvas) {
+                  const { gl, camera } = canvas;
+                  const newWidth = sizes[1];
+                  gl.getSize(v);
+                  gl.setSize(newWidth, v.y);
+                  if (camera instanceof PerspectiveCamera) {
+                    camera.aspect = newWidth / v.y;
+                    camera.updateProjectionMatrix();
+                    invalidate();
+                  }
+                }
+              }}
+            >
+              <Splitter.Panel collapsible defaultSize={projectView ? window.innerWidth / 2 : 0}>
+                <ProjectGallery canvas={canvasRef.current} relativeWidth={1 - canvasPercentWidth * 0.01} />
+              </Splitter.Panel>
+              <Splitter.Panel>{createCanvas()}</Splitter.Panel>
+            </Splitter>
+          ) : (
+            <>{createCanvas()}</>
+          )}
           <KeyboardListener canvas={canvasRef.current} />
         </div>
       </DropdownContextMenu>
