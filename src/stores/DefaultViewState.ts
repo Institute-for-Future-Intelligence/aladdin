@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { ViewState } from './ViewState';
@@ -53,6 +53,7 @@ export class DefaultViewState implements ViewState {
   solarPanelShininess: number;
   windowShininess: number;
 
+  showModelTree: boolean;
   showMapPanel: boolean;
   showHeliodonPanel: boolean;
   showWeatherPanel: boolean;
@@ -149,6 +150,7 @@ export class DefaultViewState implements ViewState {
     this.solarPanelShininess = DEFAULT_SOLAR_PANEL_SHININESS;
     this.windowShininess = DEFAULT_WINDOW_SHININESS;
 
+    this.showModelTree = false;
     this.showMapPanel = false;
     this.showHeliodonPanel = false;
     this.showWeatherPanel = false;

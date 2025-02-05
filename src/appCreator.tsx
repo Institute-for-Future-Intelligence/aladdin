@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  *
  * @author Charles Xie, Xiaotong Ding
  */
@@ -74,6 +74,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
   const cloudFileBelongToProject = useStore(Selector.cloudFileBelongToProject);
   const logAction = useStore(Selector.logAction);
+  const showModelTree = useStore(Selector.viewState.showModelTree);
 
   const [initializing, setInitializing] = useState<boolean>(true);
   const [canvasPercentWidth, setCanvasRelativeWidth] = useState<number>(50);

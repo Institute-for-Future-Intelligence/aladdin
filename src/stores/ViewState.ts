@@ -41,6 +41,7 @@ export interface ViewState {
   solarPanelShininess?: number;
   windowShininess?: number;
 
+  showModelTree: boolean;
   showMapPanel: boolean;
   showHeliodonPanel: boolean;
   showWeatherPanel: boolean;

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { CommonStoreState } from '../common';
@@ -86,6 +86,8 @@ export const showHeliodonPanel = (state: CommonStoreState) => state.viewState.sh
 export const heliodonPanelX = (state: CommonStoreState) => state.viewState.heliodonPanelX;
 
 export const heliodonPanelY = (state: CommonStoreState) => state.viewState.heliodonPanelY;
+
+export const showModelTree = (state: CommonStoreState) => state.viewState.showModelTree;
 
 export const showMapPanel = (state: CommonStoreState) => state.viewState.showMapPanel;
 
