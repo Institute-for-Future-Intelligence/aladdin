@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { ThreeEvent } from '@react-three/fiber';
-import { Torus, Cone, Circle, Plane } from '@react-three/drei';
+import { Torus, Cone, Circle, Plane, Box } from '@react-three/drei';
 import { ActionType, MoveHandleType, ResizeHandleType, RotateHandleType } from '../types';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -45,9 +45,9 @@ const RotateHandle = React.memo(
             {rotationHandleLMesh}
           </Circle>
         </group>
-        <Plane
+        <Box
           name={handleType}
-          args={[0.35, 0.35]}
+          args={[0.45, 0.45, 0.15]}
           position={[0, 0.05, 0]}
           rotation={[-HALF_PI, 0, 0]}
           visible={false}

@@ -24,10 +24,10 @@ import PolarGrid, { PolarGridRefProps } from '../solarPanel/polarGrid';
 import Label from './label';
 import Wireframe from 'src/components/wireframe';
 import { TEXT_SPRITE_NAME } from './horizontalRuler';
+import Material, { BatteryStroageMaterialRef } from './material';
 
 /**
  * todo:
- * - texture
  * - simulation
  */
 const MIN_SIZE = 0.5;
@@ -45,7 +45,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
     lz,
     rotation,
     locked,
-    color,
+    color = 'white',
     showLabel,
     lineColor = 'black',
     lineWidth = 0.2,
@@ -59,6 +59,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
   const handlesGroupRef = useRef<HandlesGroupRefProps>(null!);
   const polarGridGroupRef = useRef<Group>(null!);
   const polarGridRef = useRef<PolarGridRefProps>(null!);
+  const materialRef = useRef<BatteryStroageMaterialRef>(null!);
 
   // common state
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -340,6 +341,9 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
         } else if (operationRef.current === Operation.ResizeY) {
           boxRef.current.scale.y = d;
         }
+        if (materialRef.current) {
+          materialRef.current.update(boxRef.current.scale.x, boxRef.current.scale.y, lz);
+        }
         groupRef.current.position.x = center.x;
         groupRef.current.position.y = center.y;
         break;
@@ -362,6 +366,9 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
           groupRef.current.position.y = center.y;
           boxRef.current.scale.x = newLx;
           boxRef.current.scale.y = newLy;
+          if (materialRef.current) {
+            materialRef.current.update(newLx, newLy, lz);
+          }
         }
         break;
       }
@@ -370,6 +377,9 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
           const newLz = Math.max(MIN_SIZE, point.z - parentGroup.position.z * 2);
           boxRef.current.scale.z = newLz;
           centerGroupRef.current.position.z = newLz / 2;
+          if (materialRef.current) {
+            materialRef.current.update(lx, ly, newLz);
+          }
         }
         break;
       }
@@ -408,7 +418,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
         {/* center surface group */}
         <group ref={centerGroupRef} position={[0, 0, hz]}>
           <Box ref={boxRef} scale={[lx, ly, lz]} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
-            <meshStandardMaterial color={color} />
+            <Material ref={materialRef} lx={lx} ly={ly} lz={lz} color={color} />
           </Box>
         </group>
 
