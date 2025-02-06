@@ -862,7 +862,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           },
           undoManager: new UndoManager(),
           addUndoable(undoable: Undoable) {
-            if (!usePrimitiveStore.getState().muteUndoMessage) showUndo(undoable.name);
+            const dontShow = !import.meta.env.PROD && useStore.getState().user.uid === 'iir3sv1kW1Vzbj9sOA46RfLWKCU2';
+            if (!usePrimitiveStore.getState().muteUndoMessage && !dontShow) showUndo(undoable.name);
             immerSet((state: CommonStoreState) => {
               if (state.loggable) {
                 state.currentUndoable = undoable;
