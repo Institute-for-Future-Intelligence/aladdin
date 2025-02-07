@@ -375,7 +375,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                     ) : (
                       <Tree
                         checkable
-                        defaultExpandAll
+                        // defaultExpandAll
                         showLine
                         showIcon
                         defaultExpandedKeys={[]}
