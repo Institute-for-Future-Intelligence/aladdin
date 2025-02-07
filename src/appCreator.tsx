@@ -15,7 +15,7 @@ import Ground from './views/ground';
 import Heliodon from './views/heliodonWrapper';
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from './components/mainMenu/mainMenu';
-import { DEFAULT_SHADOW_CAMERA_FAR, DEFAULT_FOV, VERSION } from './constants';
+import { DEFAULT_FOV, DEFAULT_SHADOW_CAMERA_FAR, VERSION } from './constants';
 import { visitHomepage } from './helpers';
 import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
@@ -41,12 +41,12 @@ import Waiting from './waiting';
 import Panels from './panels';
 import Simulations from './simulations';
 import { usePrimitiveStore } from './stores/commonPrimitive';
-import { Badge, Button, Space, Splitter } from 'antd';
+import { Badge, Button, Empty, Space, Splitter, Tree, TreeDataNode } from 'antd';
 import ProjectGallery from './panels/projectGallery';
 import GroupMasterWrapper from './components/groupMaster';
 import { useRefStore } from './stores/commonRef';
 import { PerspectiveCamera, Vector2 } from 'three';
-import { useLanguage } from './hooks';
+import { useLanguage, useModelTree } from './hooks';
 import { AlertFilled } from '@ant-design/icons';
 
 export interface AppCreatorProps {
@@ -74,6 +74,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const cloudFileBelongToProject = useStore(Selector.cloudFileBelongToProject);
   const logAction = useStore(Selector.logAction);
   const closeProject = useStore(Selector.closeProject);
+  const elements = useStore(Selector.elements);
   const showModelTree = useStore(Selector.viewState.showModelTree);
 
   const [initializing, setInitializing] = useState<boolean>(true);
@@ -178,6 +179,24 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   };
 
   const v = useMemo(() => new Vector2(), []);
+
+  const resizeCanvas = (width: number) => {
+    setCanvasRelativeWidth(Math.round((width / window.innerWidth) * 100));
+    const canvas = useRefStore.getState().canvas;
+    if (canvas) {
+      const { gl, camera } = canvas;
+      const newWidth = width;
+      gl.getSize(v);
+      gl.setSize(newWidth, v.y);
+      if (camera instanceof PerspectiveCamera) {
+        camera.aspect = newWidth / v.y;
+        camera.updateProjectionMatrix();
+        invalidate();
+      }
+    }
+  };
+
+  const modelTree: TreeDataNode[] = useModelTree();
 
   return (
     // disable the default context menu for the entire app
@@ -329,19 +348,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                 if (sizes[0] === 0) {
                   closeProject();
                 }
-                setCanvasRelativeWidth(Math.round((sizes[1] / window.innerWidth) * 100));
-                const canvas = useRefStore.getState().canvas;
-                if (canvas) {
-                  const { gl, camera } = canvas;
-                  const newWidth = sizes[1];
-                  gl.getSize(v);
-                  gl.setSize(newWidth, v.y);
-                  if (camera instanceof PerspectiveCamera) {
-                    camera.aspect = newWidth / v.y;
-                    camera.updateProjectionMatrix();
-                    invalidate();
-                  }
-                }
+                resizeCanvas(sizes[1]);
               }}
             >
               <Splitter.Panel collapsible defaultSize={projectView ? window.innerWidth / 2 : 0}>
@@ -350,7 +357,42 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
               <Splitter.Panel>{createCanvas()}</Splitter.Panel>
             </Splitter>
           ) : (
-            <>{createCanvas()}</>
+            <>
+              {showModelTree ? (
+                <Splitter
+                  onResizeEnd={(sizes) => {
+                    if (sizes[0] === 0) {
+                      setCommonStore((state) => {
+                        state.viewState.showModelTree = false;
+                      });
+                      resizeCanvas(sizes[1]);
+                    }
+                  }}
+                >
+                  <Splitter.Panel defaultSize={Math.max(200, window.innerWidth / 5)} style={{ overflow: 'auto' }}>
+                    {elements.length === 0 ? (
+                      <Empty />
+                    ) : (
+                      <Tree
+                        checkable
+                        defaultExpandAll
+                        showLine
+                        showIcon
+                        defaultExpandedKeys={[]}
+                        defaultSelectedKeys={[]}
+                        defaultCheckedKeys={[]}
+                        onSelect={() => {}}
+                        onCheck={() => {}}
+                        treeData={modelTree}
+                      />
+                    )}
+                  </Splitter.Panel>
+                  <Splitter.Panel>{createCanvas()}</Splitter.Panel>
+                </Splitter>
+              ) : (
+                <>{createCanvas()}</>
+              )}
+            </>
           )}
           <KeyboardListener canvas={canvasRef.current} />
         </div>

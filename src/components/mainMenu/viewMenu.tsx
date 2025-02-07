@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { MenuProps } from 'antd';
@@ -163,6 +163,28 @@ export const createViewMenu = (keyHome: string, isMac: boolean) => {
 
   const handleZoomIn = () => {
     zoomView(0.9);
+  };
+
+  const toggleModelTree = (e: CheckboxChangeEvent) => {
+    const undoableCheck = {
+      name: 'Toggle Model Tree',
+      timestamp: Date.now(),
+      checked: e.target.checked,
+      undo: () => {
+        useStore.getState().set((state) => {
+          state.viewState.showModelTree = undoableCheck.checked;
+        });
+      },
+      redo: () => {
+        useStore.getState().set((state) => {
+          state.viewState.showModelTree = undoableCheck.checked;
+        });
+      },
+    } as UndoableCheck;
+    useStore.getState().addUndoable(undoableCheck);
+    useStore.getState().set((state) => {
+      state.viewState.showModelTree = e.target.checked;
+    });
   };
 
   const toggleNavigationView = (e: CheckboxChangeEvent) => {
@@ -375,6 +397,16 @@ export const createViewMenu = (keyHome: string, isMac: boolean) => {
         {i18n.t('menu.view.ZoomIn', lang)}
         <LabelMark>({isMac ? '⌘' : 'Ctrl'}+[)</LabelMark>
       </MenuItem>
+    ),
+  });
+
+  // model-tree-check-box
+  items.push({
+    key: 'model-tree-check-box',
+    label: (
+      <MainMenuCheckbox selector={Selector.viewState.showModelTree} onChange={toggleModelTree}>
+        {i18n.t('menu.view.ModelTree', lang)}
+      </MainMenuCheckbox>
     ),
   });
 

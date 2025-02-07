@@ -342,6 +342,7 @@ export const i18n_en = {
       },
       viewSubMenu: 'View',
       view: {
+        ModelTree: 'Model Tree',
         NavigationView: 'Navigation View',
         TwoDimensionalView: '2D View',
         ResetView: 'Reset',

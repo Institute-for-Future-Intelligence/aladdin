@@ -345,6 +345,7 @@ export const i18n_ua = {
       },
       viewSubMenu: 'Перегляд',
       view: {
+        ModelTree: 'Model Tree',
         NavigationView: 'Navigation View',
         TwoDimensionalView: '2D Вигляд',
         ResetView: 'Скинути',

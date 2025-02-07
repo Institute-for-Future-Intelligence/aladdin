@@ -341,6 +341,7 @@ export const i18n_tr = {
       },
       viewSubMenu: 'Görünüm',
       view: {
+        ModelTree: 'Model Tree',
         NavigationView: 'Navigation View',
         TwoDimensionalView: '2D',
         ResetView: 'Yenile',

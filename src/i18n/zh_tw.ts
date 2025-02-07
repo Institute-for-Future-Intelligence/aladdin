@@ -340,6 +340,7 @@ export const i18n_zh_tw = {
       },
       viewSubMenu: '視界',
       view: {
+        ModelTree: '模型樹圖',
         NavigationView: '導航模式',
         TwoDimensionalView: '二維模式',
         ResetView: '重置視角',
