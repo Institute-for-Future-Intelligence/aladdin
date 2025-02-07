@@ -73,6 +73,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
   const cloudFileBelongToProject = useStore(Selector.cloudFileBelongToProject);
   const logAction = useStore(Selector.logAction);
+  const closeProject = useStore(Selector.closeProject);
   const showModelTree = useStore(Selector.viewState.showModelTree);
 
   const [initializing, setInitializing] = useState<boolean>(true);
@@ -326,9 +327,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
             <Splitter
               onResizeEnd={(sizes) => {
                 if (sizes[0] === 0) {
-                  setCommonStore((state) => {
-                    state.projectView = false;
-                  });
+                  closeProject();
                 }
                 setCanvasRelativeWidth(Math.round((sizes[1] / window.innerWidth) * 100));
                 const canvas = useRefStore.getState().canvas;

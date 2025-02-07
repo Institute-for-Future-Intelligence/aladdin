@@ -130,6 +130,7 @@ export interface CommonStoreState {
   projectImages: Map<string, HTMLImageElement>;
   designProjectType: DesignProblem | null; // this belongs to a design of a project
   cloudFileBelongToProject: () => boolean;
+  closeProject: () => void;
   notes: string[];
   user: User;
   language: string;
@@ -639,6 +640,38 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               }
             }
             return false;
+          },
+
+          closeProject() {
+            immerSet((state) => {
+              if (state.loggable) {
+                state.actionInfo = {
+                  name: 'Close Project',
+                  timestamp: new Date().getTime(),
+                  details: state.projectState.title,
+                };
+              }
+              state.projectView = false;
+              state.projectState.title = null;
+              state.projectState.description = null;
+              state.projectState.owner = null;
+              // when a project is closed, the current cloud file is detached
+              const designs = state.projectState.designs;
+              if (designs) {
+                for (const d of designs) {
+                  if (d.title === state.cloudFile) {
+                    state.cloudFile = undefined;
+                    break;
+                  }
+                }
+              }
+              // clear the cached images for the previously open project
+              state.projectImages.clear();
+              state.undoManager.clear();
+            });
+            usePrimitiveStore.getState().set((state) => {
+              state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
+            });
           },
 
           notes: [],

@@ -159,7 +159,6 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const confirmOpeningDesign = usePrimitiveStore(Selector.confirmOpeningDesign);
   const loggable = useStore(Selector.loggable);
   const addUndoable = useStore(Selector.addUndoable);
-  const undoManager = useStore(Selector.undoManager);
   const cloudFile = useStore(Selector.cloudFile);
   const projectTitle = useStore(Selector.projectTitle);
   const projectOwner = useStore(Selector.projectOwner);
@@ -179,6 +178,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const solarPanelArrayLayoutConstraints = useStore(Selector.solarPanelArrayLayoutConstraints);
   const economicsParams = useStore(Selector.economicsParams);
   const cloudFileBelongToProject = useStore(Selector.cloudFileBelongToProject);
+  const closeProject = useStore(Selector.closeProject);
 
   const [selectedDesign, setSelectedDesign] = useState<Design | undefined>();
   const [hoveredDesign, setHoveredDesign] = useState<Design | undefined>();
@@ -286,39 +286,6 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateFlag]);
-
-  const closeProject = () => {
-    setCommonStore((state) => {
-      if (loggable) {
-        state.actionInfo = {
-          name: 'Close Project',
-          timestamp: new Date().getTime(),
-          details: state.projectState.title,
-        };
-      }
-      state.projectView = false;
-      state.projectState.title = null;
-      state.projectState.description = null;
-      state.projectState.owner = null;
-      // when a project is closed, the current cloud file is detached
-      const designs = state.projectState.designs;
-      if (designs) {
-        for (const d of designs) {
-          if (d.title === state.cloudFile) {
-            state.cloudFile = undefined;
-            break;
-          }
-        }
-      }
-      // clear the cached images for the previously open project
-      state.projectImages.clear();
-    });
-    setSelectedDesign(undefined);
-    undoManager.clear();
-    usePrimitiveStore.getState().set((state) => {
-      state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;
-    });
-  };
 
   const curateCurrentDesign = () => {
     usePrimitiveStore.getState().set((state) => {
@@ -1703,9 +1670,11 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
             style={{ cursor: 'pointer' }}
             onMouseDown={() => {
               closeProject();
+              setSelectedDesign(undefined);
             }}
             onTouchStart={() => {
               closeProject();
+              setSelectedDesign(undefined);
             }}
           >
             <CloseOutlined title={t('word.Close', lang)} />
