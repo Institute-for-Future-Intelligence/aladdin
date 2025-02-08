@@ -218,6 +218,122 @@ export const useModelTree = () => {
                   });
                   break;
                 }
+                case ObjectType.Sensor: {
+                  const sensorChildren: TreeDataNode[] = [];
+                  sensorChildren.push(...getCoordinates(c));
+                  grandChildren.push({
+                    checkable: true,
+                    title: <span>{c.type}</span>,
+                    key: c.id,
+                    children: sensorChildren,
+                  });
+                  break;
+                }
+                case ObjectType.Light: {
+                  const lightChildren: TreeDataNode[] = [];
+                  lightChildren.push(...getCoordinates(c));
+                  grandChildren.push({
+                    checkable: true,
+                    title: <span>{c.type}</span>,
+                    key: c.id,
+                    children: lightChildren,
+                  });
+                  break;
+                }
+              }
+            }
+          } else if (s.type === ObjectType.Roof) {
+            const roofChildren = getChildren(s.id);
+            for (const c of roofChildren) {
+              switch (c.type) {
+                case ObjectType.Window: {
+                  const windowChildren: TreeDataNode[] = [];
+                  windowChildren.push(...getCoordinates(c));
+                  windowChildren.push(...getDimension(c));
+                  windowChildren.push({
+                    checkable: false,
+                    title: (
+                      <Space>
+                        <span>U-value : </span>
+                        <InputNumber value={(c as WindowModel).uValue ?? 2.0} precision={2} />
+                      </Space>
+                    ),
+                    key: c.id + ' u-value',
+                  });
+                  windowChildren.push({
+                    checkable: false,
+                    title: (
+                      <Space>
+                        <span>SHGC : </span>
+                        <InputNumber value={1 - (c as WindowModel).opacity ?? 0.5} precision={2} />
+                      </Space>
+                    ),
+                    key: c.id + ' shgc',
+                  });
+                  grandChildren.push({
+                    checkable: true,
+                    title: <span>{c.type}</span>,
+                    key: c.id,
+                    children: windowChildren,
+                  });
+                  break;
+                }
+                case ObjectType.SolarPanel: {
+                  const solarPanelChildren: TreeDataNode[] = [];
+                  solarPanelChildren.push(...getCoordinates(c));
+                  solarPanelChildren.push(...getDimension(c));
+                  solarPanelChildren.push({
+                    checkable: false,
+                    title: (
+                      <Space>
+                        <span>Model : </span>
+                        <span>{(c as SolarPanelModel).pvModelName}</span>
+                      </Space>
+                    ),
+                    key: c.id + ' model',
+                  });
+                  grandChildren.push({
+                    checkable: true,
+                    title: <span>{c.type}</span>,
+                    key: c.id,
+                    children: solarPanelChildren,
+                  });
+                  break;
+                }
+                case ObjectType.SolarWaterHeater: {
+                  const solarWaterHeaterChildren: TreeDataNode[] = [];
+                  solarWaterHeaterChildren.push(...getCoordinates(c));
+                  solarWaterHeaterChildren.push(...getDimension(c));
+                  grandChildren.push({
+                    checkable: true,
+                    title: <span>{c.type}</span>,
+                    key: c.id,
+                    children: solarWaterHeaterChildren,
+                  });
+                  break;
+                }
+                case ObjectType.Sensor: {
+                  const sensorChildren: TreeDataNode[] = [];
+                  sensorChildren.push(...getCoordinates(c));
+                  grandChildren.push({
+                    checkable: true,
+                    title: <span>{c.type}</span>,
+                    key: c.id,
+                    children: sensorChildren,
+                  });
+                  break;
+                }
+                case ObjectType.Light: {
+                  const lightChildren: TreeDataNode[] = [];
+                  lightChildren.push(...getCoordinates(c));
+                  grandChildren.push({
+                    checkable: true,
+                    title: <span>{c.type}</span>,
+                    key: c.id,
+                    children: lightChildren,
+                  });
+                  break;
+                }
               }
             }
           }
