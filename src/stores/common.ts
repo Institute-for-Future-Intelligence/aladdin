@@ -127,6 +127,7 @@ export interface CommonStoreState {
   modelDescription: string | null;
   projectView: boolean;
   projectState: ProjectState;
+  canvasPercentWidth: number;
   projectImages: Map<string, HTMLImageElement>;
   designProjectType: DesignProblem | null; // this belongs to a design of a project
   cloudFileBelongToProject: () => boolean;
@@ -607,6 +608,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           modelLabel: null,
           modelDescription: null,
           projectView: false,
+          canvasPercentWidth: 100,
           projectState: {
             owner: null,
             title: null,
@@ -651,6 +653,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   details: state.projectState.title,
                 };
               }
+              state.canvasPercentWidth = 100;
               state.projectView = false;
               state.projectState.title = null;
               state.projectState.description = null;
@@ -5267,6 +5270,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           modelAuthor: state.modelAuthor,
           modelLabel: state.modelLabel,
           modelDescription: state.modelDescription,
+          canvasPercentWidth: state.canvasPercentWidth,
           projectView: state.projectView,
           projectState: state.projectState,
           designProjectType: state.designProjectType,

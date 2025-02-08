@@ -599,6 +599,8 @@ export const hiddenParameters = (state: CommonStoreState) => state.projectState.
 
 export const projectView = (state: CommonStoreState) => state.projectView;
 
+export const canvasPercentWidth = (state: CommonStoreState) => state.canvasPercentWidth;
+
 export const cloudFileBelongToProject = (state: CommonStoreState) => state.cloudFileBelongToProject;
 
 export const closeProject = (state: CommonStoreState) => state.closeProject;

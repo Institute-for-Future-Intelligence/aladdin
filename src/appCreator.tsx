@@ -74,11 +74,11 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const cloudFileBelongToProject = useStore(Selector.cloudFileBelongToProject);
   const logAction = useStore(Selector.logAction);
   const closeProject = useStore(Selector.closeProject);
+  const canvasPercentWidth = useStore(Selector.canvasPercentWidth);
   const elements = useStore(Selector.elements);
   const showModelTree = useStore(Selector.viewState.showModelTree);
 
   const [initializing, setInitializing] = useState<boolean>(true);
-  const [canvasPercentWidth, setCanvasRelativeWidth] = useState<number>(50);
   const [latestVersionReminder, setLatestVersionReminder] = useState<boolean>(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -119,7 +119,9 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
     useRefStore.setState((state) => {
       if (!canvasRef.current) return state;
       const pointer = state.pointer;
-      pointer.x = (e.clientX / canvasRef.current.clientWidth) * 2 - 1;
+      const projectPaneWidth = (100 - canvasPercentWidth) * 0.01 * window.innerWidth;
+      pointer.x = ((e.clientX - projectPaneWidth) / canvasRef.current.clientWidth) * 2 - 1;
+      // pointer.x = (e.clientX / canvasRef.current.clientWidth) * 2 - 1;
       pointer.y = -((e.clientY - HEADER_HEIGHT) / canvasRef.current.clientHeight) * 2 + 1;
       return { pointer };
     });
@@ -181,7 +183,9 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const v = useMemo(() => new Vector2(), []);
 
   const resizeCanvas = (width: number) => {
-    setCanvasRelativeWidth(Math.round((width / window.innerWidth) * 100));
+    setCommonStore((state) => {
+      state.canvasPercentWidth = Math.round((width / window.innerWidth) * 100);
+    });
     const canvas = useRefStore.getState().canvas;
     if (canvas) {
       const { gl, camera } = canvas;
@@ -351,7 +355,10 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                 resizeCanvas(sizes[1]);
               }}
             >
-              <Splitter.Panel collapsible defaultSize={projectView ? window.innerWidth / 2 : 0}>
+              <Splitter.Panel
+                collapsible
+                defaultSize={projectView ? window.innerWidth * (1 - canvasPercentWidth * 0.01) : 0}
+              >
                 <ProjectGallery canvas={canvasRef.current} relativeWidth={1 - canvasPercentWidth * 0.01} />
               </Splitter.Panel>
               <Splitter.Panel>{createCanvas()}</Splitter.Panel>
