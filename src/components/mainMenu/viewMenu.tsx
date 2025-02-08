@@ -173,17 +173,25 @@ export const createViewMenu = (keyHome: string, isMac: boolean) => {
       undo: () => {
         useStore.getState().set((state) => {
           state.viewState.showModelTree = undoableCheck.checked;
+          state.canvasPercentWidth = state.viewState.showModelTree ? 75 : 100;
         });
       },
       redo: () => {
         useStore.getState().set((state) => {
           state.viewState.showModelTree = undoableCheck.checked;
+          state.canvasPercentWidth = state.viewState.showModelTree ? 75 : 100;
         });
       },
     } as UndoableCheck;
     useStore.getState().addUndoable(undoableCheck);
     useStore.getState().set((state) => {
       state.viewState.showModelTree = e.target.checked;
+      if (state.viewState.showModelTree) {
+        state.projectView = false;
+        state.canvasPercentWidth = 75;
+      } else {
+        state.canvasPercentWidth = 100;
+      }
     });
   };
 

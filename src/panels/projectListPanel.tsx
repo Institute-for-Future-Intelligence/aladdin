@@ -193,6 +193,10 @@ const ProjectListPanel = React.memo(
     const openProject = (projectState: ProjectState) => {
       setProjectState(projectState);
       undoManager.clear();
+      setCommonStore((state) => {
+        if (state.canvasPercentWidth === 100) state.canvasPercentWidth = 50;
+        state.viewState.showModelTree = false;
+      });
       if (loggable) {
         setCommonStore((state) => {
           state.actionInfo = {

@@ -119,9 +119,8 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
     useRefStore.setState((state) => {
       if (!canvasRef.current) return state;
       const pointer = state.pointer;
-      const projectPaneWidth = (100 - canvasPercentWidth) * 0.01 * window.innerWidth;
-      pointer.x = ((e.clientX - projectPaneWidth) / canvasRef.current.clientWidth) * 2 - 1;
-      // pointer.x = (e.clientX / canvasRef.current.clientWidth) * 2 - 1;
+      const leftPaneWidth = (100 - canvasPercentWidth) * 0.01 * window.innerWidth;
+      pointer.x = ((e.clientX - leftPaneWidth) / canvasRef.current.clientWidth) * 2 - 1;
       pointer.y = -((e.clientY - HEADER_HEIGHT) / canvasRef.current.clientHeight) * 2 + 1;
       return { pointer };
     });
@@ -371,14 +370,18 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                     if (sizes[0] === 0) {
                       setCommonStore((state) => {
                         state.viewState.showModelTree = false;
+                        state.canvasPercentWidth = 100;
                       });
-                      resizeCanvas(sizes[1]);
                     }
+                    resizeCanvas(sizes[1]);
                   }}
                 >
-                  <Splitter.Panel defaultSize={Math.max(200, window.innerWidth / 5)} style={{ overflow: 'auto' }}>
+                  <Splitter.Panel
+                    defaultSize={Math.max(200, window.innerWidth * (1 - canvasPercentWidth * 0.01))}
+                    style={{ overflow: 'auto' }}
+                  >
                     {elements.length === 0 ? (
-                      <Empty />
+                      <Empty style={{ paddingTop: '20px' }} />
                     ) : (
                       <Tree
                         checkable
