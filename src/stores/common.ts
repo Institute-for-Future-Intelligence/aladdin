@@ -752,6 +752,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.elements = content.elements;
               state.notes = content.notes ?? [];
               state.animate24Hours = !!content.animate24Hours;
+              state.canvasPercentWidth = content.canvasPercentWidth ?? (state.viewState.showModelTree ? 75 : 100);
               state.modelType = content.modelType ?? ModelType.UNKNOWN;
               state.modelAuthor = content.modelAuthor ?? null;
               state.modelLabel = content.modelLabel ?? null;
@@ -824,6 +825,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               elements: elements,
               sceneRadius: state.sceneRadius,
               view: JSON.parse(JSON.stringify(state.viewState)),
+              canvasPercentWidth: state.canvasPercentWidth,
               animate24Hours: state.animate24Hours,
               graphState: JSON.parse(JSON.stringify(state.graphState)),
               evolutionMethod: state.evolutionMethod,

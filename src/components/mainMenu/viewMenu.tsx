@@ -172,7 +172,7 @@ export const createViewMenu = (keyHome: string, isMac: boolean) => {
       checked: e.target.checked,
       undo: () => {
         useStore.getState().set((state) => {
-          state.viewState.showModelTree = undoableCheck.checked;
+          state.viewState.showModelTree = !undoableCheck.checked;
           state.canvasPercentWidth = state.viewState.showModelTree ? 75 : 100;
         });
       },
