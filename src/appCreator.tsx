@@ -47,8 +47,8 @@ import GroupMasterWrapper from './components/groupMaster';
 import { useRefStore } from './stores/commonRef';
 import { PerspectiveCamera, Vector2 } from 'three';
 import { useLanguage, useModelTree } from './hooks';
-import { AlertFilled } from '@ant-design/icons';
-
+import { AlertFilled, CloseOutlined } from '@ant-design/icons';
+import { UndoableCheck } from './undo/UndoableCheck';
 export interface AppCreatorProps {
   viewOnly: boolean;
 }
@@ -200,6 +200,31 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   };
 
   const modelTree: TreeDataNode[] = useModelTree();
+
+  const closeModelTree = () => {
+    setCommonStore((state) => {
+      state.viewState.showModelTree = false;
+      state.canvasPercentWidth = 100;
+    });
+  };
+
+  const undoableCloseModelTree = () => {
+    const undoable = {
+      name: 'Close Model Tree',
+      timestamp: Date.now(),
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.showModelTree = true;
+          state.canvasPercentWidth = 75;
+        });
+      },
+      redo: () => {
+        closeModelTree();
+      },
+    } as UndoableCheck;
+    useStore.getState().addUndoable(undoable);
+    closeModelTree();
+  };
 
   return (
     // disable the default context menu for the entire app
@@ -367,19 +392,39 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
               {showModelTree ? (
                 <Splitter
                   onResizeEnd={(sizes) => {
-                    if (sizes[0] === 0) {
-                      setCommonStore((state) => {
-                        state.viewState.showModelTree = false;
-                        state.canvasPercentWidth = 100;
-                      });
-                    }
+                    if (sizes[0] === 0) closeModelTree();
                     resizeCanvas(sizes[1]);
                   }}
                 >
                   <Splitter.Panel
                     defaultSize={Math.max(200, window.innerWidth * (1 - canvasPercentWidth * 0.01))}
-                    style={{ overflow: 'auto' }}
+                    style={{ overflow: 'auto', zIndex: 1001 }}
                   >
+                    <Space
+                      style={{
+                        width: '100%',
+                        height: '36px',
+                        background: '#e8e8e8',
+                        color: '#888',
+                        alignItems: 'center',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        paddingLeft: '6px',
+                        paddingRight: '10px',
+                        paddingTop: '10px',
+                        paddingBottom: '10px',
+                        fontSize: '16px',
+                      }}
+                    >
+                      <span>{i18n.t('menu.view.ModelTree', lang)}</span>
+                      <span
+                        style={{ cursor: 'pointer' }}
+                        onMouseDown={() => undoableCloseModelTree()}
+                        onTouchStart={() => undoableCloseModelTree()}
+                      >
+                        <CloseOutlined title={i18n.t('word.Close', lang)} />
+                      </span>
+                    </Space>
                     {elements.length === 0 ? (
                       <Empty style={{ paddingTop: '20px' }} />
                     ) : (
