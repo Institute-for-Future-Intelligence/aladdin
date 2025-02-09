@@ -523,6 +523,8 @@ export const selectMe = (state: CommonStoreState) => state.selectMe;
 
 export const selectNone = (state: CommonStoreState) => state.selectNone;
 
+export const selectElement = (state: CommonStoreState) => state.selectElement;
+
 export const addElement = (state: CommonStoreState) => state.addElement;
 
 export const objectTypeToAdd = (state: CommonStoreState) => state.objectTypeToAdd;

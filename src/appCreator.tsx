@@ -49,11 +49,13 @@ import { PerspectiveCamera, Vector2 } from 'three';
 import { useLanguage, useModelTree } from './hooks';
 import { AlertFilled, CloseOutlined } from '@ant-design/icons';
 import { UndoableCheck } from './undo/UndoableCheck';
+
 export interface AppCreatorProps {
   viewOnly: boolean;
 }
 
 const HEADER_HEIGHT = 72;
+
 const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const user = useStore(Selector.user);
   const latestVersion = usePrimitiveStore(Selector.latestVersion);
@@ -77,6 +79,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const canvasPercentWidth = useStore(Selector.canvasPercentWidth);
   const elements = useStore(Selector.elements);
   const showModelTree = useStore(Selector.viewState.showModelTree);
+  const selectElement = useStore(Selector.selectElement);
 
   const [initializing, setInitializing] = useState<boolean>(true);
   const [latestVersionReminder, setLatestVersionReminder] = useState<boolean>(false);
@@ -392,7 +395,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
               {showModelTree ? (
                 <Splitter
                   onResizeEnd={(sizes) => {
-                    if (sizes[0] === 0) closeModelTree();
+                    if (sizes[0] === 0) undoableCloseModelTree();
                     resizeCanvas(sizes[1]);
                   }}
                 >
@@ -436,8 +439,10 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                         defaultExpandedKeys={[]}
                         defaultSelectedKeys={[]}
                         defaultCheckedKeys={[]}
-                        onSelect={() => {}}
                         onCheck={() => {}}
+                        onSelect={(e) => {
+                          selectElement((e as string[])[0]);
+                        }}
                         treeData={modelTree}
                       />
                     )}

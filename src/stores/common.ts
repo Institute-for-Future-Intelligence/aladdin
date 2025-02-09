@@ -215,6 +215,7 @@ export interface CommonStoreState {
   getFoundation: (elem: ElementModel) => FoundationModel | null;
   selectMe: (id: string, e: ThreeEvent<MouseEvent>, action?: ActionType, select?: boolean) => void;
   selectNone: () => void;
+  selectElement: (id: string) => void;
   setElementPosition: (id: string, x: number, y: number, z?: number) => void;
   setElementNormal: (id: string, x: number, y: number, z: number) => void;
   setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
@@ -1124,6 +1125,20 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             });
             useRefStore.getState().selectNone();
           },
+          selectElement(id) {
+            immerSet((state: CommonStoreState) => {
+              state.selectedElementIdSet.clear();
+              for (const e of state.elements) {
+                if (e.id === id) {
+                  e.selected = true;
+                  state.selectedElement = e;
+                  state.selectedElementIdSet.add(id);
+                } else {
+                  e.selected = false;
+                }
+              }
+            });
+          },
           selectMe(id, e, action, select) {
             const setEnableOrbitController = useRefStore.getState().setEnableOrbitController;
             if (e.intersections.length > 0) {
@@ -1208,7 +1223,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       case ActionType.Move: {
                         if (
                           state.selectedElement?.type === ObjectType.Tree ||
-                          state.selectedElement?.type === ObjectType.Human
+                          state.selectedElement?.type === ObjectType.Human ||
+                          state.selectedElement?.type === ObjectType.Flower
                         ) {
                           // selecting the above two types of object automatically sets them to the moving state
                           state.moveHandleType = MoveHandleType.Default;
