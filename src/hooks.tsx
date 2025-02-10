@@ -5,7 +5,7 @@
 import { useStore } from 'src/stores/common';
 import * as Selector from './stores/selector';
 import React, { useMemo } from 'react';
-import { InputNumber, Space, TreeDataNode } from 'antd';
+import { InputNumber, Space, TreeDataNode, Tooltip } from 'antd';
 import { ObjectType } from './types';
 import { HumanModel } from './models/HumanModel';
 import { GROUND_ID } from './constants';
@@ -121,6 +121,19 @@ export const useModelTree = () => {
     return name;
   };
 
+  const createTooltip = (id: string, text: string) => {
+    return (
+      <Tooltip
+        placement={'right'}
+        title={'ID: ' + id}
+        color={'white'}
+        styles={{ body: { color: 'gray', fontSize: '12px' } }}
+      >
+        <span>{text}</span>
+      </Tooltip>
+    );
+  };
+
   return useMemo(() => {
     const array: TreeDataNode[] = [];
     for (const e of elements) {
@@ -168,7 +181,7 @@ export const useModelTree = () => {
                   });
                   grandChildren.push({
                     checkable: true,
-                    title: <span>{c.type}</span>,
+                    title: createTooltip(c.id, c.type),
                     key: c.id,
                     children: windowChildren,
                   });
@@ -190,7 +203,7 @@ export const useModelTree = () => {
                   });
                   grandChildren.push({
                     checkable: true,
-                    title: <span>{c.type}</span>,
+                    title: createTooltip(c.id, c.type),
                     key: c.id,
                     children: doorChildren,
                   });
@@ -212,7 +225,7 @@ export const useModelTree = () => {
                   });
                   grandChildren.push({
                     checkable: true,
-                    title: <span>{c.type}</span>,
+                    title: createTooltip(c.id, 'Wall-Mounted Solar Panels'),
                     key: c.id,
                     children: solarPanelChildren,
                   });
@@ -223,7 +236,7 @@ export const useModelTree = () => {
                   sensorChildren.push(...getCoordinates(c));
                   grandChildren.push({
                     checkable: true,
-                    title: <span>{c.type}</span>,
+                    title: createTooltip(c.id, c.type),
                     key: c.id,
                     children: sensorChildren,
                   });
@@ -234,7 +247,7 @@ export const useModelTree = () => {
                   lightChildren.push(...getCoordinates(c));
                   grandChildren.push({
                     checkable: true,
-                    title: <span>{c.type}</span>,
+                    title: createTooltip(c.id, c.type),
                     key: c.id,
                     children: lightChildren,
                   });
@@ -272,7 +285,7 @@ export const useModelTree = () => {
                   });
                   grandChildren.push({
                     checkable: true,
-                    title: <span>{c.type}</span>,
+                    title: createTooltip(c.id, 'Skylight Window'),
                     key: c.id,
                     children: windowChildren,
                   });
@@ -294,7 +307,7 @@ export const useModelTree = () => {
                   });
                   grandChildren.push({
                     checkable: true,
-                    title: <span>{c.type}</span>,
+                    title: createTooltip(c.id, 'Rooftop Solar Panels'),
                     key: c.id,
                     children: solarPanelChildren,
                   });
@@ -306,7 +319,7 @@ export const useModelTree = () => {
                   solarWaterHeaterChildren.push(...getDimension(c));
                   grandChildren.push({
                     checkable: true,
-                    title: <span>{c.type}</span>,
+                    title: createTooltip(c.id, c.type),
                     key: c.id,
                     children: solarWaterHeaterChildren,
                   });
@@ -317,7 +330,7 @@ export const useModelTree = () => {
                   sensorChildren.push(...getCoordinates(c));
                   grandChildren.push({
                     checkable: true,
-                    title: <span>{c.type}</span>,
+                    title: createTooltip(c.id, c.type),
                     key: c.id,
                     children: sensorChildren,
                   });
@@ -328,7 +341,7 @@ export const useModelTree = () => {
                   lightChildren.push(...getCoordinates(c));
                   grandChildren.push({
                     checkable: true,
-                    title: <span>{c.type}</span>,
+                    title: createTooltip(c.id, c.type),
                     key: c.id,
                     children: lightChildren,
                   });
@@ -338,13 +351,13 @@ export const useModelTree = () => {
             }
           }
           children.push({
-            title: <span>{s.type + (s.label ? ' (' + s.label + ')' : '')}</span>,
+            title: createTooltip(s.id, s.type + (s.label ? ' (' + s.label + ')' : '')),
             key: s.id,
             children: grandChildren,
           });
         }
         array.push({
-          title: e.type + (e.label ? ' (' + e.label + ')' : ''),
+          title: createTooltip(e.id, e.type + (e.label ? ' (' + e.label + ')' : '')),
           key: e.id,
           children,
         });
@@ -360,7 +373,7 @@ export const useModelTree = () => {
         }
         properties.push(...getCoordinates(e));
         array.push({
-          title: e.type + (e.label ? ' (' + e.label + ')' : ''),
+          title: createTooltip(e.id, e.type + (e.label ? ' (' + e.label + ')' : '')),
           key: e.id,
           children: properties,
         });

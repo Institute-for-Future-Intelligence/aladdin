@@ -418,6 +418,11 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                         paddingBottom: '10px',
                         fontSize: '16px',
                       }}
+                      onContextMenu={(e) => {
+                        // do not invoke the context menu from the canvas if any
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
                     >
                       <span>{i18n.t('menu.view.ModelTree', lang)}</span>
                       <span
@@ -444,6 +449,11 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                           selectElement((e as string[])[0]);
                         }}
                         treeData={modelTree}
+                        onContextMenu={(e) => {
+                          // do not invoke the context menu from the canvas if any
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
                       />
                     )}
                   </Splitter.Panel>
