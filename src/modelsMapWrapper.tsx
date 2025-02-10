@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -36,7 +36,7 @@ const Container = styled.div`
   height: calc(100% - 70px);
   flex-direction: column;
   align-items: center;
-  z-index: 999;
+  z-index: 1999;
   tab-index: 0;
   background: white;
 `;

@@ -306,7 +306,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
           </span>
         )}
       </div>
-      {viewOnly ? (
+      {viewOnly || showModelTree ? (
         <div
           style={{
             position: 'absolute',
@@ -316,7 +316,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
             fontSize: '8px',
             userSelect: 'none',
             color:
-              groundImage || projectView
+              groundImage || projectView || showModelTree
                 ? groundImageType !== 'roadmap'
                   ? 'antiquewhite'
                   : 'darkslategrey'
@@ -401,7 +401,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                 >
                   <Splitter.Panel
                     defaultSize={Math.max(200, window.innerWidth * (1 - canvasPercentWidth * 0.01))}
-                    style={{ overflow: 'auto', zIndex: 1001 }}
+                    style={{ overflow: 'auto', zIndex: 1000 }}
                   >
                     <Space
                       style={{
