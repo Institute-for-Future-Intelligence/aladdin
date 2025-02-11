@@ -5,16 +5,25 @@
 import { useStore } from 'src/stores/common';
 import * as Selector from './stores/selector';
 import React, { useMemo } from 'react';
-import { InputNumber, Space, TreeDataNode, Tooltip } from 'antd';
+import { InputNumber, Space, Tooltip, TreeDataNode } from 'antd';
 import { ObjectType } from './types';
-import { HumanModel } from './models/HumanModel';
-import { GROUND_ID } from './constants';
+import {
+  DEFAULT_DOOR_U_VALUE,
+  DEFAULT_ROOF_R_VALUE,
+  DEFAULT_WALL_R_VALUE,
+  DEFAULT_WINDOW_U_VALUE,
+  GROUND_ID,
+} from './constants';
 import { TreeModel } from './models/TreeModel';
 import { ElementModel } from './models/ElementModel';
-import { FlowerModel } from './models/FlowerModel';
 import { WindowModel } from './models/WindowModel';
 import { DoorModel } from './models/DoorModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
+import { RoofModel } from './models/RoofModel';
+import { WallModel } from './models/WallModel';
+import { HumanModel } from './models/HumanModel';
+import { FlowerModel } from './models/FlowerModel';
+import { FoundationModel } from './models/FoundationModel';
 
 export const useSelected = (id: string) => {
   return useStore((state) => state.selectedElementIdSet.has(id) && !state.groupActionMode);
@@ -107,20 +116,6 @@ export const useModelTree = () => {
     ];
   };
 
-  const getHumanTreeFlowerName = (e: ElementModel) => {
-    let name = undefined;
-    if (e.type === ObjectType.Human || e.type === ObjectType.Flower || e.type === ObjectType.Tree) {
-      if (e.type === ObjectType.Tree) {
-        name = (e as TreeModel).name;
-      } else if (e.type === ObjectType.Flower) {
-        name = (e as FlowerModel).name;
-      } else if (e.type === ObjectType.Human) {
-        name = (e as HumanModel).name;
-      }
-    }
-    return name;
-  };
-
   const createTooltip = (id: string, text: string) => {
     return (
       <Tooltip
@@ -142,16 +137,105 @@ export const useModelTree = () => {
         const children: TreeDataNode[] = [];
         for (const s of foundationChildren) {
           const grandChildren: TreeDataNode[] = [];
-          const name = getHumanTreeFlowerName(s);
-          if (name) {
-            grandChildren.push({
-              checkable: false,
-              title: <span>Name : {name}</span>,
-              key: s.id + ' Name',
-            });
+          switch (s.type) {
+            case ObjectType.Tree: {
+              const treeModel = s as TreeModel;
+              grandChildren.push({
+                checkable: false,
+                title: <span>Type : {treeModel.name}</span>,
+                key: s.id + ' Name',
+              });
+              grandChildren.push({
+                checkable: false,
+                title: (
+                  <Space>
+                    <span>Spread : </span>
+                    <InputNumber value={treeModel.lx} precision={2} />
+                  </Space>
+                ),
+                key: s.id + ' Spread',
+              });
+              grandChildren.push({
+                checkable: false,
+                title: (
+                  <Space>
+                    <span>Height : </span>
+                    <InputNumber value={treeModel.lz} precision={2} />
+                  </Space>
+                ),
+                key: s.id + ' Height',
+              });
+              break;
+            }
+            case ObjectType.Flower: {
+              grandChildren.push({
+                checkable: false,
+                title: <span>Type : {(s as FlowerModel).name}</span>,
+                key: s.id + ' Name',
+              });
+              break;
+            }
+            case ObjectType.Human: {
+              grandChildren.push({
+                checkable: false,
+                title: <span>Name : {(s as HumanModel).name}</span>,
+                key: s.id + ' Name',
+              });
+              break;
+            }
           }
           grandChildren.push(...getCoordinates(s));
           if (s.type === ObjectType.Wall) {
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>R-value : </span>
+                  <InputNumber value={(s as WallModel).rValue ?? DEFAULT_WALL_R_VALUE} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' R-value',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>Volumetric Heat Capacity : </span>
+                  <InputNumber value={(s as WallModel).volumetricHeatCapacity ?? 0.5} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Heat Capacity',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>Thickness : </span>
+                  <InputNumber value={(s as WallModel).ly} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Thickness',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>Height : </span>
+                  <InputNumber value={(s as WallModel).lz} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Height',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>Eaves Overhang Length : </span>
+                  <InputNumber value={(s as WallModel).eavesLength} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Overhang',
+            });
             const wallChildren = getChildren(s.id);
             for (const c of wallChildren) {
               switch (c.type) {
@@ -164,10 +248,10 @@ export const useModelTree = () => {
                     title: (
                       <Space>
                         <span>U-value : </span>
-                        <InputNumber value={(c as WindowModel).uValue ?? 2.0} precision={2} />
+                        <InputNumber value={(c as WindowModel).uValue ?? DEFAULT_WINDOW_U_VALUE} precision={2} />
                       </Space>
                     ),
-                    key: c.id + ' u-value',
+                    key: c.id + ' U-value',
                   });
                   windowChildren.push({
                     checkable: false,
@@ -196,10 +280,20 @@ export const useModelTree = () => {
                     title: (
                       <Space>
                         <span>U-value : </span>
-                        <InputNumber value={(c as DoorModel).uValue ?? 2.0} precision={2} />
+                        <InputNumber value={(c as DoorModel).uValue ?? DEFAULT_DOOR_U_VALUE} precision={2} />
                       </Space>
                     ),
-                    key: c.id + ' u-value',
+                    key: c.id + ' U-value',
+                  });
+                  doorChildren.push({
+                    checkable: false,
+                    title: (
+                      <Space>
+                        <span>Volumetric Heat Capacity : </span>
+                        <InputNumber value={(c as DoorModel).volumetricHeatCapacity ?? 0.5} precision={2} />
+                      </Space>
+                    ),
+                    key: c.id + ' Heat Capacity',
                   });
                   grandChildren.push({
                     checkable: true,
@@ -221,11 +315,21 @@ export const useModelTree = () => {
                         <span>{(c as SolarPanelModel).pvModelName}</span>
                       </Space>
                     ),
-                    key: c.id + ' model',
+                    key: c.id + ' Model',
+                  });
+                  solarPanelChildren.push({
+                    checkable: false,
+                    title: (
+                      <Space>
+                        <span>Orientation : </span>
+                        <span>{(c as SolarPanelModel).orientation}</span>
+                      </Space>
+                    ),
+                    key: c.id + ' Orientation',
                   });
                   grandChildren.push({
                     checkable: true,
-                    title: createTooltip(c.id, 'Wall-Mounted Solar Panels'),
+                    title: createTooltip(c.id, 'Wall-Mounted Solar Panels' + (c.label ? ' (' + c.label + ')' : '')),
                     key: c.id,
                     children: solarPanelChildren,
                   });
@@ -256,6 +360,46 @@ export const useModelTree = () => {
               }
             }
           } else if (s.type === ObjectType.Roof) {
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>R-value : </span>
+                  <InputNumber value={(s as RoofModel).rValue ?? DEFAULT_ROOF_R_VALUE} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' R-value',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>Volumetric Heat Capacity : </span>
+                  <InputNumber value={(s as RoofModel).volumetricHeatCapacity ?? 0.5} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Heat Capacity',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>Thickness : </span>
+                  <InputNumber value={(s as RoofModel).thickness} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Thickness',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>Rise : </span>
+                  <InputNumber value={(s as RoofModel).rise} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Rise',
+            });
             const roofChildren = getChildren(s.id);
             for (const c of roofChildren) {
               switch (c.type) {
@@ -268,10 +412,10 @@ export const useModelTree = () => {
                     title: (
                       <Space>
                         <span>U-value : </span>
-                        <InputNumber value={(c as WindowModel).uValue ?? 2.0} precision={2} />
+                        <InputNumber value={(c as WindowModel).uValue ?? DEFAULT_WINDOW_U_VALUE} precision={2} />
                       </Space>
                     ),
-                    key: c.id + ' u-value',
+                    key: c.id + ' U-value',
                   });
                   windowChildren.push({
                     checkable: false,
@@ -303,11 +447,21 @@ export const useModelTree = () => {
                         <span>{(c as SolarPanelModel).pvModelName}</span>
                       </Space>
                     ),
-                    key: c.id + ' model',
+                    key: c.id + ' Model',
+                  });
+                  solarPanelChildren.push({
+                    checkable: false,
+                    title: (
+                      <Space>
+                        <span>Orientation : </span>
+                        <span>{(c as SolarPanelModel).orientation}</span>
+                      </Space>
+                    ),
+                    key: c.id + ' Orientation',
                   });
                   grandChildren.push({
                     checkable: true,
-                    title: createTooltip(c.id, 'Rooftop Solar Panels'),
+                    title: createTooltip(c.id, 'Rooftop Solar Panels' + (c.label ? ' (' + c.label + ')' : '')),
                     key: c.id,
                     children: solarPanelChildren,
                   });
@@ -319,7 +473,7 @@ export const useModelTree = () => {
                   solarWaterHeaterChildren.push(...getDimension(c));
                   grandChildren.push({
                     checkable: true,
-                    title: createTooltip(c.id, c.type),
+                    title: createTooltip(c.id, c.type + (c.label ? ' (' + c.label + ')' : '')),
                     key: c.id,
                     children: solarWaterHeaterChildren,
                   });
@@ -356,20 +510,60 @@ export const useModelTree = () => {
             children: grandChildren,
           });
         }
+        const f = e as FoundationModel;
         array.push({
-          title: createTooltip(e.id, e.type + (e.label ? ' (' + e.label + ')' : '')),
-          key: e.id,
+          title: createTooltip(f.id, (f.notBuilding ? f.type : 'Building') + (f.label ? ' (' + f.label + ')' : '')),
+          key: f.id,
           children,
         });
       } else if (e.parentId === GROUND_ID) {
         const properties: TreeDataNode[] = [];
-        const name = getHumanTreeFlowerName(e);
-        if (name) {
-          properties.push({
-            checkable: false,
-            title: <span>Name : {name}</span>,
-            key: e.id + ' Name',
-          });
+        switch (e.type) {
+          case ObjectType.Tree: {
+            const treeModel = e as TreeModel;
+            properties.push({
+              checkable: false,
+              title: <span>Type : {treeModel.name}</span>,
+              key: e.id + ' Name',
+            });
+            properties.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>Spread : </span>
+                  <InputNumber value={treeModel.lx} precision={2} />
+                </Space>
+              ),
+              key: e.id + ' Spread',
+            });
+            properties.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>Height : </span>
+                  <InputNumber value={treeModel.lz} precision={2} />
+                </Space>
+              ),
+              key: e.id + ' Height',
+            });
+            break;
+          }
+          case ObjectType.Flower: {
+            properties.push({
+              checkable: false,
+              title: <span>Type : {(e as FlowerModel).name}</span>,
+              key: e.id + ' Name',
+            });
+            break;
+          }
+          case ObjectType.Human: {
+            properties.push({
+              checkable: false,
+              title: <span>Name : {(e as HumanModel).name}</span>,
+              key: e.id + ' Name',
+            });
+            break;
+          }
         }
         properties.push(...getCoordinates(e));
         array.push({
