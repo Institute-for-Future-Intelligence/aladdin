@@ -229,6 +229,70 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
     closeModelTree();
   };
 
+  const createIfiLogo = () => {
+    if (viewOnly)
+      return (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '6px',
+            left: '6px',
+            zIndex: 997,
+            fontSize: '8px',
+            userSelect: 'none',
+            color:
+              groundImage || projectView || showModelTree
+                ? groundImageType !== 'roadmap'
+                  ? 'antiquewhite'
+                  : 'darkslategrey'
+                : 'antiquewhite',
+          }}
+        >
+          <img alt="IFI Logo" src={ifiLogo} height="30px" style={{ verticalAlign: 'bottom' }} />
+          {' V ' + VERSION}
+        </div>
+      );
+    // return logo with a full copyright statement
+    return (
+      <>
+        <img
+          alt="IFI Logo"
+          src={ifiLogo}
+          height={projectView ? '24px' : '40px'}
+          style={{
+            position: 'absolute',
+            bottom: '6px',
+            left: '6px',
+            zIndex: 997,
+            userSelect: 'none',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '4px',
+            left: projectView ? '24px' : '44px',
+            zIndex: 997,
+            fontSize: '10px',
+            userSelect: 'none',
+            pointerEvents: 'none',
+            color: groundImage
+              ? groundImageType !== 'roadmap'
+                ? 'antiquewhite'
+                : 'darkslategrey'
+              : projectView
+              ? 'darkslategrey'
+              : 'antiquewhite',
+          }}
+        >
+          &nbsp;&nbsp; &copy;{new Date().getFullYear()} {`${i18n.t('name.IFI', lang)}`}
+          &nbsp;
+          {i18n.t('word.VersionInitial', lang) + VERSION + '. ' + i18n.t('word.AllRightsReserved', lang) + '. '}
+        </div>
+      </>
+    );
+  };
+
   return (
     // disable the default context menu for the entire app
     <div className="App" style={{ position: 'relative', overflow: 'hidden' }} onContextMenu={(e) => e.preventDefault()}>
@@ -306,64 +370,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
           </span>
         )}
       </div>
-      {viewOnly || showModelTree ? (
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '6px',
-            left: '6px',
-            zIndex: 999,
-            fontSize: '8px',
-            userSelect: 'none',
-            color:
-              groundImage || projectView || showModelTree
-                ? groundImageType !== 'roadmap'
-                  ? 'antiquewhite'
-                  : 'darkslategrey'
-                : 'antiquewhite',
-          }}
-        >
-          <img alt="IFI Logo" src={ifiLogo} height="30px" style={{ verticalAlign: 'bottom' }} />
-          {' V ' + VERSION}
-        </div>
-      ) : (
-        <>
-          <img
-            alt="IFI Logo"
-            src={ifiLogo}
-            height={projectView ? '24px' : '40px'}
-            style={{
-              position: 'absolute',
-              bottom: '6px',
-              left: '6px',
-              zIndex: 999,
-              userSelect: 'none',
-            }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '4px',
-              left: projectView ? '24px' : '44px',
-              zIndex: 999,
-              fontSize: '10px',
-              userSelect: 'none',
-              pointerEvents: 'none',
-              color: groundImage
-                ? groundImageType !== 'roadmap'
-                  ? 'antiquewhite'
-                  : 'darkslategrey'
-                : projectView
-                ? 'darkslategrey'
-                : 'antiquewhite',
-            }}
-          >
-            &nbsp;&nbsp; &copy;{new Date().getFullYear()} {`${i18n.t('name.IFI', lang)}`}
-            &nbsp;
-            {i18n.t('word.VersionInitial', lang) + VERSION + '. ' + i18n.t('word.AllRightsReserved', lang) + '. '}
-          </div>
-        </>
-      )}
+      {!showModelTree && createIfiLogo()}
       {!viewOnly && (
         <ShareLink size={16} round={true} margin={'2px'} style={{ position: 'absolute', right: '0', top: '80px' }} />
       )}
@@ -401,7 +408,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                 >
                   <Splitter.Panel
                     defaultSize={Math.max(200, window.innerWidth * (1 - canvasPercentWidth * 0.01))}
-                    style={{ overflow: 'auto', zIndex: 1000 }}
+                    style={{ overflow: 'auto', zIndex: 9 }}
                   >
                     <Space
                       style={{

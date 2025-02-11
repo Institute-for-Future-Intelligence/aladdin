@@ -36,7 +36,7 @@ const Container = styled.div`
   height: calc(100% - 70px);
   flex-direction: column;
   align-items: center;
-  z-index: 1999;
+  z-index: 999;
   tab-index: 0;
   background: white;
 `;
