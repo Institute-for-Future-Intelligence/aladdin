@@ -24,6 +24,7 @@ import { WallModel } from './models/WallModel';
 import { HumanModel } from './models/HumanModel';
 import { FlowerModel } from './models/FlowerModel';
 import { FoundationModel } from './models/FoundationModel';
+import { useTranslation } from 'react-i18next';
 
 export const useSelected = (id: string) => {
   return useStore((state) => state.selectedElementIdSet.has(id) && !state.groupActionMode);
@@ -45,6 +46,9 @@ export const useWeather = (city: string | null) => {
 export const useModelTree = () => {
   const elements = useStore(Selector.elements);
   const getChildren = useStore(Selector.getChildren);
+
+  const lang = useLanguage();
+  const { t } = useTranslation();
 
   const getCoordinates = (e: ElementModel) => {
     return [
@@ -127,6 +131,20 @@ export const useModelTree = () => {
         <span>{text}</span>
       </Tooltip>
     );
+  };
+
+  const i18nType = (e: ElementModel) => {
+    switch (e.type) {
+      case ObjectType.Human: {
+        return t('modelTree.Human', lang);
+      }
+      case ObjectType.Flower: {
+        return t('modelTree.Flower', lang);
+      }
+      case ObjectType.Tree: {
+        return t('modelTree.Tree', lang);
+      }
+    }
   };
 
   return useMemo(() => {
@@ -567,12 +585,12 @@ export const useModelTree = () => {
         }
         properties.push(...getCoordinates(e));
         array.push({
-          title: createTooltip(e.id, e.type + (e.label ? ' (' + e.label + ')' : '')),
+          title: createTooltip(e.id, i18nType(e) + (e.label ? ' (' + e.label + ')' : '')),
           key: e.id,
           children: properties,
         });
       }
     }
     return array;
-  }, [elements]);
+  }, [elements, lang]);
 };

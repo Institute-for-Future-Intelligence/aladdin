@@ -78,7 +78,7 @@ const MainMenu = React.memo(({ viewOnly, canvas }: MainMenuProps) => {
   const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
 
   const loggable = useStore.getState().loggable;
-  const language = useStore.getState().language;
+  const language = useStore(Selector.language);
   const undoManager = useStore.getState().undoManager;
   const changed = usePrimitiveStore.getState().changed;
   const cloudFile = useStore.getState().cloudFile;

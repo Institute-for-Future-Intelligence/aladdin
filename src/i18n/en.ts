@@ -1861,4 +1861,10 @@ export const i18n_en = {
       ShowModelsPublishedByThisAuthor: 'Show the models published by this author',
     },
   },
+
+  modelTree: {
+    Human: 'Human',
+    Flower: 'Flower',
+    Tree: 'Tree',
+  },
 };
