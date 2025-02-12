@@ -1862,5 +1862,20 @@ export const i18n_ua = {
       ModelsFoundOnThisSite: 'моделей знайдено на цьому сайті',
       ShowModelsPublishedByThisAuthor: 'Показати моделі, опубліковані цим автором',
     },
+
+    modelTree: {
+      Human: 'Human',
+      Flower: 'Flower',
+      Tree: 'Tree',
+      Foundation: 'Foundation',
+      Wall: 'Wall',
+      Roof: 'Roof',
+      SolarWaterHeater: 'Solar Water Heater',
+      RooftopSolarPanels: 'Rooftop Solar Panels',
+      WallMountedSolarPanels: 'Wall-Mounted Solar Panels',
+      GroundMountedSolarPanels: 'Ground-Mounted Solar Panels',
+      Sensor: 'Sensor',
+      Light: 'Light',
+    },
   },
 };

@@ -1851,5 +1851,20 @@ export const i18n_es = {
       ModelsFoundOnThisSite: 'models found on this site',
       ShowModelsPublishedByThisAuthor: 'Show the models published by this author',
     },
+
+    modelTree: {
+      Human: 'Human',
+      Flower: 'Flower',
+      Tree: 'Tree',
+      Foundation: 'Foundation',
+      Wall: 'Wall',
+      Roof: 'Roof',
+      SolarWaterHeater: 'Solar Water Heater',
+      RooftopSolarPanels: 'Rooftop Solar Panels',
+      WallMountedSolarPanels: 'Wall-Mounted Solar Panels',
+      GroundMountedSolarPanels: 'Ground-Mounted Solar Panels',
+      Sensor: 'Sensor',
+      Light: 'Light',
+    },
   },
 };

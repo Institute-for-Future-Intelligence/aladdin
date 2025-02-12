@@ -144,7 +144,29 @@ export const useModelTree = () => {
       case ObjectType.Tree: {
         return t('modelTree.Tree', lang);
       }
+      case ObjectType.Foundation: {
+        return t('modelTree.Foundation', lang);
+      }
+      case ObjectType.Wall: {
+        return t('modelTree.Wall', lang);
+      }
+      case ObjectType.Roof: {
+        return t('modelTree.Roof', lang);
+      }
+      case ObjectType.SolarWaterHeater: {
+        return t('modelTree.SolarWaterHeater', lang);
+      }
+      case ObjectType.Sensor: {
+        return t('modelTree.Sensor', lang);
+      }
+      case ObjectType.Light: {
+        return t('modelTree.Light', lang);
+      }
+      case ObjectType.SolarPanel: {
+        return t('modelTree.GroundMountedSolarPanels', lang);
+      }
     }
+    return 'Unknown';
   };
 
   return useMemo(() => {
@@ -203,7 +225,29 @@ export const useModelTree = () => {
             }
           }
           grandChildren.push(...getCoordinates(s));
-          if (s.type === ObjectType.Wall) {
+          if (s.type === ObjectType.SolarPanel) {
+            grandChildren.push(...getDimension(s));
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('pvModelPanel.Model', lang)} : </span>
+                  <span>{(s as SolarPanelModel).pvModelName}</span>
+                </Space>
+              ),
+              key: s.id + ' Model',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('solarPanelMenu.Orientation', lang)} : </span>
+                  <span>{(s as SolarPanelModel).orientation}</span>
+                </Space>
+              ),
+              key: s.id + ' Orientation',
+            });
+          } else if (s.type === ObjectType.Wall) {
             grandChildren.push({
               checkable: false,
               title: (
@@ -329,7 +373,7 @@ export const useModelTree = () => {
                     checkable: false,
                     title: (
                       <Space>
-                        <span>Model : </span>
+                        <span>{t('pvModelPanel.Model', lang)} : </span>
                         <span>{(c as SolarPanelModel).pvModelName}</span>
                       </Space>
                     ),
@@ -339,7 +383,7 @@ export const useModelTree = () => {
                     checkable: false,
                     title: (
                       <Space>
-                        <span>Orientation : </span>
+                        <span>{t('solarPanelMenu.Orientation', lang)} : </span>
                         <span>{(c as SolarPanelModel).orientation}</span>
                       </Space>
                     ),
@@ -347,7 +391,10 @@ export const useModelTree = () => {
                   });
                   grandChildren.push({
                     checkable: true,
-                    title: createTooltip(c.id, 'Wall-Mounted Solar Panels' + (c.label ? ' (' + c.label + ')' : '')),
+                    title: createTooltip(
+                      c.id,
+                      t('modelTree.WallMountedSolarPanels', lang) + (c.label ? ' (' + c.label + ')' : ''),
+                    ),
                     key: c.id,
                     children: solarPanelChildren,
                   });
@@ -358,7 +405,7 @@ export const useModelTree = () => {
                   sensorChildren.push(...getCoordinates(c));
                   grandChildren.push({
                     checkable: true,
-                    title: createTooltip(c.id, c.type),
+                    title: createTooltip(c.id, i18nType(c)),
                     key: c.id,
                     children: sensorChildren,
                   });
@@ -369,7 +416,7 @@ export const useModelTree = () => {
                   lightChildren.push(...getCoordinates(c));
                   grandChildren.push({
                     checkable: true,
-                    title: createTooltip(c.id, c.type),
+                    title: createTooltip(c.id, i18nType(c)),
                     key: c.id,
                     children: lightChildren,
                   });
@@ -461,7 +508,7 @@ export const useModelTree = () => {
                     checkable: false,
                     title: (
                       <Space>
-                        <span>Model : </span>
+                        <span>{t('pvModelPanel.Model', lang)} : </span>
                         <span>{(c as SolarPanelModel).pvModelName}</span>
                       </Space>
                     ),
@@ -471,7 +518,7 @@ export const useModelTree = () => {
                     checkable: false,
                     title: (
                       <Space>
-                        <span>Orientation : </span>
+                        <span>{t('solarPanelMenu.Orientation', lang)} : </span>
                         <span>{(c as SolarPanelModel).orientation}</span>
                       </Space>
                     ),
@@ -479,7 +526,10 @@ export const useModelTree = () => {
                   });
                   grandChildren.push({
                     checkable: true,
-                    title: createTooltip(c.id, 'Rooftop Solar Panels' + (c.label ? ' (' + c.label + ')' : '')),
+                    title: createTooltip(
+                      c.id,
+                      t('modelTree.RooftopSolarPanels', lang) + (c.label ? ' (' + c.label + ')' : ''),
+                    ),
                     key: c.id,
                     children: solarPanelChildren,
                   });
@@ -491,7 +541,7 @@ export const useModelTree = () => {
                   solarWaterHeaterChildren.push(...getDimension(c));
                   grandChildren.push({
                     checkable: true,
-                    title: createTooltip(c.id, c.type + (c.label ? ' (' + c.label + ')' : '')),
+                    title: createTooltip(c.id, i18nType(c) + (c.label ? ' (' + c.label + ')' : '')),
                     key: c.id,
                     children: solarWaterHeaterChildren,
                   });
@@ -502,7 +552,7 @@ export const useModelTree = () => {
                   sensorChildren.push(...getCoordinates(c));
                   grandChildren.push({
                     checkable: true,
-                    title: createTooltip(c.id, c.type),
+                    title: createTooltip(c.id, i18nType(c)),
                     key: c.id,
                     children: sensorChildren,
                   });
@@ -513,7 +563,7 @@ export const useModelTree = () => {
                   lightChildren.push(...getCoordinates(c));
                   grandChildren.push({
                     checkable: true,
-                    title: createTooltip(c.id, c.type),
+                    title: createTooltip(c.id, i18nType(c)),
                     key: c.id,
                     children: lightChildren,
                   });
@@ -523,14 +573,19 @@ export const useModelTree = () => {
             }
           }
           children.push({
-            title: createTooltip(s.id, s.type + (s.label ? ' (' + s.label + ')' : '')),
+            title: createTooltip(s.id, i18nType(s) + (s.label ? ' (' + s.label + ')' : '')),
             key: s.id,
             children: grandChildren,
           });
         }
         const f = e as FoundationModel;
+        children.push(...getCoordinates(f));
+        children.push(...getDimension(f));
         array.push({
-          title: createTooltip(f.id, (f.notBuilding ? f.type : 'Building') + (f.label ? ' (' + f.label + ')' : '')),
+          title: createTooltip(
+            f.id,
+            (f.notBuilding ? i18nType(f) : t('word.Building', lang)) + (f.label ? ' (' + f.label + ')' : ''),
+          ),
           key: f.id,
           children,
         });

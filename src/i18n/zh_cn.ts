@@ -1833,5 +1833,20 @@ export const i18n_zh_cn = {
       ModelsFoundOnThisSite: '个模型在此位置',
       ShowModelsPublishedByThisAuthor: '展示此用户发布的模型',
     },
+
+    modelTree: {
+      Human: '人物',
+      Flower: '花草',
+      Tree: '树木',
+      Foundation: '地基',
+      Wall: '墙体',
+      Roof: '屋顶',
+      SolarWaterHeater: '太阳能热水器',
+      RooftopSolarPanels: '屋顶光伏板',
+      WallMountedSolarPanels: '壁挂光伏板',
+      GroundMountedSolarPanels: '地面安装的光伏板',
+      Sensor: '传感器',
+      Light: '电灯',
+    },
   },
 };
