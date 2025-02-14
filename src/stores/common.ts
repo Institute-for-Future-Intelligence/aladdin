@@ -1127,14 +1127,23 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           },
           selectElement(id) {
             immerSet((state: CommonStoreState) => {
-              state.selectedElementIdSet.clear();
-              for (const e of state.elements) {
-                if (e.id === id) {
-                  e.selected = true;
-                  state.selectedElement = e;
-                  state.selectedElementIdSet.add(id);
+              if (!state.multiSelectionsMode) {
+                state.selectedElementIdSet.clear();
+                for (const e of state.elements) {
+                  if (e.id === id) {
+                    e.selected = true;
+                    state.selectedElement = e;
+                    state.selectedElementIdSet.add(id);
+                  } else {
+                    e.selected = false;
+                  }
+                }
+              } else {
+                if (state.selectedElementIdSet.has(id)) {
+                  // this acts like a toggle to deselect a selected element when it is clicked
+                  state.selectedElementIdSet.delete(id);
                 } else {
-                  e.selected = false;
+                  state.selectedElementIdSet.add(id);
                 }
               }
             });

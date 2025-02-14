@@ -1,13 +1,12 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { Util } from 'src/Util';
 import { Euler, Object3D, Vector3 } from 'three';
 import { RoofSegmentGroupUserData } from '../roof/roofRenderer';
 import { useStore } from 'src/stores/common';
-import { HALF_PI } from 'src/constants';
-import { Operation, SurfaceType } from './solarPanel';
+import { HALF_PI, Operation, SurfaceType } from 'src/constants';
 import { ElementState, ObjectType, Orientation, TrackerType } from 'src/types';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { UndoableMove } from 'src/undo/UndoableMove';
@@ -106,35 +105,6 @@ export class SolarPanelUtil {
       const ny = Math.max(1, Math.round(ly / modelWidth));
       return nx * ny;
     }
-  }
-
-  static setSelected(id: string, b: boolean) {
-    useStore.getState().set((state) => {
-      if (!state.multiSelectionsMode) {
-        if (b) {
-          state.selectedElement = state.elements.find((e) => e.id === id) ?? null;
-          state.selectedElementIdSet.clear();
-          state.selectedElementIdSet.add(id);
-        } else {
-          if (state.selectedElement?.id === id) {
-            state.selectedElement = null;
-          }
-          if (state.selectedElementIdSet.has(id)) {
-            state.selectedElementIdSet.delete(id);
-          }
-        }
-      } else {
-        if (b) {
-          if (state.selectedElementIdSet.has(id)) {
-            state.selectedElementIdSet.delete(id);
-          } else {
-            state.selectedElementIdSet.add(id);
-          }
-        } else {
-          state.selectedElementIdSet.delete(id);
-        }
-      }
-    });
   }
 
   static getSurfaceType(parentType?: ObjectType, normal?: Vector3) {

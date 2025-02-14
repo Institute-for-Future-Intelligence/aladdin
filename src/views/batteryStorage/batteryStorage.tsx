@@ -5,7 +5,7 @@
 import { Box, Plane } from '@react-three/drei';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BatteryStorageModel } from 'src/models/BatteryStorageModel';
-import { Euler, Group, Mesh, Object3D, Object3DEventMap, Raycaster, Scene, Vector3 } from 'three';
+import { Euler, Group, Mesh, Object3D, Raycaster, Scene, Vector3 } from 'three';
 import * as Selector from '../../stores/selector';
 import { useStore } from 'src/stores/common';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
@@ -64,14 +64,15 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
   // common state
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const setCommonStore = useStore(Selector.set);
+  const selectElement = useStore(Selector.selectElement);
 
   // hooks
-  const { set, get } = useThree();
+  const { set } = useThree();
   const selected = useSelected(id);
 
   // inner state
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
-  const [showPolarGrid, setShowPolerGrid] = useState(false);
+  const [showPolarGrid, setShowPolarGrid] = useState(false);
   // const [hovered, setHovered] = useState(false);
 
   // variables ref
@@ -127,10 +128,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
     return null;
   };
 
-  const handleParentChange = (
-    currentWrapper: Object3D<Object3DEventMap> | null,
-    newParent: Object3D<Object3DEventMap>,
-  ) => {
+  const handleParentChange = (currentWrapper: Object3D | null, newParent: Object3D) => {
     const newWrapper = newParent.children.find((obj) => obj.name === BATTERY_STORAGE_WRAPPER_NAME);
     if (newWrapper && currentWrapper && newWrapper !== currentWrapper) {
       // remove from current wrapper
@@ -155,7 +153,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
   // events
   const onGroupPointerDown = (event: ThreeEvent<PointerEvent>) => {
     if (event.intersections.length == 0 || event.intersections[0].object !== event.object) return;
-    SolarPanelUtil.setSelected(id, true);
+    selectElement(id);
     // right click
     if (event.button === 2) {
       setCommonStore((state) => {
@@ -245,7 +243,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
       operationRef.current = Operation.None;
     }
     setShowIntersectionPlane(true);
-    setShowPolerGrid(true);
+    setShowPolarGrid(true);
     intersectionPlanePositionRef.current.set(0, 0, 0);
     intersectionPlaneRotationRef.current.set(0, 0, 0);
     parentGroupRef.current = SolarPanelUtil.findParentGroup(groupRef.current, [FOUNDATION_GROUP_NAME]);
@@ -283,7 +281,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
     setShowIntersectionPlane(false);
     operationRef.current = Operation.None;
     newParentIdRef.current = null;
-    setShowPolerGrid(false);
+    setShowPolarGrid(false);
   }, []);
 
   // window pointer up

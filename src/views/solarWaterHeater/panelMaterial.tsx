@@ -1,15 +1,14 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { useStore } from 'src/stores/common';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
-import { DEFAULT_SOLAR_PANEL_SHININESS, SOLAR_PANEL_BLACK_SPECULAR, SOLAR_PANEL_BLUE_SPECULAR } from 'src/constants';
+import { DEFAULT_SOLAR_PANEL_SHININESS, SOLAR_PANEL_BLACK_SPECULAR, Operation } from 'src/constants';
 import * as Selector from '../../stores/selector';
 import { Color, Side } from 'three';
 import { useMaterialSize, useSolarPanelHeatmapTexture } from '../solarPanel/hooks';
 import { forwardRef, useImperativeHandle } from 'react';
-import { Operation } from '../solarPanel/solarPanel';
 import { useWaterHeaterPanelTexture } from './texture';
 import React from 'react';
 

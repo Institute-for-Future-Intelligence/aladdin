@@ -143,6 +143,23 @@ export const KeyCtrl = isMac() ? '⌘' : 'Ctrl';
 
 export const DEFAULT_HVAC_SYSTEM = { heatingSetpoint: 20, coolingSetpoint: 20, temperatureThreshold: 3 } as HvacSystem;
 
+export enum Operation {
+  Move = 'Move',
+  RotateUpper = 'RotateUpper',
+  RotateLower = 'RotateLower',
+  ResizeX = 'ResizeX',
+  ResizeY = 'ResizeY',
+  ResizeHeight = 'ResizeHeight',
+  Tilt = 'Tilt',
+  None = 'None',
+}
+
+export enum SurfaceType {
+  Vertical = 'Vertical',
+  Horizontal = 'Horizontal',
+  Inclined = 'Inclined',
+}
+
 function isMac() {
   const os = platform.os?.family;
   if (os) return os.includes('Mac') || os.includes('OS X');

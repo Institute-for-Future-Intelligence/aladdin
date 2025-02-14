@@ -1,11 +1,11 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { Box, Cylinder, Plane } from '@react-three/drei';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { HALF_PI } from 'src/constants';
+import { HALF_PI, Operation, SurfaceType } from 'src/constants';
 import { useSelected } from 'src/hooks';
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 import { SolarPanelUtil } from '../solarPanel/SolarPanelUtil';
@@ -15,21 +15,8 @@ import { ObjectType, ResizeHandleType, RotateHandleType } from 'src/types';
 import { useHandleSize } from '../wall/hooks';
 import ResizeHandle from '../solarPanel/resizeHandle';
 import MoveHandle from '../solarPanel/moveHandle';
-import {
-  BackSide,
-  DoubleSide,
-  Euler,
-  FrontSide,
-  Group,
-  Mesh,
-  Object3D,
-  Object3DEventMap,
-  Raycaster,
-  Scene,
-  Vector3,
-} from 'three';
+import { BackSide, DoubleSide, Euler, FrontSide, Group, Mesh, Object3D, Raycaster, Scene, Vector3 } from 'three';
 import { useRefStore } from 'src/stores/commonRef';
-import { Operation, SurfaceType } from '../solarPanel/solarPanel';
 import { FOUNDATION_GROUP_NAME, FOUNDATION_NAME } from '../foundation/foundation';
 import RotateHandle from '../solarPanel/rotateHandle';
 import { RoofUtil } from '../roof/RoofUtil';
@@ -71,7 +58,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
     color = 'grey',
   } = waterHeater;
 
-  // constant
+  // constants
   const panelWidth = Math.hypot(lz - waterTankRadius, ly);
   const waterTankLength = lx + 0.25;
   const mountHeight = lz - waterTankRadius * 2; // surface to tank bottom, lz is from surface to top
@@ -111,12 +98,13 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
   // states
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
+  const selectElement = useStore(Selector.selectElement);
 
   const [showXYIntersectionPlane, setShowXYIntersectionPlane] = useState(false);
   const [showXZIntersectionPlane, setShowXZIntersectionPlane] = useState(false);
   const [xYPlaneHeight, setXYPlaneHeight] = useState<number | null>(null);
   const [hovered, setHovered] = useState(false);
-  const [showPolarGrid, setShowPolerGrid] = useState(false);
+  const [showPolarGrid, setShowPolarGrid] = useState(false);
 
   const selected = useSelected(id);
   const handleSize = useHandleSize();
@@ -194,10 +182,10 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
   };
 
   const handleParentChange = (
-    currentWrapper: Object3D<Object3DEventMap> | null,
-    newParent: Object3D<Object3DEventMap>,
+    currentWrapper: Object3D | null,
+    newParent: Object3D,
     newParentType: ObjectType,
-    object: Object3D<Object3DEventMap>,
+    object: Object3D,
   ) => {
     const newWrapper = newParent.children.find((obj) => obj.name === WATER_HEATER_WRAPPER_NAME);
     if (newWrapper && currentWrapper && newWrapper !== currentWrapper) {
@@ -303,13 +291,13 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
     event.stopPropagation();
     if (event.button === 2) {
       if (!useStore.getState().selectedElementIdSet.has(id)) {
-        SolarPanelUtil.setSelected(id, true);
+        selectElement(id);
       }
       setCommonStore((state) => {
         state.contextMenuObjectType = ObjectType.SolarWaterHeater;
       });
     } else {
-      SolarPanelUtil.setSelected(id, true);
+      selectElement(id);
     }
   };
 
@@ -416,7 +404,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
     anchorRef.current.z = 0;
     setShowXYIntersectionPlane(true);
     setXYPlaneHeight(mountHeight / 2);
-    setShowPolerGrid(true);
+    setShowPolarGrid(true);
     parentGroupRef.current = SolarPanelUtil.findParentGroup(groupRef.current, [FOUNDATION_GROUP_NAME]);
   };
 
@@ -520,8 +508,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
           if (!azimuthGroupRef.current) return;
           const waterHeater = state.elements.find((e) => e.id === id) as SolarWaterHeaterModel | undefined;
           if (!waterHeater) return;
-          const angle = SolarPanelUtil.getRelativeAzimuth(azimuthGroupRef.current.rotation.z);
-          waterHeater.relativeAzimuth = angle;
+          waterHeater.relativeAzimuth = SolarPanelUtil.getRelativeAzimuth(azimuthGroupRef.current.rotation.z);
         });
         break;
       }
@@ -557,7 +544,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
     setShowXYIntersectionPlane(false);
     setXYPlaneHeight(null);
     setShowXZIntersectionPlane(false);
-    setShowPolerGrid(false);
+    setShowPolarGrid(false);
   }, []);
 
   // onPointerUp
@@ -624,8 +611,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
         const angle = anchorToPoint.angleTo(anchorToCenter);
         const distance = anchorToPoint.length() * Math.cos(angle);
 
-        if (surfaceType === SurfaceType.Vertical) {
-        } else {
+        if (surfaceType !== SurfaceType.Vertical) {
           const center = tempVector3_0
             .copy(anchorToCenter)
             .multiplyScalar(distance / 2)
@@ -654,8 +640,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
         const a = anchorToPoint.angleTo(anchorToCenter);
         const distance = Math.cos(a) > 0 ? anchorToPoint.length() * Math.cos(a) : 0.1;
 
-        if (surfaceType === SurfaceType.Vertical) {
-        } else {
+        if (surfaceType !== SurfaceType.Vertical) {
           const height = lz - waterTankRadius;
           const newPanelWidth = Math.hypot(distance, height);
           const angle = Math.asin(height / newPanelWidth);
@@ -738,7 +723,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
     >
-      {/* auzimuth group */}
+      {/* azimuth group */}
       <group ref={azimuthGroupRef} rotation={azimuthEuler}>
         {/* upper Y offset */}
         <group ref={upperYOffsetGroup} position={[0, ly / 2, 0]}>

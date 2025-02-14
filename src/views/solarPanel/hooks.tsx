@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -7,6 +7,7 @@ import {
   GAP_PERCENT,
   HIGHLIGHT_HANDLE_COLOR,
   MARGIN_PERCENT,
+  Operation,
   RESOLUTION,
   SOLAR_PANEL_CELL_COLOR_BLACK,
   SOLAR_PANEL_CELL_COLOR_BLUE,
@@ -19,7 +20,6 @@ import { CanvasTexture, RepeatWrapping } from 'three';
 import * as Selector from '../../stores/selector';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
-import { Operation } from './solarPanel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 
 export const useInnerState = <T,>(val: T) => {

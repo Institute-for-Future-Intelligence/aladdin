@@ -1,5 +1,9 @@
+/*
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
+ */
+
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
-import { Operation } from '../solarPanel/solarPanel';
+import { Operation } from 'src/constants';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { UndoableMove } from 'src/undo/UndoableMove';
@@ -25,7 +29,7 @@ export class SolarWaterHeaterUtil {
         break;
       }
       case Operation.ResizeHeight: {
-        SolarWaterHeaterUtil.addUndoablResizeHeight(oldElement);
+        SolarWaterHeaterUtil.addUndoableResizeHeight(oldElement);
         break;
       }
       case Operation.RotateLower:
@@ -168,7 +172,7 @@ export class SolarWaterHeaterUtil {
     useStore.getState().addUndoable(undoableResize);
   }
 
-  static addUndoablResizeHeight(oldElement: SolarWaterHeaterModel) {
+  static addUndoableResizeHeight(oldElement: SolarWaterHeaterModel) {
     const newElement = useStore
       .getState()
       .elements.find((e) => e.id === oldElement.id && e.type === ObjectType.SolarWaterHeater) as SolarWaterHeaterModel;
@@ -226,13 +230,13 @@ export class SolarWaterHeaterUtil {
     } as UndoableChange;
     useStore.getState().addUndoable(undoableChange);
 
-    const setState = (auzimuth: number) => {
+    const setState = (azimuth: number) => {
       useStore.getState().set((state) => {
         const sp = state.elements.find(
           (e) => e.id === undoableChange.changedElementId && e.type === ObjectType.SolarWaterHeater,
         );
         if (!sp) return;
-        (sp as SolarWaterHeaterModel).relativeAzimuth = auzimuth;
+        (sp as SolarWaterHeaterModel).relativeAzimuth = azimuth;
       });
     };
   }

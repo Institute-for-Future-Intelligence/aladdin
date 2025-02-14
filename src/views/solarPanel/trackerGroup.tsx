@@ -1,9 +1,9 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { TrackerType } from 'src/types';
-import { SurfaceType } from './solarPanel';
+import { SurfaceType } from 'src/constants';
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import { Group, Vector3 } from 'three';
 import { useStore } from 'src/stores/common';
@@ -46,7 +46,7 @@ const TrackerGroup = React.memo(
         groupRef.current.rotation.set(0, 0, 0);
       };
 
-      const udpateTracker = (trackerType: TrackerType, parentRotationZ: number) => {
+      const updateTracker = (trackerType: TrackerType, parentRotationZ: number) => {
         if (!groupRef.current) return;
         switch (trackerType) {
           case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER: {
@@ -85,7 +85,7 @@ const TrackerGroup = React.memo(
               resetTracker();
             },
             update(trackerType: TrackerType, parentRotationZ: number) {
-              udpateTracker(trackerType, parentRotationZ);
+              updateTracker(trackerType, parentRotationZ);
             },
           };
         },
@@ -103,7 +103,7 @@ const TrackerGroup = React.memo(
           CUBOID_WRAPPER_NAME,
         ]);
         if (!parentGroup) return;
-        udpateTracker(trackerType, tempEuler.setFromQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0)).z);
+        updateTracker(trackerType, tempEuler.setFromQuaternion(parentGroup.getWorldQuaternion(tempQuaternion_0)).z);
       }, [sunDirection, trackerType, surfaceType]);
 
       return <group ref={groupRef}>{children}</group>;

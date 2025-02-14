@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { Plane } from '@react-three/drei';
@@ -9,11 +9,11 @@ import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import { ObjectType, Orientation, ResizeHandleType, RotateHandleType, TrackerType } from 'src/types';
-import { DoubleSide, Euler, Group, Mesh, Object3D, Object3DEventMap, Raycaster, Scene, Vector3 } from 'three';
+import { DoubleSide, Euler, Group, Mesh, Object3D, Raycaster, Scene, Vector3 } from 'three';
 import { useSelected } from '../../hooks';
 import * as Selector from '../../stores/selector';
 import { SOLAR_PANELS_WRAPPER_NAME } from './solarPanelWrapper';
-import { HALF_PI } from 'src/constants';
+import { HALF_PI, Operation, SurfaceType } from 'src/constants';
 import { SharedUtil } from '../SharedUtil';
 import { FOUNDATION_GROUP_NAME, FOUNDATION_NAME } from '../foundation/foundation';
 import { RoofUtil } from '../roof/RoofUtil';
@@ -36,25 +36,7 @@ import ResizeHandleGroup from './resizeHandleGroup';
 import PanelBox from './panelBox';
 import HeatmapLines from './heatmapLines';
 import PolarGrid, { PolarGridRefProps } from './polarGrid';
-import { MountRefProps } from './mount';
-import Mount from './mount';
-
-export enum Operation {
-  Move = 'Move',
-  RotateUpper = 'RotateUpper',
-  RotateLower = 'RotateLower',
-  ResizeX = 'ResizeX',
-  ResizeY = 'ResizeY',
-  ResizeHeight = 'ResizeHeight',
-  Tilt = 'Tilt',
-  None = 'None',
-}
-
-export enum SurfaceType {
-  Vertical = 'Vertical',
-  Horizontal = 'Horizontal',
-  Inclined = 'Inclined',
-}
+import Mount, { MountRefProps } from './mount';
 
 const INTERSECTION_PLANE_XY_NAME = 'Intersection Plane XY';
 
@@ -64,8 +46,8 @@ const RotateHandleDist = 1;
  * todos:
  *
  * bugs:
- * -resize when tracker is enabled. auzi and tilt should use tracker group value.
- * -tilt anchor on cuboid vertial surfaces have problem. anchor is not on same plane with pointer
+ * -resize when tracker is enabled. azimuth and tilt should use tracker group value.
+ * -tilt anchor on cuboid vertical surfaces have problem. anchor is not on same plane with pointer
  */
 
 const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
@@ -103,10 +85,11 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   const { set, get, raycaster } = useThree();
 
   const setCommonStore = useStore(Selector.set);
+  const selectElement = useStore(Selector.selectElement);
 
   const [hovered, setHovered] = useState(false);
   const [showXYIntersectionPlane, setShowXYIntersectionPlane] = useState(false);
-  const [showPolarGrid, setShowPolerGrid] = useState(false);
+  const [showPolarGrid, setShowPolarGrid] = useState(false);
 
   // meshes ref
   const groupRef = useRef<Group>(null!);
@@ -123,7 +106,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   const polarGridRef = useRef<PolarGridRefProps>(null!);
   const mountRef = useRef<MountRefProps>(null!);
 
-  // vairables
+  // variables
   const worldRotationRef = useRef<number | null>(null); // keep sp world rotation same when moving between different foundations
   const anchorRef = useRef(new Vector3()); // anchor for resize and rotate, top surface of foundation/cuboid/roof when on top surfaces, bottom surface of panel when on side surfaces
   const dirVectorRef = useRef(new Vector3());
@@ -143,8 +126,8 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
     [surfaceType, trackerType],
   );
 
-  // panel center height offset due to tilt angle on vertical surface, tiltAngle is negetive when on vertical surface
-  const tiltHandleoffsetZ = useMemo(() => -hly * Math.sin(Math.min(0, tiltAngle)), [tiltAngle, hly]);
+  // panel center height offset due to tilt angle on vertical surface, tiltAngle is negative when on vertical surface
+  const tiltHandleOffsetZ = useMemo(() => -hly * Math.sin(Math.min(0, tiltAngle)), [tiltAngle, hly]);
 
   const panelCenterHeight = useMemo(() => {
     switch (surfaceType) {
@@ -152,13 +135,14 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
         return hlz + poleHeight;
       }
       case SurfaceType.Vertical: {
-        return hlz + tiltHandleoffsetZ;
+        return hlz + tiltHandleOffsetZ;
       }
       case SurfaceType.Inclined: {
         return hlz;
       }
     }
-  }, [poleHeight, hlz, surfaceType, tiltHandleoffsetZ]);
+    return hlz;
+  }, [poleHeight, hlz, surfaceType, tiltHandleOffsetZ]);
 
   const isShowMoveAndResizeHandle = useMemo(() => {
     return selected && !locked;
@@ -166,7 +150,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
 
   const isShowRotateHandle = useMemo(() => {
     return selected && surfaceType === SurfaceType.Horizontal && !trackerEnabled && !locked;
-  }, [selected, surfaceType, trackerType, trackerEnabled, locked]);
+  }, [selected, surfaceType, trackerEnabled, locked]);
 
   const isShowTiltHandle = useMemo(() => {
     if (!selected || trackerEnabled || locked) return false;
@@ -260,7 +244,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
     }
   };
 
-  const updateAuzimuthGroupZ = (z: number) => {
+  const updateAzimuthGroupZ = (z: number) => {
     if (topAzimuthGroupRef.current) {
       topAzimuthGroupRef.current.position.z = z;
     }
@@ -395,10 +379,10 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   };
 
   const handleParentChange = (
-    currentWrapper: Object3D<Object3DEventMap> | null,
-    newParent: Object3D<Object3DEventMap>,
+    currentWrapper: Object3D | null,
+    newParent: Object3D,
     newParentType: ObjectType,
-    object: Object3D<Object3DEventMap>,
+    object: Object3D,
   ) => {
     const newWrapper = newParent.children.find((obj) => obj.name === SOLAR_PANELS_WRAPPER_NAME);
     if (newWrapper && currentWrapper && newWrapper !== currentWrapper) {
@@ -429,13 +413,13 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
     event.stopPropagation();
     if (event.button === 2) {
       if (!useStore.getState().selectedElementIdSet.has(id)) {
-        SolarPanelUtil.setSelected(id, true);
+        selectElement(id);
       }
       setCommonStore((state) => {
         state.contextMenuObjectType = ObjectType.SolarPanel;
       });
     } else {
-      SolarPanelUtil.setSelected(id, true);
+      selectElement(id);
     }
   };
 
@@ -510,7 +494,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
     topAzimuthGroupRef.current.getWorldPosition(anchorRef.current);
     anchorRef.current.z = 0;
     setShowXYIntersectionPlane(true);
-    setShowPolerGrid(true);
+    setShowPolarGrid(true);
     parentGroupRef.current = SolarPanelUtil.findParentGroup(groupRef.current, [
       FOUNDATION_GROUP_NAME,
       CUBOID_WRAPPER_NAME,
@@ -540,7 +524,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
     if (surfaceType === SurfaceType.Vertical) {
       const a = angle > 0 ? -angle : angle;
       const z = hlz - hly * Math.sin(a);
-      updateAuzimuthGroupZ(z);
+      updateAzimuthGroupZ(z);
       updateTilt(a, -z);
     } else {
       const maxAngle = poleHeight >= hly ? HALF_PI : Math.asin(poleHeight / hly);
@@ -653,8 +637,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
           if (!topAzimuthGroupRef.current) return;
           const sp = state.elements.find((e) => e.id === id) as SolarPanelModel | undefined;
           if (!sp) return;
-          const angle = SolarPanelUtil.getRelativeAzimuth(topAzimuthGroupRef.current.rotation.z);
-          sp.relativeAzimuth = angle;
+          sp.relativeAzimuth = SolarPanelUtil.getRelativeAzimuth(topAzimuthGroupRef.current.rotation.z);
         });
         break;
       }
@@ -696,7 +679,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
     newParentTypeRef.current = null;
     parentGroupRef.current = null;
     setShowXYIntersectionPlane(false);
-    setShowPolerGrid(false);
+    setShowPolarGrid(false);
   }, []);
 
   // onPointerUp
@@ -803,7 +786,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
           if (mountRef.current) {
             mountRef.current.setVisiable(false);
           }
-          updateAuzimuthGroupZ(poleHeight + hlz);
+          updateAzimuthGroupZ(poleHeight + hlz);
         } else {
           if (polesRef.current) {
             polesRef.current.setVisiable(false);
@@ -811,7 +794,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
           if (mountRef.current) {
             mountRef.current.setVisiable(true);
           }
-          updateAuzimuthGroupZ(hlz);
+          updateAzimuthGroupZ(hlz);
         }
 
         // update tilt
@@ -823,7 +806,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
           case SurfaceType.Vertical: {
             const angle = Math.min(0, tiltAngle);
             const z = hlz - hly * Math.sin(angle);
-            updateAuzimuthGroupZ(z);
+            updateAzimuthGroupZ(z);
             updateTilt(angle, -z);
             break;
           }
@@ -870,7 +853,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
 
           groupRef.current.position.x = center.x;
           groupRef.current.position.z = center.z;
-          // bug: can't update auzimuth group z on cuboid. because anchor and pointer won't be on same vertical plane.
+          // bug: can't update azimuth group z on cuboid. because anchor and pointer won't be on same vertical plane.
           if (parentType === ObjectType.Cuboid) {
             groupRef.current.position.y = center.y;
           }
@@ -881,9 +864,9 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
           } else if (operationRef.current === Operation.ResizeY) {
             boxGroupMeshRef.current.scale.y = Math.abs(distance);
             updateMountY(distance);
-            // bug: can't update auzimuth group z on cuboid. because anchor and pointer won't be on same vertical plane.
+            // bug: can't update azimuth group z on cuboid. because anchor and pointer won't be on same vertical plane.
             if (parentType === ObjectType.Wall) {
-              updateAuzimuthGroupZ(Math.abs((distance / 2) * Math.sin(Math.min(0, tiltAngle))));
+              updateAzimuthGroupZ(Math.abs((distance / 2) * Math.sin(Math.min(0, tiltAngle))));
             }
           }
           setMaterialSize(operationRef.current, distance);
@@ -974,7 +957,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
       rotation={[rotation[0], rotation[1], rotation[2], 'ZXY']}
       onPointerDown={onGroupPointerDown}
     >
-      {/* auzimuth group */}
+      {/* azimuth group */}
       <group
         name={'Top_Azimuth_Group'}
         ref={topAzimuthGroupRef}
@@ -1059,7 +1042,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
           <TiltHandle
             ref={tiltHandleRef}
             tiltAngle={tiltAngle}
-            positionZ={-tiltHandleoffsetZ}
+            positionZ={-tiltHandleOffsetZ}
             isOnVerticalSurface={surfaceType === SurfaceType.Vertical}
             onPointerDown={onTiltHandlePointerDown}
             onPointerMove={onTiltHandlePointerMove}
