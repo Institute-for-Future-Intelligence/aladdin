@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -206,15 +206,15 @@ const handleAddElementOnRoof = (
       break;
     }
   }
-  if (newElement) {
-    useStore.getState().set((state) => {
+  useStore.getState().set((state) => {
+    if (newElement) {
       state.elements.push(newElement);
       state.selectedElement = newElement;
       state.selectedElementIdSet.clear();
       state.selectedElementIdSet.add(newElement.id);
       if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
-    });
-  }
+    }
+  });
 };
 
 export const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: string, foundationId: string) => {
@@ -248,6 +248,11 @@ export const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: strin
             } else {
               state.selectedElementIdSet.clear();
               state.selectedElementIdSet.add(id);
+            }
+            if (state.viewState.showModelTree) {
+              usePrimitiveStore.getState().set((state) => {
+                state.modelTreeExpandedKeys = [id];
+              });
             }
           } else {
             e.selected = false;
@@ -395,6 +400,7 @@ export const handlePointerDown = (
   if (e.button === 2) return;
   // click on child
   if (e.intersections[0].eventObject.name !== e.eventObject.name) {
+    // TODO
   }
   // click on roof body
   else {

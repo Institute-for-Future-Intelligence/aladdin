@@ -79,6 +79,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const canvasPercentWidth = useStore(Selector.canvasPercentWidth);
   const elements = useStore(Selector.elements);
   const showModelTree = useStore(Selector.viewState.showModelTree);
+  const modelTreeExpandedKeys = usePrimitiveStore(Selector.modelTreeExpandedKeys);
   const selectElement = useStore(Selector.selectElement);
 
   const [initializing, setInitializing] = useState<boolean>(true);
@@ -445,15 +446,25 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                     ) : (
                       <Tree
                         checkable
-                        // defaultExpandAll
+                        autoExpandParent
                         showLine
                         showIcon
-                        defaultExpandedKeys={[]}
-                        defaultSelectedKeys={[]}
-                        defaultCheckedKeys={[]}
+                        expandedKeys={modelTreeExpandedKeys}
+                        selectedKeys={modelTreeExpandedKeys}
+                        // checkedKeys={[]}
                         onCheck={() => {}}
-                        onSelect={(e) => {
-                          selectElement((e as string[])[0]);
+                        onSelect={(keys) => {
+                          selectElement((keys as string[])[0], true);
+                        }}
+                        onExpand={(keys, node) => {
+                          if (node.expanded) {
+                            selectElement((keys as string[])[0], true);
+                          } else {
+                            selectElement('none', true);
+                          }
+                          usePrimitiveStore.getState().set((state) => {
+                            state.modelTreeExpandedKeys = [...keys] as string[];
+                          });
                         }}
                         treeData={modelTree}
                         onContextMenu={(e) => {

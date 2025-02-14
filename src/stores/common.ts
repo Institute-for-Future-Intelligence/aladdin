@@ -215,7 +215,7 @@ export interface CommonStoreState {
   getFoundation: (elem: ElementModel) => FoundationModel | null;
   selectMe: (id: string, e: ThreeEvent<MouseEvent>, action?: ActionType, select?: boolean) => void;
   selectNone: () => void;
-  selectElement: (id: string) => void;
+  selectElement: (id: string, fromModelTree?: boolean) => void;
   setElementPosition: (id: string, x: number, y: number, z?: number) => void;
   setElementNormal: (id: string, x: number, y: number, z: number) => void;
   setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
@@ -1122,18 +1122,33 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                 e.selected = false;
               }
               state.selectedElement = null;
+              if (state.viewState.showModelTree) {
+                usePrimitiveStore.getState().set((s) => {
+                  s.modelTreeExpandedKeys = [];
+                });
+              }
             });
             useRefStore.getState().selectNone();
           },
-          selectElement(id) {
+          selectElement(id, fromModelTree) {
             immerSet((state: CommonStoreState) => {
               if (!state.multiSelectionsMode) {
                 state.selectedElementIdSet.clear();
+                if (state.viewState.showModelTree) {
+                  usePrimitiveStore.getState().set((s) => {
+                    s.modelTreeExpandedKeys = [];
+                  });
+                }
                 for (const e of state.elements) {
                   if (e.id === id) {
                     e.selected = true;
                     state.selectedElement = e;
                     state.selectedElementIdSet.add(id);
+                    if (!fromModelTree && state.viewState.showModelTree) {
+                      usePrimitiveStore.getState().set((s) => {
+                        s.modelTreeExpandedKeys = [id];
+                      });
+                    }
                   } else {
                     e.selected = false;
                   }
@@ -1156,6 +1171,11 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               );
               if (intersectableObjects[0].object === e.eventObject || select) {
                 immerSet((state) => {
+                  if (state.viewState.showModelTree) {
+                    usePrimitiveStore.getState().set((s) => {
+                      s.modelTreeExpandedKeys = [];
+                    });
+                  }
                   for (const elem of state.elements) {
                     if (elem.id === id) {
                       elem.selected = true;
@@ -1221,6 +1241,11 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       }
                     } else {
                       elem.selected = false;
+                    }
+                    if (state.viewState.showModelTree) {
+                      usePrimitiveStore.getState().set((s) => {
+                        s.modelTreeExpandedKeys = [id];
+                      });
                     }
                   }
                   state.moveHandleType = null;

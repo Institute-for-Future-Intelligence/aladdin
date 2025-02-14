@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import { createWithEqualityFn } from 'zustand/traditional';
@@ -25,6 +25,8 @@ export interface PrimitiveStoreState {
 
   contextMenuFlag: boolean;
   updateContextMenu: () => void;
+
+  modelTreeExpandedKeys: string[];
 
   showSolarPanelCustomizationPanel: boolean;
   showEconomicsPanel: boolean;
@@ -222,6 +224,8 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
         state.contextMenuFlag = !state.contextMenuFlag;
       });
     },
+
+    modelTreeExpandedKeys: [],
 
     showSolarPanelCustomizationPanel: false,
     showEconomicsPanel: false,

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo } from 'react';
@@ -138,10 +138,16 @@ const Window = (windowModel: WindowModel) => {
   const getFoundation = useStore(Selector.getFoundation);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const windowShininess = useStore(Selector.viewState.windowShininess);
+  const showModelTree = useStore(Selector.viewState.showModelTree);
 
   const selected = useSelected(id);
 
   const selectMe = (isContextMenu = false) => {
+    if (showModelTree) {
+      usePrimitiveStore.getState().set((state) => {
+        state.modelTreeExpandedKeys = [id];
+      });
+    }
     setCommonStore((state) => {
       state.contextMenuObjectType = null;
       if (state.groupActionMode) {

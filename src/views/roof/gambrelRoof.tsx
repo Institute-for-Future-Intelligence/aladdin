@@ -246,7 +246,7 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
 
   const selected = useSelected(id);
 
-  [lineColor, lineWidth] = RoofUtil.getWireframetStyle(lineColor, lineWidth, selected, locked);
+  [lineColor, lineWidth] = RoofUtil.getWireframeStyle(lineColor, lineWidth, selected, locked);
 
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);

@@ -140,7 +140,7 @@ const HipRoof = ({ roofModel, foundationModel }: HipRoofProps) => {
 
   const isFlat = rise < 0.01;
 
-  [lineColor, lineWidth] = RoofUtil.getWireframetStyle(lineColor, lineWidth, selected, locked);
+  [lineColor, lineWidth] = RoofUtil.getWireframeStyle(lineColor, lineWidth, selected, locked);
 
   useEffect(() => {
     setLeftRidgeLengthCurr(leftRidgeLength);

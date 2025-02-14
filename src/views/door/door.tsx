@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -30,7 +30,6 @@ import { Util } from '../../Util';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import { useRefStore } from 'src/stores/commonRef';
-import { ElementModel } from 'src/models/ElementModel';
 import { useSelected } from '../../hooks';
 
 interface DoorHandleWrapperProps {
@@ -111,6 +110,7 @@ const Door = (doorModel: DoorModel) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const windowShininess = useStore(Selector.viewState.windowShininess);
+  const showModelTree = useStore(Selector.viewState.showModelTree);
 
   const selected = useSelected(id);
 
@@ -125,6 +125,11 @@ const Door = (doorModel: DoorModel) => {
   }, []);
 
   const selectMe = (isContextMenu = false) => {
+    if (showModelTree) {
+      usePrimitiveStore.getState().set((state) => {
+        state.modelTreeExpandedKeys = [id];
+      });
+    }
     setCommonStore((state) => {
       if (state.groupActionMode) {
         if (!state.multiSelectionsMode) {

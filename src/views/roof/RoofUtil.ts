@@ -25,7 +25,7 @@ import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 export class RoofUtil {
   // roof related
 
-  static getWireframetStyle(lineColor: string, lineWidth: number, selected: boolean, locked?: boolean) {
+  static getWireframeStyle(lineColor: string, lineWidth: number, selected: boolean, locked?: boolean) {
     const _lineColor = selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor;
     const _lineWidth = selected && locked ? 1 : lineWidth;
     return [_lineColor, _lineWidth] as [string, number];
@@ -689,6 +689,7 @@ export class RoofUtil {
     switch (elem.type) {
       case ObjectType.SolarPanel:
       // return (elem as SolarPanelModel).parentType === ObjectType.Roof;
+      // eslint-disable-next-line no-fallthrough
       case ObjectType.Light:
       case ObjectType.Sensor:
         return true;
@@ -703,8 +704,7 @@ export class RoofUtil {
     for (const segment of segments) {
       if (Util.isPointInside(position.x, position.y, segment)) {
         const normal = RoofUtil.getSegmentNormal(segment);
-        const rotation = RoofUtil.getRotationFromNormal(normal);
-        return rotation;
+        return RoofUtil.getRotationFromNormal(normal);
       }
     }
     return null;

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import { Cone, Extrude, Line, Plane } from '@react-three/drei';
@@ -335,7 +335,7 @@ const GableRoof = ({ roofModel, foundationModel }: GableRoofProps) => {
 
   const selected = useSelected(id);
 
-  [lineColor, lineWidth] = RoofUtil.getWireframetStyle(lineColor, lineWidth, selected, locked);
+  [lineColor, lineWidth] = RoofUtil.getWireframeStyle(lineColor, lineWidth, selected, locked);
 
   const { gl, camera } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
@@ -1038,7 +1038,7 @@ const GableRoof = ({ roofModel, foundationModel }: GableRoofProps) => {
       {/* handles */}
       {selected && !locked && (
         <group position={[0, 0, thickness]}>
-          {/* mid handle */}
+          {/* middle handle */}
           <RoofHandle
             position={[ridgeMidPoint.x, ridgeMidPoint.y, ridgeMidPoint.z + 0.15]}
             onPointerDown={(e) => {
