@@ -122,10 +122,16 @@ const Light = React.memo((lightModel: LightModel) => {
           break;
         case ObjectType.Roof:
           if (foundation?.type === ObjectType.Foundation) {
-            const absoluteCoordinates = Util.absoluteCoordinates(cx, cy, cz, parent, foundation as FoundationModel);
+            const absoluteCoordinates = Util.absoluteCoordinates(
+              cx * foundation.lx,
+              cy * foundation.ly,
+              cz + foundation.cz,
+              parent,
+              foundation as FoundationModel,
+            );
             rx = absoluteCoordinates.x;
             ry = absoluteCoordinates.y;
-            rz = absoluteCoordinates.z;
+            rz = absoluteCoordinates.z + lz / 2;
           }
           parentThickness = (parent as RoofModel).thickness;
           break;
