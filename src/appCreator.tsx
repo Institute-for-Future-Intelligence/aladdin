@@ -41,7 +41,7 @@ import Waiting from './waiting';
 import Panels from './panels';
 import Simulations from './simulations';
 import { usePrimitiveStore } from './stores/commonPrimitive';
-import { Badge, Button, Empty, Space, Splitter, Tree, TreeDataNode } from 'antd';
+import { Badge, Button, Empty, GetRef, Space, Splitter, Tree, TreeDataNode } from 'antd';
 import ProjectGallery from './panels/projectGallery';
 import GroupMasterWrapper from './components/groupMaster';
 import { useRefStore } from './stores/commonRef';
@@ -86,8 +86,15 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const [latestVersionReminder, setLatestVersionReminder] = useState<boolean>(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const modelTreeRef = useRef<GetRef<typeof Tree>>(null);
 
   const lang = useLanguage();
+
+  useEffect(() => {
+    if (modelTreeRef.current && modelTreeExpandedKeys.length > 0) {
+      modelTreeRef.current?.scrollTo({ key: modelTreeExpandedKeys[modelTreeExpandedKeys.length - 1] });
+    }
+  }, [modelTreeExpandedKeys]);
 
   useEffect(() => {
     setInitializing(false);
@@ -445,7 +452,11 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                       <Empty style={{ paddingTop: '20px' }} />
                     ) : (
                       <Tree
+                        ref={modelTreeRef}
+                        virtual
                         checkable
+                        height={canvasRef.current ? canvasRef.current.clientHeight - 36 : 400}
+                        defaultExpandAll
                         autoExpandParent
                         showLine
                         showIcon
