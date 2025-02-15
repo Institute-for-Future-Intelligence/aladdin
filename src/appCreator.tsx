@@ -454,7 +454,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                       <Tree
                         ref={modelTreeRef}
                         virtual={false}
-                        checkable
+                        checkable={false}
                         defaultExpandAll
                         autoExpandParent
                         showLine
@@ -464,13 +464,15 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                         // checkedKeys={[]}
                         onCheck={() => {}}
                         onSelect={(keys) => {
-                          selectElement((keys as string[])[0]);
+                          const key = (keys as string[])[0];
+                          // we use a space after the UID of an element for the keys of its properties
+                          if (key && !key.includes(' ')) selectElement(key);
                         }}
                         onExpand={(keys, node) => {
                           if (node.expanded) {
                             selectElement((keys as string[])[0], true);
                           } else {
-                            selectElement('none', true);
+                            selectElement('none');
                           }
                           usePrimitiveStore.getState().set((state) => {
                             state.modelTreeExpandedKeys = [...keys] as string[];
