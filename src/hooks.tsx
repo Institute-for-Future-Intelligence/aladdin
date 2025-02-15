@@ -30,6 +30,13 @@ import { HumanData } from './HumanData';
 import { TreeData } from './TreeData';
 import { Util } from './Util';
 import { PolygonModel } from './models/PolygonModel';
+import { CuboidModel } from './models/CuboidModel';
+import { BatteryStorageModel } from './models/BatteryStorageModel';
+import { ParabolicDishModel } from './models/ParabolicDishModel';
+import { ParabolicTroughModel } from './models/ParabolicTroughModel';
+import { HeliostatModel } from './models/HeliostatModel';
+import { WindTurbineModel } from './models/WindTurbineModel';
+import { FresnelReflectorModel } from './models/FresnelReflectorModel';
 
 export const useSelected = (id: string) => {
   return useStore((state) => state.selectedElementIdSet.has(id) && !state.groupActionMode);
@@ -141,43 +148,64 @@ export const useModelTree = () => {
   const i18nType = (e: ElementModel) => {
     switch (e.type) {
       case ObjectType.Human: {
-        return t('modelTree.Human', lang);
+        return t('shared.HumanElement', lang);
       }
       case ObjectType.Flower: {
-        return t('modelTree.Flower', lang);
+        return t('shared.FlowerElement', lang);
       }
       case ObjectType.Tree: {
-        return t('modelTree.Tree', lang);
+        return t('shared.TreeElement', lang);
       }
       case ObjectType.Polygon: {
         return t('shared.PolygonElement', lang);
       }
       case ObjectType.Foundation: {
-        return t('modelTree.Foundation', lang);
+        return t('shared.FoundationElement', lang);
+      }
+      case ObjectType.Cuboid: {
+        return t('shared.CuboidElement', lang);
       }
       case ObjectType.Wall: {
-        return t('modelTree.Wall', lang);
+        return t('shared.WallElement', lang);
       }
       case ObjectType.Roof: {
-        return t('modelTree.Roof', lang);
+        return t('shared.RoofElement', lang);
       }
       case ObjectType.Window: {
-        return t('modelTree.Window', lang);
+        return t('shared.WindowElement', lang);
       }
       case ObjectType.Door: {
-        return t('modelTree.Door', lang);
+        return t('shared.DoorElement', lang);
       }
       case ObjectType.SolarWaterHeater: {
-        return t('modelTree.SolarWaterHeater', lang);
+        return t('shared.SolarWaterHeaterElement', lang);
       }
       case ObjectType.Sensor: {
-        return t('modelTree.Sensor', lang);
+        return t('shared.SensorElement', lang);
       }
       case ObjectType.Light: {
-        return t('modelTree.Light', lang);
+        return t('shared.LightElement', lang);
       }
       case ObjectType.SolarPanel: {
         return t('modelTree.GroundMountedSolarPanels', lang);
+      }
+      case ObjectType.ParabolicDish: {
+        return t('shared.ParabolicDishElement', lang);
+      }
+      case ObjectType.ParabolicTrough: {
+        return t('shared.ParabolicTroughElement', lang);
+      }
+      case ObjectType.FresnelReflector: {
+        return t('shared.FresnelReflectorElement', lang);
+      }
+      case ObjectType.Heliostat: {
+        return t('shared.HeliostatElement', lang);
+      }
+      case ObjectType.WindTurbine: {
+        return t('shared.WindTurbineElement', lang);
+      }
+      case ObjectType.BatteryStorage: {
+        return t('shared.BatteryStorageElement', lang);
       }
     }
     return 'Unknown';
@@ -191,7 +219,163 @@ export const useModelTree = () => {
         const children: TreeDataNode[] = [];
         for (const s of foundationChildren) {
           const grandChildren: TreeDataNode[] = [];
-          if (s.type === ObjectType.Tree) {
+          if (s.type === ObjectType.BatteryStorage) {
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('word.Azimuth', lang)} : </span>
+                  <InputNumber
+                    value={parseFloat(Util.toDegrees((s as BatteryStorageModel).rotation[2]).toFixed(2))}
+                    precision={2}
+                    formatter={(value) => `${value}°`}
+                  />
+                </Space>
+              ),
+              key: s.id + ' Azimuth',
+            });
+            grandChildren.push(...getDimension(s));
+          } else if (s.type === ObjectType.ParabolicDish) {
+            const dish = s as ParabolicDishModel;
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('parabolicDishMenu.RimDiameter', lang)} : </span>
+                  <InputNumber value={dish.lx} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Rim Diameter',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('parabolicDishMenu.LatusRectum', lang)} : </span>
+                  <InputNumber value={dish.latusRectum} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Latus Rectum',
+            });
+          } else if (s.type === ObjectType.ParabolicTrough) {
+            const trough = s as ParabolicTroughModel;
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('word.Length', lang)} : </span>
+                  <InputNumber value={trough.ly} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Length',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('word.Width', lang)} : </span>
+                  <InputNumber value={trough.lx} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Width',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('parabolicTroughMenu.LatusRectum', lang)} : </span>
+                  <InputNumber value={trough.latusRectum} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Latus Rectum',
+            });
+          } else if (s.type === ObjectType.Heliostat) {
+            const heliostat = s as HeliostatModel;
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('word.Length', lang)} : </span>
+                  <InputNumber value={heliostat.lx} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Length',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('word.Width', lang)} : </span>
+                  <InputNumber value={heliostat.ly} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Width',
+            });
+          } else if (s.type === ObjectType.FresnelReflector) {
+            const fresnel = s as FresnelReflectorModel;
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('word.Length', lang)} : </span>
+                  <InputNumber value={fresnel.ly} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Length',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('word.Width', lang)} : </span>
+                  <InputNumber value={fresnel.lx} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Width',
+            });
+          } else if (s.type === ObjectType.WindTurbine) {
+            const turbine = s as WindTurbineModel;
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('windTurbineMenu.TowerHeight', lang)} : </span>
+                  <InputNumber value={turbine.towerHeight} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Tower Height',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('windTurbineMenu.TowerRadius', lang)} : </span>
+                  <InputNumber value={turbine.towerRadius} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Tower Radius',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('windTurbineMenu.BladeNumber', lang)} : </span>
+                  <InputNumber value={turbine.numberOfBlades} precision={0} />
+                </Space>
+              ),
+              key: s.id + ' Blade Number',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('windTurbineMenu.RotorBladeRadius', lang)} : </span>
+                  <InputNumber value={turbine.bladeRadius} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Blade Radius',
+            });
+          } else if (s.type === ObjectType.Tree) {
             const treeModel = s as TreeModel;
             const n = treeModel.name;
             grandChildren.push({
@@ -634,7 +818,11 @@ export const useModelTree = () => {
           title: (
             <Space>
               <span>{t('word.Azimuth', lang)} : </span>
-              <InputNumber value={Util.toDegrees(f.rotation[2])} precision={2} />
+              <InputNumber
+                value={parseFloat(Util.toDegrees(f.rotation[2]).toFixed(2))}
+                precision={2}
+                formatter={(value) => `${value}°`}
+              />
             </Space>
           ),
           key: f.id + ' Azimuth',
@@ -689,6 +877,7 @@ export const useModelTree = () => {
               ),
               key: e.id + ' Height',
             });
+            properties.push(...getCoordinates(e));
             break;
           }
           case ObjectType.Flower: {
@@ -703,6 +892,7 @@ export const useModelTree = () => {
               ),
               key: e.id + ' Type',
             });
+            properties.push(...getCoordinates(e));
             break;
           }
           case ObjectType.Human: {
@@ -717,10 +907,29 @@ export const useModelTree = () => {
               ),
               key: e.id + ' Name',
             });
+            properties.push(...getCoordinates(e));
+            break;
+          }
+          case ObjectType.Cuboid: {
+            properties.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('word.Azimuth', lang)} : </span>
+                  <InputNumber
+                    value={parseFloat(Util.toDegrees((e as CuboidModel).rotation[2]).toFixed(2))}
+                    precision={2}
+                    formatter={(value) => `${value}°`}
+                  />
+                </Space>
+              ),
+              key: e.id + ' Azimuth',
+            });
+            properties.push(...getCoordinates(e));
+            properties.push(...getDimension(e));
             break;
           }
         }
-        properties.push(...getCoordinates(e));
         array.push({
           title: createTooltip(e.id, i18nType(e) + (e.label ? ' (' + e.label + ')' : '')),
           key: e.id,
