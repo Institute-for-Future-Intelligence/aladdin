@@ -215,7 +215,7 @@ export interface CommonStoreState {
   getFoundation: (elem: ElementModel) => FoundationModel | null;
   selectMe: (id: string, e: ThreeEvent<MouseEvent>, action?: ActionType, select?: boolean) => void;
   selectNone: () => void;
-  selectElement: (id: string, fromModelTree?: boolean) => void;
+  selectElement: (id: string, keepModelTreeKeys?: boolean) => void;
   setElementPosition: (id: string, x: number, y: number, z?: number) => void;
   setElementNormal: (id: string, x: number, y: number, z: number) => void;
   setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
@@ -1130,11 +1130,11 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             });
             useRefStore.getState().selectNone();
           },
-          selectElement(id, fromModelTree) {
+          selectElement(id, keepModelTreeKeys) {
             immerSet((state: CommonStoreState) => {
               if (!state.multiSelectionsMode) {
                 state.selectedElementIdSet.clear();
-                if (!fromModelTree && state.viewState.showModelTree) {
+                if (!keepModelTreeKeys && state.viewState.showModelTree) {
                   usePrimitiveStore.getState().set((s) => {
                     s.modelTreeExpandedKeys = [];
                   });
@@ -1144,7 +1144,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     e.selected = true;
                     state.selectedElement = e;
                     state.selectedElementIdSet.add(id);
-                    if (!fromModelTree && state.viewState.showModelTree) {
+                    if (!keepModelTreeKeys && state.viewState.showModelTree) {
                       usePrimitiveStore.getState().set((s) => {
                         s.modelTreeExpandedKeys = [id];
                       });

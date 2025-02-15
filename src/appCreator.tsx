@@ -460,11 +460,11 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                         showLine
                         showIcon
                         expandedKeys={modelTreeExpandedKeys}
-                        // selectedKeys={[]}
+                        selectedKeys={modelTreeExpandedKeys}
                         // checkedKeys={[]}
                         onCheck={() => {}}
                         onSelect={(keys) => {
-                          selectElement((keys as string[])[0], true);
+                          selectElement((keys as string[])[0]);
                         }}
                         onExpand={(keys, node) => {
                           if (node.expanded) {
