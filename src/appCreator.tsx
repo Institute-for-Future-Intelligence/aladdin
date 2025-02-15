@@ -453,15 +453,14 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                     ) : (
                       <Tree
                         ref={modelTreeRef}
-                        virtual
+                        virtual={false}
                         checkable
-                        height={canvasRef.current ? canvasRef.current.clientHeight - 36 : 400}
                         defaultExpandAll
                         autoExpandParent
                         showLine
                         showIcon
                         expandedKeys={modelTreeExpandedKeys}
-                        selectedKeys={modelTreeExpandedKeys}
+                        // selectedKeys={[]}
                         // checkedKeys={[]}
                         onCheck={() => {}}
                         onSelect={(keys) => {

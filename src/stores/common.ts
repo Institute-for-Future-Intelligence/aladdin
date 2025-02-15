@@ -1134,7 +1134,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             immerSet((state: CommonStoreState) => {
               if (!state.multiSelectionsMode) {
                 state.selectedElementIdSet.clear();
-                if (state.viewState.showModelTree) {
+                if (!fromModelTree && state.viewState.showModelTree) {
                   usePrimitiveStore.getState().set((s) => {
                     s.modelTreeExpandedKeys = [];
                   });
