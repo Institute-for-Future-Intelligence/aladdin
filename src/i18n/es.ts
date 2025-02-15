@@ -1868,6 +1868,7 @@ export const i18n_es = {
       GroundMountedSolarPanels: 'Ground-Mounted Solar Panels',
       Sensor: 'Sensor',
       Light: 'Light',
+      VertexCount: 'Vertex Count',
     },
   },
 };

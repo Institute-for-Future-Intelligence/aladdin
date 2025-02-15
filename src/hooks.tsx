@@ -28,6 +28,8 @@ import { useTranslation } from 'react-i18next';
 import { FlowerData } from './FlowerData';
 import { HumanData } from './HumanData';
 import { TreeData } from './TreeData';
+import { Util } from './Util';
+import { PolygonModel } from './models/PolygonModel';
 
 export const useSelected = (id: string) => {
   return useStore((state) => state.selectedElementIdSet.has(id) && !state.groupActionMode);
@@ -147,6 +149,9 @@ export const useModelTree = () => {
       case ObjectType.Tree: {
         return t('modelTree.Tree', lang);
       }
+      case ObjectType.Polygon: {
+        return t('shared.PolygonElement', lang);
+      }
       case ObjectType.Foundation: {
         return t('modelTree.Foundation', lang);
       }
@@ -186,7 +191,6 @@ export const useModelTree = () => {
         const children: TreeDataNode[] = [];
         for (const s of foundationChildren) {
           const grandChildren: TreeDataNode[] = [];
-          grandChildren.push(...getCoordinates(s));
           if (s.type === ObjectType.Tree) {
             const treeModel = s as TreeModel;
             const n = treeModel.name;
@@ -248,8 +252,17 @@ export const useModelTree = () => {
               ),
               key: s.id + ' Name',
             });
+          } else if (s.type === ObjectType.Polygon) {
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <span>
+                  {t('modelTree.VertexCount', lang)} : {(s as PolygonModel).vertices.length}
+                </span>
+              ),
+              key: s.id + ' Vertex Count',
+            });
           } else if (s.type === ObjectType.SolarPanel) {
-            grandChildren.push(...getDimension(s));
             grandChildren.push({
               checkable: false,
               title: (
@@ -270,7 +283,134 @@ export const useModelTree = () => {
               ),
               key: s.id + ' Orientation',
             });
+            grandChildren.push(...getDimension(s));
           } else if (s.type === ObjectType.Wall) {
+            const wallChildren = getChildren(s.id);
+            for (const c of wallChildren) {
+              switch (c.type) {
+                case ObjectType.Window: {
+                  const windowChildren: TreeDataNode[] = [];
+                  windowChildren.push({
+                    checkable: false,
+                    title: (
+                      <Space>
+                        <span>{t('word.UValue', lang)} : </span>
+                        <InputNumber value={(c as WindowModel).uValue ?? DEFAULT_WINDOW_U_VALUE} precision={2} />
+                      </Space>
+                    ),
+                    key: c.id + ' U-value',
+                  });
+                  windowChildren.push({
+                    checkable: false,
+                    title: (
+                      <Space>
+                        <span>SHGC : </span>
+                        <InputNumber value={1 - (c as WindowModel).opacity ?? 0.5} precision={2} />
+                      </Space>
+                    ),
+                    key: c.id + ' shgc',
+                  });
+                  windowChildren.push(...getCoordinates(c));
+                  windowChildren.push(...getDimension(c));
+                  grandChildren.push({
+                    checkable: true,
+                    title: createTooltip(c.id, i18nType(c)),
+                    key: c.id,
+                    children: windowChildren,
+                  });
+                  break;
+                }
+                case ObjectType.Door: {
+                  const doorChildren: TreeDataNode[] = [];
+                  doorChildren.push({
+                    checkable: false,
+                    title: (
+                      <Space>
+                        <span>{t('word.UValue', lang)} : </span>
+                        <InputNumber value={(c as DoorModel).uValue ?? DEFAULT_DOOR_U_VALUE} precision={2} />
+                      </Space>
+                    ),
+                    key: c.id + ' U-value',
+                  });
+                  doorChildren.push({
+                    checkable: false,
+                    title: (
+                      <Space>
+                        <span>{t('word.VolumetricHeatCapacity', lang)} : </span>
+                        <InputNumber value={(c as DoorModel).volumetricHeatCapacity ?? 0.5} precision={2} />
+                      </Space>
+                    ),
+                    key: c.id + ' Heat Capacity',
+                  });
+                  doorChildren.push(...getCoordinates(c));
+                  doorChildren.push(...getDimension(c));
+                  grandChildren.push({
+                    checkable: true,
+                    title: createTooltip(c.id, i18nType(c)),
+                    key: c.id,
+                    children: doorChildren,
+                  });
+                  break;
+                }
+                case ObjectType.SolarPanel: {
+                  const solarPanelChildren: TreeDataNode[] = [];
+                  solarPanelChildren.push({
+                    checkable: false,
+                    title: (
+                      <Space>
+                        <span>{t('pvModelPanel.Model', lang)} : </span>
+                        <span>{(c as SolarPanelModel).pvModelName}</span>
+                      </Space>
+                    ),
+                    key: c.id + ' Model',
+                  });
+                  solarPanelChildren.push({
+                    checkable: false,
+                    title: (
+                      <Space>
+                        <span>{t('solarPanelMenu.Orientation', lang)} : </span>
+                        <span>{(c as SolarPanelModel).orientation}</span>
+                      </Space>
+                    ),
+                    key: c.id + ' Orientation',
+                  });
+                  solarPanelChildren.push(...getCoordinates(c));
+                  solarPanelChildren.push(...getDimension(c));
+                  grandChildren.push({
+                    checkable: true,
+                    title: createTooltip(
+                      c.id,
+                      t('modelTree.WallMountedSolarPanels', lang) + (c.label ? ' (' + c.label + ')' : ''),
+                    ),
+                    key: c.id,
+                    children: solarPanelChildren,
+                  });
+                  break;
+                }
+                case ObjectType.Sensor: {
+                  const sensorChildren: TreeDataNode[] = [];
+                  sensorChildren.push(...getCoordinates(c));
+                  grandChildren.push({
+                    checkable: true,
+                    title: createTooltip(c.id, i18nType(c)),
+                    key: c.id,
+                    children: sensorChildren,
+                  });
+                  break;
+                }
+                case ObjectType.Light: {
+                  const lightChildren: TreeDataNode[] = [];
+                  lightChildren.push(...getCoordinates(c));
+                  grandChildren.push({
+                    checkable: true,
+                    title: createTooltip(c.id, i18nType(c)),
+                    key: c.id,
+                    children: lightChildren,
+                  });
+                  break;
+                }
+              }
+            }
             grandChildren.push({
               checkable: false,
               title: (
@@ -321,173 +461,7 @@ export const useModelTree = () => {
               ),
               key: s.id + ' Overhang',
             });
-            const wallChildren = getChildren(s.id);
-            for (const c of wallChildren) {
-              switch (c.type) {
-                case ObjectType.Window: {
-                  const windowChildren: TreeDataNode[] = [];
-                  windowChildren.push(...getCoordinates(c));
-                  windowChildren.push(...getDimension(c));
-                  windowChildren.push({
-                    checkable: false,
-                    title: (
-                      <Space>
-                        <span>{t('word.UValue', lang)} : </span>
-                        <InputNumber value={(c as WindowModel).uValue ?? DEFAULT_WINDOW_U_VALUE} precision={2} />
-                      </Space>
-                    ),
-                    key: c.id + ' U-value',
-                  });
-                  windowChildren.push({
-                    checkable: false,
-                    title: (
-                      <Space>
-                        <span>SHGC : </span>
-                        <InputNumber value={1 - (c as WindowModel).opacity ?? 0.5} precision={2} />
-                      </Space>
-                    ),
-                    key: c.id + ' shgc',
-                  });
-                  grandChildren.push({
-                    checkable: true,
-                    title: createTooltip(c.id, i18nType(c)),
-                    key: c.id,
-                    children: windowChildren,
-                  });
-                  break;
-                }
-                case ObjectType.Door: {
-                  const doorChildren: TreeDataNode[] = [];
-                  doorChildren.push(...getCoordinates(c));
-                  doorChildren.push(...getDimension(c));
-                  doorChildren.push({
-                    checkable: false,
-                    title: (
-                      <Space>
-                        <span>{t('word.UValue', lang)} : </span>
-                        <InputNumber value={(c as DoorModel).uValue ?? DEFAULT_DOOR_U_VALUE} precision={2} />
-                      </Space>
-                    ),
-                    key: c.id + ' U-value',
-                  });
-                  doorChildren.push({
-                    checkable: false,
-                    title: (
-                      <Space>
-                        <span>{t('word.VolumetricHeatCapacity', lang)} : </span>
-                        <InputNumber value={(c as DoorModel).volumetricHeatCapacity ?? 0.5} precision={2} />
-                      </Space>
-                    ),
-                    key: c.id + ' Heat Capacity',
-                  });
-                  grandChildren.push({
-                    checkable: true,
-                    title: createTooltip(c.id, i18nType(c)),
-                    key: c.id,
-                    children: doorChildren,
-                  });
-                  break;
-                }
-                case ObjectType.SolarPanel: {
-                  const solarPanelChildren: TreeDataNode[] = [];
-                  solarPanelChildren.push(...getCoordinates(c));
-                  solarPanelChildren.push(...getDimension(c));
-                  solarPanelChildren.push({
-                    checkable: false,
-                    title: (
-                      <Space>
-                        <span>{t('pvModelPanel.Model', lang)} : </span>
-                        <span>{(c as SolarPanelModel).pvModelName}</span>
-                      </Space>
-                    ),
-                    key: c.id + ' Model',
-                  });
-                  solarPanelChildren.push({
-                    checkable: false,
-                    title: (
-                      <Space>
-                        <span>{t('solarPanelMenu.Orientation', lang)} : </span>
-                        <span>{(c as SolarPanelModel).orientation}</span>
-                      </Space>
-                    ),
-                    key: c.id + ' Orientation',
-                  });
-                  grandChildren.push({
-                    checkable: true,
-                    title: createTooltip(
-                      c.id,
-                      t('modelTree.WallMountedSolarPanels', lang) + (c.label ? ' (' + c.label + ')' : ''),
-                    ),
-                    key: c.id,
-                    children: solarPanelChildren,
-                  });
-                  break;
-                }
-                case ObjectType.Sensor: {
-                  const sensorChildren: TreeDataNode[] = [];
-                  sensorChildren.push(...getCoordinates(c));
-                  grandChildren.push({
-                    checkable: true,
-                    title: createTooltip(c.id, i18nType(c)),
-                    key: c.id,
-                    children: sensorChildren,
-                  });
-                  break;
-                }
-                case ObjectType.Light: {
-                  const lightChildren: TreeDataNode[] = [];
-                  lightChildren.push(...getCoordinates(c));
-                  grandChildren.push({
-                    checkable: true,
-                    title: createTooltip(c.id, i18nType(c)),
-                    key: c.id,
-                    children: lightChildren,
-                  });
-                  break;
-                }
-              }
-            }
           } else if (s.type === ObjectType.Roof) {
-            grandChildren.push({
-              checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.RValue', lang)} : </span>
-                  <InputNumber value={(s as RoofModel).rValue ?? DEFAULT_ROOF_R_VALUE} precision={2} />
-                </Space>
-              ),
-              key: s.id + ' R-value',
-            });
-            grandChildren.push({
-              checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.VolumetricHeatCapacity', lang)} : </span>
-                  <InputNumber value={(s as RoofModel).volumetricHeatCapacity ?? 0.5} precision={2} />
-                </Space>
-              ),
-              key: s.id + ' Heat Capacity',
-            });
-            grandChildren.push({
-              checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.Thickness', lang)} : </span>
-                  <InputNumber value={(s as RoofModel).thickness} precision={2} />
-                </Space>
-              ),
-              key: s.id + ' Thickness',
-            });
-            grandChildren.push({
-              checkable: false,
-              title: (
-                <Space>
-                  <span>{t('roofMenu.Rise', lang)} : </span>
-                  <InputNumber value={(s as RoofModel).rise} precision={2} />
-                </Space>
-              ),
-              key: s.id + ' Rise',
-            });
             const roofChildren = getChildren(s.id);
             for (const c of roofChildren) {
               switch (c.type) {
@@ -525,8 +499,6 @@ export const useModelTree = () => {
                 }
                 case ObjectType.SolarPanel: {
                   const solarPanelChildren: TreeDataNode[] = [];
-                  solarPanelChildren.push(...getCoordinates(c));
-                  solarPanelChildren.push(...getDimension(c));
                   solarPanelChildren.push({
                     checkable: false,
                     title: (
@@ -547,6 +519,8 @@ export const useModelTree = () => {
                     ),
                     key: c.id + ' Orientation',
                   });
+                  solarPanelChildren.push(...getCoordinates(c));
+                  solarPanelChildren.push(...getDimension(c));
                   grandChildren.push({
                     checkable: true,
                     title: createTooltip(
@@ -594,7 +568,48 @@ export const useModelTree = () => {
                 }
               }
             }
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('word.RValue', lang)} : </span>
+                  <InputNumber value={(s as RoofModel).rValue ?? DEFAULT_ROOF_R_VALUE} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' R-value',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('word.VolumetricHeatCapacity', lang)} : </span>
+                  <InputNumber value={(s as RoofModel).volumetricHeatCapacity ?? 0.5} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Heat Capacity',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('word.Thickness', lang)} : </span>
+                  <InputNumber value={(s as RoofModel).thickness} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Thickness',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: (
+                <Space>
+                  <span>{t('roofMenu.Rise', lang)} : </span>
+                  <InputNumber value={(s as RoofModel).rise} precision={2} />
+                </Space>
+              ),
+              key: s.id + ' Rise',
+            });
           }
+          grandChildren.push(...getCoordinates(s));
           children.push({
             title: createTooltip(s.id, i18nType(s) + (s.label ? ' (' + s.label + ')' : '')),
             key: s.id,
@@ -602,6 +617,28 @@ export const useModelTree = () => {
           });
         }
         const f = e as FoundationModel;
+        if (!f.notBuilding) {
+          children.push({
+            checkable: false,
+            title: (
+              <Space>
+                <span>{t('foundationMenu.GroundFloorRValue', lang)} : </span>
+                <InputNumber value={f.rValue ?? 2} precision={2} />
+              </Space>
+            ),
+            key: f.id + ' R-value',
+          });
+        }
+        children.push({
+          checkable: false,
+          title: (
+            <Space>
+              <span>{t('word.Azimuth', lang)} : </span>
+              <InputNumber value={Util.toDegrees(f.rotation[2])} precision={2} />
+            </Space>
+          ),
+          key: f.id + ' Azimuth',
+        });
         children.push(...getCoordinates(f));
         children.push(...getDimension(f));
         array.push({

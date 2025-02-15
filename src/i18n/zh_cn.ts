@@ -1850,6 +1850,7 @@ export const i18n_zh_cn = {
       GroundMountedSolarPanels: '地面安装的光伏板',
       Sensor: '传感器',
       Light: '电灯',
+      VertexCount: '顶点数量',
     },
   },
 };
