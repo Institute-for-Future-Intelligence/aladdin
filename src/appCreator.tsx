@@ -41,14 +41,15 @@ import Waiting from './waiting';
 import Panels from './panels';
 import Simulations from './simulations';
 import { usePrimitiveStore } from './stores/commonPrimitive';
-import { Badge, Button, Empty, GetRef, Space, Splitter, Tree, TreeDataNode } from 'antd';
+import { Badge, Button, Empty, Space, Splitter } from 'antd';
 import ProjectGallery from './panels/projectGallery';
 import GroupMasterWrapper from './components/groupMaster';
 import { useRefStore } from './stores/commonRef';
 import { PerspectiveCamera, Vector2 } from 'three';
-import { useLanguage, useModelTree } from './hooks';
+import { useLanguage } from './hooks';
 import { AlertFilled, CloseOutlined } from '@ant-design/icons';
 import { UndoableCheck } from './undo/UndoableCheck';
+import ModelTree from './modelTree';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -79,22 +80,13 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const canvasPercentWidth = useStore(Selector.canvasPercentWidth);
   const elements = useStore(Selector.elements);
   const showModelTree = useStore(Selector.viewState.showModelTree);
-  const modelTreeExpandedKeys = usePrimitiveStore(Selector.modelTreeExpandedKeys);
-  const selectElement = useStore(Selector.selectElement);
 
   const [initializing, setInitializing] = useState<boolean>(true);
   const [latestVersionReminder, setLatestVersionReminder] = useState<boolean>(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const modelTreeRef = useRef<GetRef<typeof Tree>>(null);
 
   const lang = useLanguage();
-
-  useEffect(() => {
-    if (modelTreeRef.current && modelTreeExpandedKeys.length > 0) {
-      modelTreeRef.current?.scrollTo({ key: modelTreeExpandedKeys[modelTreeExpandedKeys.length - 1] });
-    }
-  }, [modelTreeExpandedKeys]);
 
   useEffect(() => {
     setInitializing(false);
@@ -209,8 +201,6 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
       }
     }
   };
-
-  const modelTree: TreeDataNode[] = useModelTree();
 
   const closeModelTree = () => {
     setCommonStore((state) => {
@@ -448,44 +438,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                         <CloseOutlined title={i18n.t('word.Close', lang)} />
                       </span>
                     </Space>
-                    {elements.length === 0 ? (
-                      <Empty style={{ paddingTop: '20px' }} />
-                    ) : (
-                      <Tree
-                        ref={modelTreeRef}
-                        virtual={false}
-                        checkable={false}
-                        defaultExpandAll
-                        autoExpandParent
-                        showLine
-                        showIcon
-                        expandedKeys={modelTreeExpandedKeys}
-                        selectedKeys={modelTreeExpandedKeys}
-                        // checkedKeys={[]}
-                        onCheck={() => {}}
-                        onSelect={(keys) => {
-                          const key = (keys as string[])[0];
-                          // we use a space after the UID of an element for the keys of its properties
-                          if (key && !key.includes(' ')) selectElement(key);
-                        }}
-                        onExpand={(keys, node) => {
-                          if (node.expanded) {
-                            selectElement((keys as string[])[0], true);
-                          } else {
-                            selectElement('none');
-                          }
-                          usePrimitiveStore.getState().set((state) => {
-                            state.modelTreeExpandedKeys = [...keys] as string[];
-                          });
-                        }}
-                        treeData={modelTree}
-                        onContextMenu={(e) => {
-                          // do not invoke the context menu from the canvas if any
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
-                      />
-                    )}
+                    {elements.length === 0 ? <Empty style={{ paddingTop: '20px' }} /> : <ModelTree />}
                   </Splitter.Panel>
                   <Splitter.Panel>{createCanvas()}</Splitter.Panel>
                 </Splitter>
