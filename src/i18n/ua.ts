@@ -32,6 +32,7 @@ export const i18n_ua = {
     },
 
     word: {
+      Relative: 'Relative',
       Mute: 'Mute',
       BrandName: 'Brand Name',
       Name: 'Name',

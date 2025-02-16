@@ -31,6 +31,7 @@ export const i18n_zh_cn = {
     },
 
     word: {
+      Relative: '相对',
       Mute: '勿扰',
       BrandName: '品牌',
       Name: '名字',

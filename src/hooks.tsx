@@ -58,11 +58,12 @@ export const useWeather = (city: string | null) => {
 export const useModelTree = () => {
   const elements = useStore(Selector.elements);
   const getChildren = useStore(Selector.getChildren);
+  const getParent = useStore(Selector.getParent);
 
   const lang = useLanguage();
   const { t } = useTranslation();
 
-  const getCoordinates = (e: ElementModel) => {
+  const getCoordinates = (e: ElementModel, relative?: boolean) => {
     return [
       {
         checkable: false,
@@ -70,6 +71,7 @@ export const useModelTree = () => {
           <Space>
             <span>x : </span>
             <InputNumber value={e.cx} precision={2} />
+            {t(relative ? 'word.Relative' : 'word.MeterAbbreviation', lang)}
           </Space>
         ),
         key: e.id + ' x',
@@ -80,6 +82,7 @@ export const useModelTree = () => {
           <Space>
             <span>y : </span>
             <InputNumber value={e.cy} precision={2} />
+            {t(relative ? 'word.Relative' : 'word.MeterAbbreviation', lang)}
           </Space>
         ),
         key: e.id + ' y',
@@ -90,6 +93,7 @@ export const useModelTree = () => {
           <Space>
             <span>z : </span>
             <InputNumber value={e.cz} precision={2} />
+            {t(relative ? 'word.Relative' : 'word.MeterAbbreviation', lang)}
           </Space>
         ),
         key: e.id + ' z',
@@ -97,14 +101,16 @@ export const useModelTree = () => {
     ];
   };
 
-  const getDimension = (e: ElementModel) => {
+  const getDimension = (e: ElementModel, relative?: boolean) => {
+    const parent = getParent(e);
     return [
       {
         checkable: false,
         title: (
           <Space>
             <span>Lx : </span>
-            <InputNumber value={e.lx} precision={2} />
+            <InputNumber value={(relative && parent ? parent.lx : 1) * e.lx} precision={2} />
+            {t('word.MeterAbbreviation', lang)}
           </Space>
         ),
         key: e.id + ' lx',
@@ -114,7 +120,8 @@ export const useModelTree = () => {
         title: (
           <Space>
             <span>Ly : </span>
-            <InputNumber value={e.ly} precision={2} />
+            <InputNumber value={(relative && parent ? parent.ly : 1) * e.ly} precision={2} />
+            {t('word.MeterAbbreviation', lang)}
           </Space>
         ),
         key: e.id + ' ly',
@@ -124,7 +131,8 @@ export const useModelTree = () => {
         title: (
           <Space>
             <span>Lz : </span>
-            <InputNumber value={e.lz} precision={2} />
+            <InputNumber value={(relative && parent ? parent.lz : 1) * e.lz} precision={2} />
+            {t('word.MeterAbbreviation', lang)}
           </Space>
         ),
         key: e.id + ' lz',
@@ -243,6 +251,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('parabolicDishMenu.RimDiameter', lang)} : </span>
                   <InputNumber value={dish.lx} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Rim Diameter',
@@ -253,6 +262,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('parabolicDishMenu.LatusRectum', lang)} : </span>
                   <InputNumber value={dish.latusRectum} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Latus Rectum',
@@ -265,6 +275,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('word.Length', lang)} : </span>
                   <InputNumber value={trough.ly} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Length',
@@ -275,6 +286,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('word.Width', lang)} : </span>
                   <InputNumber value={trough.lx} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Width',
@@ -285,6 +297,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('parabolicTroughMenu.LatusRectum', lang)} : </span>
                   <InputNumber value={trough.latusRectum} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Latus Rectum',
@@ -297,6 +310,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('word.Length', lang)} : </span>
                   <InputNumber value={heliostat.lx} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Length',
@@ -307,6 +321,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('word.Width', lang)} : </span>
                   <InputNumber value={heliostat.ly} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Width',
@@ -319,6 +334,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('word.Length', lang)} : </span>
                   <InputNumber value={fresnel.ly} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Length',
@@ -329,6 +345,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('word.Width', lang)} : </span>
                   <InputNumber value={fresnel.lx} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Width',
@@ -341,6 +358,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('windTurbineMenu.TowerHeight', lang)} : </span>
                   <InputNumber value={turbine.towerHeight} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Tower Height',
@@ -351,6 +369,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('windTurbineMenu.TowerRadius', lang)} : </span>
                   <InputNumber value={turbine.towerRadius} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Tower Radius',
@@ -371,6 +390,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('windTurbineMenu.RotorBladeRadius', lang)} : </span>
                   <InputNumber value={turbine.bladeRadius} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Blade Radius',
@@ -398,6 +418,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('treeMenu.Spread', lang)} : </span>
                   <InputNumber value={treeModel.lx} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Spread',
@@ -408,6 +429,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('word.Height', lang)} : </span>
                   <InputNumber value={treeModel.lz} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Height',
@@ -480,6 +502,7 @@ export const useModelTree = () => {
                       <Space>
                         <span>{t('word.UValue', lang)} : </span>
                         <InputNumber value={(c as WindowModel).uValue ?? DEFAULT_WINDOW_U_VALUE} precision={2} />
+                        W/(m²·℃)
                       </Space>
                     ),
                     key: c.id + ' U-value',
@@ -494,8 +517,8 @@ export const useModelTree = () => {
                     ),
                     key: c.id + ' shgc',
                   });
-                  windowChildren.push(...getCoordinates(c));
-                  windowChildren.push(...getDimension(c));
+                  windowChildren.push(...getCoordinates(c, true));
+                  windowChildren.push(...getDimension(c, true));
                   grandChildren.push({
                     checkable: true,
                     title: createTooltip(c.id, i18nType(c)),
@@ -512,6 +535,7 @@ export const useModelTree = () => {
                       <Space>
                         <span>{t('word.UValue', lang)} : </span>
                         <InputNumber value={(c as DoorModel).uValue ?? DEFAULT_DOOR_U_VALUE} precision={2} />
+                        W/(m²·℃)
                       </Space>
                     ),
                     key: c.id + ' U-value',
@@ -522,12 +546,13 @@ export const useModelTree = () => {
                       <Space>
                         <span>{t('word.VolumetricHeatCapacity', lang)} : </span>
                         <InputNumber value={(c as DoorModel).volumetricHeatCapacity ?? 0.5} precision={2} />
+                        kWh/(m³·℃)
                       </Space>
                     ),
                     key: c.id + ' Heat Capacity',
                   });
-                  doorChildren.push(...getCoordinates(c));
-                  doorChildren.push(...getDimension(c));
+                  doorChildren.push(...getCoordinates(c, true));
+                  doorChildren.push(...getDimension(c, true));
                   grandChildren.push({
                     checkable: true,
                     title: createTooltip(c.id, i18nType(c)),
@@ -573,7 +598,7 @@ export const useModelTree = () => {
                 }
                 case ObjectType.Sensor: {
                   const sensorChildren: TreeDataNode[] = [];
-                  sensorChildren.push(...getCoordinates(c));
+                  sensorChildren.push(...getCoordinates(c, true));
                   grandChildren.push({
                     checkable: true,
                     title: createTooltip(c.id, i18nType(c)),
@@ -584,7 +609,7 @@ export const useModelTree = () => {
                 }
                 case ObjectType.Light: {
                   const lightChildren: TreeDataNode[] = [];
-                  lightChildren.push(...getCoordinates(c));
+                  lightChildren.push(...getCoordinates(c, true));
                   grandChildren.push({
                     checkable: true,
                     title: createTooltip(c.id, i18nType(c)),
@@ -601,6 +626,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('word.RValue', lang)} : </span>
                   <InputNumber value={(s as WallModel).rValue ?? DEFAULT_WALL_R_VALUE} precision={2} />
+                  m²·℃/W
                 </Space>
               ),
               key: s.id + ' R-value',
@@ -611,6 +637,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('word.VolumetricHeatCapacity', lang)} : </span>
                   <InputNumber value={(s as WallModel).volumetricHeatCapacity ?? 0.5} precision={2} />
+                  kWh/(m³·℃)
                 </Space>
               ),
               key: s.id + ' Heat Capacity',
@@ -621,6 +648,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('word.Thickness', lang)} : </span>
                   <InputNumber value={(s as WallModel).ly} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Thickness',
@@ -631,6 +659,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('word.Height', lang)} : </span>
                   <InputNumber value={(s as WallModel).lz} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Height',
@@ -641,6 +670,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('wallMenu.EavesLength', lang)} : </span>
                   <InputNumber value={(s as WallModel).eavesLength} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Overhang',
@@ -659,6 +689,7 @@ export const useModelTree = () => {
                       <Space>
                         <span>{t('word.UValue', lang)} : </span>
                         <InputNumber value={(c as WindowModel).uValue ?? DEFAULT_WINDOW_U_VALUE} precision={2} />
+                        W/(m²·℃)
                       </Space>
                     ),
                     key: c.id + ' U-value',
@@ -730,7 +761,7 @@ export const useModelTree = () => {
                 }
                 case ObjectType.Sensor: {
                   const sensorChildren: TreeDataNode[] = [];
-                  sensorChildren.push(...getCoordinates(c));
+                  sensorChildren.push(...getCoordinates(c, true));
                   grandChildren.push({
                     checkable: true,
                     title: createTooltip(c.id, i18nType(c)),
@@ -741,7 +772,7 @@ export const useModelTree = () => {
                 }
                 case ObjectType.Light: {
                   const lightChildren: TreeDataNode[] = [];
-                  lightChildren.push(...getCoordinates(c));
+                  lightChildren.push(...getCoordinates(c, true));
                   grandChildren.push({
                     checkable: true,
                     title: createTooltip(c.id, i18nType(c)),
@@ -758,6 +789,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('word.RValue', lang)} : </span>
                   <InputNumber value={(s as RoofModel).rValue ?? DEFAULT_ROOF_R_VALUE} precision={2} />
+                  m²·℃/W
                 </Space>
               ),
               key: s.id + ' R-value',
@@ -768,6 +800,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('word.VolumetricHeatCapacity', lang)} : </span>
                   <InputNumber value={(s as RoofModel).volumetricHeatCapacity ?? 0.5} precision={2} />
+                  kWh/(m³·℃)
                 </Space>
               ),
               key: s.id + ' Heat Capacity',
@@ -778,6 +811,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('word.Thickness', lang)} : </span>
                   <InputNumber value={(s as RoofModel).thickness} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Thickness',
@@ -788,12 +822,23 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('roofMenu.Rise', lang)} : </span>
                   <InputNumber value={(s as RoofModel).rise} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: s.id + ' Rise',
             });
           }
-          grandChildren.push(...getCoordinates(s));
+          if (s.type !== ObjectType.Roof) {
+            const relative =
+              s.type === ObjectType.ParabolicDish ||
+              s.type === ObjectType.ParabolicTrough ||
+              s.type === ObjectType.Heliostat ||
+              s.type === ObjectType.FresnelReflector ||
+              s.type === ObjectType.WindTurbine ||
+              s.type === ObjectType.Sensor ||
+              s.type === ObjectType.Light;
+            grandChildren.push(...getCoordinates(s, relative));
+          }
           children.push({
             title: createTooltip(s.id, i18nType(s) + (s.label ? ' (' + s.label + ')' : '')),
             key: s.id,
@@ -808,6 +853,7 @@ export const useModelTree = () => {
               <Space>
                 <span>{t('foundationMenu.GroundFloorRValue', lang)} : </span>
                 <InputNumber value={f.rValue ?? 2} precision={2} />
+                m²·℃/W
               </Space>
             ),
             key: f.id + ' R-value',
@@ -863,6 +909,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('treeMenu.Spread', lang)} : </span>
                   <InputNumber value={treeModel.lx} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: e.id + ' Spread',
@@ -873,6 +920,7 @@ export const useModelTree = () => {
                 <Space>
                   <span>{t('word.Height', lang)} : </span>
                   <InputNumber value={treeModel.lz} precision={2} />
+                  {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
               key: e.id + ' Height',

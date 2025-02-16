@@ -31,6 +31,7 @@ export const i18n_tr = {
     },
 
     word: {
+      Relative: 'Relative',
       Mute: 'Mute',
       BrandName: 'Brand Name',
       Name: 'Name',
