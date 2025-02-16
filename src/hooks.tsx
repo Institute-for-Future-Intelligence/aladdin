@@ -512,7 +512,7 @@ export const useModelTree = () => {
                     title: (
                       <Space>
                         <span>SHGC : </span>
-                        <InputNumber value={1 - (c as WindowModel).opacity ?? 0.5} precision={2} />
+                        <InputNumber value={1 - ((c as WindowModel).opacity ?? 0.5)} precision={2} />
                       </Space>
                     ),
                     key: c.id + ' shgc',
@@ -699,7 +699,7 @@ export const useModelTree = () => {
                     title: (
                       <Space>
                         <span>SHGC : </span>
-                        <InputNumber value={1 - (c as WindowModel).opacity ?? 0.5} precision={2} />
+                        <InputNumber value={1 - ((c as WindowModel).opacity ?? 0.5)} precision={2} />
                       </Space>
                     ),
                     key: c.id + ' shgc',
