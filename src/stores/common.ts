@@ -2953,6 +2953,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             const deletedElementSet = new Set<ElementModel>();
             const deletedElementIdSet = new Set<string>();
             for (const e of get().elements) {
+              if (e.locked) continue;
               if (selectedIdSet.has(e.id)) {
                 deletedElementSet.add(e);
                 deletedElementIdSet.add(e.id);
