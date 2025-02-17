@@ -940,13 +940,14 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
               undo: () => {
                 const deletedElements = undoableDelete.deletedElements;
                 if (!deletedElements || deletedElements.length === 0) return;
-                const selectedElement = deletedElements.find((e) => e.id === undoableDelete.selectedElementId);
-                if (!selectedElement) return;
                 setCommonStore((state) => {
                   state.elements.push(...deletedElements);
                   state.selectedElementIdSet.clear();
-                  state.selectedElementIdSet.add(selectedElement.id);
-                  state.selectedElement = selectedElement;
+                  const selectedElement = state.elements.find((e) => e.id === undoableDelete.selectedElementId);
+                  if (selectedElement) {
+                    state.selectedElementIdSet.add(selectedElement.id);
+                    state.selectedElement = selectedElement;
+                  }
                   state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
                   state.deletedRoofId = null;
                   state.deletedRoofIdSet.clear();
