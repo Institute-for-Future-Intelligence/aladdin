@@ -63,14 +63,60 @@ export const useModelTree = () => {
   const lang = useLanguage();
   const { t } = useTranslation();
 
+  const handleCoordinateChange = (element: ElementModel, prop: 'cx' | 'cy' | 'cz', value: number) => {
+    if (element.parentId === GROUND_ID && prop === 'cz') return;
+    useStore.getState().set((state) => {
+      const el = state.elements.find((e) => e.id === element.id);
+      if (el) {
+        el[prop] = value;
+      }
+    });
+  };
+
   const getCoordinates = (e: ElementModel, relative?: boolean) => {
+    // hardcode the rules for allowing and disallowing coordinate changes from the model tree
+    const parent = getParent(e);
+    const disableAll =
+      e.type === ObjectType.SolarWaterHeater ||
+      (parent?.type === ObjectType.Roof &&
+        (e.type === ObjectType.SolarPanel || e.type === ObjectType.Sensor || e.type === ObjectType.Light));
+    const disableX = e.type === ObjectType.Wall;
+    const disableY =
+      e.type === ObjectType.Window ||
+      e.type === ObjectType.Door ||
+      e.type === ObjectType.Wall ||
+      (parent?.type === ObjectType.Wall &&
+        (e.type === ObjectType.SolarPanel || e.type === ObjectType.Sensor || e.type === ObjectType.Light));
+    const disableZ =
+      e.parentId === GROUND_ID ||
+      ((parent?.type === ObjectType.Foundation || parent?.type === ObjectType.Cuboid) &&
+        (e.type === ObjectType.SolarPanel ||
+          e.type === ObjectType.Sensor ||
+          e.type === ObjectType.Light ||
+          e.type === ObjectType.ParabolicDish ||
+          e.type === ObjectType.ParabolicTrough ||
+          e.type === ObjectType.FresnelReflector ||
+          e.type === ObjectType.Heliostat ||
+          e.type === ObjectType.Polygon ||
+          e.type === ObjectType.BatteryStorage ||
+          e.type === ObjectType.WindTurbine)) ||
+      e.type === ObjectType.Wall;
+
     return [
       {
         checkable: false,
         title: (
           <Space>
             <span>x : </span>
-            <InputNumber value={e.cx} precision={2} />
+            <InputNumber
+              step={relative ? 0.01 : 0.1}
+              value={e.cx}
+              precision={2}
+              disabled={disableAll || disableX}
+              onChange={(value) => {
+                if (value !== null) handleCoordinateChange(e, 'cx', value);
+              }}
+            />
             {t(relative ? 'word.Relative' : 'word.MeterAbbreviation', lang)}
           </Space>
         ),
@@ -81,7 +127,15 @@ export const useModelTree = () => {
         title: (
           <Space>
             <span>y : </span>
-            <InputNumber value={e.cy} precision={2} />
+            <InputNumber
+              step={relative ? 0.01 : 0.1}
+              value={e.cy}
+              precision={2}
+              disabled={disableAll || disableY}
+              onChange={(value) => {
+                if (value !== null) handleCoordinateChange(e, 'cy', value);
+              }}
+            />
             {t(relative ? 'word.Relative' : 'word.MeterAbbreviation', lang)}
           </Space>
         ),
@@ -92,7 +146,15 @@ export const useModelTree = () => {
         title: (
           <Space>
             <span>z : </span>
-            <InputNumber value={e.cz} precision={2} />
+            <InputNumber
+              step={relative ? 0.01 : 0.1}
+              value={e.cz}
+              precision={2}
+              disabled={disableAll || disableZ}
+              onChange={(value) => {
+                if (value !== null) handleCoordinateChange(e, 'cz', value);
+              }}
+            />
             {t(relative ? 'word.Relative' : 'word.MeterAbbreviation', lang)}
           </Space>
         ),
@@ -576,7 +638,7 @@ export const useModelTree = () => {
                     ),
                     key: c.id + ' Orientation',
                   });
-                  solarPanelChildren.push(...getCoordinates(c));
+                  solarPanelChildren.push(...getCoordinates(c, true));
                   solarPanelChildren.push(...getDimension(c));
                   grandChildren.push({
                     checkable: true,
