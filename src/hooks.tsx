@@ -5,7 +5,7 @@
 import { useStore } from 'src/stores/common';
 import * as Selector from './stores/selector';
 import React, { useMemo } from 'react';
-import { Image, InputNumber, Space, Tooltip, TreeDataNode } from 'antd';
+import { InputNumber, Space, Tooltip, TreeDataNode } from 'antd';
 import { ObjectType } from './types';
 import {
   DEFAULT_DOOR_U_VALUE,
@@ -25,9 +25,6 @@ import { HumanModel } from './models/HumanModel';
 import { FlowerModel } from './models/FlowerModel';
 import { FoundationModel } from './models/FoundationModel';
 import { useTranslation } from 'react-i18next';
-import { FlowerData } from './FlowerData';
-import { HumanData } from './HumanData';
-import { TreeData } from './TreeData';
 import { Util } from './Util';
 import { PolygonModel } from './models/PolygonModel';
 import { CuboidModel } from './models/CuboidModel';
@@ -37,6 +34,9 @@ import { ParabolicTroughModel } from './models/ParabolicTroughModel';
 import { HeliostatModel } from './models/HeliostatModel';
 import { WindTurbineModel } from './models/WindTurbineModel';
 import { FresnelReflectorModel } from './models/FresnelReflectorModel';
+import HumanSelection from './components/contextMenu/elementMenu/billboardMenu/humanSelection';
+import TreeSelection from './components/contextMenu/elementMenu/billboardMenu/treeSelection';
+import FlowerSelection from './components/contextMenu/elementMenu/billboardMenu/flowerSelection';
 
 export const useSelected = (id: string) => {
   return useStore((state) => state.selectedElementIdSet.has(id) && !state.groupActionMode);
@@ -397,18 +397,13 @@ export const useModelTree = () => {
             });
           } else if (s.type === ObjectType.Tree) {
             const treeModel = s as TreeModel;
-            const n = treeModel.name;
             grandChildren.push({
               checkable: false,
               title: (
-                <span>
-                  {t('word.Type', lang)} : {n}{' '}
-                  <Image
-                    style={{ paddingLeft: '6px' }}
-                    height={'16px'}
-                    src={TreeData.fetchTextureImage(n, 180, 42, 90, 300)}
-                  />
-                </span>
+                <Space>
+                  <span>{t('word.Type', lang)} : </span>
+                  <TreeSelection tree={treeModel} />
+                </Space>
               ),
               key: s.id + ' Type',
             });
@@ -435,26 +430,24 @@ export const useModelTree = () => {
               key: s.id + ' Height',
             });
           } else if (s.type === ObjectType.Flower) {
-            const n = (s as FlowerModel).name;
             grandChildren.push({
               checkable: false,
               title: (
-                <span>
-                  {t('word.Type', lang)} : {n}{' '}
-                  <Image style={{ paddingLeft: '6px' }} height={'16px'} src={FlowerData.fetchTextureImage(n, false)} />
-                </span>
+                <Space>
+                  <span>{t('word.Type', lang)} :</span>
+                  <FlowerSelection flower={s as FlowerModel} />
+                </Space>
               ),
               key: s.id + ' Type',
             });
           } else if (s.type === ObjectType.Human) {
-            const n = (s as HumanModel).name;
             grandChildren.push({
               checkable: false,
               title: (
-                <span>
-                  {t('word.Name', lang)} : {n}{' '}
-                  <Image style={{ paddingLeft: '6px' }} height={'16px'} src={HumanData.fetchTextureImage(n)} />
-                </span>
+                <Space>
+                  <span>{t('word.Name', lang)} :</span>
+                  <HumanSelection human={s as HumanModel} />
+                </Space>
               ),
               key: s.id + ' Name',
             });
@@ -888,18 +881,13 @@ export const useModelTree = () => {
         switch (e.type) {
           case ObjectType.Tree: {
             const treeModel = e as TreeModel;
-            const n = treeModel.name;
             properties.push({
               checkable: false,
               title: (
-                <span>
-                  {t('word.Type', lang)} : {n}{' '}
-                  <Image
-                    style={{ paddingLeft: '6px' }}
-                    height={'16px'}
-                    src={TreeData.fetchTextureImage(n, 180, 42, 90, 300)}
-                  />
-                </span>
+                <Space>
+                  <span>{t('word.Type', lang)} :</span>
+                  <TreeSelection tree={treeModel} />
+                </Space>
               ),
               key: e.id + ' Type',
             });
@@ -929,14 +917,13 @@ export const useModelTree = () => {
             break;
           }
           case ObjectType.Flower: {
-            const n = (e as FlowerModel).name;
             properties.push({
               checkable: false,
               title: (
-                <span>
-                  {t('word.Type', lang)} : {n}{' '}
-                  <Image style={{ paddingLeft: '6px' }} height={'16px'} src={FlowerData.fetchTextureImage(n, false)} />
-                </span>
+                <Space>
+                  <span>{t('word.Type', lang)} :</span>
+                  <FlowerSelection flower={e as FlowerModel} />
+                </Space>
               ),
               key: e.id + ' Type',
             });
@@ -944,14 +931,13 @@ export const useModelTree = () => {
             break;
           }
           case ObjectType.Human: {
-            const n = (e as HumanModel).name;
             properties.push({
               checkable: false,
               title: (
-                <span>
-                  {t('word.Name', lang)} : {n}{' '}
-                  <Image style={{ paddingLeft: '6px' }} height={'16px'} src={HumanData.fetchTextureImage(n)} />
-                </span>
+                <Space>
+                  <span>{t('word.Name', lang)} :</span>
+                  <HumanSelection human={e as HumanModel} />
+                </Space>
               ),
               key: e.id + ' Name',
             });
