@@ -342,7 +342,21 @@ export const useModelTree = () => {
                   <InputNumber
                     value={parseFloat(Util.toDegrees((s as BatteryStorageModel).rotation[2]).toFixed(2))}
                     precision={2}
+                    step={1}
+                    min={-180}
+                    max={180}
                     formatter={(value) => `${value}°`}
+                    disabled={s.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === s.id);
+                          if (el) {
+                            el.rotation[2] = Util.toRadians(value);
+                          }
+                        });
+                      }
+                    }}
                   />
                 </Space>
               ),
@@ -518,7 +532,23 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('treeMenu.Spread', lang)} : </span>
-                  <InputNumber value={treeModel.lx} precision={2} />
+                  <InputNumber
+                    value={treeModel.lx}
+                    precision={2}
+                    min={1}
+                    step={1}
+                    disabled={treeModel.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === treeModel.id);
+                          if (el) {
+                            el.lx = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -529,7 +559,23 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Height', lang)} : </span>
-                  <InputNumber value={treeModel.lz} precision={2} />
+                  <InputNumber
+                    value={treeModel.lz}
+                    precision={2}
+                    min={1}
+                    step={1}
+                    disabled={treeModel.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === treeModel.id);
+                          if (el) {
+                            el.lz = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -966,7 +1012,21 @@ export const useModelTree = () => {
               <InputNumber
                 value={parseFloat(Util.toDegrees(f.rotation[2]).toFixed(2))}
                 precision={2}
+                step={1}
+                min={-180}
+                max={180}
                 formatter={(value) => `${value}°`}
+                disabled={f.locked}
+                onChange={(value) => {
+                  if (value !== null) {
+                    useStore.getState().set((state) => {
+                      const el = state.elements.find((e) => e.id === f.id);
+                      if (el) {
+                        el.rotation[2] = Util.toRadians(value);
+                      }
+                    });
+                  }
+                }}
               />
             </Space>
           ),
@@ -1002,7 +1062,23 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('treeMenu.Spread', lang)} : </span>
-                  <InputNumber value={treeModel.lx} precision={2} />
+                  <InputNumber
+                    value={treeModel.lx}
+                    precision={2}
+                    min={1}
+                    step={1}
+                    disabled={treeModel.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === treeModel.id);
+                          if (el) {
+                            el.lx = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -1013,7 +1089,23 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Height', lang)} : </span>
-                  <InputNumber value={treeModel.lz} precision={2} />
+                  <InputNumber
+                    value={treeModel.lz}
+                    precision={2}
+                    min={1}
+                    step={1}
+                    disabled={treeModel.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === treeModel.id);
+                          if (el) {
+                            el.lz = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -1059,7 +1151,21 @@ export const useModelTree = () => {
                   <InputNumber
                     value={parseFloat(Util.toDegrees((e as CuboidModel).rotation[2]).toFixed(2))}
                     precision={2}
+                    step={1}
+                    min={-180}
+                    max={180}
                     formatter={(value) => `${value}°`}
+                    disabled={e.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((m) => m.id === e.id);
+                          if (el) {
+                            el.rotation[2] = Util.toRadians(value);
+                          }
+                        });
+                      }
+                    }}
                   />
                 </Space>
               ),
