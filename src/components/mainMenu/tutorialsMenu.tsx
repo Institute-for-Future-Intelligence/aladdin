@@ -229,7 +229,7 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
           label: 'menu.photovoltaicSolarPowerTutorials.CoveringGroundWithSolarPanels',
         },
         {
-          key: 'inter_row_spacing',
+          key: 'inter_row_spacing_2',
           label: 'menu.photovoltaicSolarPowerTutorials.InterRowSpacingOfSolarPanelArray',
         },
         {

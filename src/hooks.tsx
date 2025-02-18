@@ -646,7 +646,24 @@ export const useModelTree = () => {
                     title: (
                       <Space>
                         <span>{t('word.UValue', lang)} : </span>
-                        <InputNumber value={(c as WindowModel).uValue ?? DEFAULT_WINDOW_U_VALUE} precision={2} />
+                        <InputNumber
+                          value={(c as WindowModel).uValue ?? DEFAULT_WINDOW_U_VALUE}
+                          precision={2}
+                          min={0.01}
+                          max={100}
+                          step={0.05}
+                          disabled={c.locked}
+                          onChange={(value) => {
+                            if (value !== null) {
+                              useStore.getState().set((state) => {
+                                const el = state.elements.find((e) => e.id === c.id);
+                                if (el) {
+                                  (el as WindowModel).uValue = value;
+                                }
+                              });
+                            }
+                          }}
+                        />
                         W/(m²·℃)
                       </Space>
                     ),
@@ -657,7 +674,24 @@ export const useModelTree = () => {
                     title: (
                       <Space>
                         <span>SHGC : </span>
-                        <InputNumber value={1 - ((c as WindowModel).opacity ?? 0.5)} precision={2} />
+                        <InputNumber
+                          value={1 - ((c as WindowModel).opacity ?? 0.5)}
+                          precision={2}
+                          min={0}
+                          max={1}
+                          step={0.01}
+                          disabled={c.locked}
+                          onChange={(value) => {
+                            if (value !== null) {
+                              useStore.getState().set((state) => {
+                                const el = state.elements.find((e) => e.id === c.id);
+                                if (el) {
+                                  (el as WindowModel).opacity = 1 - value;
+                                }
+                              });
+                            }
+                          }}
+                        />
                       </Space>
                     ),
                     key: c.id + ' shgc',
@@ -679,7 +713,24 @@ export const useModelTree = () => {
                     title: (
                       <Space>
                         <span>{t('word.UValue', lang)} : </span>
-                        <InputNumber value={(c as DoorModel).uValue ?? DEFAULT_DOOR_U_VALUE} precision={2} />
+                        <InputNumber
+                          value={(c as DoorModel).uValue ?? DEFAULT_DOOR_U_VALUE}
+                          precision={2}
+                          min={0.01}
+                          max={100}
+                          step={0.05}
+                          disabled={c.locked}
+                          onChange={(value) => {
+                            if (value !== null) {
+                              useStore.getState().set((state) => {
+                                const el = state.elements.find((e) => e.id === c.id);
+                                if (el) {
+                                  (el as DoorModel).uValue = value;
+                                }
+                              });
+                            }
+                          }}
+                        />
                         W/(m²·℃)
                       </Space>
                     ),
@@ -770,7 +821,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.RValue', lang)} : </span>
-                  <InputNumber value={(s as WallModel).rValue ?? DEFAULT_WALL_R_VALUE} precision={2} />
+                  <InputNumber
+                    value={(s as WallModel).rValue ?? DEFAULT_WALL_R_VALUE}
+                    precision={2}
+                    min={0.01}
+                    max={100}
+                    step={0.05}
+                    disabled={s.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === s.id);
+                          if (el) {
+                            (el as WallModel).rValue = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   m²·℃/W
                 </Space>
               ),
@@ -826,14 +894,29 @@ export const useModelTree = () => {
               switch (c.type) {
                 case ObjectType.Window: {
                   const windowChildren: TreeDataNode[] = [];
-                  windowChildren.push(...getCoordinates(c));
-                  windowChildren.push(...getDimension(c));
                   windowChildren.push({
                     checkable: false,
                     title: (
                       <Space>
                         <span>{t('word.UValue', lang)} : </span>
-                        <InputNumber value={(c as WindowModel).uValue ?? DEFAULT_WINDOW_U_VALUE} precision={2} />
+                        <InputNumber
+                          value={(c as WindowModel).uValue ?? DEFAULT_WINDOW_U_VALUE}
+                          precision={2}
+                          min={0.01}
+                          max={100}
+                          step={0.05}
+                          disabled={c.locked}
+                          onChange={(value) => {
+                            if (value !== null) {
+                              useStore.getState().set((state) => {
+                                const el = state.elements.find((e) => e.id === c.id);
+                                if (el) {
+                                  (el as WindowModel).uValue = value;
+                                }
+                              });
+                            }
+                          }}
+                        />
                         W/(m²·℃)
                       </Space>
                     ),
@@ -844,11 +927,30 @@ export const useModelTree = () => {
                     title: (
                       <Space>
                         <span>SHGC : </span>
-                        <InputNumber value={1 - ((c as WindowModel).opacity ?? 0.5)} precision={2} />
+                        <InputNumber
+                          value={1 - ((c as WindowModel).opacity ?? 0.5)}
+                          precision={2}
+                          min={0}
+                          max={1}
+                          step={0.01}
+                          disabled={c.locked}
+                          onChange={(value) => {
+                            if (value !== null) {
+                              useStore.getState().set((state) => {
+                                const el = state.elements.find((e) => e.id === c.id);
+                                if (el) {
+                                  (el as WindowModel).opacity = 1 - value;
+                                }
+                              });
+                            }
+                          }}
+                        />
                       </Space>
                     ),
                     key: c.id + ' shgc',
                   });
+                  windowChildren.push(...getCoordinates(c));
+                  windowChildren.push(...getDimension(c));
                   grandChildren.push({
                     checkable: true,
                     title: createTooltip(c.id, t('modelTree.SkylightWindow', lang)),
@@ -933,7 +1035,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.RValue', lang)} : </span>
-                  <InputNumber value={(s as RoofModel).rValue ?? DEFAULT_ROOF_R_VALUE} precision={2} />
+                  <InputNumber
+                    value={(s as RoofModel).rValue ?? DEFAULT_ROOF_R_VALUE}
+                    precision={2}
+                    min={0.01}
+                    max={100}
+                    step={0.05}
+                    disabled={s.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === s.id);
+                          if (el) {
+                            (el as RoofModel).rValue = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   m²·℃/W
                 </Space>
               ),
@@ -997,7 +1116,24 @@ export const useModelTree = () => {
             title: (
               <Space>
                 <span>{t('foundationMenu.GroundFloorRValue', lang)} : </span>
-                <InputNumber value={f.rValue ?? 2} precision={2} />
+                <InputNumber
+                  value={f.rValue ?? 2}
+                  precision={2}
+                  min={0.01}
+                  max={100}
+                  step={0.05}
+                  disabled={f.locked}
+                  onChange={(value) => {
+                    if (value !== null) {
+                      useStore.getState().set((state) => {
+                        const el = state.elements.find((e) => e.id === f.id);
+                        if (el) {
+                          (el as FoundationModel).rValue = value;
+                        }
+                      });
+                    }
+                  }}
+                />
                 m²·℃/W
               </Space>
             ),
