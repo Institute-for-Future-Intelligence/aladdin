@@ -77,6 +77,7 @@ export const useModelTree = () => {
     // hardcode the rules for allowing and disallowing coordinate changes from the model tree
     const parent = getParent(e);
     const disableAll =
+      e.locked ||
       e.type === ObjectType.SolarWaterHeater ||
       (parent?.type === ObjectType.Roof &&
         (e.type === ObjectType.SolarPanel || e.type === ObjectType.Sensor || e.type === ObjectType.Light));
@@ -98,6 +99,9 @@ export const useModelTree = () => {
           e.type === ObjectType.FresnelReflector ||
           e.type === ObjectType.Heliostat ||
           e.type === ObjectType.Polygon ||
+          e.type === ObjectType.Human ||
+          e.type === ObjectType.Flower ||
+          e.type === ObjectType.Tree ||
           e.type === ObjectType.BatteryStorage ||
           e.type === ObjectType.WindTurbine)) ||
       e.type === ObjectType.Wall;
@@ -163,15 +167,37 @@ export const useModelTree = () => {
     ];
   };
 
+  const handleDimensionChange = (element: ElementModel, prop: 'lx' | 'ly' | 'lz', value: number) => {
+    useStore.getState().set((state) => {
+      const el = state.elements.find((e) => e.id === element.id);
+      if (el) {
+        el[prop] = value;
+      }
+    });
+  };
+
   const getDimension = (e: ElementModel, relative?: boolean) => {
     const parent = getParent(e);
+    const disableAll = e.locked || e.type === ObjectType.SolarPanel;
+    const disableY =
+      e.type == ObjectType.SolarWaterHeater || e.type === ObjectType.Window || e.type === ObjectType.Door;
+    const disableZ = e.type == ObjectType.SolarWaterHeater || e.type === ObjectType.Door;
     return [
       {
         checkable: false,
         title: (
           <Space>
             <span>Lx : </span>
-            <InputNumber value={(relative && parent ? parent.lx : 1) * e.lx} precision={2} />
+            <InputNumber
+              value={(relative && parent ? parent.lx : 1) * e.lx}
+              min={0.01}
+              precision={2}
+              step={relative ? 0.01 : 0.1}
+              disabled={disableAll}
+              onChange={(value) => {
+                if (value !== null) handleDimensionChange(e, 'lx', relative && parent ? value / parent.lx : value);
+              }}
+            />
             {t('word.MeterAbbreviation', lang)}
           </Space>
         ),
@@ -182,7 +208,16 @@ export const useModelTree = () => {
         title: (
           <Space>
             <span>Ly : </span>
-            <InputNumber value={(relative && parent ? parent.ly : 1) * e.ly} precision={2} />
+            <InputNumber
+              value={(relative && parent ? parent.ly : 1) * e.ly}
+              precision={2}
+              min={0.01}
+              step={relative ? 0.01 : 0.1}
+              disabled={disableAll || disableY}
+              onChange={(value) => {
+                if (value !== null) handleDimensionChange(e, 'ly', relative && parent ? value / parent.ly : value);
+              }}
+            />
             {t('word.MeterAbbreviation', lang)}
           </Space>
         ),
@@ -193,7 +228,16 @@ export const useModelTree = () => {
         title: (
           <Space>
             <span>Lz : </span>
-            <InputNumber value={(relative && parent ? parent.lz : 1) * e.lz} precision={2} />
+            <InputNumber
+              value={(relative && parent ? parent.lz : 1) * e.lz}
+              precision={2}
+              min={0.01}
+              step={relative ? 0.01 : 0.1}
+              disabled={disableAll || disableZ}
+              onChange={(value) => {
+                if (value !== null) handleDimensionChange(e, 'lz', relative && parent ? value / parent.lz : value);
+              }}
+            />
             {t('word.MeterAbbreviation', lang)}
           </Space>
         ),
