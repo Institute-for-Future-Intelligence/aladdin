@@ -370,7 +370,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('parabolicDishMenu.RimDiameter', lang)} : </span>
-                  <InputNumber value={dish.lx} precision={2} />
+                  <InputNumber
+                    value={dish.lx}
+                    precision={2}
+                    min={1}
+                    max={10}
+                    step={0.05}
+                    disabled={dish.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === dish.id);
+                          if (el) {
+                            (el as ParabolicDishModel).lx = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -381,7 +398,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('parabolicDishMenu.LatusRectum', lang)} : </span>
-                  <InputNumber value={dish.latusRectum} precision={2} />
+                  <InputNumber
+                    value={dish.latusRectum}
+                    precision={2}
+                    min={1}
+                    max={20}
+                    step={0.1}
+                    disabled={dish.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === dish.id);
+                          if (el) {
+                            (el as ParabolicDishModel).latusRectum = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -394,7 +428,23 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Length', lang)} : </span>
-                  <InputNumber value={trough.ly} precision={2} />
+                  <InputNumber
+                    value={trough.ly}
+                    precision={2}
+                    min={trough.moduleLength}
+                    step={trough.moduleLength}
+                    disabled={trough.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === trough.id);
+                          if (el) {
+                            (el as ParabolicTroughModel).ly = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -405,7 +455,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Width', lang)} : </span>
-                  <InputNumber value={trough.lx} precision={2} />
+                  <InputNumber
+                    value={trough.lx}
+                    precision={2}
+                    min={1}
+                    max={10}
+                    step={0.1}
+                    disabled={trough.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === trough.id);
+                          if (el) {
+                            (el as ParabolicTroughModel).lx = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -416,7 +483,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('parabolicTroughMenu.LatusRectum', lang)} : </span>
-                  <InputNumber value={trough.latusRectum} precision={2} />
+                  <InputNumber
+                    value={trough.latusRectum}
+                    precision={2}
+                    min={1}
+                    max={20}
+                    step={0.1}
+                    disabled={trough.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === trough.id);
+                          if (el) {
+                            (el as ParabolicTroughModel).latusRectum = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -429,7 +513,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Length', lang)} : </span>
-                  <InputNumber value={heliostat.lx} precision={2} />
+                  <InputNumber
+                    value={heliostat.lx}
+                    precision={2}
+                    min={1}
+                    max={20}
+                    step={0.05}
+                    disabled={heliostat.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === heliostat.id);
+                          if (el) {
+                            (el as HeliostatModel).lx = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -440,7 +541,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Width', lang)} : </span>
-                  <InputNumber value={heliostat.ly} precision={2} />
+                  <InputNumber
+                    value={heliostat.ly}
+                    precision={2}
+                    min={1}
+                    max={20}
+                    step={0.05}
+                    disabled={heliostat.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === heliostat.id);
+                          if (el) {
+                            (el as HeliostatModel).ly = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -453,7 +571,23 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Length', lang)} : </span>
-                  <InputNumber value={fresnel.ly} precision={2} />
+                  <InputNumber
+                    value={fresnel.ly}
+                    precision={2}
+                    min={fresnel.moduleLength}
+                    step={fresnel.moduleLength}
+                    disabled={fresnel.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === fresnel.id);
+                          if (el) {
+                            (el as FresnelReflectorModel).ly = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -464,7 +598,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Width', lang)} : </span>
-                  <InputNumber value={fresnel.lx} precision={2} />
+                  <InputNumber
+                    value={fresnel.lx}
+                    precision={2}
+                    min={1}
+                    max={10}
+                    step={0.05}
+                    disabled={fresnel.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === fresnel.id);
+                          if (el) {
+                            (el as FresnelReflectorModel).lx = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -477,7 +628,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('windTurbineMenu.TowerHeight', lang)} : </span>
-                  <InputNumber value={turbine.towerHeight} precision={2} />
+                  <InputNumber
+                    value={turbine.towerHeight}
+                    precision={2}
+                    min={1}
+                    max={100}
+                    step={1}
+                    disabled={turbine.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === turbine.id);
+                          if (el) {
+                            (el as WindTurbineModel).towerHeight = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -488,7 +656,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('windTurbineMenu.TowerRadius', lang)} : </span>
-                  <InputNumber value={turbine.towerRadius} precision={2} />
+                  <InputNumber
+                    value={turbine.towerRadius}
+                    precision={2}
+                    min={0.1}
+                    max={2}
+                    step={0.1}
+                    disabled={turbine.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === turbine.id);
+                          if (el) {
+                            (el as WindTurbineModel).towerRadius = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -499,7 +684,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('windTurbineMenu.BladeNumber', lang)} : </span>
-                  <InputNumber value={turbine.numberOfBlades} precision={0} />
+                  <InputNumber
+                    value={turbine.numberOfBlades}
+                    precision={0}
+                    min={1}
+                    max={8}
+                    step={1}
+                    disabled={turbine.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === turbine.id);
+                          if (el) {
+                            (el as WindTurbineModel).numberOfBlades = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                 </Space>
               ),
               key: s.id + ' Blade Number',
@@ -509,7 +711,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('windTurbineMenu.RotorBladeRadius', lang)} : </span>
-                  <InputNumber value={turbine.bladeRadius} precision={2} />
+                  <InputNumber
+                    value={turbine.bladeRadius}
+                    precision={2}
+                    min={1}
+                    max={100}
+                    step={1}
+                    disabled={turbine.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === turbine.id);
+                          if (el) {
+                            (el as WindTurbineModel).bladeRadius = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -741,7 +960,24 @@ export const useModelTree = () => {
                     title: (
                       <Space>
                         <span>{t('word.VolumetricHeatCapacity', lang)} : </span>
-                        <InputNumber value={(c as DoorModel).volumetricHeatCapacity ?? 0.5} precision={2} />
+                        <InputNumber
+                          value={(c as DoorModel).volumetricHeatCapacity ?? 0.5}
+                          precision={2}
+                          min={0.01}
+                          max={100}
+                          step={0.05}
+                          disabled={c.locked}
+                          onChange={(value) => {
+                            if (value !== null) {
+                              useStore.getState().set((state) => {
+                                const el = state.elements.find((e) => e.id === c.id);
+                                if (el) {
+                                  (el as DoorModel).volumetricHeatCapacity = value;
+                                }
+                              });
+                            }
+                          }}
+                        />
                         kWh/(m³·℃)
                       </Space>
                     ),
@@ -849,7 +1085,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.VolumetricHeatCapacity', lang)} : </span>
-                  <InputNumber value={(s as WallModel).volumetricHeatCapacity ?? 0.5} precision={2} />
+                  <InputNumber
+                    value={(s as WallModel).volumetricHeatCapacity ?? 0.5}
+                    precision={2}
+                    min={0.01}
+                    max={100}
+                    step={0.05}
+                    disabled={s.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === s.id);
+                          if (el) {
+                            (el as WallModel).volumetricHeatCapacity = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   kWh/(m³·℃)
                 </Space>
               ),
@@ -860,7 +1113,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Thickness', lang)} : </span>
-                  <InputNumber value={(s as WallModel).ly} precision={2} />
+                  <InputNumber
+                    value={(s as WallModel).ly}
+                    precision={2}
+                    min={0.1}
+                    max={1}
+                    step={0.01}
+                    disabled={s.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === s.id);
+                          if (el) {
+                            (el as WallModel).ly = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -871,7 +1141,7 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Height', lang)} : </span>
-                  <InputNumber value={(s as WallModel).lz} precision={2} />
+                  <InputNumber value={(s as WallModel).lz} precision={2} disabled />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -882,7 +1152,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('wallMenu.EavesLength', lang)} : </span>
-                  <InputNumber value={(s as WallModel).eavesLength} precision={2} />
+                  <InputNumber
+                    value={(s as WallModel).eavesLength}
+                    precision={2}
+                    min={0}
+                    max={5}
+                    step={0.05}
+                    disabled={s.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === s.id);
+                          if (el) {
+                            (el as WallModel).eavesLength = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -1063,7 +1350,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.VolumetricHeatCapacity', lang)} : </span>
-                  <InputNumber value={(s as RoofModel).volumetricHeatCapacity ?? 0.5} precision={2} />
+                  <InputNumber
+                    value={(s as RoofModel).volumetricHeatCapacity ?? 0.5}
+                    precision={2}
+                    min={0.01}
+                    max={100}
+                    step={0.05}
+                    disabled={s.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === s.id);
+                          if (el) {
+                            (el as RoofModel).volumetricHeatCapacity = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   kWh/(m³·℃)
                 </Space>
               ),
@@ -1074,7 +1378,24 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Thickness', lang)} : </span>
-                  <InputNumber value={(s as RoofModel).thickness} precision={2} />
+                  <InputNumber
+                    value={(s as RoofModel).thickness}
+                    precision={2}
+                    min={0.05}
+                    max={1}
+                    step={0.01}
+                    disabled={s.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === s.id);
+                          if (el) {
+                            (el as RoofModel).thickness = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -1085,7 +1406,23 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('roofMenu.Rise', lang)} : </span>
-                  <InputNumber value={(s as RoofModel).rise} precision={2} />
+                  <InputNumber
+                    value={(s as RoofModel).rise}
+                    precision={2}
+                    min={0}
+                    step={0.1}
+                    disabled={s.locked}
+                    onChange={(value) => {
+                      if (value !== null) {
+                        useStore.getState().set((state) => {
+                          const el = state.elements.find((e) => e.id === s.id);
+                          if (el) {
+                            (el as RoofModel).rise = value;
+                          }
+                        });
+                      }
+                    }}
+                  />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
