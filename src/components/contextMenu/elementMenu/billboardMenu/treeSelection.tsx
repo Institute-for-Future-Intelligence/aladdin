@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -25,6 +25,12 @@ import { TreeModel } from '../../../../models/TreeModel';
 import { useLanguage } from '../../../../hooks';
 
 const { Option } = Select;
+
+const style = {
+  display: 'flex',
+  justifyContent: 'start',
+  alignItems: 'center',
+};
 
 const TreeSelection = React.memo(({ tree }: { tree: TreeModel }) => {
   const setCommonStore = useStore(Selector.set);
@@ -77,52 +83,76 @@ const TreeSelection = React.memo(({ tree }: { tree: TreeModel }) => {
       }}
     >
       <Option key={TreeType.Apple} value={TreeType.Apple}>
-        <img alt={TreeType.Apple} src={AppleImage} height={20} style={{ paddingRight: '8px' }} />{' '}
-        {i18n.t('tree.Apple', lang)}
+        <span style={style}>
+          <img alt={TreeType.Apple} src={AppleImage} height={20} style={{ paddingRight: '8px' }} />{' '}
+          {i18n.t('tree.Apple', lang)}
+        </span>
       </Option>
       <Option key={TreeType.Birch} value={TreeType.Birch}>
-        <img alt={TreeType.Birch} src={BirchImage} height={20} style={{ paddingRight: '20px' }} />{' '}
-        {i18n.t('tree.Birch', lang)}
+        <span style={style}>
+          <img alt={TreeType.Birch} src={BirchImage} height={20} style={{ paddingRight: '20px' }} />{' '}
+          {i18n.t('tree.Birch', lang)}
+        </span>
       </Option>
       <Option key={TreeType.Coconut} value={TreeType.Coconut}>
-        <img alt={TreeType.Coconut} src={CoconutImage} height={20} style={{ paddingRight: '18px' }} />{' '}
-        {i18n.t('tree.Coconut', lang)}
+        <span style={style}>
+          <img alt={TreeType.Coconut} src={CoconutImage} height={20} style={{ paddingRight: '18px' }} />{' '}
+          {i18n.t('tree.Coconut', lang)}
+        </span>
       </Option>
       <Option key={TreeType.Dogwood} value={TreeType.Dogwood}>
-        <img alt={TreeType.Dogwood} src={DogwoodImage} height={20} style={{ paddingRight: '10px' }} />{' '}
-        {i18n.t('tree.Dogwood', lang)}
+        <span style={style}>
+          <img alt={TreeType.Dogwood} src={DogwoodImage} height={20} style={{ paddingRight: '10px' }} />{' '}
+          {i18n.t('tree.Dogwood', lang)}
+        </span>
       </Option>
       <Option key={TreeType.Elm} value={TreeType.Elm}>
-        <img alt={TreeType.Elm} src={ElmImage} height={20} style={{ paddingRight: '20px' }} />
-        {i18n.t('tree.Elm', lang)}
+        <span style={style}>
+          <img alt={TreeType.Elm} src={ElmImage} height={20} style={{ paddingRight: '15px' }} />
+          {i18n.t('tree.Elm', lang)}
+        </span>
       </Option>
       <Option key={TreeType.FanPalm} value={TreeType.FanPalm}>
-        <img alt={TreeType.FanPalm} src={FanPalmImage} height={20} style={{ paddingRight: '18px' }} />{' '}
-        {i18n.t('tree.FanPalm', lang)}
+        <span style={style}>
+          <img alt={TreeType.FanPalm} src={FanPalmImage} height={20} style={{ paddingRight: '18px' }} />{' '}
+          {i18n.t('tree.FanPalm', lang)}
+        </span>
       </Option>
       <Option key={TreeType.Linden} value={TreeType.Linden}>
-        <img alt={TreeType.Linden} src={LindenImage} height={20} style={{ paddingRight: '10px' }} />{' '}
-        {i18n.t('tree.Linden', lang)}
+        <span style={style}>
+          <img alt={TreeType.Linden} src={LindenImage} height={20} style={{ paddingRight: '10px' }} />{' '}
+          {i18n.t('tree.Linden', lang)}
+        </span>
       </Option>
       <Option key={TreeType.Magnolia} value={TreeType.Magnolia}>
-        <img alt={TreeType.Magnolia} src={MagnoliaImage} height={20} style={{ paddingRight: '10px' }} />{' '}
-        {i18n.t('tree.Magnolia', lang)}
+        <span style={style}>
+          <img alt={TreeType.Magnolia} src={MagnoliaImage} height={20} style={{ paddingRight: '10px' }} />{' '}
+          {i18n.t('tree.Magnolia', lang)}
+        </span>
       </Option>
       <Option key={TreeType.Maple} value={TreeType.Maple}>
-        <img alt={TreeType.Maple} src={MapleImage} height={20} style={{ paddingRight: '12px' }} />{' '}
-        {i18n.t('tree.Maple', lang)}
+        <span style={style}>
+          <img alt={TreeType.Maple} src={MapleImage} height={20} style={{ paddingRight: '10px' }} />{' '}
+          {i18n.t('tree.Maple', lang)}
+        </span>
       </Option>
       <Option key={TreeType.Oak} value={TreeType.Oak}>
-        <img alt={TreeType.Oak} src={OakImage} height={20} style={{ paddingRight: '17px' }} />
-        {i18n.t('tree.Oak', lang)}
+        <span style={style}>
+          <img alt={TreeType.Oak} src={OakImage} height={20} style={{ paddingRight: '11px' }} />
+          {i18n.t('tree.Oak', lang)}
+        </span>
       </Option>
       <Option key={TreeType.Pine} value={TreeType.Pine}>
-        <img alt={TreeType.Pine} src={PineImage} height={20} style={{ paddingRight: '18px' }} />{' '}
-        {i18n.t('tree.Pine', lang)}
+        <span style={style}>
+          <img alt={TreeType.Pine} src={PineImage} height={20} style={{ paddingRight: '16px' }} />{' '}
+          {i18n.t('tree.Pine', lang)}
+        </span>
       </Option>
       <Option key={TreeType.Spruce} value={TreeType.Spruce}>
-        <img alt={TreeType.Spruce} src={SpruceImage} height={20} style={{ paddingRight: '20px' }} />{' '}
-        {i18n.t('tree.Spruce', lang)}
+        <span style={style}>
+          <img alt={TreeType.Spruce} src={SpruceImage} height={20} style={{ paddingRight: '16px' }} />{' '}
+          {i18n.t('tree.Spruce', lang)}
+        </span>
       </Option>
     </Select>
   );

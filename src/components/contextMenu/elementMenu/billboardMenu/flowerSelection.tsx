@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -31,6 +31,12 @@ import { FlowerData } from '../../../../FlowerData';
 import { useLanguage } from '../../../../hooks';
 
 const { Option } = Select;
+
+const style = {
+  display: 'flex',
+  justifyContent: 'start',
+  alignItems: 'center',
+};
 
 const FlowerSelection = React.memo(({ flower }: { flower: FlowerModel }) => {
   const setCommonStore = useStore(Selector.set);
@@ -86,72 +92,106 @@ const FlowerSelection = React.memo(({ flower }: { flower: FlowerModel }) => {
       }}
     >
       <Option key={FlowerType.WhiteFlower} value={FlowerType.WhiteFlower}>
-        <img alt={FlowerType.WhiteFlower} src={WhiteFlowerImage} height={20} style={{ paddingRight: '17px' }} />{' '}
-        {i18n.t('flower.WhiteFlower', lang)}
+        <span style={style}>
+          <img alt={FlowerType.WhiteFlower} src={WhiteFlowerImage} height={20} style={{ paddingRight: '17px' }} />{' '}
+          {i18n.t('flower.WhiteFlower', lang)}
+        </span>
       </Option>
       <Option key={FlowerType.YellowFlower} value={FlowerType.YellowFlower}>
-        <img alt={FlowerType.YellowFlower} src={YellowFlowerImage} height={20} style={{ paddingRight: '16px' }} />{' '}
-        {i18n.t('flower.YellowFlower', lang)}
+        <span style={style}>
+          <img alt={FlowerType.YellowFlower} src={YellowFlowerImage} height={20} style={{ paddingRight: '16px' }} />{' '}
+          {i18n.t('flower.YellowFlower', lang)}
+        </span>
       </Option>
       <Option key={FlowerType.Hibiscus} value={FlowerType.Hibiscus}>
-        <img alt={FlowerType.Hibiscus} src={HibiscusImage} height={20} style={{ paddingRight: '19px' }} />{' '}
-        {i18n.t('flower.Hibiscus', lang)}
+        <span style={style}>
+          <img alt={FlowerType.Hibiscus} src={HibiscusImage} height={20} style={{ paddingRight: '19px' }} />{' '}
+          {i18n.t('flower.Hibiscus', lang)}
+        </span>
       </Option>
       <Option key={FlowerType.Hydrangea} value={FlowerType.Hydrangea}>
-        <img alt={FlowerType.Hydrangea} src={HydrangeaImage} height={20} style={{ paddingRight: '18px' }} />{' '}
-        {i18n.t('flower.Hydrangea', lang)}
+        <span style={style}>
+          <img alt={FlowerType.Hydrangea} src={HydrangeaImage} height={20} style={{ paddingRight: '18px' }} />{' '}
+          {i18n.t('flower.Hydrangea', lang)}
+        </span>
       </Option>
       <Option key={FlowerType.Spirea} value={FlowerType.Spirea}>
-        <img alt={FlowerType.Spirea} src={SpireaImage} height={20} style={{ paddingRight: '18px' }} />{' '}
-        {i18n.t('flower.Spirea', lang)}
+        <span style={style}>
+          <img alt={FlowerType.Spirea} src={SpireaImage} height={20} style={{ paddingRight: '18px' }} />{' '}
+          {i18n.t('flower.Spirea', lang)}
+        </span>
       </Option>
       <Option key={FlowerType.Hosta} value={FlowerType.Hosta}>
-        <img alt={FlowerType.Hosta} src={HostaImage} height={20} style={{ paddingRight: '18px' }} />{' '}
-        {i18n.t('flower.Hosta', lang)}
+        <span style={style}>
+          <img alt={FlowerType.Hosta} src={HostaImage} height={20} style={{ paddingRight: '18px' }} />{' '}
+          {i18n.t('flower.Hosta', lang)}
+        </span>
       </Option>
       <Option key={FlowerType.Peony} value={FlowerType.Peony}>
-        <img alt={FlowerType.Peony} src={PeonyImage} height={20} style={{ paddingRight: '17px' }} />{' '}
-        {i18n.t('flower.Peony', lang)}
+        <span style={style}>
+          <img alt={FlowerType.Peony} src={PeonyImage} height={20} style={{ paddingRight: '17px' }} />{' '}
+          {i18n.t('flower.Peony', lang)}
+        </span>
       </Option>
       <Option key={FlowerType.Boxwood} value={FlowerType.Boxwood}>
-        <img alt={FlowerType.Boxwood} src={BoxwoodImage} height={20} style={{ paddingRight: '23px' }} />{' '}
-        {i18n.t('flower.Boxwood', lang)}
+        <span style={style}>
+          <img alt={FlowerType.Boxwood} src={BoxwoodImage} height={20} style={{ paddingRight: '23px' }} />{' '}
+          {i18n.t('flower.Boxwood', lang)}
+        </span>
       </Option>
       <Option key={FlowerType.TallBush} value={FlowerType.TallBush}>
-        <img alt={FlowerType.TallBush} src={TallBushImage} height={20} style={{ paddingRight: '32px' }} />{' '}
-        {i18n.t('flower.TallBush', lang)}
+        <span style={style}>
+          <img alt={FlowerType.TallBush} src={TallBushImage} height={20} style={{ paddingRight: '32px' }} />{' '}
+          {i18n.t('flower.TallBush', lang)}
+        </span>
       </Option>
       <Option key={FlowerType.CactusCombo1} value={FlowerType.CactusCombo1}>
-        <img alt={FlowerType.CactusCombo1} src={CactusCombo1Image} height={20} style={{ paddingRight: '26px' }} />{' '}
-        {i18n.t('flower.CactusCombo1', lang)}
+        <span style={style}>
+          <img alt={FlowerType.CactusCombo1} src={CactusCombo1Image} height={20} style={{ paddingRight: '26px' }} />{' '}
+          {i18n.t('flower.CactusCombo1', lang)}
+        </span>
       </Option>
       <Option key={FlowerType.CactusCombo2} value={FlowerType.CactusCombo2}>
-        <img alt={FlowerType.CactusCombo2} src={CactusCombo2Image} height={20} style={{ paddingRight: '26px' }} />{' '}
-        {i18n.t('flower.CactusCombo2', lang)}
+        <span style={style}>
+          <img alt={FlowerType.CactusCombo2} src={CactusCombo2Image} height={20} style={{ paddingRight: '26px' }} />{' '}
+          {i18n.t('flower.CactusCombo2', lang)}
+        </span>
       </Option>
       <Option key={FlowerType.CactusCombo3} value={FlowerType.CactusCombo3}>
-        <img alt={FlowerType.CactusCombo3} src={CactusCombo3Image} height={20} style={{ paddingRight: '26px' }} />{' '}
-        {i18n.t('flower.CactusCombo3', lang)}
+        <span style={style}>
+          <img alt={FlowerType.CactusCombo3} src={CactusCombo3Image} height={20} style={{ paddingRight: '26px' }} />{' '}
+          {i18n.t('flower.CactusCombo3', lang)}
+        </span>
       </Option>
       <Option key={FlowerType.CactusCombo4} value={FlowerType.CactusCombo4}>
-        <img alt={FlowerType.CactusCombo4} src={CactusCombo4Image} height={20} style={{ paddingRight: '26px' }} />{' '}
-        {i18n.t('flower.CactusCombo4', lang)}
+        <span style={style}>
+          <img alt={FlowerType.CactusCombo4} src={CactusCombo4Image} height={20} style={{ paddingRight: '26px' }} />{' '}
+          {i18n.t('flower.CactusCombo4', lang)}
+        </span>
       </Option>
       <Option key={FlowerType.RedRose} value={FlowerType.RedRose}>
-        <img alt={FlowerType.RedRose} src={RedRoseImage} height={20} style={{ paddingRight: '26px' }} />{' '}
-        {i18n.t('flower.RedRose', lang)}
+        <span style={style}>
+          <img alt={FlowerType.RedRose} src={RedRoseImage} height={20} style={{ paddingRight: '26px' }} />{' '}
+          {i18n.t('flower.RedRose', lang)}
+        </span>
       </Option>
       <Option key={FlowerType.Bellflower} value={FlowerType.Bellflower}>
-        <img alt={FlowerType.Bellflower} src={BellflowerImage} height={20} style={{ paddingRight: '20px' }} />{' '}
-        {i18n.t('flower.Bellflower', lang)}
+        <span style={style}>
+          <img alt={FlowerType.Bellflower} src={BellflowerImage} height={20} style={{ paddingRight: '20px' }} />{' '}
+          {i18n.t('flower.Bellflower', lang)}
+        </span>
       </Option>
       <Option key={FlowerType.Sunflower} value={FlowerType.Sunflower}>
-        <img alt={FlowerType.Sunflower} src={SunflowerImage} height={20} style={{ paddingRight: '32px' }} />{' '}
-        {i18n.t('flower.Sunflower', lang)}
+        <span style={style}>
+          <img alt={FlowerType.Sunflower} src={SunflowerImage} height={20} style={{ paddingRight: '32px' }} />{' '}
+          {i18n.t('flower.Sunflower', lang)}
+        </span>
       </Option>
       <Option key={FlowerType.Tulip} value={FlowerType.Tulip}>
-        <img alt={FlowerType.Tulip} src={TulipImage} height={20} style={{ paddingRight: '24px' }} />{' '}
-        {i18n.t('flower.Tulip', lang)}
+        <span style={style}>
+          <img alt={FlowerType.Tulip} src={TulipImage} height={20} style={{ paddingRight: '24px' }} />{' '}
+          {i18n.t('flower.Tulip', lang)}
+        </span>
       </Option>
     </Select>
   );
