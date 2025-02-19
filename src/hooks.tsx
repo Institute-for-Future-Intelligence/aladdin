@@ -741,7 +741,7 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Type', lang)} : </span>
-                  <TreeSelection tree={treeModel} />
+                  <TreeSelection tree={treeModel} disabled={treeModel.locked} />
                 </Space>
               ),
               key: s.id + ' Type',
@@ -806,7 +806,7 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Type', lang)} :</span>
-                  <FlowerSelection flower={s as FlowerModel} />
+                  <FlowerSelection flower={s as FlowerModel} disabled={s.locked} />
                 </Space>
               ),
               key: s.id + ' Type',
@@ -817,7 +817,7 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Name', lang)} :</span>
-                  <HumanSelection human={s as HumanModel} />
+                  <HumanSelection human={s as HumanModel} disabled={s.locked} />
                 </Space>
               ),
               key: s.id + ' Name',
@@ -1525,7 +1525,7 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Type', lang)} :</span>
-                  <TreeSelection tree={treeModel} />
+                  <TreeSelection tree={treeModel} disabled={treeModel.locked} />
                 </Space>
               ),
               key: e.id + ' Type',
@@ -1593,7 +1593,7 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Type', lang)} :</span>
-                  <FlowerSelection flower={e as FlowerModel} />
+                  <FlowerSelection flower={e as FlowerModel} disabled={e.locked} />
                 </Space>
               ),
               key: e.id + ' Type',
@@ -1607,7 +1607,7 @@ export const useModelTree = () => {
               title: (
                 <Space>
                   <span>{t('word.Name', lang)} :</span>
-                  <HumanSelection human={e as HumanModel} />
+                  <HumanSelection human={e as HumanModel} disabled={e.locked} />
                 </Space>
               ),
               key: e.id + ' Name',

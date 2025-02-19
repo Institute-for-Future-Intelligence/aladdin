@@ -38,7 +38,7 @@ const style = {
   alignItems: 'center',
 };
 
-const FlowerSelection = React.memo(({ flower }: { flower: FlowerModel }) => {
+const FlowerSelection = React.memo(({ flower, disabled }: { flower: FlowerModel; disabled?: boolean }) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
 
@@ -61,6 +61,7 @@ const FlowerSelection = React.memo(({ flower }: { flower: FlowerModel }) => {
 
   return (
     <Select
+      disabled={disabled}
       style={{ width: '200px' }}
       value={flower?.name ?? FlowerType.WhiteFlower}
       onChange={(value) => {

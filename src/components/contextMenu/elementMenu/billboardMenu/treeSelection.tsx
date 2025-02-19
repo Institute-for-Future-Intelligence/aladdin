@@ -32,7 +32,7 @@ const style = {
   alignItems: 'center',
 };
 
-const TreeSelection = React.memo(({ tree }: { tree: TreeModel }) => {
+const TreeSelection = React.memo(({ tree, disabled }: { tree: TreeModel; disabled?: boolean }) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
 
@@ -52,6 +52,7 @@ const TreeSelection = React.memo(({ tree }: { tree: TreeModel }) => {
 
   return (
     <Select
+      disabled={disabled}
       style={{ width: '160px' }}
       value={tree?.name ?? TreeType.Pine}
       onChange={(value) => {

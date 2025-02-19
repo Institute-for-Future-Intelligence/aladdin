@@ -58,7 +58,7 @@ const style = {
   alignItems: 'center',
 };
 
-const HumanSelection = React.memo(({ human }: { human: HumanModel }) => {
+const HumanSelection = React.memo(({ human, disabled }: { human: HumanModel; disabled?: boolean }) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
 
@@ -81,6 +81,7 @@ const HumanSelection = React.memo(({ human }: { human: HumanModel }) => {
 
   return (
     <Select
+      disabled={disabled}
       style={{ width: '140px' }}
       value={human?.name ?? HumanName.Jack}
       onChange={(value) => {
