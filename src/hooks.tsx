@@ -5,8 +5,8 @@
 import { useStore } from 'src/stores/common';
 import * as Selector from './stores/selector';
 import React, { useMemo } from 'react';
-import { InputNumber, Space, Tooltip, TreeDataNode } from 'antd';
-import { ObjectType } from './types';
+import { InputNumber, Radio, Space, Tooltip, TreeDataNode } from 'antd';
+import { ObjectType, Orientation } from './types';
 import {
   DEFAULT_DOOR_U_VALUE,
   DEFAULT_ROOF_R_VALUE,
@@ -27,11 +27,8 @@ import { FoundationModel } from './models/FoundationModel';
 import { useTranslation } from 'react-i18next';
 import { Util } from './Util';
 import { PolygonModel } from './models/PolygonModel';
-import { CuboidModel } from './models/CuboidModel';
-import { BatteryStorageModel } from './models/BatteryStorageModel';
 import { ParabolicDishModel } from './models/ParabolicDishModel';
 import { ParabolicTroughModel } from './models/ParabolicTroughModel';
-import { HeliostatModel } from './models/HeliostatModel';
 import { WindTurbineModel } from './models/WindTurbineModel';
 import { FresnelReflectorModel } from './models/FresnelReflectorModel';
 import HumanSelection from './components/contextMenu/elementMenu/billboardMenu/humanSelection';
@@ -247,6 +244,179 @@ export const useModelTree = () => {
     ];
   };
 
+  const createSolarPanelOrientationRadioGroup = (s: SolarPanelModel) => {
+    return (
+      <Space>
+        <span>{t('solarPanelMenu.Orientation', lang)} : </span>
+        <Radio.Group
+          value={s.orientation}
+          options={[
+            { value: Orientation.portrait, label: t('solarPanelMenu.Portrait', lang) },
+            { value: Orientation.landscape, label: t('solarPanelMenu.Landscape', lang) },
+          ]}
+          onChange={(e) => {
+            useStore.getState().set((state) => {
+              const elem = state.elements.find((e) => e.id === s.id);
+              if (elem) {
+                (elem as SolarPanelModel).orientation = e.target.value;
+              }
+            });
+          }}
+        />
+      </Space>
+    );
+  };
+
+  const createSolarPanelTiltAngleInput = (s: SolarPanelModel) => {
+    return (
+      <Space>
+        <span>{t('solarPanelMenu.TiltAngle', lang)} : </span>
+        <InputNumber
+          value={parseFloat(Util.toDegrees(s.tiltAngle).toFixed(2))}
+          precision={2}
+          step={1}
+          min={-90}
+          max={90}
+          formatter={(value) => `${value}°`}
+          disabled={s.locked}
+          onChange={(value) => {
+            if (value !== null) {
+              useStore.getState().set((state) => {
+                const element = state.elements.find((e) => e.id === s.id);
+                if (element) {
+                  (element as SolarPanelModel).tiltAngle = Util.toRadians(value);
+                }
+              });
+            }
+          }}
+        />
+      </Space>
+    );
+  };
+
+  const createAzimuthInput = (s: ElementModel) => {
+    return (
+      <Space>
+        <span>{t('word.Azimuth', lang)} : </span>
+        <InputNumber
+          value={parseFloat(Util.toDegrees(s.rotation[2]).toFixed(2))}
+          precision={2}
+          step={1}
+          min={-180}
+          max={180}
+          formatter={(value) => `${value}°`}
+          disabled={s.locked}
+          onChange={(value) => {
+            if (value !== null) {
+              useStore.getState().set((state) => {
+                const element = state.elements.find((e) => e.id === s.id);
+                if (element) {
+                  element.rotation[2] = Util.toRadians(value);
+                }
+              });
+            }
+          }}
+        />
+      </Space>
+    );
+  };
+
+  const createLxInput = (
+    s: ElementModel,
+    title: string,
+    min: number,
+    max: number,
+    step: number,
+    relative?: boolean,
+  ) => {
+    return (
+      <Space>
+        <span>{title} : </span>
+        <InputNumber
+          value={s.lx}
+          precision={2}
+          min={min}
+          max={max}
+          step={step}
+          disabled={s.locked}
+          onChange={(value) => {
+            if (value !== null) {
+              useStore.getState().set((state) => {
+                const element = state.elements.find((e) => e.id === s.id);
+                if (element) element.lx = value;
+              });
+            }
+          }}
+        />
+        {t(relative ? 'word.Relative' : 'word.MeterAbbreviation', lang)}
+      </Space>
+    );
+  };
+
+  const createLyInput = (
+    s: ElementModel,
+    title: string,
+    min: number,
+    max: number,
+    step: number,
+    relative?: boolean,
+  ) => {
+    return (
+      <Space>
+        <span>{title} : </span>
+        <InputNumber
+          value={s.ly}
+          precision={2}
+          min={min}
+          max={max}
+          step={step}
+          disabled={s.locked}
+          onChange={(value) => {
+            if (value !== null) {
+              useStore.getState().set((state) => {
+                const element = state.elements.find((e) => e.id === s.id);
+                if (element) element.ly = value;
+              });
+            }
+          }}
+        />
+        {t(relative ? 'word.Relative' : 'word.MeterAbbreviation', lang)}
+      </Space>
+    );
+  };
+
+  const createLzInput = (
+    s: ElementModel,
+    title: string,
+    min: number,
+    max: number,
+    step: number,
+    relative?: boolean,
+  ) => {
+    return (
+      <Space>
+        <span>{title} : </span>
+        <InputNumber
+          value={s.lz}
+          precision={2}
+          min={min}
+          max={max}
+          step={step}
+          disabled={s.locked}
+          onChange={(value) => {
+            if (value !== null) {
+              useStore.getState().set((state) => {
+                const element = state.elements.find((e) => e.id === s.id);
+                if (element) element.lz = value;
+              });
+            }
+          }}
+        />
+        {t(relative ? 'word.Relative' : 'word.MeterAbbreviation', lang)}
+      </Space>
+    );
+  };
+
   const createTooltip = (id: string, text: string) => {
     return (
       <Tooltip
@@ -341,30 +511,7 @@ export const useModelTree = () => {
           if (s.type === ObjectType.BatteryStorage) {
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.Azimuth', lang)} : </span>
-                  <InputNumber
-                    value={parseFloat(Util.toDegrees((s as BatteryStorageModel).rotation[2]).toFixed(2))}
-                    precision={2}
-                    step={1}
-                    min={-180}
-                    max={180}
-                    formatter={(value) => `${value}°`}
-                    disabled={s.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === s.id);
-                          if (el) {
-                            el.rotation[2] = Util.toRadians(value);
-                          }
-                        });
-                      }
-                    }}
-                  />
-                </Space>
-              ),
+              title: createAzimuthInput(s),
               key: s.id + ' Azimuth',
             });
             grandChildren.push(...getDimension(s));
@@ -372,30 +519,7 @@ export const useModelTree = () => {
             const dish = s as ParabolicDishModel;
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('parabolicDishMenu.RimDiameter', lang)} : </span>
-                  <InputNumber
-                    value={dish.lx}
-                    precision={2}
-                    min={1}
-                    max={10}
-                    step={0.05}
-                    disabled={dish.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === dish.id);
-                          if (el) {
-                            (el as ParabolicDishModel).lx = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  {t('word.MeterAbbreviation', lang)}
-                </Space>
-              ),
+              title: createLxInput(s, t('parabolicDishMenu.RimDiameter', lang), 1, 10, 0.05),
               key: s.id + ' Rim Diameter',
             });
             grandChildren.push({
@@ -430,57 +554,18 @@ export const useModelTree = () => {
             const trough = s as ParabolicTroughModel;
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.Length', lang)} : </span>
-                  <InputNumber
-                    value={trough.ly}
-                    precision={2}
-                    min={trough.moduleLength}
-                    step={trough.moduleLength}
-                    disabled={trough.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === trough.id);
-                          if (el) {
-                            (el as ParabolicTroughModel).ly = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  {t('word.MeterAbbreviation', lang)}
-                </Space>
+              title: createLyInput(
+                s,
+                t('word.Length', lang),
+                trough.moduleLength,
+                100 * trough.moduleLength,
+                trough.moduleLength,
               ),
               key: s.id + ' Length',
             });
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.Width', lang)} : </span>
-                  <InputNumber
-                    value={trough.lx}
-                    precision={2}
-                    min={1}
-                    max={10}
-                    step={0.1}
-                    disabled={trough.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === trough.id);
-                          if (el) {
-                            (el as ParabolicTroughModel).lx = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  {t('word.MeterAbbreviation', lang)}
-                </Space>
-              ),
+              title: createLxInput(s, t('word.Width', lang), 1, 10, 0.1),
               key: s.id + ' Width',
             });
             grandChildren.push({
@@ -512,118 +597,32 @@ export const useModelTree = () => {
               key: s.id + ' Latus Rectum',
             });
           } else if (s.type === ObjectType.Heliostat) {
-            const heliostat = s as HeliostatModel;
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.Length', lang)} : </span>
-                  <InputNumber
-                    value={heliostat.lx}
-                    precision={2}
-                    min={1}
-                    max={20}
-                    step={0.05}
-                    disabled={heliostat.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === heliostat.id);
-                          if (el) {
-                            (el as HeliostatModel).lx = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  {t('word.MeterAbbreviation', lang)}
-                </Space>
-              ),
+              title: createLxInput(s, t('word.Length', lang), 1, 20, 0.05),
               key: s.id + ' Length',
             });
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.Width', lang)} : </span>
-                  <InputNumber
-                    value={heliostat.ly}
-                    precision={2}
-                    min={1}
-                    max={20}
-                    step={0.05}
-                    disabled={heliostat.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === heliostat.id);
-                          if (el) {
-                            (el as HeliostatModel).ly = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  {t('word.MeterAbbreviation', lang)}
-                </Space>
-              ),
+              title: createLyInput(s, t('word.Width', lang), 1, 20, 0.05),
               key: s.id + ' Width',
             });
           } else if (s.type === ObjectType.FresnelReflector) {
             const fresnel = s as FresnelReflectorModel;
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.Length', lang)} : </span>
-                  <InputNumber
-                    value={fresnel.ly}
-                    precision={2}
-                    min={fresnel.moduleLength}
-                    step={fresnel.moduleLength}
-                    disabled={fresnel.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === fresnel.id);
-                          if (el) {
-                            (el as FresnelReflectorModel).ly = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  {t('word.MeterAbbreviation', lang)}
-                </Space>
+              title: createLyInput(
+                s,
+                t('word.Length', lang),
+                fresnel.moduleLength,
+                100 * fresnel.moduleLength,
+                fresnel.moduleLength,
               ),
               key: s.id + ' Length',
             });
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.Width', lang)} : </span>
-                  <InputNumber
-                    value={fresnel.lx}
-                    precision={2}
-                    min={1}
-                    max={10}
-                    step={0.05}
-                    disabled={fresnel.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === fresnel.id);
-                          if (el) {
-                            (el as FresnelReflectorModel).lx = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  {t('word.MeterAbbreviation', lang)}
-                </Space>
-              ),
+              title: createLxInput(s, t('word.Width', lang), 1, 10, 0.05),
               key: s.id + ' Width',
             });
           } else if (s.type === ObjectType.WindTurbine) {
@@ -753,56 +752,12 @@ export const useModelTree = () => {
             });
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('treeMenu.Spread', lang)} : </span>
-                  <InputNumber
-                    value={treeModel.lx}
-                    precision={2}
-                    min={1}
-                    step={1}
-                    disabled={treeModel.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === treeModel.id);
-                          if (el) {
-                            el.lx = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  {t('word.MeterAbbreviation', lang)}
-                </Space>
-              ),
+              title: createLxInput(s, t('treeMenu.Spread', lang), 1, 100, 1),
               key: s.id + ' Spread',
             });
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.Height', lang)} : </span>
-                  <InputNumber
-                    value={treeModel.lz}
-                    precision={2}
-                    min={1}
-                    step={1}
-                    disabled={treeModel.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === treeModel.id);
-                          if (el) {
-                            el.lz = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  {t('word.MeterAbbreviation', lang)}
-                </Space>
-              ),
+              title: createLzInput(s, t('word.Height', lang), 1, 100, 1),
               key: s.id + ' Height',
             });
           } else if (s.type === ObjectType.Flower) {
@@ -838,25 +793,26 @@ export const useModelTree = () => {
               key: s.id + ' Vertex Count',
             });
           } else if (s.type === ObjectType.SolarPanel) {
+            const solarPanel = s as SolarPanelModel;
             grandChildren.push({
               checkable: false,
               title: (
                 <Space>
                   <span>{t('pvModelPanel.Model', lang)} : </span>
-                  <span>{(s as SolarPanelModel).pvModelName}</span>
+                  <span>{solarPanel.pvModelName}</span>
                 </Space>
               ),
               key: s.id + ' Model',
             });
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('solarPanelMenu.Orientation', lang)} : </span>
-                  <span>{(s as SolarPanelModel).orientation}</span>
-                </Space>
-              ),
+              title: createSolarPanelOrientationRadioGroup(s as SolarPanelModel),
               key: s.id + ' Orientation',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: createSolarPanelTiltAngleInput(s as SolarPanelModel),
+              key: s.id + ' Tilt Angle',
             });
             grandChildren.push(...getDimension(s));
           } else if (s.type === ObjectType.Wall) {
@@ -1012,12 +968,7 @@ export const useModelTree = () => {
                   });
                   solarPanelChildren.push({
                     checkable: false,
-                    title: (
-                      <Space>
-                        <span>{t('solarPanelMenu.Orientation', lang)} : </span>
-                        <span>{(c as SolarPanelModel).orientation}</span>
-                      </Space>
-                    ),
+                    title: createSolarPanelOrientationRadioGroup(c as SolarPanelModel),
                     key: c.id + ' Orientation',
                   });
                   solarPanelChildren.push(...getCoordinates(c, true));
@@ -1115,30 +1066,7 @@ export const useModelTree = () => {
             });
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.Thickness', lang)} : </span>
-                  <InputNumber
-                    value={(s as WallModel).ly}
-                    precision={2}
-                    min={0.1}
-                    max={1}
-                    step={0.01}
-                    disabled={s.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === s.id);
-                          if (el) {
-                            (el as WallModel).ly = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  {t('word.MeterAbbreviation', lang)}
-                </Space>
-              ),
+              title: createLyInput(s, t('word.Thickness', lang), 0.1, 1, 0.01),
               key: s.id + ' Thickness',
             });
             grandChildren.push({
@@ -1265,12 +1193,7 @@ export const useModelTree = () => {
                   });
                   solarPanelChildren.push({
                     checkable: false,
-                    title: (
-                      <Space>
-                        <span>{t('solarPanelMenu.Orientation', lang)} : </span>
-                        <span>{(c as SolarPanelModel).orientation}</span>
-                      </Space>
-                    ),
+                    title: createSolarPanelOrientationRadioGroup(c as SolarPanelModel),
                     key: c.id + ' Orientation',
                   });
                   solarPanelChildren.push(...getCoordinates(c));
@@ -1484,30 +1407,7 @@ export const useModelTree = () => {
         }
         children.push({
           checkable: false,
-          title: (
-            <Space>
-              <span>{t('word.Azimuth', lang)} : </span>
-              <InputNumber
-                value={parseFloat(Util.toDegrees(f.rotation[2]).toFixed(2))}
-                precision={2}
-                step={1}
-                min={-180}
-                max={180}
-                formatter={(value) => `${value}°`}
-                disabled={f.locked}
-                onChange={(value) => {
-                  if (value !== null) {
-                    useStore.getState().set((state) => {
-                      const el = state.elements.find((e) => e.id === f.id);
-                      if (el) {
-                        el.rotation[2] = Util.toRadians(value);
-                      }
-                    });
-                  }
-                }}
-              />
-            </Space>
-          ),
+          title: createAzimuthInput(f),
           key: f.id + ' Azimuth',
         });
         children.push(...getCoordinates(f));
@@ -1537,56 +1437,12 @@ export const useModelTree = () => {
             });
             properties.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('treeMenu.Spread', lang)} : </span>
-                  <InputNumber
-                    value={treeModel.lx}
-                    precision={2}
-                    min={1}
-                    step={1}
-                    disabled={treeModel.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === treeModel.id);
-                          if (el) {
-                            el.lx = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  {t('word.MeterAbbreviation', lang)}
-                </Space>
-              ),
+              title: createLxInput(e, t('treeMenu.Spread', lang), 1, 100, 1),
               key: e.id + ' Spread',
             });
             properties.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.Height', lang)} : </span>
-                  <InputNumber
-                    value={treeModel.lz}
-                    precision={2}
-                    min={1}
-                    step={1}
-                    disabled={treeModel.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === treeModel.id);
-                          if (el) {
-                            el.lz = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  {t('word.MeterAbbreviation', lang)}
-                </Space>
-              ),
+              title: createLzInput(e, t('word.Height', lang), 1, 100, 1),
               key: e.id + ' Height',
             });
             properties.push(...getCoordinates(e));
@@ -1638,56 +1494,12 @@ export const useModelTree = () => {
                 });
                 grandChildren.push({
                   checkable: false,
-                  title: (
-                    <Space>
-                      <span>{t('treeMenu.Spread', lang)} : </span>
-                      <InputNumber
-                        value={treeModel.lx}
-                        precision={2}
-                        min={1}
-                        step={1}
-                        disabled={treeModel.locked}
-                        onChange={(value) => {
-                          if (value !== null) {
-                            useStore.getState().set((state) => {
-                              const el = state.elements.find((e) => e.id === treeModel.id);
-                              if (el) {
-                                el.lx = value;
-                              }
-                            });
-                          }
-                        }}
-                      />
-                      {t('word.MeterAbbreviation', lang)}
-                    </Space>
-                  ),
+                  title: createLxInput(s, t('treeMenu.Spread', lang), 1, 100, 1),
                   key: s.id + ' Spread',
                 });
                 grandChildren.push({
                   checkable: false,
-                  title: (
-                    <Space>
-                      <span>{t('word.Height', lang)} : </span>
-                      <InputNumber
-                        value={treeModel.lz}
-                        precision={2}
-                        min={1}
-                        step={1}
-                        disabled={treeModel.locked}
-                        onChange={(value) => {
-                          if (value !== null) {
-                            useStore.getState().set((state) => {
-                              const el = state.elements.find((e) => e.id === treeModel.id);
-                              if (el) {
-                                el.lz = value;
-                              }
-                            });
-                          }
-                        }}
-                      />
-                      {t('word.MeterAbbreviation', lang)}
-                    </Space>
-                  ),
+                  title: createLzInput(s, t('word.Height', lang), 1, 100, 1),
                   key: s.id + ' Height',
                 });
               } else if (s.type === ObjectType.Flower) {
@@ -1723,25 +1535,26 @@ export const useModelTree = () => {
                   key: s.id + ' Vertex Count',
                 });
               } else if (s.type === ObjectType.SolarPanel) {
+                const solarPanel = s as SolarPanelModel;
                 grandChildren.push({
                   checkable: false,
                   title: (
                     <Space>
                       <span>{t('pvModelPanel.Model', lang)} : </span>
-                      <span>{(s as SolarPanelModel).pvModelName}</span>
+                      <span>{solarPanel.pvModelName}</span>
                     </Space>
                   ),
                   key: s.id + ' Model',
                 });
                 grandChildren.push({
                   checkable: false,
-                  title: (
-                    <Space>
-                      <span>{t('solarPanelMenu.Orientation', lang)} : </span>
-                      <span>{(s as SolarPanelModel).orientation}</span>
-                    </Space>
-                  ),
+                  title: createSolarPanelOrientationRadioGroup(s as SolarPanelModel),
                   key: s.id + ' Orientation',
+                });
+                grandChildren.push({
+                  checkable: false,
+                  title: createSolarPanelTiltAngleInput(s as SolarPanelModel),
+                  key: s.id + ' Tilt Angle',
                 });
                 grandChildren.push(...getDimension(s));
               }
@@ -1755,30 +1568,7 @@ export const useModelTree = () => {
             }
             properties.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.Azimuth', lang)} : </span>
-                  <InputNumber
-                    value={parseFloat(Util.toDegrees((e as CuboidModel).rotation[2]).toFixed(2))}
-                    precision={2}
-                    step={1}
-                    min={-180}
-                    max={180}
-                    formatter={(value) => `${value}°`}
-                    disabled={e.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((m) => m.id === e.id);
-                          if (el) {
-                            el.rotation[2] = Util.toRadians(value);
-                          }
-                        });
-                      }
-                    }}
-                  />
-                </Space>
-              ),
+              title: createAzimuthInput(e),
               key: e.id + ' Azimuth',
             });
             properties.push(...getCoordinates(e));
