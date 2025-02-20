@@ -7,13 +7,7 @@ import * as Selector from './stores/selector';
 import React, { useMemo } from 'react';
 import { InputNumber, Radio, Space, Tooltip, TreeDataNode } from 'antd';
 import { ObjectType, Orientation } from './types';
-import {
-  DEFAULT_DOOR_U_VALUE,
-  DEFAULT_ROOF_R_VALUE,
-  DEFAULT_WALL_R_VALUE,
-  DEFAULT_WINDOW_U_VALUE,
-  GROUND_ID,
-} from './constants';
+import { DEFAULT_DOOR_U_VALUE, DEFAULT_WINDOW_U_VALUE, GROUND_ID } from './constants';
 import { TreeModel } from './models/TreeModel';
 import { ElementModel } from './models/ElementModel';
 import { WindowModel } from './models/WindowModel';
@@ -321,8 +315,9 @@ export const useModelTree = () => {
     );
   };
 
-  const createLxInput = (
+  const createLxLyLzInput = (
     s: ElementModel,
+    variable: 'lx' | 'ly' | 'lz',
     title: string,
     min: number,
     max: number,
@@ -333,7 +328,7 @@ export const useModelTree = () => {
       <Space>
         <span>{title} : </span>
         <InputNumber
-          value={s.lx}
+          value={s[variable]}
           precision={2}
           min={min}
           max={max}
@@ -343,7 +338,7 @@ export const useModelTree = () => {
             if (value !== null) {
               useStore.getState().set((state) => {
                 const element = state.elements.find((e) => e.id === s.id);
-                if (element) element.lx = value;
+                if (element) element[variable] = value;
               });
             }
           }}
@@ -353,66 +348,99 @@ export const useModelTree = () => {
     );
   };
 
-  const createLyInput = (
-    s: ElementModel,
-    title: string,
-    min: number,
-    max: number,
-    step: number,
-    relative?: boolean,
-  ) => {
+  const createUValueInput = (s: WindowModel | DoorModel) => {
     return (
       <Space>
-        <span>{title} : </span>
+        <span>{t('word.UValue', lang)} : </span>
         <InputNumber
-          value={s.ly}
+          value={s.type === ObjectType.Window ? s.uValue ?? DEFAULT_WINDOW_U_VALUE : s.uValue ?? DEFAULT_DOOR_U_VALUE}
           precision={2}
-          min={min}
-          max={max}
-          step={step}
+          min={0.01}
+          max={100}
+          step={0.05}
           disabled={s.locked}
           onChange={(value) => {
             if (value !== null) {
               useStore.getState().set((state) => {
                 const element = state.elements.find((e) => e.id === s.id);
-                if (element) element.ly = value;
+                if (element) {
+                  if (element.type === ObjectType.Window) {
+                    (element as WindowModel).uValue = value;
+                  } else {
+                    (element as DoorModel).uValue = value;
+                  }
+                }
               });
             }
           }}
         />
-        {t(relative ? 'word.Relative' : 'word.MeterAbbreviation', lang)}
+        W/(m²·℃)
       </Space>
     );
   };
 
-  const createLzInput = (
-    s: ElementModel,
-    title: string,
-    min: number,
-    max: number,
-    step: number,
-    relative?: boolean,
-  ) => {
+  const createRValueInput = (s: FoundationModel | RoofModel | WallModel, title: string) => {
     return (
       <Space>
         <span>{title} : </span>
         <InputNumber
-          value={s.lz}
+          value={s.rValue ?? 2}
           precision={2}
-          min={min}
-          max={max}
-          step={step}
+          min={0.01}
+          max={100}
+          step={0.05}
           disabled={s.locked}
           onChange={(value) => {
             if (value !== null) {
               useStore.getState().set((state) => {
                 const element = state.elements.find((e) => e.id === s.id);
-                if (element) element.lz = value;
+                if (element) {
+                  if (element.type === ObjectType.Foundation) {
+                    (element as FoundationModel).rValue = value;
+                  } else if (element.type === ObjectType.Roof) {
+                    (element as RoofModel).rValue = value;
+                  } else {
+                    (element as WallModel).rValue = value;
+                  }
+                }
               });
             }
           }}
         />
-        {t(relative ? 'word.Relative' : 'word.MeterAbbreviation', lang)}
+        m²·℃/W
+      </Space>
+    );
+  };
+
+  const createVolumetricHeatCapacityInput = (s: WallModel | RoofModel | DoorModel) => {
+    return (
+      <Space>
+        <span>{t('word.VolumetricHeatCapacity', lang)} : </span>
+        <InputNumber
+          value={s.volumetricHeatCapacity ?? 0.5}
+          precision={2}
+          min={0.01}
+          max={100}
+          step={0.05}
+          disabled={s.locked}
+          onChange={(value) => {
+            if (value !== null) {
+              useStore.getState().set((state) => {
+                const element = state.elements.find((e) => e.id === s.id);
+                if (element) {
+                  if (element.type === ObjectType.Roof) {
+                    (element as RoofModel).volumetricHeatCapacity = value;
+                  } else if (element.type === ObjectType.Wall) {
+                    (element as WallModel).volumetricHeatCapacity = value;
+                  } else {
+                    (element as DoorModel).volumetricHeatCapacity = value;
+                  }
+                }
+              });
+            }
+          }}
+        />
+        kWh/(m³·℃)
       </Space>
     );
   };
@@ -519,7 +547,7 @@ export const useModelTree = () => {
             const dish = s as ParabolicDishModel;
             grandChildren.push({
               checkable: false,
-              title: createLxInput(s, t('parabolicDishMenu.RimDiameter', lang), 1, 10, 0.05),
+              title: createLxLyLzInput(s, 'lx', t('parabolicDishMenu.RimDiameter', lang), 1, 10, 0.05),
               key: s.id + ' Rim Diameter',
             });
             grandChildren.push({
@@ -554,8 +582,9 @@ export const useModelTree = () => {
             const trough = s as ParabolicTroughModel;
             grandChildren.push({
               checkable: false,
-              title: createLyInput(
+              title: createLxLyLzInput(
                 s,
+                'ly',
                 t('word.Length', lang),
                 trough.moduleLength,
                 100 * trough.moduleLength,
@@ -565,7 +594,7 @@ export const useModelTree = () => {
             });
             grandChildren.push({
               checkable: false,
-              title: createLxInput(s, t('word.Width', lang), 1, 10, 0.1),
+              title: createLxLyLzInput(s, 'lx', t('word.Width', lang), 1, 10, 0.1),
               key: s.id + ' Width',
             });
             grandChildren.push({
@@ -599,20 +628,21 @@ export const useModelTree = () => {
           } else if (s.type === ObjectType.Heliostat) {
             grandChildren.push({
               checkable: false,
-              title: createLxInput(s, t('word.Length', lang), 1, 20, 0.05),
+              title: createLxLyLzInput(s, 'lx', t('word.Length', lang), 1, 20, 0.05),
               key: s.id + ' Length',
             });
             grandChildren.push({
               checkable: false,
-              title: createLyInput(s, t('word.Width', lang), 1, 20, 0.05),
+              title: createLxLyLzInput(s, 'ly', t('word.Width', lang), 1, 20, 0.05),
               key: s.id + ' Width',
             });
           } else if (s.type === ObjectType.FresnelReflector) {
             const fresnel = s as FresnelReflectorModel;
             grandChildren.push({
               checkable: false,
-              title: createLyInput(
+              title: createLxLyLzInput(
                 s,
+                'ly',
                 t('word.Length', lang),
                 fresnel.moduleLength,
                 100 * fresnel.moduleLength,
@@ -622,7 +652,7 @@ export const useModelTree = () => {
             });
             grandChildren.push({
               checkable: false,
-              title: createLxInput(s, t('word.Width', lang), 1, 10, 0.05),
+              title: createLxLyLzInput(s, 'lx', t('word.Width', lang), 1, 10, 0.05),
               key: s.id + ' Width',
             });
           } else if (s.type === ObjectType.WindTurbine) {
@@ -752,12 +782,12 @@ export const useModelTree = () => {
             });
             grandChildren.push({
               checkable: false,
-              title: createLxInput(s, t('treeMenu.Spread', lang), 1, 100, 1),
+              title: createLxLyLzInput(s, 'lx', t('treeMenu.Spread', lang), 1, 100, 1),
               key: s.id + ' Spread',
             });
             grandChildren.push({
               checkable: false,
-              title: createLzInput(s, t('word.Height', lang), 1, 100, 1),
+              title: createLxLyLzInput(s, 'lz', t('word.Height', lang), 1, 100, 1),
               key: s.id + ' Height',
             });
           } else if (s.type === ObjectType.Flower) {
@@ -823,30 +853,7 @@ export const useModelTree = () => {
                   const windowChildren: TreeDataNode[] = [];
                   windowChildren.push({
                     checkable: false,
-                    title: (
-                      <Space>
-                        <span>{t('word.UValue', lang)} : </span>
-                        <InputNumber
-                          value={(c as WindowModel).uValue ?? DEFAULT_WINDOW_U_VALUE}
-                          precision={2}
-                          min={0.01}
-                          max={100}
-                          step={0.05}
-                          disabled={c.locked}
-                          onChange={(value) => {
-                            if (value !== null) {
-                              useStore.getState().set((state) => {
-                                const el = state.elements.find((e) => e.id === c.id);
-                                if (el) {
-                                  (el as WindowModel).uValue = value;
-                                }
-                              });
-                            }
-                          }}
-                        />
-                        W/(m²·℃)
-                      </Space>
-                    ),
+                    title: createUValueInput(c as WindowModel),
                     key: c.id + ' U-value',
                   });
                   windowChildren.push({
@@ -890,58 +897,12 @@ export const useModelTree = () => {
                   const doorChildren: TreeDataNode[] = [];
                   doorChildren.push({
                     checkable: false,
-                    title: (
-                      <Space>
-                        <span>{t('word.UValue', lang)} : </span>
-                        <InputNumber
-                          value={(c as DoorModel).uValue ?? DEFAULT_DOOR_U_VALUE}
-                          precision={2}
-                          min={0.01}
-                          max={100}
-                          step={0.05}
-                          disabled={c.locked}
-                          onChange={(value) => {
-                            if (value !== null) {
-                              useStore.getState().set((state) => {
-                                const el = state.elements.find((e) => e.id === c.id);
-                                if (el) {
-                                  (el as DoorModel).uValue = value;
-                                }
-                              });
-                            }
-                          }}
-                        />
-                        W/(m²·℃)
-                      </Space>
-                    ),
+                    title: createUValueInput(c as DoorModel),
                     key: c.id + ' U-value',
                   });
                   doorChildren.push({
                     checkable: false,
-                    title: (
-                      <Space>
-                        <span>{t('word.VolumetricHeatCapacity', lang)} : </span>
-                        <InputNumber
-                          value={(c as DoorModel).volumetricHeatCapacity ?? 0.5}
-                          precision={2}
-                          min={0.01}
-                          max={100}
-                          step={0.05}
-                          disabled={c.locked}
-                          onChange={(value) => {
-                            if (value !== null) {
-                              useStore.getState().set((state) => {
-                                const el = state.elements.find((e) => e.id === c.id);
-                                if (el) {
-                                  (el as DoorModel).volumetricHeatCapacity = value;
-                                }
-                              });
-                            }
-                          }}
-                        />
-                        kWh/(m³·℃)
-                      </Space>
-                    ),
+                    title: createVolumetricHeatCapacityInput(c as DoorModel),
                     key: c.id + ' Heat Capacity',
                   });
                   doorChildren.push(...getCoordinates(c, true));
@@ -1010,63 +971,17 @@ export const useModelTree = () => {
             }
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.RValue', lang)} : </span>
-                  <InputNumber
-                    value={(s as WallModel).rValue ?? DEFAULT_WALL_R_VALUE}
-                    precision={2}
-                    min={0.01}
-                    max={100}
-                    step={0.05}
-                    disabled={s.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === s.id);
-                          if (el) {
-                            (el as WallModel).rValue = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  m²·℃/W
-                </Space>
-              ),
+              title: createRValueInput(s as WallModel, t('word.RValue', lang)),
               key: s.id + ' R-value',
             });
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.VolumetricHeatCapacity', lang)} : </span>
-                  <InputNumber
-                    value={(s as WallModel).volumetricHeatCapacity ?? 0.5}
-                    precision={2}
-                    min={0.01}
-                    max={100}
-                    step={0.05}
-                    disabled={s.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === s.id);
-                          if (el) {
-                            (el as WallModel).volumetricHeatCapacity = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  kWh/(m³·℃)
-                </Space>
-              ),
+              title: createVolumetricHeatCapacityInput(s as WallModel),
               key: s.id + ' Heat Capacity',
             });
             grandChildren.push({
               checkable: false,
-              title: createLyInput(s, t('word.Thickness', lang), 0.1, 1, 0.01),
+              title: createLxLyLzInput(s, 'ly', t('word.Thickness', lang), 0.1, 1, 0.01),
               key: s.id + ' Thickness',
             });
             grandChildren.push({
@@ -1116,30 +1031,7 @@ export const useModelTree = () => {
                   const windowChildren: TreeDataNode[] = [];
                   windowChildren.push({
                     checkable: false,
-                    title: (
-                      <Space>
-                        <span>{t('word.UValue', lang)} : </span>
-                        <InputNumber
-                          value={(c as WindowModel).uValue ?? DEFAULT_WINDOW_U_VALUE}
-                          precision={2}
-                          min={0.01}
-                          max={100}
-                          step={0.05}
-                          disabled={c.locked}
-                          onChange={(value) => {
-                            if (value !== null) {
-                              useStore.getState().set((state) => {
-                                const el = state.elements.find((e) => e.id === c.id);
-                                if (el) {
-                                  (el as WindowModel).uValue = value;
-                                }
-                              });
-                            }
-                          }}
-                        />
-                        W/(m²·℃)
-                      </Space>
-                    ),
+                    title: createUValueInput(c as WindowModel),
                     key: c.id + ' U-value',
                   });
                   windowChildren.push({
@@ -1247,58 +1139,12 @@ export const useModelTree = () => {
             }
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.RValue', lang)} : </span>
-                  <InputNumber
-                    value={(s as RoofModel).rValue ?? DEFAULT_ROOF_R_VALUE}
-                    precision={2}
-                    min={0.01}
-                    max={100}
-                    step={0.05}
-                    disabled={s.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === s.id);
-                          if (el) {
-                            (el as RoofModel).rValue = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  m²·℃/W
-                </Space>
-              ),
+              title: createRValueInput(s as RoofModel, t('word.RValue', lang)),
               key: s.id + ' R-value',
             });
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('word.VolumetricHeatCapacity', lang)} : </span>
-                  <InputNumber
-                    value={(s as RoofModel).volumetricHeatCapacity ?? 0.5}
-                    precision={2}
-                    min={0.01}
-                    max={100}
-                    step={0.05}
-                    disabled={s.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === s.id);
-                          if (el) {
-                            (el as RoofModel).volumetricHeatCapacity = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  kWh/(m³·℃)
-                </Space>
-              ),
+              title: createVolumetricHeatCapacityInput(s as RoofModel),
               key: s.id + ' Heat Capacity',
             });
             grandChildren.push({
@@ -1378,30 +1224,7 @@ export const useModelTree = () => {
         if (!f.notBuilding) {
           children.push({
             checkable: false,
-            title: (
-              <Space>
-                <span>{t('foundationMenu.GroundFloorRValue', lang)} : </span>
-                <InputNumber
-                  value={f.rValue ?? 2}
-                  precision={2}
-                  min={0.01}
-                  max={100}
-                  step={0.05}
-                  disabled={f.locked}
-                  onChange={(value) => {
-                    if (value !== null) {
-                      useStore.getState().set((state) => {
-                        const el = state.elements.find((e) => e.id === f.id);
-                        if (el) {
-                          (el as FoundationModel).rValue = value;
-                        }
-                      });
-                    }
-                  }}
-                />
-                m²·℃/W
-              </Space>
-            ),
+            title: createRValueInput(f, t('foundationMenu.GroundFloorRValue', lang)),
             key: f.id + ' R-value',
           });
         }
@@ -1437,12 +1260,12 @@ export const useModelTree = () => {
             });
             properties.push({
               checkable: false,
-              title: createLxInput(e, t('treeMenu.Spread', lang), 1, 100, 1),
+              title: createLxLyLzInput(e, 'lx', t('treeMenu.Spread', lang), 1, 100, 1),
               key: e.id + ' Spread',
             });
             properties.push({
               checkable: false,
-              title: createLzInput(e, t('word.Height', lang), 1, 100, 1),
+              title: createLxLyLzInput(e, 'lz', t('word.Height', lang), 1, 100, 1),
               key: e.id + ' Height',
             });
             properties.push(...getCoordinates(e));
@@ -1494,12 +1317,12 @@ export const useModelTree = () => {
                 });
                 grandChildren.push({
                   checkable: false,
-                  title: createLxInput(s, t('treeMenu.Spread', lang), 1, 100, 1),
+                  title: createLxLyLzInput(s, 'lx', t('treeMenu.Spread', lang), 1, 100, 1),
                   key: s.id + ' Spread',
                 });
                 grandChildren.push({
                   checkable: false,
-                  title: createLzInput(s, t('word.Height', lang), 1, 100, 1),
+                  title: createLxLyLzInput(s, 'lz', t('word.Height', lang), 1, 100, 1),
                   key: s.id + ' Height',
                 });
               } else if (s.type === ObjectType.Flower) {
