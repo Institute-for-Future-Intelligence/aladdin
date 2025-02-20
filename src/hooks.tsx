@@ -5,8 +5,8 @@
 import { useStore } from 'src/stores/common';
 import * as Selector from './stores/selector';
 import React, { useMemo } from 'react';
-import { InputNumber, Radio, Space, Tooltip, TreeDataNode } from 'antd';
-import { ObjectType, Orientation } from './types';
+import { InputNumber, Radio, Select, Space, Tooltip, TreeDataNode } from 'antd';
+import { ObjectType, Orientation, TrackerType } from './types';
 import { DEFAULT_DOOR_U_VALUE, DEFAULT_WINDOW_U_VALUE, GROUND_ID } from './constants';
 import { TreeModel } from './models/TreeModel';
 import { ElementModel } from './models/ElementModel';
@@ -28,6 +28,7 @@ import { FresnelReflectorModel } from './models/FresnelReflectorModel';
 import HumanSelection from './components/contextMenu/elementMenu/billboardMenu/humanSelection';
 import TreeSelection from './components/contextMenu/elementMenu/billboardMenu/treeSelection';
 import FlowerSelection from './components/contextMenu/elementMenu/billboardMenu/flowerSelection';
+import i18n from './i18n/i18n';
 
 export const useSelected = (id: string) => {
   return useStore((state) => state.selectedElementIdSet.has(id) && !state.groupActionMode);
@@ -51,9 +52,15 @@ export const useModelTree = () => {
   const getChildren = useStore(Selector.getChildren);
   const getParent = useStore(Selector.getParent);
   const getElementById = useStore(Selector.getElementById);
+  const supportedPvModules = useStore(Selector.supportedPvModules);
+  const customPvModules = useStore(Selector.customPvModules);
 
   const lang = useLanguage();
   const { t } = useTranslation();
+
+  const pvModules = useMemo(() => {
+    return { ...customPvModules, ...supportedPvModules };
+  }, [supportedPvModules, customPvModules]);
 
   const handleCoordinateChange = (element: ElementModel, prop: 'cx' | 'cy' | 'cz', value: number) => {
     if (element.parentId === GROUND_ID && prop === 'cz') return;
@@ -252,7 +259,99 @@ export const useModelTree = () => {
             useStore.getState().set((state) => {
               const elem = state.elements.find((e) => e.id === s.id);
               if (elem) {
-                (elem as SolarPanelModel).orientation = e.target.value;
+                let pvModel = state.supportedPvModules[s.pvModelName];
+                if (!pvModel) pvModel = state.customPvModules[s.pvModelName];
+                state.setSolarPanelOrientation(elem as SolarPanelModel, pvModel, e.target.value);
+              }
+            });
+          }}
+        />
+      </Space>
+    );
+  };
+
+  const createSolarPanelTrackerSelection = (s: SolarPanelModel) => {
+    return (
+      <Space>
+        <span>{t('solarPanelMenu.Tracker', lang)} : </span>
+        <Select
+          value={s.trackerType}
+          options={[
+            { value: TrackerType.NO_TRACKER, label: <span>{t('solarPanelMenu.NoTracker', lang)}</span> },
+            {
+              value: TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER,
+              label: <span>{t('solarPanelMenu.HorizontalSingleAxisTracker', lang)}</span>,
+            },
+            {
+              value: TrackerType.VERTICAL_SINGLE_AXIS_TRACKER,
+              label: <span>{t('solarPanelMenu.VerticalSingleAxisTracker', lang)}</span>,
+            },
+            {
+              value: TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER,
+              label: <span>{t('solarPanelMenu.AltazimuthDualAxisTracker', lang)}</span>,
+            },
+          ]}
+          onChange={(value) => {
+            useStore.getState().set((state) => {
+              const elem = state.elements.find((e) => e.id === s.id);
+              if (elem) {
+                (elem as SolarPanelModel).trackerType = value;
+              }
+            });
+          }}
+        />
+      </Space>
+    );
+  };
+
+  const createSolarPanelModelSelection = (s: SolarPanelModel) => {
+    const options = [];
+    for (const key in pvModules) {
+      const panel = pvModules[key];
+      options.push({
+        value: key,
+        label: (
+          <span
+            style={{
+              alignItems: 'center',
+              display: 'flex',
+              justifyContent: 'start',
+            }}
+          >
+            {key + (panel.bifacialityFactor > 0 ? ' (' + i18n.t('pvModelPanel.Bifacial', lang) + ')' : '')}
+          </span>
+        ),
+      });
+    }
+    return (
+      <Space>
+        <span>{t('pvModelPanel.Model', lang)} : </span>
+        <Select
+          defaultValue="Custom"
+          options={options}
+          style={{ width: '250px' }}
+          value={s.pvModelName}
+          onChange={(value) => {
+            useStore.getState().set((state) => {
+              const elem = state.elements.find((e) => e.id === s.id);
+              if (elem) {
+                const panel = elem as SolarPanelModel;
+                panel.pvModelName = value;
+                let pvModel = state.supportedPvModules[value];
+                if (!pvModel) pvModel = state.customPvModules[value];
+                if (panel.orientation === Orientation.portrait) {
+                  // calculate the current x-y layout
+                  const nx = Math.max(1, Math.round(panel.lx / pvModel.width));
+                  const ny = Math.max(1, Math.round(panel.ly / pvModel.length));
+                  panel.lx = nx * pvModel.width;
+                  panel.ly = ny * pvModel.length;
+                } else {
+                  // calculate the current x-y layout
+                  const nx = Math.max(1, Math.round(panel.lx / pvModel.length));
+                  const ny = Math.max(1, Math.round(panel.ly / pvModel.width));
+                  panel.lx = nx * pvModel.length;
+                  panel.ly = ny * pvModel.width;
+                }
               }
             });
           }}
@@ -288,10 +387,10 @@ export const useModelTree = () => {
     );
   };
 
-  const createAzimuthInput = (s: ElementModel) => {
+  const createAzimuthInput = (s: ElementModel, relative?: boolean) => {
     return (
       <Space>
-        <span>{t('word.Azimuth', lang)} : </span>
+        <span>{t(relative ? 'solarCollectorMenu.RelativeAzimuth' : 'word.Azimuth', lang)} : </span>
         <InputNumber
           value={parseFloat(Util.toDegrees(s.rotation[2]).toFixed(2))}
           precision={2}
@@ -539,7 +638,7 @@ export const useModelTree = () => {
           if (s.type === ObjectType.BatteryStorage) {
             grandChildren.push({
               checkable: false,
-              title: createAzimuthInput(s),
+              title: createAzimuthInput(s, true),
               key: s.id + ' Azimuth',
             });
             grandChildren.push(...getDimension(s));
@@ -826,13 +925,19 @@ export const useModelTree = () => {
             const solarPanel = s as SolarPanelModel;
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('pvModelPanel.Model', lang)} : </span>
-                  <span>{solarPanel.pvModelName}</span>
-                </Space>
-              ),
+              title: createSolarPanelModelSelection(solarPanel),
+              //   (
+              //   <Space>
+              //     <span>{t('pvModelPanel.Model', lang)} : </span>
+              //     <span>{solarPanel.pvModelName}</span>
+              //   </Space>
+              // ),
               key: s.id + ' Model',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: createSolarPanelTrackerSelection(s as SolarPanelModel),
+              key: s.id + ' Tracker',
             });
             grandChildren.push({
               checkable: false,
@@ -843,6 +948,11 @@ export const useModelTree = () => {
               checkable: false,
               title: createSolarPanelTiltAngleInput(s as SolarPanelModel),
               key: s.id + ' Tilt Angle',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: createAzimuthInput(s as SolarPanelModel, true),
+              key: s.id + ' Azimuth',
             });
             grandChildren.push(...getDimension(s));
           } else if (s.type === ObjectType.Wall) {
@@ -1378,6 +1488,11 @@ export const useModelTree = () => {
                   checkable: false,
                   title: createSolarPanelTiltAngleInput(s as SolarPanelModel),
                   key: s.id + ' Tilt Angle',
+                });
+                grandChildren.push({
+                  checkable: false,
+                  title: createAzimuthInput(s as SolarPanelModel, true),
+                  key: s.id + ' Azimuth',
                 });
                 grandChildren.push(...getDimension(s));
               }
