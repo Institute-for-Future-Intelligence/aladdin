@@ -59,6 +59,7 @@ export const useModelTree = () => {
   const elements = useStore(Selector.elements);
   const getChildren = useStore(Selector.getChildren);
   const getParent = useStore(Selector.getParent);
+  const getElementById = useStore(Selector.getElementById);
 
   const lang = useLanguage();
   const { t } = useTranslation();
@@ -301,7 +302,11 @@ export const useModelTree = () => {
         return t('shared.LightElement', lang);
       }
       case ObjectType.SolarPanel: {
-        return t('modelTree.GroundMountedSolarPanels', lang);
+        const parent = getElementById(e.parentId);
+        return t(
+          parent?.type === ObjectType.Foundation ? 'modelTree.GroundMountedSolarPanels' : 'shared.SolarPanelElement',
+          lang,
+        );
       }
       case ObjectType.ParabolicDish: {
         return t('shared.ParabolicDishElement', lang);
@@ -1616,6 +1621,138 @@ export const useModelTree = () => {
             break;
           }
           case ObjectType.Cuboid: {
+            const cuboidChildren = getChildren(e.id);
+            for (const s of cuboidChildren) {
+              const grandChildren: TreeDataNode[] = [];
+              if (s.type === ObjectType.Tree) {
+                const treeModel = s as TreeModel;
+                grandChildren.push({
+                  checkable: false,
+                  title: (
+                    <Space>
+                      <span>{t('word.Type', lang)} : </span>
+                      <TreeSelection tree={treeModel} disabled={treeModel.locked} />
+                    </Space>
+                  ),
+                  key: s.id + ' Type',
+                });
+                grandChildren.push({
+                  checkable: false,
+                  title: (
+                    <Space>
+                      <span>{t('treeMenu.Spread', lang)} : </span>
+                      <InputNumber
+                        value={treeModel.lx}
+                        precision={2}
+                        min={1}
+                        step={1}
+                        disabled={treeModel.locked}
+                        onChange={(value) => {
+                          if (value !== null) {
+                            useStore.getState().set((state) => {
+                              const el = state.elements.find((e) => e.id === treeModel.id);
+                              if (el) {
+                                el.lx = value;
+                              }
+                            });
+                          }
+                        }}
+                      />
+                      {t('word.MeterAbbreviation', lang)}
+                    </Space>
+                  ),
+                  key: s.id + ' Spread',
+                });
+                grandChildren.push({
+                  checkable: false,
+                  title: (
+                    <Space>
+                      <span>{t('word.Height', lang)} : </span>
+                      <InputNumber
+                        value={treeModel.lz}
+                        precision={2}
+                        min={1}
+                        step={1}
+                        disabled={treeModel.locked}
+                        onChange={(value) => {
+                          if (value !== null) {
+                            useStore.getState().set((state) => {
+                              const el = state.elements.find((e) => e.id === treeModel.id);
+                              if (el) {
+                                el.lz = value;
+                              }
+                            });
+                          }
+                        }}
+                      />
+                      {t('word.MeterAbbreviation', lang)}
+                    </Space>
+                  ),
+                  key: s.id + ' Height',
+                });
+              } else if (s.type === ObjectType.Flower) {
+                grandChildren.push({
+                  checkable: false,
+                  title: (
+                    <Space>
+                      <span>{t('word.Type', lang)} :</span>
+                      <FlowerSelection flower={s as FlowerModel} disabled={s.locked} />
+                    </Space>
+                  ),
+                  key: s.id + ' Type',
+                });
+              } else if (s.type === ObjectType.Human) {
+                grandChildren.push({
+                  checkable: false,
+                  title: (
+                    <Space>
+                      <span>{t('word.Name', lang)} :</span>
+                      <HumanSelection human={s as HumanModel} disabled={s.locked} />
+                    </Space>
+                  ),
+                  key: s.id + ' Name',
+                });
+              } else if (s.type === ObjectType.Polygon) {
+                grandChildren.push({
+                  checkable: false,
+                  title: (
+                    <span>
+                      {t('modelTree.VertexCount', lang)} : {(s as PolygonModel).vertices.length}
+                    </span>
+                  ),
+                  key: s.id + ' Vertex Count',
+                });
+              } else if (s.type === ObjectType.SolarPanel) {
+                grandChildren.push({
+                  checkable: false,
+                  title: (
+                    <Space>
+                      <span>{t('pvModelPanel.Model', lang)} : </span>
+                      <span>{(s as SolarPanelModel).pvModelName}</span>
+                    </Space>
+                  ),
+                  key: s.id + ' Model',
+                });
+                grandChildren.push({
+                  checkable: false,
+                  title: (
+                    <Space>
+                      <span>{t('solarPanelMenu.Orientation', lang)} : </span>
+                      <span>{(s as SolarPanelModel).orientation}</span>
+                    </Space>
+                  ),
+                  key: s.id + ' Orientation',
+                });
+                grandChildren.push(...getDimension(s));
+              }
+              const relative = s.type === ObjectType.Light || s.type === ObjectType.Sensor;
+              grandChildren.push(...getCoordinates(s, relative));
+              properties.push({
+                title: createTooltip(s.id, i18nType(s) + (s.label ? ' (' + s.label + ')' : '')),
+                key: s.id,
+                children: grandChildren,
+              });
+            }
             properties.push({
               checkable: false,
               title: (
