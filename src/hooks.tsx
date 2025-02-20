@@ -308,17 +308,19 @@ export const useModelTree = () => {
     const options = [];
     for (const key in pvModules) {
       const panel = pvModules[key];
+      const t = key + (panel.bifacialityFactor > 0 ? ' (' + i18n.t('pvModelPanel.Bifacial', lang) + ')' : '');
       options.push({
         value: key,
         label: (
           <span
+            title={t}
             style={{
               alignItems: 'center',
               display: 'flex',
               justifyContent: 'start',
             }}
           >
-            {key + (panel.bifacialityFactor > 0 ? ' (' + i18n.t('pvModelPanel.Bifacial', lang) + ')' : '')}
+            {t}
           </span>
         ),
       });
@@ -329,7 +331,7 @@ export const useModelTree = () => {
         <Select
           defaultValue="Custom"
           options={options}
-          style={{ width: '250px' }}
+          style={{ width: '200px' }}
           value={s.pvModelName}
           onChange={(value) => {
             useStore.getState().set((state) => {
@@ -926,12 +928,6 @@ export const useModelTree = () => {
             grandChildren.push({
               checkable: false,
               title: createSolarPanelModelSelection(solarPanel),
-              //   (
-              //   <Space>
-              //     <span>{t('pvModelPanel.Model', lang)} : </span>
-              //     <span>{solarPanel.pvModelName}</span>
-              //   </Space>
-              // ),
               key: s.id + ' Model',
             });
             grandChildren.push({
@@ -1029,12 +1025,7 @@ export const useModelTree = () => {
                   const solarPanelChildren: TreeDataNode[] = [];
                   solarPanelChildren.push({
                     checkable: false,
-                    title: (
-                      <Space>
-                        <span>{t('pvModelPanel.Model', lang)} : </span>
-                        <span>{(c as SolarPanelModel).pvModelName}</span>
-                      </Space>
-                    ),
+                    title: createSolarPanelModelSelection(c as SolarPanelModel),
                     key: c.id + ' Model',
                   });
                   solarPanelChildren.push({
@@ -1185,12 +1176,7 @@ export const useModelTree = () => {
                   const solarPanelChildren: TreeDataNode[] = [];
                   solarPanelChildren.push({
                     checkable: false,
-                    title: (
-                      <Space>
-                        <span>{t('pvModelPanel.Model', lang)} : </span>
-                        <span>{(c as SolarPanelModel).pvModelName}</span>
-                      </Space>
-                    ),
+                    title: createSolarPanelModelSelection(c as SolarPanelModel),
                     key: c.id + ' Model',
                   });
                   solarPanelChildren.push({
@@ -1471,27 +1457,22 @@ export const useModelTree = () => {
                 const solarPanel = s as SolarPanelModel;
                 grandChildren.push({
                   checkable: false,
-                  title: (
-                    <Space>
-                      <span>{t('pvModelPanel.Model', lang)} : </span>
-                      <span>{solarPanel.pvModelName}</span>
-                    </Space>
-                  ),
+                  title: createSolarPanelModelSelection(solarPanel),
                   key: s.id + ' Model',
                 });
                 grandChildren.push({
                   checkable: false,
-                  title: createSolarPanelOrientationRadioGroup(s as SolarPanelModel),
+                  title: createSolarPanelOrientationRadioGroup(solarPanel),
                   key: s.id + ' Orientation',
                 });
                 grandChildren.push({
                   checkable: false,
-                  title: createSolarPanelTiltAngleInput(s as SolarPanelModel),
+                  title: createSolarPanelTiltAngleInput(solarPanel),
                   key: s.id + ' Tilt Angle',
                 });
                 grandChildren.push({
                   checkable: false,
-                  title: createAzimuthInput(s as SolarPanelModel, true),
+                  title: createAzimuthInput(solarPanel, true),
                   key: s.id + ' Azimuth',
                 });
                 grandChildren.push(...getDimension(s));
