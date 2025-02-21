@@ -273,18 +273,33 @@ const ModelTree = React.memo(() => {
         <Select
           value={s.trackerType}
           options={[
-            { value: TrackerType.NO_TRACKER, label: <span>{t('solarPanelMenu.NoTracker', lang)}</span> },
+            {
+              value: TrackerType.NO_TRACKER,
+              label: <span title={t('solarPanelMenu.NoTracker', lang)}>{t('solarPanelMenu.NoTracker', lang)}</span>,
+            },
             {
               value: TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER,
-              label: <span>{t('solarPanelMenu.HorizontalSingleAxisTracker', lang)}</span>,
+              label: (
+                <span title={t('solarPanelMenu.HorizontalSingleAxisTracker', lang)}>
+                  {t('solarPanelMenu.HorizontalSingleAxisTracker', lang)}
+                </span>
+              ),
             },
             {
               value: TrackerType.VERTICAL_SINGLE_AXIS_TRACKER,
-              label: <span>{t('solarPanelMenu.VerticalSingleAxisTracker', lang)}</span>,
+              label: (
+                <span title={t('solarPanelMenu.VerticalSingleAxisTracker', lang)}>
+                  {t('solarPanelMenu.VerticalSingleAxisTracker', lang)}
+                </span>
+              ),
             },
             {
               value: TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER,
-              label: <span>{t('solarPanelMenu.AltazimuthDualAxisTracker', lang)}</span>,
+              label: (
+                <span title={t('solarPanelMenu.AltazimuthDualAxisTracker', lang)}>
+                  {t('solarPanelMenu.AltazimuthDualAxisTracker', lang)}
+                </span>
+              ),
             },
           ]}
           onChange={(value) => {

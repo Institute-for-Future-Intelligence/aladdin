@@ -1878,5 +1878,12 @@ export const i18n_en = {
       ModelsFoundOnThisSite: 'models found on this site',
       ShowModelsPublishedByThisAuthor: 'Show the models published by this author',
     },
+    modelTree: {
+      SkylightWindow: 'Skylight Window',
+      RooftopSolarPanels: 'Rooftop Solar Panels',
+      WallMountedSolarPanels: 'Wall-Mounted Solar Panels',
+      GroundMountedSolarPanels: 'Ground-Mounted Solar Panels',
+      VertexCount: 'Vertex Count',
+    },
   },
 };
