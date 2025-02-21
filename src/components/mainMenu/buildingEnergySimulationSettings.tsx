@@ -8,18 +8,18 @@ import { SimulationSamplingDaysSelect } from './simulationSamplingDaysSelect';
 import { EnergyGridCellSizeInput } from './energyGridCellSizeInput';
 import { EnergyModelingType } from '../../types';
 
-export const buildingEnergySimulationSettingsSubmenu = () => {
+export const buildingEnergySimulationSettingsSubmenu = (key = 'building') => {
   return [
     {
-      key: 'building-energy-simulation-sampling-frequency',
+      key: key + '-energy-simulation-sampling-frequency',
       label: <SamplingFrequencySelect type={EnergyModelingType.BUILDING} />,
     },
     {
-      key: 'building-energy-simulation-sampling-days',
+      key: key + '-energy-simulation-sampling-days',
       label: <SimulationSamplingDaysSelect type={EnergyModelingType.BUILDING} />,
     },
     {
-      key: 'building-energy-simulation-grid-cell-size',
+      key: key + '-energy-simulation-grid-cell-size',
       label: <EnergyGridCellSizeInput type={EnergyModelingType.BUILDING} />,
     },
   ] as MenuProps['items'];

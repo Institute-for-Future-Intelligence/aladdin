@@ -67,6 +67,8 @@ export interface ViewState {
   showYearlyUpdraftTowerYieldPanel: boolean;
   showDailyBuildingEnergyPanel: boolean;
   showYearlyBuildingEnergyPanel: boolean;
+  showDailyBatteryStorageEnergyPanel: boolean;
+  showYearlyBatteryStorageEnergyPanel: boolean;
   showEvolutionPanel: boolean;
 
   heliodonPanelX: number;
@@ -82,6 +84,8 @@ export interface ViewState {
   yearlyLightSensorPanelShowClearness: boolean;
   dailyPvYieldPanelRect: Rectangle;
   yearlyPvYieldPanelRect: Rectangle;
+  dailyBatteryStorageEnergyPanelRect: Rectangle;
+  yearlyBatteryStorageEnergyPanelRect: Rectangle;
   visibilityResultsPanelRect: Rectangle;
   dailyParabolicTroughYieldPanelRect: Rectangle;
   yearlyParabolicTroughYieldPanelRect: Rectangle;

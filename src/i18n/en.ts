@@ -872,6 +872,13 @@ export const i18n_en = {
       AllBatteryStorages: 'All Battery Storages',
     },
 
+    batteryStoragePanel: {
+      StoredEnergy: 'Stored Energy',
+      DailyStoredEnergy: 'Battery Storage Daily Stored Energy',
+      YearlyStoredEnergy: 'Battery Storage Yearly Stored Energy',
+      ShowResultsOfIndividualBatteryStorages: 'Show Results of Individual Battery Storages',
+    },
+
     cuboidMenu: {
       Texture01: 'Texture 1',
       Texture02: 'Texture 2',
@@ -1090,6 +1097,7 @@ export const i18n_en = {
       InverterEfficiencyExplained: 'The efficiency for converting direct current (DC) to alternating current (AC).',
       DcToAcSizeRatio: 'DC-to-AC Size Ratio',
       DcToAcSizeRatioExplained: "The ratio of the solar panels' DC-rated size to the inverter's AC-rated size.",
+      BatteryStorageSelection: 'Battery Stroage Selection',
       ChangePvModel: 'Change PV Model',
       Orientation: 'Orientation',
       Portrait: 'Portrait',
@@ -1714,6 +1722,7 @@ export const i18n_en = {
       NoHeliostatForAnalysis: 'There is no heliostat for analysis.',
       NoSolarUpdraftTowerForAnalysis: 'There is no solar updraft tower for analysis.',
       NoBuildingForAnalysis: 'There is no building for analysis.',
+      NoBatteryStorageForAnalysis: 'There is no connected battery storage for analysis',
     },
 
     toolbar: {
@@ -1868,14 +1877,6 @@ export const i18n_en = {
       SitesFound: 'sites found',
       ModelsFoundOnThisSite: 'models found on this site',
       ShowModelsPublishedByThisAuthor: 'Show the models published by this author',
-    },
-
-    modelTree: {
-      SkylightWindow: 'Skylight Window',
-      RooftopSolarPanels: 'Rooftop Solar Panels',
-      WallMountedSolarPanels: 'Wall-Mounted Solar Panels',
-      GroundMountedSolarPanels: 'Ground-Mounted Solar Panels',
-      VertexCount: 'Vertex Count',
     },
   },
 };

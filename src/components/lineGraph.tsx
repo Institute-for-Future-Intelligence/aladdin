@@ -165,6 +165,14 @@ const LineGraph = ({
         case GraphDataType.YearlyBuildingEnergy:
           name = labels && labels[i] ? labels[i] : 'Energy' + (i + 1);
           break;
+        case GraphDataType.DailyBatteryStorageEnergy:
+        case GraphDataType.YearlyBatteryStorageEnergy:
+          if (lineCount === 1) {
+            name = 'Total';
+          } else {
+            name = labels && labels[i] ? labels[i] : 'Battery' + (i + 1);
+          }
+          break;
       }
       const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
       const symbol = createSymbol(SYMBOLS[i], symbolSize, dataSource.length, symbolCount, opacity);

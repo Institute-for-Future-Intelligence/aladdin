@@ -148,6 +148,7 @@ export class DefaultActionState implements ActionState {
   solarPanelFrameColor: string;
   solarPanelCx: number;
   solarPanelCy: number;
+  solarPanelBatteryStorageId: string | null;
 
   solarWaterHeaterColor: string;
   solarWaterHeaterRelativeAzimuth: number;
@@ -308,6 +309,7 @@ export class DefaultActionState implements ActionState {
     this.solarPanelFrameColor = '#ffffff';
     this.solarPanelCx = 0;
     this.solarPanelCy = 0;
+    this.solarPanelBatteryStorageId = null;
 
     this.solarWaterHeaterColor = 'grey';
     this.solarWaterHeaterRelativeAzimuth = 0;

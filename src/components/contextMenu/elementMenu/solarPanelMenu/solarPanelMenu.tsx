@@ -26,6 +26,7 @@ import SolarPanelPoleSpacingInput from './solarPanelPoleSpacingInput';
 import { createLabelSubmenu } from '../../labelSubmenuItems';
 import SolarPanelXInput from './solarPanelXInput';
 import SolarPanelYInput from './solarPanelYInput';
+import SolarPanelBatteryStorageSelection from './solarPanelBatteryStorageSelection';
 
 export const createSolarPanelMenu = (selectedElement: ElementModel) => {
   const items: MenuProps['items'] = [];
@@ -91,7 +92,7 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
         {
           key: 'solar-panel-center-x',
           label: (
-            <DialogItem Dialog={SolarPanelXInput}>
+            <DialogItem Dialog={SolarPanelXInput} noPadding>
               {i18n.t('solarCollectorMenu.RelativeXCoordinateOfCenter', lang)} ...
             </DialogItem>
           ),
@@ -99,7 +100,7 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
         {
           key: 'solar-panel-center-y',
           label: (
-            <DialogItem Dialog={SolarPanelYInput}>
+            <DialogItem Dialog={SolarPanelYInput} noPadding>
               {i18n.t('solarCollectorMenu.RelativeYCoordinateOfCenter', lang)} ...
             </DialogItem>
           ),
@@ -164,7 +165,7 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
         {
           key: 'solar-panel-inverter-efficiency',
           label: (
-            <DialogItem Dialog={SolarPanelInverterEfficiencyInput}>
+            <DialogItem Dialog={SolarPanelInverterEfficiencyInput} noPadding>
               {i18n.t('solarPanelMenu.InverterEfficiency', lang)} ...
             </DialogItem>
           ),
@@ -172,8 +173,16 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
         {
           key: 'solar-panel-dc-ac-ratio',
           label: (
-            <DialogItem Dialog={SolarPanelDcToAcRatioInput}>
+            <DialogItem Dialog={SolarPanelDcToAcRatioInput} noPadding>
               {i18n.t('solarPanelMenu.DcToAcSizeRatio', lang)} ...
+            </DialogItem>
+          ),
+        },
+        {
+          key: 'solar-panel-battery-storage-selection',
+          label: (
+            <DialogItem Dialog={SolarPanelBatteryStorageSelection} noPadding>
+              {i18n.t('solarPanelMenu.BatteryStorageSelection', lang)} ...
             </DialogItem>
           ),
         },

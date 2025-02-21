@@ -125,7 +125,7 @@ export class ElementModelFactory {
         foundationId = parent.parentId;
         break;
     }
-    return {
+    const sp = {
       type: ObjectType.SolarPanel,
       pvModelName: pvModel.name,
       trackerType: TrackerType.NO_TRACKER,
@@ -153,6 +153,10 @@ export class ElementModelFactory {
       id: short.generate() as string,
       version: 1,
     } as SolarPanelModel;
+    if (useStore.getState().actionState.solarPanelBatteryStorageId) {
+      sp.batteryStorageId = useStore.getState().actionState.solarPanelBatteryStorageId;
+    }
+    return sp;
   }
 
   static makeSolarWaterHeater(

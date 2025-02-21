@@ -79,6 +79,8 @@ export class DefaultViewState implements ViewState {
   showYearlyUpdraftTowerYieldPanel: boolean;
   showDailyBuildingEnergyPanel: boolean;
   showYearlyBuildingEnergyPanel: boolean;
+  showDailyBatteryStorageEnergyPanel: boolean;
+  showYearlyBatteryStorageEnergyPanel: boolean;
   showEvolutionPanel: boolean;
   autoRotate: boolean;
 
@@ -108,6 +110,8 @@ export class DefaultViewState implements ViewState {
   yearlyUpdraftTowerYieldPanelRect: Rectangle;
   dailyBuildingEnergyPanelRect: Rectangle;
   yearlyBuildingEnergyPanelRect: Rectangle;
+  dailyBatteryStorageEnergyPanelRect: Rectangle;
+  yearlyBatteryStorageEnergyPanelRect: Rectangle;
   evolutionPanelRect: Rectangle;
 
   mapZoom: number;
@@ -176,6 +180,8 @@ export class DefaultViewState implements ViewState {
     this.showYearlyUpdraftTowerYieldPanel = false;
     this.showDailyBuildingEnergyPanel = false;
     this.showYearlyBuildingEnergyPanel = false;
+    this.showDailyBatteryStorageEnergyPanel = false;
+    this.showYearlyBatteryStorageEnergyPanel = false;
     this.showEvolutionPanel = false;
     this.autoRotate = false;
 
@@ -205,6 +211,8 @@ export class DefaultViewState implements ViewState {
     this.yearlyUpdraftTowerYieldPanelRect = new Rectangle(0, 0, 600, 400);
     this.dailyBuildingEnergyPanelRect = new Rectangle(0, 0, 600, 400);
     this.yearlyBuildingEnergyPanelRect = new Rectangle(0, 0, 600, 400);
+    this.dailyBatteryStorageEnergyPanelRect = new Rectangle(0, 0, 600, 400);
+    this.yearlyBatteryStorageEnergyPanelRect = new Rectangle(0, 0, 600, 400);
     this.evolutionPanelRect = new Rectangle(0, 0, 640, 400);
 
     this.mapZoom = 18;
@@ -273,6 +281,8 @@ export class DefaultViewState implements ViewState {
     viewState.showYearlyUpdraftTowerYieldPanel = false;
     viewState.showDailyBuildingEnergyPanel = false;
     viewState.showYearlyBuildingEnergyPanel = false;
+    viewState.showDailyBatteryStorageEnergyPanel = false;
+    viewState.showYearlyBatteryStorageEnergyPanel = false;
     viewState.showEvolutionPanel = false;
     viewState.autoRotate = false;
 
@@ -302,6 +312,8 @@ export class DefaultViewState implements ViewState {
     viewState.yearlyUpdraftTowerYieldPanelRect = new Rectangle(0, 0, 600, 400);
     viewState.dailyBuildingEnergyPanelRect = new Rectangle(0, 0, 600, 400);
     viewState.yearlyBuildingEnergyPanelRect = new Rectangle(0, 0, 600, 400);
+    viewState.dailyBatteryStorageEnergyPanelRect = new Rectangle(0, 0, 600, 400);
+    viewState.yearlyBatteryStorageEnergyPanelRect = new Rectangle(0, 0, 600, 400);
     viewState.evolutionPanelRect = new Rectangle(0, 0, 640, 400);
 
     viewState.mapZoom = 18;

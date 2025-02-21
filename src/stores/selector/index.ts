@@ -58,6 +58,12 @@ export const hourlySolarPanelOutputArrayMap = (state: DataStoreState) => state.h
 
 export const setHourlySolarPanelOutputArray = (state: DataStoreState) => state.setHourlySolarPanelOutputArray;
 
+export const hourlySingleSolarPanelOutputArrayMap = (state: DataStoreState) =>
+  state.hourlySingleSolarPanelOutputArrayMap;
+
+export const setHourlySingleSolarPanelOutputArray = (state: DataStoreState) =>
+  state.setHourlySingleSolarPanelOutputArray;
+
 export const getRoofSegmentVertices = (state: DataStoreState) => state.getRoofSegmentVertices;
 
 export const getRoofSegmentVerticesWithoutOverhang = (state: DataStoreState) =>
@@ -694,6 +700,12 @@ export const setTotalBuildingAc = (state: DataStoreState) => state.setTotalBuild
 export const setTotalBuildingSolarPanel = (state: DataStoreState) => state.setTotalBuildingSolarPanel;
 
 export const updateElementOnRoofFlag = (state: CommonStoreState) => state.updateElementOnRoofFlag;
+
+export const dailyBatteryStorageIndividualOutputs = (state: CommonStoreState) =>
+  state.graphState?.dailyBatteryStorageIndividualOutputs;
+
+export const yearlyBatteryStorageIndividualOutputs = (state: CommonStoreState) =>
+  state.graphState?.yearlyBatteryStorageIndividualOutputs;
 
 // parabolic troughs (CSP)
 

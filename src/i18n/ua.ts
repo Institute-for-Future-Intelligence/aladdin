@@ -874,6 +874,13 @@ export const i18n_ua = {
       AllBatteryStorages: 'All Battery Storages',
     },
 
+    batteryStoragePanel: {
+      StoredEnergy: 'Stored Energy',
+      DailyStoredEnergy: 'Battery Storage Daily Stored Energy',
+      YearlyStoredEnergy: 'Battery Storage Yearly Stored Energy',
+      ShowResultsOfIndividualBatteryStorages: 'Show Results of Individual Battery Storages',
+    },
+
     cuboidMenu: {
       Texture01: 'Текстура 1',
       Texture02: 'Текстура 2',
@@ -1100,6 +1107,7 @@ export const i18n_ua = {
       InverterEfficiencyExplained: 'The efficiency for converting direct current (DC) to alternating current (AC).',
       DcToAcSizeRatio: 'DC-to-AC Size Ratio',
       DcToAcSizeRatioExplained: "The ratio of the solar panels' DC-rated size to the inverter's AC-rated size.",
+      BatteryStorageSelection: 'Battery Stroage Selection',
       ChangePvModel: 'Змінити модель',
       Orientation: 'Орієнтація',
       Portrait: 'Вертикальна',
@@ -1716,6 +1724,7 @@ export const i18n_ua = {
       NoHeliostatForAnalysis: 'Немає геліостата для аналізу.',
       NoSolarUpdraftTowerForAnalysis: 'Немає сонячної вежі для аналізу.',
       NoBuildingForAnalysis: 'Немає будівлі для аналізу.',
+      NoBatteryStorageForAnalysis: 'There is no connected battery storage for analysis',
     },
 
     toolbar: {

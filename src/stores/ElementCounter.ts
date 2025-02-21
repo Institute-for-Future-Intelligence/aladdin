@@ -22,6 +22,8 @@ export class ElementCounter {
   outsideLightCount: number = 0;
   solarPanelCount: number = 0;
   lockedSolarPanelCount: number = 0;
+  batteryStorageCount: number = 0;
+  lockedBatteryStroageCount: number = 0;
   solarPanelModuleCount: number = 0;
   parabolicDishCount: number = 0;
   parabolicTroughCount: number = 0;
@@ -53,7 +55,8 @@ export class ElementCounter {
       this.fresnelReflectorCount > 0 ||
       this.heliostatCount > 0 ||
       this.solarUpdraftTowerCount > 0 ||
-      this.windTurbineCount > 0
+      this.windTurbineCount > 0 ||
+      this.batteryStorageCount > 0
     );
   }
 }

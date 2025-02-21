@@ -863,6 +863,21 @@ export const i18n_es = {
       SolarUpdraftTowerTurbineEfficiency: 'Solar Updraft Tower Turbine Efficiency',
     },
 
+    batteryStorageMenu: {
+      BatteryStorage: 'Battery Storage',
+      OnlyThisBatteryStorage: 'Only This Battery Storage',
+      AllBatteryStoragesAboveSameBase: 'All Battery Storages Above Same Base',
+      AllSelectedBatteryStorages: 'All Selected Battery Storages',
+      AllBatteryStorages: 'All Battery Storages',
+    },
+
+    batteryStoragePanel: {
+      StoredEnergy: 'Stored Energy',
+      DailyStoredEnergy: 'Battery Storage Daily Stored Energy',
+      YearlyStoredEnergy: 'Battery Storage Yearly Stored Energy',
+      ShowResultsOfIndividualBatteryStorages: 'Show Results of Individual Battery Storages',
+    },
+
     cuboidMenu: {
       Texture01: 'Textura 1',
       Texture02: 'Textura 2',
@@ -1081,6 +1096,7 @@ export const i18n_es = {
       InverterEfficiencyExplained: 'The efficiency for converting direct current (DC) to alternating current (AC).',
       DcToAcSizeRatio: 'DC-to-AC Size Ratio',
       DcToAcSizeRatioExplained: "The ratio of the solar panels' DC-rated size to the inverter's AC-rated size.",
+      BatteryStorageSelection: 'Battery Stroage Selection',
       ChangePvModel: 'Cambiar modelo PV',
       Orientation: 'Orientación',
       Portrait: 'Vertical',
@@ -1705,6 +1721,7 @@ export const i18n_es = {
       NoHeliostatForAnalysis: 'There is no heliostat for analysis.',
       NoSolarUpdraftTowerForAnalysis: 'There is no solar updraft tower for analysis.',
       NoBuildingForAnalysis: 'There is no building for analysis.',
+      NoBatteryStorageForAnalysis: 'There is no connected battery storage for analysis',
     },
 
     toolbar: {

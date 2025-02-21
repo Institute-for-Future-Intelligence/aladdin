@@ -9,9 +9,10 @@ import { FoundationModel } from '../models/FoundationModel';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { WeatherModel } from '../models/WeatherModel';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
+import { SolarPanelModel } from 'src/models/SolarPanelModel';
 
 export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarPanels: boolean) => {
   const elements = useStore.getState().elements;
@@ -21,12 +22,28 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
   const hourlyHeatExchangeArrayMap = useDataStore(Selector.hourlyHeatExchangeArrayMap);
   const hourlySolarHeatGainArrayMap = useDataStore(Selector.hourlySolarHeatGainArrayMap);
   const hourlySolarPanelOutputArrayMap = useDataStore(Selector.hourlySolarPanelOutputArrayMap);
+  const hourlySingleSolarPanelOutputArrayMap = useDataStore(Selector.hourlySingleSolarPanelOutputArrayMap);
 
   const sum: DatumEntry[] = [];
   const dataLabels: string[] = [];
   const sumHeaterMapRef = useRef<Map<string, number>>(new Map<string, number>());
   const sumAcMapRef = useRef<Map<string, number>>(new Map<string, number>());
   const sumSolarPanelMapRef = useRef<Map<string, number>>(new Map<string, number>());
+
+  const [batteryStorageData, setBatteryStorageData] = useState<DatumEntry[] | null>(null);
+
+  const getBatteryIdToLabelMap = () => {
+    const map = new Map<string, string>();
+    let idx = 1;
+    for (const e of elements) {
+      if (e.type === ObjectType.BatteryStorage) {
+        const label = idx + '-' + (e.label ? e.label : e.id.slice(0, 4));
+        map.set(e.id, label);
+        idx++;
+      }
+    }
+    return map;
+  };
 
   useEffect(() => {
     if (!weather) return;
@@ -39,6 +56,10 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
     sumHeaterMapRef.current.clear();
     sumAcMapRef.current.clear();
     sumSolarPanelMapRef.current.clear();
+
+    const batteryStorageDataMap = new Map<string, number[]>(); // batteryId -> energyStored[];
+    const batteryIdToLabelMap = getBatteryIdToLabelMap();
+
     for (let i = 0; i < 24; i++) {
       const datum: DatumEntry = {};
       const energy = new Map<string, EnergyUsage>();
@@ -111,6 +132,10 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
         }
       }
       if (energy.size > 1) {
+        const hvacEnergySavingPercentMap = new Map<string, number>(); // hvacId -> percent;
+        const fIdToHvacIdMap = new Map<string, string>(); // fId -> hvacId
+        const hvacIdSet = new Set<string>();
+
         let index = 1;
         for (const key of energy.keys()) {
           datum['Hour'] = i;
@@ -127,6 +152,8 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
                 const coolingSetpoint = Util.getCoolingSetpoint(now, f.hvacSystem);
                 const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
                 const id = f.hvacSystem?.id ?? (value.label && value.label !== '' ? value.label : index.toString());
+                fIdToHvacIdMap.set(f.id, id);
+                hvacIdSet.add(id);
                 if (id === index.toString()) index++;
                 let adjustedHeat = Math.abs(
                   adjustEnergyUsage(outsideTemperatureRange, value.heater, heatingSetpoint, threshold),
@@ -183,6 +210,43 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
             }
           }
         }
+
+        hvacEnergySavingPercentMap.clear();
+        for (const id of hvacIdSet.keys()) {
+          if (datum['Solar ' + id] !== undefined && Number(datum[`Net ${id}`]) < 0) {
+            const percent = Number(datum[`Net ${id}`]) / Number(datum[`Solar ${id}`]);
+            hvacEnergySavingPercentMap.set(id, percent);
+          } else {
+            hvacEnergySavingPercentMap.set(id, 0);
+          }
+        }
+        for (const e of elements) {
+          if (e.type === ObjectType.SolarPanel) {
+            const batteryStorageId = (e as SolarPanelModel).batteryStorageId;
+            // has connected battery
+            if (e.foundationId && batteryStorageId) {
+              if (!batteryStorageDataMap.has(batteryStorageId)) {
+                batteryStorageDataMap.set(batteryStorageId, new Array(24).fill(0));
+              }
+              const energyOutputArray = hourlySingleSolarPanelOutputArrayMap.get(e.id);
+              if (energyOutputArray) {
+                const batteryStorageData = batteryStorageDataMap.get(batteryStorageId);
+                if (batteryStorageData) {
+                  const hvacId = fIdToHvacIdMap.get(e.foundationId);
+                  if (hvacId) {
+                    const energyPercent = hvacEnergySavingPercentMap.get(hvacId);
+                    if (energyPercent) {
+                      const savedEnergy = energyPercent * energyOutputArray[i];
+                      batteryStorageData[i] += savedEnergy;
+                    }
+                  } else {
+                    batteryStorageData[i] += energyOutputArray[i];
+                  }
+                }
+              }
+            }
+          }
+        }
       } else {
         for (const key of energy.keys()) {
           datum['Hour'] = i;
@@ -234,9 +298,57 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
             }
           }
         }
+
+        const savedPercent =
+          Number(datum['Net']) < 0 && datum['Solar'] ? Number(datum['Net']) / Number(datum['Solar']) : 0;
+
+        const foundationStatusMap = new Map<string, boolean>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Foundation) {
+            const status =
+              Util.getBuildingCompletionStatus(e as FoundationModel, elements) !== BuildingCompletionStatus.COMPLETE;
+            foundationStatusMap.set(e.id, status);
+          }
+        }
+        for (const e of elements) {
+          const batteryStorageId = (e as SolarPanelModel).batteryStorageId;
+          if (e.foundationId && batteryStorageId) {
+            const energyOutputArray = hourlySingleSolarPanelOutputArrayMap.get(e.id);
+            if (energyOutputArray) {
+              if (!batteryStorageDataMap.has(batteryStorageId)) {
+                batteryStorageDataMap.set(batteryStorageId, new Array(24).fill(0));
+              }
+              const batteryStorageData = batteryStorageDataMap.get(batteryStorageId);
+              if (batteryStorageData) {
+                if (foundationStatusMap.get(e.foundationId)) {
+                  batteryStorageData[i] += energyOutputArray[i];
+                } else {
+                  const savedEnergy = savedPercent * energyOutputArray[i];
+                  batteryStorageData[i] += savedEnergy;
+                }
+              }
+            }
+          }
+        }
       }
       sum.push(datum);
     }
+
+    if (batteryStorageDataMap.size > 0) {
+      const batteryStorageDataArray: DatumEntry[] = new Array(24).fill({});
+      for (let i = 0; i < batteryStorageDataArray.length; i++) {
+        for (const [id, hourlyArray] of batteryStorageDataMap.entries()) {
+          const label = batteryIdToLabelMap.get(id);
+          if (label) {
+            const data = batteryStorageDataArray[i];
+            batteryStorageDataArray[i] = { ...data, [label]: hourlyArray[i], Hour: i };
+            dataLabels.push(label);
+          }
+        }
+      }
+      setBatteryStorageData(batteryStorageDataArray);
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flagOfDailySimulation, weather]);
 
@@ -246,5 +358,6 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
     sumAcMap: sumAcMapRef.current,
     sumSolarPanelMap: sumSolarPanelMapRef.current,
     dataLabels,
+    batteryStorageData,
   };
 };

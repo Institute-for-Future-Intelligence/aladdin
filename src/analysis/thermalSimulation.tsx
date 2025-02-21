@@ -72,6 +72,7 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
   const setHourlyHeatExchangeArray = useDataStore(Selector.setHourlyHeatExchangeArray);
   const setHourlySolarHeatGainArray = useDataStore(Selector.setHourlySolarHeatGainArray);
   const setHourlySolarPanelOutputArray = useDataStore(Selector.setHourlySolarPanelOutputArray);
+  const setHourlySingleSolarPanelOutputArray = useDataStore(Selector.setHourlySingleSolarPanelOutputArray);
   const loggable = useStore(Selector.loggable);
   const runDailySimulation = usePrimitiveStore(Selector.runDailyThermalSimulation);
   const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailyThermalSimulation);
@@ -96,6 +97,7 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
   const hourlyHeatExchangeArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const hourlySolarHeatGainArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const hourlySolarPanelOutputArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
+  const hourlySingleSolarPanelOutputArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
   const sunDirectionRef = useRef<Vector3>();
@@ -218,6 +220,15 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
     a[now.getHours()] += output;
   };
 
+  const updateSingleSolarPanelOutputNow = (id: string, output: number) => {
+    let a = hourlySingleSolarPanelOutputArrayMapRef.current.get(id);
+    if (!a) {
+      a = new Array(24).fill(0);
+      hourlySingleSolarPanelOutputArrayMapRef.current.set(id, a);
+    }
+    a[now.getHours()] = output;
+  };
+
   const resetHourlyMaps = () => {
     for (const e of elements) {
       if (Util.onBuildingEnvelope(e)) {
@@ -309,7 +320,7 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
     resetSolarHeatMaps();
   };
 
-  const finishDaily = () => {
+  const finishDaily = (isBatterySimulation?: boolean) => {
     // store the results in the common store for other components to use
     for (const e of elements) {
       // heat exchanges through individual elements on a building envelope
@@ -358,10 +369,16 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
           setHourlySolarPanelOutputArray(e.id, [...arr]);
         }
       }
+      if (e.type === ObjectType.SolarPanel) {
+        const singlePaneloutputArray = hourlySingleSolarPanelOutputArrayMapRef.current.get(e.id);
+        if (singlePaneloutputArray) {
+          setHourlySingleSolarPanelOutputArray(e.id, [...singlePaneloutputArray]);
+        }
+      }
     }
     usePrimitiveStore.getState().set((state) => {
       state.flagOfDailySimulation = !state.flagOfDailySimulation;
-      if (!state.runYearlyThermalSimulation) {
+      if (!state.runYearlyThermalSimulation && !isBatterySimulation) {
         state.showSolarRadiationHeatmap = true;
         state.showHeatFluxes = true;
       }
@@ -394,21 +411,28 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
       const totalMinutes =
         now.getMinutes() + now.getHours() * 60 + (Util.dayOfYear(now) - dayRef.current) * MINUTES_OF_DAY;
       if (totalMinutes + minuteInterval > MINUTES_OF_DAY) {
+        const isBatterySimulation = usePrimitiveStore.getState().runDailySimulationForBatteryStorages;
         computeNow();
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
           state.world.date = originalDateRef.current.toLocaleString('en-US');
-          state.viewState.showDailyBuildingEnergyPanel = true;
-          state.selectedFloatingWindow = 'dailyBuildingEnergyPanel';
+          if (isBatterySimulation) {
+            state.viewState.showDailyBatteryStorageEnergyPanel = true;
+            state.selectedFloatingWindow = 'dailyBatteryStoragePanel';
+          } else {
+            state.viewState.showDailyBuildingEnergyPanel = true;
+            state.selectedFloatingWindow = 'dailyBuildingEnergyPanel';
+          }
         });
         usePrimitiveStore.getState().set((state) => {
           state.runDailyThermalSimulation = false;
+          state.runDailySimulationForBatteryStorages = false;
           state.simulationPaused = false;
           state.simulationInProgress = false;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
         simulationCompletedRef.current = true;
-        finishDaily();
+        finishDaily(isBatterySimulation);
         return;
       }
       // this forces the scene to be re-rendered
@@ -502,8 +526,13 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
       now.setHours(0, minuteInterval / 2);
       // set the initial date so that the scene gets a chance to render before the simulation starts
       setCommonStore((state) => {
-        state.viewState.showYearlyBuildingEnergyPanel = true;
-        state.selectedFloatingWindow = 'yearlyBuildingEnergyPanel';
+        if (usePrimitiveStore.getState().runYearlySimulationForBatteryStorages) {
+          state.viewState.showYearlyBatteryStorageEnergyPanel = true;
+          state.selectedFloatingWindow = 'yearlyBatteryStoragePanel';
+        } else {
+          state.viewState.showYearlyBuildingEnergyPanel = true;
+          state.selectedFloatingWindow = 'yearlyBuildingEnergyPanel';
+        }
         state.world.date = now.toLocaleString('en-US');
       });
     }
@@ -536,6 +565,7 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
             });
           }, 10);
           usePrimitiveStore.getState().set((state) => {
+            state.runYearlySimulationForBatteryStorages = false;
             state.runYearlyThermalSimulation = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;
@@ -661,7 +691,9 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
             getPanelEfficiency(currentOutsideTemperatureRef.current, pvModel) *
             getTimeFactor() *
             getElementFactor(panel);
-          updateSolarPanelOutputNow(foundation.id, results.average * factor);
+          const output = results.average * factor;
+          updateSolarPanelOutputNow(foundation.id, output);
+          updateSingleSolarPanelOutputNow(panel.id, output);
           // sum up the solar radiation intensity for generating the solar heatmap
           if (runDailySimulation) {
             for (let i = 0; i < results.heatmap.length; i++) {

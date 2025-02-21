@@ -25,6 +25,7 @@ import { SensorSimulationSamplingFrequencyInput } from './sensorSimulationSampli
 import { SolarPanelVisibilityGridCellSizeInput } from './solarPanelVisibilityGridCellSizeInput';
 import { EnergyGridCellSizeInput } from './energyGridCellSizeInput';
 import { sutSimulationSettings } from './sutSimulationSettings';
+import { SolarPanelModel } from 'src/models/SolarPanelModel';
 
 export const createAnalysisMenu = (elementCounter: ElementCounter) => {
   const lang = { lng: useStore.getState().language };
@@ -246,6 +247,74 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
           state.actionInfo = { name: 'Analyze Yearly Building Energy', timestamp: new Date().getTime() };
         });
       }
+    }, 100);
+  };
+
+  const atLeastOneConnectedBatteryStorage = () => {
+    const idSet = new Set<string>();
+    for (const e of useStore.getState().elements) {
+      if (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).batteryStorageId) {
+        idSet.add((e as SolarPanelModel).batteryStorageId!);
+      }
+      if (e.type === ObjectType.BatteryStorage && idSet.has(e.id)) {
+        return true;
+      }
+    }
+    for (const e of useStore.getState().elements) {
+      if (e.type === ObjectType.BatteryStorage && idSet.has(e.id)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const analyzeBatteryStorageDailyYield = () => {
+    if (!atLeastOneConnectedBatteryStorage()) {
+      showInfo(i18n.t('analysisManager.NoBatteryStorageForAnalysis', lang));
+      return;
+    }
+    showInfo(i18n.t('message.SimulationStarted', lang));
+    // give it 0.1 second for the info to show up
+    setTimeout(() => {
+      setCommonStore((state) => {
+        if (state.graphState) state.graphState.dailyBatteryStorageIndividualOutputs = false;
+        if (loggable) {
+          state.actionInfo = {
+            name: 'Run Daily Simulation For Battery Storage',
+            timestamp: new Date().getTime(),
+          };
+        }
+      });
+      usePrimitiveStore.getState().set((state) => {
+        state.simulationInProgress = true;
+        state.runDailySimulationForBatteryStorages = true;
+        state.runDailyThermalSimulation = true;
+      });
+    }, 100);
+  };
+
+  const analyzeBatteryStorageYearlyYield = () => {
+    if (!atLeastOneConnectedBatteryStorage()) {
+      showInfo(i18n.t('analysisManager.NoBatteryStorageForAnalysis', lang));
+      return;
+    }
+    showInfo(i18n.t('message.SimulationStarted', lang));
+    // give it 0.1 second for the info to show up
+    setTimeout(() => {
+      setCommonStore((state) => {
+        if (state.graphState) state.graphState.yearlyBatteryStorageIndividualOutputs = false;
+        if (loggable) {
+          state.actionInfo = {
+            name: 'Run Yearly Simulation For Battery Storage',
+            timestamp: new Date().getTime(),
+          };
+        }
+      });
+      usePrimitiveStore.getState().set((state) => {
+        state.simulationInProgress = true;
+        state.runYearlySimulationForBatteryStorages = true;
+        state.runYearlyThermalSimulation = true;
+      });
     }, 100);
   };
 
@@ -730,6 +799,37 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
           key: 'building-energy-analysis-options-submenu',
           label: <MenuItem noPadding>{i18n.t('menu.building.EnergyAnalysisOptions', lang)}</MenuItem>,
           children: buildingEnergySimulationSettingsSubmenu(),
+        },
+      ],
+    });
+  }
+
+  // === battery-storage-submenu ===
+  if (elementCounter.batteryStorageCount > 0 && atLeastOneConnectedBatteryStorage()) {
+    items.push({
+      key: 'battery-storage-submenu',
+      label: <MenuItem noPadding>{i18n.t('batteryStorageMenu.BatteryStorage', lang)}</MenuItem>,
+      children: [
+        {
+          key: 'daily-yield',
+          label: (
+            <MenuItem noPadding onClick={analyzeBatteryStorageDailyYield}>
+              {i18n.t('menu.solarPanel.AnalyzeDailyYield', lang)}
+            </MenuItem>
+          ),
+        },
+        {
+          key: 'yearly-yield',
+          label: (
+            <MenuItem noPadding onClick={analyzeBatteryStorageYearlyYield}>
+              {i18n.t('menu.solarPanel.AnalyzeYearlyYield', lang)}
+            </MenuItem>
+          ),
+        },
+        {
+          key: 'analysis-options-submenu',
+          label: <MenuItem noPadding>{i18n.t('menu.building.EnergyAnalysisOptions', lang)}</MenuItem>,
+          children: buildingEnergySimulationSettingsSubmenu('battery-storage'),
         },
       ],
     });

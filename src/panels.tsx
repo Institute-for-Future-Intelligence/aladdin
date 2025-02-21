@@ -39,6 +39,8 @@ import { GraphDataType } from './types';
 import NavigationPanel from './panels/navigationPanel';
 import ShadowSettingsPanel from './panels/shadowSettingsPanel';
 import SolarPanelCustomizationPanel from './panels/solarPanelCustomizationPanel';
+import DailyBatteryStoragePanel from './panels/dailyBatteryStoragePanel';
+import YearlyBatteryStoragePanel from './panels/yearlyBatteryStoragePanel';
 
 const Panels = React.memo(() => {
   const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
@@ -71,6 +73,8 @@ const Panels = React.memo(() => {
   const showYearlyUpdraftTowerYieldPanel = useStore(Selector.viewState.showYearlyUpdraftTowerYieldPanel);
   const showDailyBuildingEnergyPanel = useStore(Selector.viewState.showDailyBuildingEnergyPanel);
   const showYearlyBuildingEnergyPanel = useStore(Selector.viewState.showYearlyBuildingEnergyPanel);
+  const showDailyBatteryStorageEnergyPanel = useStore(Selector.viewState.showDailyBatteryStorageEnergyPanel);
+  const showYearlyBatteryStorageEnergyPanel = useStore(Selector.viewState.showYearlyBatteryStorageEnergyPanel);
   const showEvolutionPanel = useStore(Selector.viewState.showEvolutionPanel);
   const projectView = useStore(Selector.projectView);
   const worldLatitude = useStore(Selector.world.latitude);
@@ -155,6 +159,8 @@ const Panels = React.memo(() => {
       {showYearlyUpdraftTowerYieldPanel && <YearlySolarUpdraftTowerYieldPanel city={city} />}
       {showDailyBuildingEnergyPanel && <DailyBuildingEnergyPanel city={city} />}
       {showYearlyBuildingEnergyPanel && <YearlyBuildingEnergyPanel city={city} />}
+      {showDailyBatteryStorageEnergyPanel && <DailyBatteryStoragePanel city={city} />}
+      {showYearlyBatteryStorageEnergyPanel && <YearlyBatteryStoragePanel city={city} />}
       {showSolarRadiationHeatmap && <VisualizationControlPanel />}
       {showEvolutionPanel && <SolarPanelOptimizationResult />}
     </>

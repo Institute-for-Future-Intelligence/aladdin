@@ -24,6 +24,10 @@ export const createBatteryStorageMenu = (selectedElement: ElementModel) => {
   const editable = !batteryStorage?.locked;
 
   items.push({
+    key: 'battery-storage-id',
+    label: <MenuItem stayAfterClick>ID: {selectedElement.id.slice(0, 4)}</MenuItem>,
+  });
+  items.push({
     key: 'battery-storage-copy',
     label: <Copy />,
   });

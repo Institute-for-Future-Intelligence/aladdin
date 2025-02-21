@@ -263,6 +263,8 @@ export enum GraphDataType {
   DailyUpdraftTowerYield = 19,
   YearlyBuildingEnergy = 20,
   DailyBuildingEnergy = 21,
+  YearlyBatteryStorageEnergy = 22,
+  DailyBatteryStorageEnergy = 23,
 }
 
 export enum Theme {

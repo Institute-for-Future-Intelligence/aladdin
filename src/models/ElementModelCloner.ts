@@ -396,6 +396,7 @@ export class ElementModelCloner {
       poleHeight: solarPanel.poleHeight,
       poleSpacing: solarPanel.poleSpacing,
       showLabel: solarPanel.showLabel,
+      batteryStorageId: solarPanel.batteryStorageId,
       normal: normal,
       rotation: rotation,
       parentType: parentType,

@@ -20,4 +20,7 @@ export interface GraphState {
 
   dailyUpdraftTowerIndividualOutputs: boolean;
   yearlyUpdraftTowerIndividualOutputs: boolean;
+
+  dailyBatteryStorageIndividualOutputs: boolean;
+  yearlyBatteryStorageIndividualOutputs: boolean;
 }

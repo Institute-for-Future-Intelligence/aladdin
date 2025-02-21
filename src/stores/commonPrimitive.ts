@@ -113,6 +113,9 @@ export interface PrimitiveStoreState {
   pauseDailySimulationForHeliostats: boolean;
   pauseYearlySimulationForHeliostats: boolean;
 
+  runDailySimulationForBatteryStorages: boolean;
+  runYearlySimulationForBatteryStorages: boolean;
+
   runSolarPanelVisibilityAnalysis: boolean;
   runDailySimulationForSolarPanels: boolean;
   pauseDailySimulationForSolarPanels: boolean;
@@ -292,6 +295,9 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
     runDynamicSimulation: false,
     runStaticSimulation: false,
     pauseSimulation: false,
+
+    runDailySimulationForBatteryStorages: false,
+    runYearlySimulationForBatteryStorages: false,
 
     runDailySimulationForParabolicDishes: false,
     runYearlySimulationForParabolicDishes: false,

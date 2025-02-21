@@ -855,6 +855,13 @@ export const i18n_zh_tw = {
       AllBatteryStorages: '所有蓄電池',
     },
 
+    batteryStoragePanel: {
+      StoredEnergy: '已儲存的能量',
+      DailyStoredEnergy: '蓄電池每日儲存能量',
+      YearlyStoredEnergy: '蓄電池每年儲存能量',
+      ShowResultsOfIndividualBatteryStorages: '顯示每個蓄電池的結果',
+    },
+
     cuboidMenu: {
       Texture01: '一號材質',
       Texture02: '二號材質',
@@ -1074,6 +1081,7 @@ export const i18n_zh_tw = {
       InverterEfficiencyExplained: '直流電轉換為交流電的效率。',
       DcToAcSizeRatio: '直流-交流容量比例',
       DcToAcSizeRatioExplained: '直流電容量和交流電容量的比例。',
+      BatteryStorageSelection: '蓄電池選擇',
       ChangePvModel: '改變光伏板型號',
       Orientation: '排列方向',
       Portrait: '縱向',
@@ -1688,6 +1696,7 @@ export const i18n_zh_tw = {
       NoHeliostatForAnalysis: '沒有定日鏡可以分析。',
       NoSolarUpdraftTowerForAnalysis: '沒有太陽能上升氣流塔可以分析。',
       NoBuildingForAnalysis: '沒有建築物可以分析。',
+      NoBatteryStorageForAnalysis: '沒有已連接的蓄電池可以分析',
     },
 
     toolbar: {

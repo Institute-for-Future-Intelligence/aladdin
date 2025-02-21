@@ -97,6 +97,9 @@ export interface DataStoreState {
   hourlySolarPanelOutputArrayMap: Map<string, number[]>;
   setHourlySolarPanelOutputArray: (id: string, data: number[]) => void;
 
+  hourlySingleSolarPanelOutputArrayMap: Map<string, number[]>;
+  setHourlySingleSolarPanelOutputArray: (id: string, data: number[]) => void;
+
   // for logger: store the calculated total heater, AC, and solar panel results of building energy analysis
   totalBuildingHeater: number;
   setTotalBuildingHeater: (heater: number) => void;
@@ -486,6 +489,14 @@ export const useDataStore = createWithEqualityFn<DataStoreState>()((set, get) =>
       });
     },
 
+    hourlySingleSolarPanelOutputArrayMap: new Map<string, number[]>(),
+    setHourlySingleSolarPanelOutputArray(id, data) {
+      set((state) => {
+        state.hourlySingleSolarPanelOutputArrayMap.set(id, data);
+        return state;
+      });
+    },
+
     totalBuildingHeater: 0,
     setTotalBuildingHeater: (heater: number) => {
       set({ totalBuildingHeater: heater });
@@ -518,6 +529,7 @@ export const useDataStore = createWithEqualityFn<DataStoreState>()((set, get) =>
         hourlySolarHeatGainArrayMap: new Map<string, number[]>(),
         hourlySolarPanelOutputArrayMap: new Map<string, number[]>(),
         solarPanelVisibilityResults: new Map<Vantage, Map<string, number>>(),
+        hourlySingleSolarPanelOutputArrayMap: new Map<string, number[]>(),
 
         // create a new empty array in the following
         // do not just set the length to zero as it will not trigger re-rendering

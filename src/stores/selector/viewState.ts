@@ -113,6 +113,12 @@ export const dailyBuildingEnergyPanelRect = (state: CommonStoreState) => state.v
 
 export const showYearlyBuildingEnergyPanel = (state: CommonStoreState) => state.viewState.showYearlyBuildingEnergyPanel;
 
+export const showDailyBatteryStorageEnergyPanel = (state: CommonStoreState) =>
+  state.viewState.showDailyBatteryStorageEnergyPanel;
+
+export const showYearlyBatteryStorageEnergyPanel = (state: CommonStoreState) =>
+  state.viewState.showYearlyBatteryStorageEnergyPanel;
+
 export const yearlyBuildingEnergyPanelRect = (state: CommonStoreState) => state.viewState.yearlyBuildingEnergyPanelRect;
 
 export const showDailyLightSensorPanel = (state: CommonStoreState) => state.viewState.showDailyLightSensorPanel;
@@ -134,6 +140,12 @@ export const showDailyPvYieldPanel = (state: CommonStoreState) => state.viewStat
 export const dailyPvYieldPanelRect = (state: CommonStoreState) => state.viewState.dailyPvYieldPanelRect;
 
 export const showYearlyPvYieldPanel = (state: CommonStoreState) => state.viewState.showYearlyPvYieldPanel;
+
+export const dailyBatteryStorageEnergyPanelRect = (state: CommonStoreState) =>
+  state.viewState.dailyBatteryStorageEnergyPanelRect;
+
+export const yearlyBatteryStorageEnergyPanelRect = (state: CommonStoreState) =>
+  state.viewState.yearlyBatteryStorageEnergyPanelRect;
 
 export const yearlyPvYieldPanelRect = (state: CommonStoreState) => state.viewState.yearlyPvYieldPanelRect;
 

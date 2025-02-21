@@ -130,6 +130,7 @@ export interface ActionState {
   solarPanelFrameColor: string;
   solarPanelCx: number;
   solarPanelCy: number;
+  solarPanelBatteryStorageId: string | null;
 
   solarWaterHeaterColor: string;
   solarWaterHeaterRelativeAzimuth: number;

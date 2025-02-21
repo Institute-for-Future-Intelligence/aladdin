@@ -3338,6 +3338,10 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   }
                   break;
                 }
+                case ObjectType.BatteryStorage: {
+                  counter.batteryStorageCount++;
+                  break;
+                }
                 case ObjectType.SolarPanel: {
                   counter.solarPanelCount++;
                   const sp = e as SolarPanelModel;
@@ -3440,6 +3444,10 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       counter.outsideLightCount++;
                     }
                     if (e.locked) counter.lockedLightCount++;
+                    break;
+                  }
+                  case ObjectType.BatteryStorage: {
+                    counter.batteryStorageCount++;
                     break;
                   }
                   case ObjectType.SolarPanel: {

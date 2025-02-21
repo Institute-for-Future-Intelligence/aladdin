@@ -872,6 +872,13 @@ export const i18n_tr = {
       AllBatteryStorages: 'All Battery Storages',
     },
 
+    batteryStoragePanel: {
+      StoredEnergy: 'Stored Energy',
+      DailyStoredEnergy: 'Battery Storage Daily Stored Energy',
+      YearlyStoredEnergy: 'Battery Storage Yearly Stored Energy',
+      ShowResultsOfIndividualBatteryStorages: 'Show Results of Individual Battery Storages',
+    },
+
     cuboidMenu: {
       Texture01: 'Doku 1',
       Texture02: 'Doku 2',
@@ -1090,6 +1097,7 @@ export const i18n_tr = {
       InverterEfficiencyExplained: 'The efficiency for converting direct current (DC) to alternating current (AC).',
       DcToAcSizeRatio: 'DC-to-AC Size Ratio',
       DcToAcSizeRatioExplained: "The ratio of the solar panels' DC-rated size to the inverter's AC-rated size.",
+      BatteryStorageSelection: 'Battery Stroage Selection',
       ChangePvModel: 'PV Modelini Değiştir',
       Orientation: 'Oryantasyon',
       Portrait: 'Portre',
@@ -1715,6 +1723,7 @@ export const i18n_tr = {
       NoHeliostatForAnalysis: 'Analiz için heliostat yok.',
       NoSolarUpdraftTowerForAnalysis: 'Analiz için Solar Updraft Kulesi yok.',
       NoBuildingForAnalysis: 'There is no building for analysis.',
+      NoBatteryStorageForAnalysis: 'There is no connected battery storage for analysis',
     },
 
     toolbar: {
