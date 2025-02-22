@@ -868,6 +868,7 @@ export const i18n_ua = {
 
     batteryStorageMenu: {
       BatteryStorage: 'Battery Storage',
+      HvacIdSelection: 'Select HVAC System ID',
       OnlyThisBatteryStorage: 'Only This Battery Storage',
       AllBatteryStoragesAboveSameFoundation: 'All Battery Storages Above the Same Foundation',
       AllSelectedBatteryStorages: 'All Selected Battery Storages',

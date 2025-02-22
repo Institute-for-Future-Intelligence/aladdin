@@ -4,4 +4,7 @@
 
 import { ElementModel } from './ElementModel';
 
-export interface BatteryStorageModel extends ElementModel {}
+export interface BatteryStorageModel extends ElementModel {
+  connectedHvacIds?: string[];
+  batteryId?: string;
+}

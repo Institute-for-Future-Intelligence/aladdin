@@ -848,6 +848,7 @@ export const i18n_zh_cn = {
 
     batteryStorageMenu: {
       BatteryStorage: '蓄电池',
+      HvacIdSelection: '选择暖通空调系统ID',
       OnlyThisBatteryStorage: '只这个蓄电池',
       AllBatteryStoragesAboveSameFoundation: '同一地基上的蓄电池',
       AllSelectedBatteryStorages: '所有选中的蓄电池',

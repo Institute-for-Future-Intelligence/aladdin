@@ -11,6 +11,7 @@ import BatteryStorageHeightInput from './batteryStorageHeightInput';
 import BatteryStorageWidthInput from './batteryStorageWidthInput';
 import BatteryStorageLengthInput from './batteryStorageLengthInput';
 import BatteryStorageColorSelection from './batteryStorageColorSelection';
+import BatteryStorageHvacIdSelection from './batteryStorageHvacIdSelection';
 
 export const createBatteryStorageMenu = (selectedElement: ElementModel) => {
   const items: MenuProps['items'] = [];
@@ -68,6 +69,15 @@ export const createBatteryStorageMenu = (selectedElement: ElementModel) => {
     items.push({
       key: 'battery-storage-azimuth',
       label: <DialogItem Dialog={BatteryStorageAzimuthInput}>{i18n.t('word.Azimuth', lang)} ...</DialogItem>,
+    });
+
+    items.push({
+      key: 'battery-storage-hvacId-selection',
+      label: (
+        <DialogItem Dialog={BatteryStorageHvacIdSelection}>
+          {i18n.t('batteryStorageMenu.HvacIdSelection', lang)} ...
+        </DialogItem>
+      ),
     });
 
     items.push({

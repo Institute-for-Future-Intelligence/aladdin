@@ -697,7 +697,7 @@ export class ElementModelCloner {
   }
 
   private static cloneBatteryStorage(parentId: string, batteryStorage: BatteryStorageModel, x: number, y: number) {
-    return {
+    const b = {
       type: ObjectType.BatteryStorage,
       cx: x,
       cy: y,
@@ -711,6 +711,10 @@ export class ElementModelCloner {
       foundationId: parentId,
       id: short.generate() as string,
     } as BatteryStorageModel;
+    if (batteryStorage.connectedHvacIds && batteryStorage.connectedHvacIds.length > 0) {
+      b.connectedHvacIds = [...batteryStorage.connectedHvacIds];
+    }
+    return b;
   }
 
   private static cloneWall(parent: ElementModel, wall: WallModel, x: number, y: number, z?: number) {
