@@ -866,7 +866,7 @@ export const i18n_es = {
     batteryStorageMenu: {
       BatteryStorage: 'Battery Storage',
       OnlyThisBatteryStorage: 'Only This Battery Storage',
-      AllBatteryStoragesAboveSameBase: 'All Battery Storages Above Same Base',
+      AllBatteryStoragesAboveSameFoundation: 'All Battery Storages Above the Same Foundation',
       AllSelectedBatteryStorages: 'All Selected Battery Storages',
       AllBatteryStorages: 'All Battery Storages',
     },

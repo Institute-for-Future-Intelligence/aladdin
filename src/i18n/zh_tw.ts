@@ -850,7 +850,7 @@ export const i18n_zh_tw = {
     batteryStorageMenu: {
       BatteryStorage: '蓄電池',
       OnlyThisBatteryStorage: '只這個蓄電池',
-      AllBatteryStoragesAboveSameBase: '同一地基上的蓄電池',
+      AllBatteryStoragesAboveSameFoundation: '同一地基上的蓄電池',
       AllSelectedBatteryStorages: '所有選中的蓄電池',
       AllBatteryStorages: '所有蓄電池',
     },

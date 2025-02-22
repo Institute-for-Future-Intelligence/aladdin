@@ -215,9 +215,9 @@ const BatteryStorageColorSelection = ({ setDialogVisible }: { setDialogVisible: 
   };
 
   return (
-    <Dialog width={650} title={i18n.t('word.Color', lang)} onApply={apply} onClose={close}>
+    <Dialog width={680} title={i18n.t('word.Color', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
-        <Col span={12}>
+        <Col span={10}>
           <CompactPicker
             color={selectedColor}
             onChangeComplete={(colorResult) => {
@@ -227,7 +227,7 @@ const BatteryStorageColorSelection = ({ setDialogVisible }: { setDialogVisible: 
         </Col>
         <Col
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-          span={12}
+          span={14}
         >
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
@@ -235,7 +235,7 @@ const BatteryStorageColorSelection = ({ setDialogVisible }: { setDialogVisible: 
                 {i18n.t('batteryStorageMenu.OnlyThisBatteryStorage', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                {i18n.t('batteryStorageMenu.AllBatteryStoragesAboveSameBase', lang)}
+                {i18n.t('batteryStorageMenu.AllBatteryStoragesAboveSameFoundation', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
                 {i18n.t('batteryStorageMenu.AllSelectedBatteryStorages', lang)}

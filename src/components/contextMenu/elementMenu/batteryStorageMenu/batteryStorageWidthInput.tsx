@@ -260,7 +260,7 @@ const BatteryStorageWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: 
                 {i18n.t('batteryStorageMenu.OnlyThisBatteryStorage', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                {i18n.t('batteryStorageMenu.AllBatteryStoragesAboveSameBase', lang)}
+                {i18n.t('batteryStorageMenu.AllBatteryStoragesAboveSameFoundation', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
                 {i18n.t('batteryStorageMenu.AllSelectedBatteryStorages', lang)}
