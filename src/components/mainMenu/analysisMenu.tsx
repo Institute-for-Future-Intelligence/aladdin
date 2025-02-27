@@ -277,7 +277,7 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
     // give it 0.1 second for the info to show up
     setTimeout(() => {
       setCommonStore((state) => {
-        if (state.graphState) state.graphState.dailyBatteryStorageIndividualOutputs = false;
+        if (state.graphState) state.graphState.dailyBatteryStorageIndividualOutputs = true;
         if (loggable) {
           state.actionInfo = {
             name: 'Run Daily Simulation For Battery Storage',
@@ -302,7 +302,7 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
     // give it 0.1 second for the info to show up
     setTimeout(() => {
       setCommonStore((state) => {
-        if (state.graphState) state.graphState.yearlyBatteryStorageIndividualOutputs = false;
+        if (state.graphState) state.graphState.yearlyBatteryStorageIndividualOutputs = true;
         if (loggable) {
           state.actionInfo = {
             name: 'Run Yearly Simulation For Battery Storage',
