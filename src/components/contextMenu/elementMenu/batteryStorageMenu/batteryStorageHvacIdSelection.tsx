@@ -28,16 +28,18 @@ const BatteryStorageHvacIdSelection = ({ setDialogVisible }: { setDialogVisible:
 
   const battery = useSelectedElement() as BatteryStorageModel | undefined;
 
+  const hvacIdsetRef = useRef(new Set<string>());
+
   const options = useMemo(() => {
     const arr: { value: string; label: string }[] = [];
-    const set = new Set<string>();
+    hvacIdsetRef.current.clear();
     for (const e of useStore.getState().elements) {
       if (e.type === ObjectType.Foundation) {
         const f = e as FoundationModel;
-        if (f.hvacSystem && f.hvacSystem.id && !set.has(f.hvacSystem.id)) {
+        if (f.hvacSystem && f.hvacSystem.id && !hvacIdsetRef.current.has(f.hvacSystem.id)) {
           const id = f.hvacSystem.id;
           arr.push({ value: id, label: id });
-          set.add(id);
+          hvacIdsetRef.current.add(id);
         }
       }
     }
@@ -46,8 +48,8 @@ const BatteryStorageHvacIdSelection = ({ setDialogVisible }: { setDialogVisible:
 
   const initSelections = () => {
     const arr: string[] = [];
-    if (!battery) return arr;
-    return battery.connectedHvacIds ?? arr;
+    if (!battery || !battery.connectedHvacIds) return arr;
+    return battery.connectedHvacIds.filter((id) => hvacIdsetRef.current.has(id));
   };
 
   const selectinosRef = useRef(initSelections());
