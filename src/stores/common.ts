@@ -2900,6 +2900,11 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                 state.selectedElementIdSet.clear();
                 state.selectedElementIdSet.add(model.id);
                 state.selectedElement = model;
+                if (state.viewState.showModelTree) {
+                  usePrimitiveStore.getState().set((s) => {
+                    if (model) s.modelTreeExpandedKeys = [model.id];
+                  });
+                }
               }
             });
             return model;
