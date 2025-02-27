@@ -856,11 +856,12 @@ export const i18n_zh_cn = {
     },
 
     batteryStoragePanel: {
-      InputPower: 'Input Power',
-      ChargeDischargeCurve: 'Battery Storage Daily Charge-Discharge Curve',
-      YearlyStoredEnergy: '蓄电池每年储存能量',
+      InputPower: '输入能量',
+      DailyChargeDischargeCurve: '蓄电池日充放电曲线',
+      YearlyChargeDischargeCurve: '蓄电池年充放电曲线',
       ShowResultsOfIndividualBatteryStorages: '显示每个蓄电池的结果',
-      DailyRemaining: 'Daily Remaining',
+      DailyRemaining: '每日剩余',
+      YearlyRemaining: '每年剩余',
     },
 
     cuboidMenu: {

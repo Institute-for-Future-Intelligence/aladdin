@@ -100,19 +100,24 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
   const weather = useWeather(city);
   const lang = useLanguage();
   const { t } = useTranslation();
-  const { batteryStorageData } = useDailyEnergySorter(now, weather, hasSolarPanels);
+  const { batteryStorageData } = useDailyEnergySorter(now, weather, hasSolarPanels, true);
 
   const yearlyBatteryStorageDataRef = useRef<DatumEntry[]>([]);
+
+  const startRef = useRef(false);
+  const countRef = useRef(0);
 
   useEffect(() => {
     if (runYearlySimulation) {
       setGraphDataSource(null);
       yearlyBatteryStorageDataRef.current = [];
+      countRef.current = 0;
+      startRef.current = true;
     }
   }, [runYearlySimulation, clearYearlySimulationResultsFlag]);
 
   useEffect(() => {
-    if (!batteryStorageData) return;
+    if (!batteryStorageData || !startRef.current) return;
 
     const monthlyDataSource: DatumEntry = { Month: MONTHS_ABBV[now.getMonth()] };
     Object.keys(batteryStorageData[0]).forEach((key) => {
@@ -132,7 +137,12 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
       setGraphDataSource(getTotalFromIndividual(yearlyBatteryStorageDataRef.current));
     }
     setGraphLabels(getLabels(monthlyDataSource));
-  }, [batteryStorageData]);
+
+    countRef.current++;
+    if (countRef.current === (useStore.getState().world.daysPerYear ?? 6)) {
+      startRef.current = false;
+    }
+  }, [batteryStorageData, individualOutputs]);
 
   const getTotalFromIndividual = (data: DatumEntry[]) => {
     const res: DatumEntry[] = [];
@@ -300,7 +310,7 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
   const nodeRef = React.useRef(null);
   const labelX = t('word.Month', lang);
-  const labelY = t('batteryStoragePanel.StoredEnergy', lang);
+  const labelY = t('batteryStoragePanel.InputPower', lang);
   const emptyGraph = !graphDataSource;
 
   const batteryCountInGraph = getBatteryCountInGraph(batteryStorageData);
@@ -334,7 +344,7 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
         >
           <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {t('batteryStoragePanel.YearlyStoredEnergy', lang) + ': '}
+              {t('batteryStoragePanel.YearlyChargeDischargeCurve', lang) + ': '}
               <span style={{ fontSize: '10px' }}>
                 {t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + moment(now).format('MM/DD')}
               </span>
@@ -395,7 +405,7 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
                   <>
                     {yearlyTotal > 0 && (
                       <Space style={{ cursor: 'default' }}>
-                        {`${t('solarPanelYieldPanel.YearlyTotal', lang)}: ${yearlyTotal.toFixed(3)} ${t(
+                        {`${t('batteryStoragePanel.YearlyRemaining', lang)}: ${yearlyTotal.toFixed(3)} ${t(
                           'word.kWh',
                           lang,
                         )}`}
@@ -405,7 +415,7 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
                 )}
 
                 {/* individual output switch */}
-                {batteryCountInGraph > 1 && (
+                {batteryCountInGraph > 1 && graphDataSource && (
                   <Switch
                     title={t('batteryStoragePanel.ShowResultsOfIndividualBatteryStorages', lang)}
                     checkedChildren={<UnorderedListOutlined />}
