@@ -30,12 +30,14 @@ const BatteryStorageHvacIdSelection = ({ setDialogVisible }: { setDialogVisible:
 
   const options = useMemo(() => {
     const arr: { value: string; label: string }[] = [];
+    const set = new Set<string>();
     for (const e of useStore.getState().elements) {
       if (e.type === ObjectType.Foundation) {
         const f = e as FoundationModel;
-        if (f.hvacSystem && f.hvacSystem.id) {
+        if (f.hvacSystem && f.hvacSystem.id && !set.has(f.hvacSystem.id)) {
           const id = f.hvacSystem.id;
           arr.push({ value: id, label: id });
+          set.add(id);
         }
       }
     }
@@ -58,7 +60,7 @@ const BatteryStorageHvacIdSelection = ({ setDialogVisible }: { setDialogVisible:
         if (e.type === ObjectType.BatteryStorage && e.id === id && !e.locked) {
           const b = e as BatteryStorageModel;
           if (selections) {
-            b.connectedHvacIds = selections;
+            b.connectedHvacIds = [...selections];
           } else {
             delete b.connectedHvacIds;
           }
@@ -109,9 +111,11 @@ const BatteryStorageHvacIdSelection = ({ setDialogVisible }: { setDialogVisible:
     }
     if (str1.length !== str2.length) return true;
     const set1 = new Set(str1);
-    str2.forEach((str) => {
-      if (!set1.has(str)) return true;
-    });
+    for (const str of str2) {
+      if (!set1.has(str)) {
+        return true;
+      }
+    }
     return false;
   };
 
@@ -163,9 +167,9 @@ const BatteryStorageHvacIdSelection = ({ setDialogVisible }: { setDialogVisible:
   };
 
   const setSelections = () => {
-    const selections = selectinosRef.current;
     if (!battery) return;
     if (!needChange()) return;
+    const selections = selectinosRef.current;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
         const oldSelections = new Map<string, string[] | undefined>();

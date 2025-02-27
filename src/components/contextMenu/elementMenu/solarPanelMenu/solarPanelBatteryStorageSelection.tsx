@@ -15,6 +15,7 @@ import { Util } from '../../../../Util';
 import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
+import { BatteryStorageModel } from 'src/models/BatteryStorageModel';
 
 const SolarPanelBatteryStorageSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -35,7 +36,7 @@ const SolarPanelBatteryStorageSelection = ({ setDialogVisible }: { setDialogVisi
     let idx = 1;
     for (const e of useStore.getState().elements) {
       if (e.type === ObjectType.BatteryStorage) {
-        const label = idx + ' - ' + (e.label ? e.label : e.id.slice(0, 4));
+        const label = idx + ' - ' + ((e as BatteryStorageModel).editableId ?? e.id.slice(0, 4));
         idx++;
         options.push({ value: e.id, label: label });
       }

@@ -27,6 +27,9 @@ export class DefaultGraphState implements GraphState {
   dailyUpdraftTowerIndividualOutputs: boolean;
   yearlyUpdraftTowerIndividualOutputs: boolean;
 
+  dailyBatteryStorageIndividualOutputs: boolean;
+  yearlyBatteryStorageIndividualOutputs: boolean;
+
   constructor() {
     this.dailyPvIndividualOutputs = false;
     this.yearlyPvIndividualOutputs = false;
@@ -45,5 +48,8 @@ export class DefaultGraphState implements GraphState {
 
     this.dailyUpdraftTowerIndividualOutputs = false;
     this.yearlyUpdraftTowerIndividualOutputs = false;
+
+    this.dailyBatteryStorageIndividualOutputs = false;
+    this.yearlyBatteryStorageIndividualOutputs = false;
   }
 }

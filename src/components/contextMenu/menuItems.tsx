@@ -2,8 +2,8 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
-import { Checkbox, Slider } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Checkbox, Input, Slider } from 'antd';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
 import i18n from '../../i18n/i18n';
@@ -22,6 +22,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { GroupableModel, isGroupable } from 'src/models/Groupable';
 import { LightModel } from 'src/models/LightModel';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
+import { BatteryStorageModel } from 'src/models/BatteryStorageModel';
 
 interface MenuItemProps {
   noPadding?: boolean;
@@ -66,6 +67,10 @@ interface SliderMenuItemProps {
   value: number;
   onChange: (val: number) => void;
   children?: React.ReactNode;
+}
+
+interface EditAbleIdProps {
+  element: BatteryStorageModel;
 }
 
 export const Paste = () => {
@@ -436,6 +441,42 @@ export const SliderMenuItem = ({ min, max, value, onChange, children }: SliderMe
     <MenuItem stayAfterClick noPadding>
       {children}
       <Slider min={min} max={max} tooltip={{ open: false }} defaultValue={value} onChange={onChange} />
+    </MenuItem>
+  );
+};
+
+export const EditableId = ({ element }: EditAbleIdProps) => {
+  const [id, setId] = useState(element.editableId ?? element.id.slice(0, 4));
+
+  const setEditableId = (str: string) => {
+    const trimed = str.trim();
+    const id = trimed.length > 0 ? trimed : element.id.slice(0, 4);
+
+    setId(id);
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.id === element.id && e.type === ObjectType.BatteryStorage) {
+          (e as BatteryStorageModel).editableId = id;
+          break;
+        }
+      }
+    });
+  };
+
+  useEffect(() => {
+    setId(element.editableId ?? element.id.slice(0, 4));
+  }, [element]);
+
+  return (
+    <MenuItem stayAfterClick>
+      ID:
+      <Input
+        value={id}
+        onChange={(e) => setId(e.target.value)}
+        onBlur={() => setEditableId(id)}
+        onPressEnter={() => setEditableId(id)}
+        style={{ width: '150px' }}
+      />
     </MenuItem>
   );
 };

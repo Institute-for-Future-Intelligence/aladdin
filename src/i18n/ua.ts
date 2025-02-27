@@ -876,10 +876,11 @@ export const i18n_ua = {
     },
 
     batteryStoragePanel: {
-      StoredEnergy: 'Stored Energy',
-      DailyStoredEnergy: 'Battery Storage Daily Stored Energy',
+      InputPower: 'Input Power',
+      ChargeDischargeCurve: 'Battery Storage Daily Charge-Discharge Curve',
       YearlyStoredEnergy: 'Battery Storage Yearly Stored Energy',
       ShowResultsOfIndividualBatteryStorages: 'Show Results of Individual Battery Storages',
+      DailyRemaining: 'Daily Remaining',
     },
 
     cuboidMenu: {

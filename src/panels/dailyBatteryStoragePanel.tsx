@@ -98,7 +98,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
   const weather = useWeather(city);
   const lang = useLanguage();
   const { t } = useTranslation();
-  const { batteryStorageData } = useDailyEnergySorter(now, weather, hasSolarPanels);
+  const { batteryStorageData, batteryRemainingEnergyMap } = useDailyEnergySorter(now, weather, hasSolarPanels, true);
 
   useEffect(() => {
     if (!batteryStorageData) return;
@@ -122,31 +122,19 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
     }
   }, [batteryStorageData, individualOutputs]);
 
-  const getTotalBreakdownArray = (data: DatumEntry[] | null) => {
-    const arr: { key: string; total: number }[] = [];
-    if (!data) return arr;
-    Object.keys(data[0]).forEach((key) => {
-      if (key !== 'Hour') {
-        let total = 0;
-        for (let i = 0; i < 24; i++) {
-          total += Number(data[i][key]);
-        }
-        arr.push({ key, total });
-      }
+  const getRemainingBreakdownArray = () => {
+    const arr: { key: string; value: number }[] = [];
+    batteryRemainingEnergyMap.forEach((value, key) => {
+      arr.push({ key: key.slice(0, 4), value });
     });
     return arr;
   };
 
-  const getDailyTotal = (data: DatumEntry[] | null) => {
-    if (!data) return 0;
+  const getDailyRemaining = () => {
     let total = 0;
-    for (let i = 0; i < 24; i++) {
-      Object.keys(data[i]).forEach((key) => {
-        if (key !== 'Hour') {
-          total += Number(data[i][key]);
-        }
-      });
-    }
+    batteryRemainingEnergyMap.forEach((value) => {
+      total += value;
+    });
     return total;
   };
 
@@ -264,11 +252,11 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
   const nodeRef = React.useRef(null);
   const labelX = t('word.Hour', lang);
-  const labelY = t('batteryStoragePanel.StoredEnergy', lang);
+  const labelY = t('batteryStoragePanel.InputPower', lang);
   const emptyGraph = !graphDataSource;
 
   const batteryCountInGraph = getBatteryCountInGraph(batteryStorageData);
-  const dailyTotal = getDailyTotal(batteryStorageData);
+  const DailyRemaining = getDailyRemaining();
 
   return (
     <ReactDraggable
@@ -298,7 +286,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
         >
           <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {t('batteryStoragePanel.DailyStoredEnergy', lang) + ': '}
+              {t('batteryStoragePanel.DailyChargeDischargeCurve', lang) + ': '}
               <span style={{ fontSize: '10px' }}>
                 {t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + moment(now).format('MM/DD')}
               </span>
@@ -331,19 +319,19 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
                   <>
                     <Popover
                       title={t('shared.OutputBreakdown', lang)}
-                      content={getTotalBreakdownArray(batteryStorageData).map(({ key, total }, i, arr) => (
+                      content={getRemainingBreakdownArray().map(({ key, value }, i, arr) => (
                         <React.Fragment key={i}>
                           <Row style={{ textAlign: 'right' }}>
                             <Col span={16} style={{ textAlign: 'right', paddingRight: '8px' }}>
                               {key + ': '}
                             </Col>
-                            <Col span={8}>{total.toFixed(3)}</Col>
+                            <Col span={8}>{value.toFixed(3)}</Col>
                           </Row>
                           {i === arr.length - 1 && (
                             <>
                               <hr></hr>
                               <div style={{ textAlign: 'right' }}>
-                                {t('word.Total', lang) + ': ' + dailyTotal.toFixed(3) + ' ' + t('word.kWh', lang)}
+                                {t('word.Total', lang) + ': ' + DailyRemaining.toFixed(3) + ' ' + t('word.kWh', lang)}
                               </div>
                             </>
                           )}
@@ -357,9 +345,9 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
                   </>
                 ) : (
                   <>
-                    {dailyTotal > 0 && (
+                    {DailyRemaining > 0 && (
                       <Space style={{ cursor: 'default' }}>
-                        {`${t('solarPanelYieldPanel.DailyTotal', lang)}: ${dailyTotal.toFixed(3)} ${t(
+                        {`${t('batteryStoragePanel.DailyRemaining', lang)}: ${DailyRemaining.toFixed(3)} ${t(
                           'word.kWh',
                           lang,
                         )}`}
@@ -462,8 +450,3 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
 };
 
 export default DailyBatteryStoragePanel;
-
-/**
- * - yearly
- * - delete bs should change connected sp
- */

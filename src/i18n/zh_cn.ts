@@ -856,10 +856,11 @@ export const i18n_zh_cn = {
     },
 
     batteryStoragePanel: {
-      StoredEnergy: '已储存的能量',
-      DailyStoredEnergy: '蓄电池每日储存能量',
+      InputPower: 'Input Power',
+      ChargeDischargeCurve: 'Battery Storage Daily Charge-Discharge Curve',
       YearlyStoredEnergy: '蓄电池每年储存能量',
       ShowResultsOfIndividualBatteryStorages: '显示每个蓄电池的结果',
+      DailyRemaining: 'Daily Remaining',
     },
 
     cuboidMenu: {

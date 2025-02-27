@@ -3,7 +3,7 @@ import { BatteryStorageModel } from 'src/models/BatteryStorageModel';
 import { ElementModel } from 'src/models/ElementModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { Copy, Cut, DialogItem, Lock, MenuItem } from '../../menuItems';
+import { Copy, Cut, DialogItem, EditableId, Lock, MenuItem } from '../../menuItems';
 import { createLabelSubmenu } from '../../labelSubmenuItems';
 import i18n from 'src/i18n/i18n';
 import BatteryStorageAzimuthInput from './batteryStorageAzimuthInput';
@@ -26,8 +26,9 @@ export const createBatteryStorageMenu = (selectedElement: ElementModel) => {
 
   items.push({
     key: 'battery-storage-id',
-    label: <MenuItem stayAfterClick>ID: {selectedElement.id.slice(0, 4)}</MenuItem>,
+    label: <EditableId element={batteryStorage} />,
   });
+
   items.push({
     key: 'battery-storage-copy',
     label: <Copy />,
