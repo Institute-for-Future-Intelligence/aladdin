@@ -1,5 +1,5 @@
 /*
- * @Copyright 2025. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import * as Selector from '../stores/selector';
@@ -98,7 +98,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
   const weather = useWeather(city);
   const lang = useLanguage();
   const { t } = useTranslation();
-  const { batteryStorageData, batterySurplusEnergyMap } = useDailyEnergySorter(now, weather, hasSolarPanels, true);
+  const { batteryStorageData, batteryRemainingEnergyMap } = useDailyEnergySorter(now, weather, hasSolarPanels, true);
 
   const getBatteryCountInGraph = (data: DatumEntry[] | null) => {
     if (!data) return 0;
@@ -136,17 +136,17 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
     }
   }, [batteryStorageData, isIndividual]);
 
-  const getSurplusBreakdownArray = () => {
+  const getRemainingBreakdownArray = () => {
     const arr: { key: string; value: number }[] = [];
-    batterySurplusEnergyMap.forEach((value, key) => {
+    batteryRemainingEnergyMap.forEach((value, key) => {
       arr.push({ key: key.slice(0, 4), value });
     });
     return arr;
   };
 
-  const getDailySurplus = () => {
+  const getDailyRemaining = () => {
     let total = 0;
-    batterySurplusEnergyMap.forEach((value) => {
+    batteryRemainingEnergyMap.forEach((value) => {
       total += value;
     });
     return total;
@@ -255,10 +255,10 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
   const nodeRef = React.useRef(null);
   const labelX = t('word.Hour', lang);
-  const labelY = t('word.Energy', lang);
+  const labelY = t('batteryStoragePanel.InputPower', lang);
   const emptyGraph = !graphDataSource;
 
-  const dailySurplus = getDailySurplus();
+  const DailyRemaining = getDailyRemaining();
 
   return (
     <ReactDraggable
@@ -321,7 +321,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
                   <>
                     <Popover
                       title={t('shared.OutputBreakdown', lang)}
-                      content={getSurplusBreakdownArray().map(({ key, value }, i, arr) => (
+                      content={getRemainingBreakdownArray().map(({ key, value }, i, arr) => (
                         <React.Fragment key={i}>
                           <Row style={{ textAlign: 'right' }}>
                             <Col span={16} style={{ textAlign: 'right', paddingRight: '8px' }}>
@@ -333,7 +333,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
                             <>
                               <hr></hr>
                               <div style={{ textAlign: 'right' }}>
-                                {t('word.Total', lang) + ': ' + dailySurplus.toFixed(3) + ' ' + t('word.kWh', lang)}
+                                {t('word.Total', lang) + ': ' + DailyRemaining.toFixed(3) + ' ' + t('word.kWh', lang)}
                               </div>
                             </>
                           )}
@@ -347,9 +347,9 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
                   </>
                 ) : (
                   <>
-                    {dailySurplus > 0 && (
+                    {DailyRemaining > 0 && (
                       <Space style={{ cursor: 'default' }}>
-                        {`${t('batteryStoragePanel.DailySurplus', lang)}: ${dailySurplus.toFixed(3)} ${t(
+                        {`${t('batteryStoragePanel.DailyRemaining', lang)}: ${DailyRemaining.toFixed(3)} ${t(
                           'word.kWh',
                           lang,
                         )}`}
