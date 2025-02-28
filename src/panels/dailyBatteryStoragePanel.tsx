@@ -100,9 +100,23 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
   const { t } = useTranslation();
   const { batteryStorageData, batteryRemainingEnergyMap } = useDailyEnergySorter(now, weather, hasSolarPanels, true);
 
+  const getBatteryCountInGraph = (data: DatumEntry[] | null) => {
+    if (!data) return 0;
+    let count = 0;
+    Object.keys(data[0]).forEach((key) => {
+      if (key !== 'Hour') {
+        count++;
+      }
+    });
+    return count;
+  };
+
+  const batteryCountInGraph = getBatteryCountInGraph(batteryStorageData);
+  const isIndividual = individualOutputs && batteryCountInGraph > 1;
+
   useEffect(() => {
     if (!batteryStorageData) return;
-    if (individualOutputs) {
+    if (isIndividual) {
       setGraphDataSource(batteryStorageData);
       setGraphLabels(getLabels(batteryStorageData));
     } else {
@@ -120,7 +134,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
       setGraphDataSource(dataSource);
       setGraphLabels(getLabels(dataSource));
     }
-  }, [batteryStorageData, individualOutputs]);
+  }, [batteryStorageData, isIndividual]);
 
   const getRemainingBreakdownArray = () => {
     const arr: { key: string; value: number }[] = [];
@@ -146,17 +160,6 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
       }
     });
     return labels;
-  };
-
-  const getBatteryCountInGraph = (data: DatumEntry[] | null) => {
-    if (!data) return 0;
-    let count = 0;
-    Object.keys(data[0]).forEach((key) => {
-      if (key !== 'Hour') {
-        count++;
-      }
-    });
-    return count;
   };
 
   const getConnectedBatteryCountInScene = () => {
@@ -255,7 +258,6 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
   const labelY = t('batteryStoragePanel.InputPower', lang);
   const emptyGraph = !graphDataSource;
 
-  const batteryCountInGraph = getBatteryCountInGraph(batteryStorageData);
   const DailyRemaining = getDailyRemaining();
 
   return (
@@ -297,7 +299,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
           </Header>
           <LineGraph
             type={GraphDataType.DailyBatteryStorageEnergy}
-            chartType={individualOutputs ? ChartType.Line : ChartType.Area}
+            chartType={isIndividual ? ChartType.Line : ChartType.Area}
             dataSource={graphDataSource ?? []}
             labels={graphLabels}
             height={100}
@@ -315,7 +317,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
             <>
               <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
                 {/* daily total */}
-                {individualOutputs && graphDataSource ? (
+                {isIndividual && graphDataSource ? (
                   <>
                     <Popover
                       title={t('shared.OutputBreakdown', lang)}
@@ -362,7 +364,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
                     title={t('batteryStoragePanel.ShowResultsOfIndividualBatteryStorages', lang)}
                     checkedChildren={<UnorderedListOutlined />}
                     unCheckedChildren={<UnorderedListOutlined />}
-                    checked={individualOutputs}
+                    checked={isIndividual}
                     onChange={toggleIndividualOutputs}
                   />
                 )}

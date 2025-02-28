@@ -102,6 +102,20 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
   const { t } = useTranslation();
   const { batteryStorageData } = useDailyEnergySorter(now, weather, hasSolarPanels, true);
 
+  const getBatteryCountInGraph = (data: DatumEntry[] | null) => {
+    if (!data) return 0;
+    let count = 0;
+    Object.keys(data[0]).forEach((key) => {
+      if (key !== 'Hour') {
+        count++;
+      }
+    });
+    return count;
+  };
+
+  const batteryCountInGraph = getBatteryCountInGraph(batteryStorageData);
+  const isIndividual = individualOutputs && batteryCountInGraph > 1;
+
   const yearlyBatteryStorageDataRef = useRef<DatumEntry[]>([]);
 
   const startRef = useRef(false);
@@ -131,7 +145,7 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
     });
     yearlyBatteryStorageDataRef.current.push({ ...monthlyDataSource });
 
-    if (individualOutputs) {
+    if (isIndividual) {
       setGraphDataSource([...yearlyBatteryStorageDataRef.current]);
     } else {
       setGraphDataSource(getTotalFromIndividual(yearlyBatteryStorageDataRef.current));
@@ -142,7 +156,7 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
     if (countRef.current === (useStore.getState().world.daysPerYear ?? 6)) {
       startRef.current = false;
     }
-  }, [batteryStorageData, individualOutputs]);
+  }, [batteryStorageData, isIndividual]);
 
   const getTotalFromIndividual = (data: DatumEntry[]) => {
     const res: DatumEntry[] = [];
@@ -197,17 +211,6 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
       }
     });
     return labels;
-  };
-
-  const getBatteryCountInGraph = (data: DatumEntry[] | null) => {
-    if (!data) return 0;
-    let count = 0;
-    Object.keys(data[0]).forEach((key) => {
-      if (key !== 'Hour') {
-        count++;
-      }
-    });
-    return count;
   };
 
   const getConnectedBatteryCountInScene = () => {
@@ -313,7 +316,6 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
   const labelY = t('batteryStoragePanel.InputPower', lang);
   const emptyGraph = !graphDataSource;
 
-  const batteryCountInGraph = getBatteryCountInGraph(batteryStorageData);
   const yearlyTotal = getYearlyTotal();
 
   return (
@@ -355,7 +357,7 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
           </Header>
           <LineGraph
             type={GraphDataType.YearlyBatteryStorageEnergy}
-            chartType={individualOutputs ? ChartType.Line : ChartType.Area}
+            chartType={isIndividual ? ChartType.Line : ChartType.Area}
             dataSource={graphDataSource ?? []}
             labels={graphLabels}
             height={100}
@@ -373,7 +375,7 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
             <>
               <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
                 {/* yearly total */}
-                {individualOutputs && graphDataSource ? (
+                {isIndividual && graphDataSource ? (
                   <>
                     <Popover
                       title={t('shared.OutputBreakdown', lang)}
@@ -420,7 +422,7 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
                     title={t('batteryStoragePanel.ShowResultsOfIndividualBatteryStorages', lang)}
                     checkedChildren={<UnorderedListOutlined />}
                     unCheckedChildren={<UnorderedListOutlined />}
-                    checked={individualOutputs}
+                    checked={isIndividual}
                     onChange={toggleIndividualOutputs}
                   />
                 )}
