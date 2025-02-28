@@ -144,6 +144,7 @@ export const i18n_ua = {
       Daylight: 'Денне світло',
       Radiation: 'Радіаційне Випромінювання',
       Temperature: 'Температура',
+      kW: 'кВт',
       kWh: 'кВт-год',
       dollar: 'долар',
       MeterPerSecond: 'м/с',
@@ -569,6 +570,7 @@ export const i18n_ua = {
       solarEnergyExamples: {
         SunBeamAndHeliodon: 'Промінь сонця та геліодон',
         RooftopSolarPanels: 'Сонячні панелі на даху',
+        HomeSolarEnergyStorage: 'Home Solar Energy Storage',
         NevadaSolarOneParabolicTroughArray: 'Масив параболічних сонячних колекторів Nevada Solar One',
         TooeleParabolicDishArray: 'Масив параболічних тарілок Tooele',
         PS10SolarPowerTower: 'Сонячна енергетична вежа PS10',
@@ -876,12 +878,11 @@ export const i18n_ua = {
     },
 
     batteryStoragePanel: {
-      InputPower: 'Input Power',
       DailyChargeDischargeCurve: 'Battery Storage Daily Charge-Discharge Curve',
       YearlyChargeDischargeCurve: 'Battery Storage Yearly Charge-Discharge Curve',
       ShowResultsOfIndividualBatteryStorages: 'Show Results of Individual Battery Storages',
-      DailyRemaining: 'Daily Remaining',
-      YearlyRemaining: 'Yearly Remaining',
+      DailySurplus: 'Daily Surplus',
+      YearlySurplus: 'Yearly Surplus',
     },
 
     cuboidMenu: {

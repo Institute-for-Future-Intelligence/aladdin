@@ -11,6 +11,7 @@ import custom_solar_panels from './examples/custom_solar_panels.json';
 import vertical_bifacial_solar_panels from './examples/vertical_bifacial_solar_panels.json';
 import compare_monofacial_bifacial_solar_panels from './examples/compare_monofacial_bifacial_solar_panels.json';
 import rooftop_solar_panels from './examples/rooftop_solar_panels.json';
+import home_solar_energy_storage from './examples/home_solar_energy_storage.json';
 import rainbow_swash_solar_farm from './examples/rainbow_swash_solar_farm.json';
 import mickey_mouse_solar_farm from './examples/mickey_mouse_solar_farm.json';
 import solar_farm_hsat_array from './examples/solar_farm_hsat_array.json';
@@ -277,6 +278,9 @@ export const getExample = (name: string) => {
       break;
     case 'rooftop_solar_panels':
       input = rooftop_solar_panels;
+      break;
+    case 'home_solar_energy_storage':
+      input = home_solar_energy_storage;
       break;
     case 'solar_panels_over_canal':
       input = solar_panels_over_canal;

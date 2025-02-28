@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2025. Institute for Future Intelligence, Inc.
  */
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import * as Selector from '../stores/selector';
@@ -98,11 +98,25 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
   const weather = useWeather(city);
   const lang = useLanguage();
   const { t } = useTranslation();
-  const { batteryStorageData, batteryRemainingEnergyMap } = useDailyEnergySorter(now, weather, hasSolarPanels, true);
+  const { batteryStorageData, batterySurplusEnergyMap } = useDailyEnergySorter(now, weather, hasSolarPanels, true);
+
+  const getBatteryCountInGraph = (data: DatumEntry[] | null) => {
+    if (!data) return 0;
+    let count = 0;
+    Object.keys(data[0]).forEach((key) => {
+      if (key !== 'Hour') {
+        count++;
+      }
+    });
+    return count;
+  };
+
+  const batteryCountInGraph = getBatteryCountInGraph(batteryStorageData);
+  const isIndividual = individualOutputs && batteryCountInGraph > 1;
 
   useEffect(() => {
     if (!batteryStorageData) return;
-    if (individualOutputs) {
+    if (isIndividual) {
       setGraphDataSource(batteryStorageData);
       setGraphLabels(getLabels(batteryStorageData));
     } else {
@@ -120,19 +134,19 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
       setGraphDataSource(dataSource);
       setGraphLabels(getLabels(dataSource));
     }
-  }, [batteryStorageData, individualOutputs]);
+  }, [batteryStorageData, isIndividual]);
 
-  const getRemainingBreakdownArray = () => {
+  const getSurplusBreakdownArray = () => {
     const arr: { key: string; value: number }[] = [];
-    batteryRemainingEnergyMap.forEach((value, key) => {
+    batterySurplusEnergyMap.forEach((value, key) => {
       arr.push({ key: key.slice(0, 4), value });
     });
     return arr;
   };
 
-  const getDailyRemaining = () => {
+  const getDailySurplus = () => {
     let total = 0;
-    batteryRemainingEnergyMap.forEach((value) => {
+    batterySurplusEnergyMap.forEach((value) => {
       total += value;
     });
     return total;
@@ -146,17 +160,6 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
       }
     });
     return labels;
-  };
-
-  const getBatteryCountInGraph = (data: DatumEntry[] | null) => {
-    if (!data) return 0;
-    let count = 0;
-    Object.keys(data[0]).forEach((key) => {
-      if (key !== 'Hour') {
-        count++;
-      }
-    });
-    return count;
   };
 
   const getConnectedBatteryCountInScene = () => {
@@ -252,11 +255,10 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
   const nodeRef = React.useRef(null);
   const labelX = t('word.Hour', lang);
-  const labelY = t('batteryStoragePanel.InputPower', lang);
+  const labelY = t('word.Energy', lang);
   const emptyGraph = !graphDataSource;
 
-  const batteryCountInGraph = getBatteryCountInGraph(batteryStorageData);
-  const DailyRemaining = getDailyRemaining();
+  const dailySurplus = getDailySurplus();
 
   return (
     <ReactDraggable
@@ -297,7 +299,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
           </Header>
           <LineGraph
             type={GraphDataType.DailyBatteryStorageEnergy}
-            chartType={individualOutputs ? ChartType.Line : ChartType.Area}
+            chartType={isIndividual ? ChartType.Line : ChartType.Area}
             dataSource={graphDataSource ?? []}
             labels={graphLabels}
             height={100}
@@ -315,11 +317,11 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
             <>
               <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
                 {/* daily total */}
-                {individualOutputs && graphDataSource ? (
+                {isIndividual && graphDataSource ? (
                   <>
                     <Popover
                       title={t('shared.OutputBreakdown', lang)}
-                      content={getRemainingBreakdownArray().map(({ key, value }, i, arr) => (
+                      content={getSurplusBreakdownArray().map(({ key, value }, i, arr) => (
                         <React.Fragment key={i}>
                           <Row style={{ textAlign: 'right' }}>
                             <Col span={16} style={{ textAlign: 'right', paddingRight: '8px' }}>
@@ -331,7 +333,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
                             <>
                               <hr></hr>
                               <div style={{ textAlign: 'right' }}>
-                                {t('word.Total', lang) + ': ' + DailyRemaining.toFixed(3) + ' ' + t('word.kWh', lang)}
+                                {t('word.Total', lang) + ': ' + dailySurplus.toFixed(3) + ' ' + t('word.kWh', lang)}
                               </div>
                             </>
                           )}
@@ -345,9 +347,9 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
                   </>
                 ) : (
                   <>
-                    {DailyRemaining > 0 && (
+                    {dailySurplus > 0 && (
                       <Space style={{ cursor: 'default' }}>
-                        {`${t('batteryStoragePanel.DailyRemaining', lang)}: ${DailyRemaining.toFixed(3)} ${t(
+                        {`${t('batteryStoragePanel.DailySurplus', lang)}: ${dailySurplus.toFixed(3)} ${t(
                           'word.kWh',
                           lang,
                         )}`}
@@ -362,7 +364,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
                     title={t('batteryStoragePanel.ShowResultsOfIndividualBatteryStorages', lang)}
                     checkedChildren={<UnorderedListOutlined />}
                     unCheckedChildren={<UnorderedListOutlined />}
-                    checked={individualOutputs}
+                    checked={isIndividual}
                     onChange={toggleIndividualOutputs}
                   />
                 )}

@@ -143,6 +143,7 @@ export const i18n_es = {
       Daylight: 'Luz solar',
       Radiation: 'Radiación',
       Temperature: 'Temperatura',
+      kW: 'kW',
       kWh: 'kWh',
       dollar: 'dollar',
       MeterPerSecond: 'm/s',
@@ -566,6 +567,7 @@ export const i18n_es = {
       solarEnergyExamples: {
         SunBeamAndHeliodon: 'Rayo de sol y heliodon',
         RooftopSolarPanels: 'Rooftop Solar Panels',
+        HomeSolarEnergyStorage: 'Home Solar Energy Storage',
         NevadaSolarOneParabolicTroughArray: 'Nevada Solar One Parabolic Trough Array',
         TooeleParabolicDishArray: 'Tooele Parabolic Dish Array',
         PS10SolarPowerTower: 'PS10 Solar Power Tower',
@@ -873,12 +875,11 @@ export const i18n_es = {
     },
 
     batteryStoragePanel: {
-      InputPower: 'Input Power',
       DailyChargeDischargeCurve: 'Battery Storage Daily Charge-Discharge Curve',
       YearlyChargeDischargeCurve: 'Battery Storage Yearly Charge-Discharge Curve',
       ShowResultsOfIndividualBatteryStorages: 'Show Results of Individual Battery Storages',
-      DailyRemaining: 'Daily Remaining',
-      YearlyRemaining: 'Yearly Remaining',
+      DailySurplus: 'Daily Surplus',
+      YearlySurplus: 'Yearly Surplus',
     },
 
     cuboidMenu: {

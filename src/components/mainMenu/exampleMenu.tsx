@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 import { MenuProps } from 'antd';
 import { MenuItem } from '../contextMenu/menuItems';

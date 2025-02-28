@@ -538,6 +538,6 @@ export const useDailyEnergySorter = (
     sumSolarPanelMap: sumSolarPanelMapRef.current,
     dataLabels,
     batteryStorageData,
-    batteryRemainingEnergyMap: batteryRemainingEnergyMapRef.current,
+    batterySurplusEnergyMap: batteryRemainingEnergyMapRef.current,
   };
 };

@@ -143,6 +143,7 @@ export const i18n_zh_tw = {
       Daylight: '白天長度',
       Radiation: '輻射',
       Temperature: '温度',
+      kW: '千瓦',
       kWh: '千瓦時',
       dollar: '元',
       MeterPerSecond: '米/秒',
@@ -563,6 +564,7 @@ export const i18n_zh_tw = {
       solarEnergyExamples: {
         SunBeamAndHeliodon: '太陽光束和日影儀',
         RooftopSolarPanels: '屋頂光伏板',
+        HomeSolarEnergyStorage: '家用太陽能儲能係統',
         NevadaSolarOneParabolicTroughArray: '內華達州太陽能一號的拋物線槽陣列',
         TooeleParabolicDishArray: '猶他州圖埃勒的拋物線碟陣列',
         PS10SolarPowerTower: '西班牙塞維利亞的PS10太陽能發電塔',
@@ -857,12 +859,11 @@ export const i18n_zh_tw = {
     },
 
     batteryStoragePanel: {
-      InputPower: '輸入能量',
       DailyChargeDischargeCurve: '蓄電池日充放電曲綫',
       YearlyChargeDischargeCurve: '蓄電池年充放電曲綫',
       ShowResultsOfIndividualBatteryStorages: '顯示每個蓄電池的結果',
-      DailyRemaining: '每日剩餘',
-      YearlyRemaining: '每年剩餘',
+      DailySurplus: '每日剩餘',
+      YearlySurplus: '每年剩餘',
     },
 
     cuboidMenu: {

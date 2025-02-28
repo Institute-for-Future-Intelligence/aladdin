@@ -245,6 +245,10 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
           label: 'menu.solarEnergyExamples.RooftopSolarPanels',
         },
         {
+          key: 'home_solar_energy_storage',
+          label: 'menu.solarEnergyExamples.HomeSolarEnergyStorage',
+        },
+        {
           key: 'solar_canopy_form_factors',
           label: 'menu.solarEnergyExamples.SolarCanopyFormFactors',
         },

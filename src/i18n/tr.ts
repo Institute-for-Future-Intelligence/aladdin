@@ -143,6 +143,7 @@ export const i18n_tr = {
       Daylight: 'Gün Işığı',
       Radiation: 'Işınım',
       Temperature: 'Sıcaklık',
+      kW: 'kW',
       kWh: 'kWh',
       dollar: 'dollar',
       MeterPerSecond: 'm/s',
@@ -566,6 +567,7 @@ export const i18n_tr = {
       solarEnergyExamples: {
         SunBeamAndHeliodon: 'Güneş Işını ve Heliodon',
         RooftopSolarPanels: 'Çatı Üstü Güneş Panelleri',
+        HomeSolarEnergyStorage: 'Home Solar Energy Storage',
         NevadaSolarOneParabolicTroughArray: 'Nevada Eyaletinde Parabolik Oluk Dizisi',
         TooeleParabolicDishArray: 'Tooele Şehrinde Parabolik Çanak Dizisi',
         PS10SolarPowerTower: 'PS10 Güneş Güç Kulesi',
@@ -874,12 +876,11 @@ export const i18n_tr = {
     },
 
     batteryStoragePanel: {
-      InputPower: 'Input Power',
       DailyChargeDischargeCurve: 'Battery Storage Daily Charge-Discharge Curve',
       YearlyChargeDischargeCurve: 'Battery Storage Yearly Charge-Discharge Curve',
       ShowResultsOfIndividualBatteryStorages: 'Show Results of Individual Battery Storages',
-      DailyRemaining: 'Daily Remaining',
-      YearlyRemaining: 'Yearly Remaining',
+      DailySurplus: 'Daily Surplus',
+      YearlySurplus: 'Yearly Surplus',
     },
 
     cuboidMenu: {
