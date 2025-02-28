@@ -49,7 +49,7 @@ export class DefaultGraphState implements GraphState {
     this.dailyUpdraftTowerIndividualOutputs = false;
     this.yearlyUpdraftTowerIndividualOutputs = false;
 
-    this.dailyBatteryStorageIndividualOutputs = false;
-    this.yearlyBatteryStorageIndividualOutputs = false;
+    this.dailyBatteryStorageIndividualOutputs = true;
+    this.yearlyBatteryStorageIndividualOutputs = true;
   }
 }

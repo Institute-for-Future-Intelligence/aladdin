@@ -439,6 +439,10 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
                       useStore.getState().set((state) => {
                         state.graphState.yearlyBatteryStorageIndividualOutputs = false;
                       });
+                    } else {
+                      useStore.getState().set((state) => {
+                        state.graphState.yearlyBatteryStorageIndividualOutputs = true;
+                      });
                     }
                     showInfo(t('message.SimulationStarted', lang));
                     // give it 0.1 second for the info to show up
