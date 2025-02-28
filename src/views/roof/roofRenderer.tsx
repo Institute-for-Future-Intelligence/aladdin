@@ -169,7 +169,6 @@ const handleAddElementOnRoof = (
         0.5,
       );
       addUndoableAddRooftopElement(newElement);
-
       break;
     }
     case ObjectType.Sensor: {
@@ -183,7 +182,6 @@ const handleAddElementOnRoof = (
         rotation ?? [0, 0, 1],
       );
       addUndoableAddRooftopElement(newElement);
-
       break;
     }
     case ObjectType.Light: {
@@ -202,7 +200,6 @@ const handleAddElementOnRoof = (
         rotation ?? [0, 0, 1],
       );
       addUndoableAddRooftopElement(newElement);
-
       break;
     }
   }
@@ -213,6 +210,11 @@ const handleAddElementOnRoof = (
       state.selectedElementIdSet.clear();
       state.selectedElementIdSet.add(newElement.id);
       if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
+      if (state.viewState.showModelTree) {
+        usePrimitiveStore.getState().set((s) => {
+          if (newElement) s.modelTreeExpandedKeys = [newElement.id];
+        });
+      }
     }
   });
 };

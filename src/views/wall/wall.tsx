@@ -1640,6 +1640,11 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       // add new element
       if (isElementAllowedMovingAdd(objectTypeToAdd)) {
         const newElement = makeNewMovingElement(e, objectTypeToAdd);
+        if (useStore.getState().viewState.showModelTree) {
+          usePrimitiveStore.getState().set((s) => {
+            if (newElement) s.modelTreeExpandedKeys = [newElement.id];
+          });
+        }
         setElementHasBeenAdded(newElement);
       }
       // move element being added
@@ -2141,6 +2146,11 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           }
           if (!state.actionModeLock) {
             state.objectTypeToAdd = ObjectType.None;
+          }
+          if (state.viewState.showModelTree) {
+            usePrimitiveStore.getState().set((s) => {
+              if (newElement) s.modelTreeExpandedKeys = [newElement.id];
+            });
           }
         });
       }
