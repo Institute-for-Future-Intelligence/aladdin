@@ -17,6 +17,9 @@ import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
 const BatteryStorageChargingEfficiencyInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
+  const elements = useStore(Selector.elements);
+  const selectedElementIdSet = useStore(Selector.selectedElementIdSet);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.batteryStorageActionScope);
   const setActionScope = useStore(Selector.setBatteryStorageActionScope);
@@ -25,7 +28,7 @@ const BatteryStorageChargingEfficiencyInput = ({ setDialogVisible }: { setDialog
 
   const batteryStorage = useSelectedElement(ObjectType.BatteryStorage) as BatteryStorageModel | undefined;
 
-  const [inputValue, setInputValue] = useState<number>(batteryStorage?.chargingEfficiency ?? 95);
+  const [inputValue, setInputValue] = useState<number>(100 * (batteryStorage?.chargingEfficiency ?? 0.95));
 
   const lang = useLanguage();
 
@@ -33,14 +36,14 @@ const BatteryStorageChargingEfficiencyInput = ({ setDialogVisible }: { setDialog
     setActionScope(e.target.value);
   };
 
-  const needChange = (chargingEfficiency: number) => {
+  const needChange = (chargingEfficiencyPercent: number) => {
     if (!batteryStorage) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
-        for (const e of useStore.getState().elements) {
-          if (e.type === ObjectType.BatteryStorage && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+        for (const e of elements) {
+          if (e.type === ObjectType.BatteryStorage && !e.locked && selectedElementIdSet.has(e.id)) {
             const battery = e as BatteryStorageModel;
-            if (Math.abs(battery.chargingEfficiency - chargingEfficiency) > ZERO_TOLERANCE) {
+            if (Math.abs((battery.chargingEfficiency ?? 0.95) * 100 - chargingEfficiencyPercent) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -48,10 +51,10 @@ const BatteryStorageChargingEfficiencyInput = ({ setDialogVisible }: { setDialog
         break;
       }
       case Scope.AllObjectsOfThisType: {
-        for (const e of useStore.getState().elements) {
+        for (const e of elements) {
           if (e.type === ObjectType.BatteryStorage && !e.locked) {
             const battery = e as BatteryStorageModel;
-            if (Math.abs(battery.chargingEfficiency - chargingEfficiency) > ZERO_TOLERANCE) {
+            if (Math.abs((battery.chargingEfficiency ?? 0.95) * 100 - chargingEfficiencyPercent) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -59,10 +62,10 @@ const BatteryStorageChargingEfficiencyInput = ({ setDialogVisible }: { setDialog
         break;
       }
       case Scope.AllObjectsOfThisTypeAboveFoundation: {
-        for (const e of useStore.getState().elements) {
+        for (const e of elements) {
           if (e.type === ObjectType.BatteryStorage && e.parentId === batteryStorage.parentId && !e.locked) {
             const battery = e as BatteryStorageModel;
-            if (Math.abs(battery.chargingEfficiency - chargingEfficiency) > ZERO_TOLERANCE) {
+            if (Math.abs((battery.chargingEfficiency ?? 0.95) * 100 - chargingEfficiencyPercent) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -70,7 +73,7 @@ const BatteryStorageChargingEfficiencyInput = ({ setDialogVisible }: { setDialog
         break;
       }
       default: {
-        if (Math.abs(batteryStorage?.chargingEfficiency - chargingEfficiency) > ZERO_TOLERANCE) {
+        if (Math.abs((batteryStorage?.chargingEfficiency ?? 0.95) * 100 - chargingEfficiencyPercent) > ZERO_TOLERANCE) {
           return true;
         }
         break;
@@ -80,7 +83,7 @@ const BatteryStorageChargingEfficiencyInput = ({ setDialogVisible }: { setDialog
   };
 
   const updateInMap = (map: Map<string, number>, value?: number) => {
-    useStore.getState().set((state) => {
+    setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.BatteryStorage && map.has(e.id)) {
           const battery = e as BatteryStorageModel;
@@ -98,7 +101,7 @@ const BatteryStorageChargingEfficiencyInput = ({ setDialogVisible }: { setDialog
   };
 
   const updateOnFoundation = (fId: string, value: number) => {
-    useStore.getState().set((state) => {
+    setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.BatteryStorage && !e.locked && e.parentId === fId) {
           const battery = e as BatteryStorageModel;
@@ -109,7 +112,7 @@ const BatteryStorageChargingEfficiencyInput = ({ setDialogVisible }: { setDialog
   };
 
   const updateById = (id: string, val: number) => {
-    useStore.getState().set((state) => {
+    setCommonStore((state) => {
       const bs = state.elements.find((e) => e.id === id);
       if (bs && bs.type === ObjectType.BatteryStorage) {
         const battery = bs as BatteryStorageModel;
@@ -123,21 +126,17 @@ const BatteryStorageChargingEfficiencyInput = ({ setDialogVisible }: { setDialog
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
-        const oldLzSelected = new Map<string, number>();
-        for (const elem of useStore.getState().elements) {
-          if (
-            elem.type === ObjectType.BatteryStorage &&
-            !elem.locked &&
-            useStore.getState().selectedElementIdSet.has(elem.id)
-          ) {
+        const oldSelected = new Map<string, number>();
+        for (const elem of elements) {
+          if (elem.type === ObjectType.BatteryStorage && !elem.locked && selectedElementIdSet.has(elem.id)) {
             const battery = elem as BatteryStorageModel;
-            oldLzSelected.set(elem.id, battery.chargingEfficiency);
+            oldSelected.set(elem.id, battery.chargingEfficiency);
           }
         }
         const undoableChangeSelected = {
           name: 'Set Charging Efficiency for Selected Battery Storages',
           timestamp: Date.now(),
-          oldValues: oldLzSelected,
+          oldValues: oldSelected,
           newValue: value,
           undo: () => {
             updateInMap(undoableChangeSelected.oldValues as Map<string, number>);
@@ -150,13 +149,13 @@ const BatteryStorageChargingEfficiencyInput = ({ setDialogVisible }: { setDialog
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeSelected);
-        updateInMap(oldLzSelected, value);
+        updateInMap(oldSelected, value * 0.01);
         setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisType: {
         const oldValAll = new Map<string, number>();
-        for (const elem of useStore.getState().elements) {
+        for (const elem of elements) {
           if (elem.type === ObjectType.BatteryStorage && !elem.locked) {
             const battery = elem as BatteryStorageModel;
             oldValAll.set(elem.id, battery.chargingEfficiency);
@@ -175,13 +174,13 @@ const BatteryStorageChargingEfficiencyInput = ({ setDialogVisible }: { setDialog
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateInMap(oldValAll, value);
+        updateInMap(oldValAll, value * 0.01);
         setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisTypeAboveFoundation: {
         const oldValAll = new Map<string, number>();
-        for (const elem of useStore.getState().elements) {
+        for (const elem of elements) {
           if (elem.type === ObjectType.BatteryStorage && elem.parentId === batteryStorage.parentId && !elem.locked) {
             const battery = elem as BatteryStorageModel;
             oldValAll.set(elem.id, battery.chargingEfficiency);
@@ -201,7 +200,7 @@ const BatteryStorageChargingEfficiencyInput = ({ setDialogVisible }: { setDialog
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateOnFoundation(batteryStorage.parentId, value);
+        updateOnFoundation(batteryStorage.parentId, value * 0.01);
         setApplyCount(applyCount + 1);
         break;
       }
@@ -221,7 +220,7 @@ const BatteryStorageChargingEfficiencyInput = ({ setDialogVisible }: { setDialog
           },
         } as UndoableChange;
         addUndoable(undoableChange);
-        updateById(batteryStorage.id, value);
+        updateById(batteryStorage.id, value * 0.01);
         setApplyCount(applyCount + 1);
         break;
       }

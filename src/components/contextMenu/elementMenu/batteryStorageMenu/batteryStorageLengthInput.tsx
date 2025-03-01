@@ -117,20 +117,20 @@ const BatteryStorageLengthInput = ({ setDialogVisible }: { setDialogVisible: (b:
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
-        const oldLzSelected = new Map<string, number>();
+        const oldLxSelected = new Map<string, number>();
         for (const elem of useStore.getState().elements) {
           if (
             elem.type === ObjectType.BatteryStorage &&
             !elem.locked &&
             useStore.getState().selectedElementIdSet.has(elem.id)
           ) {
-            oldLzSelected.set(elem.id, elem.lx);
+            oldLxSelected.set(elem.id, elem.lx);
           }
         }
         const undoableChangeSelected = {
           name: 'Set Lx for Selected Battery Storages',
           timestamp: Date.now(),
-          oldValues: oldLzSelected,
+          oldValues: oldLxSelected,
           newValue: value,
           undo: () => {
             updateInMap(undoableChangeSelected.oldValues as Map<string, number>);
@@ -143,7 +143,7 @@ const BatteryStorageLengthInput = ({ setDialogVisible }: { setDialogVisible: (b:
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeSelected);
-        updateInMap(oldLzSelected, value);
+        updateInMap(oldLxSelected, value);
         setApplyCount(applyCount + 1);
         break;
       }

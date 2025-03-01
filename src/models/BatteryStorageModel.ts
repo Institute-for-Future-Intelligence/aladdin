@@ -8,6 +8,6 @@ export interface BatteryStorageModel extends ElementModel {
   connectedHvacIds?: string[];
   editableId?: string;
   energyDensity: number;
-  chargingEfficiency: number;
-  dischargingEfficiency: number;
+  chargingEfficiency: number; // [0, 1] dimensionless
+  dischargingEfficiency: number; // [0, 1] dimensionless
 }
