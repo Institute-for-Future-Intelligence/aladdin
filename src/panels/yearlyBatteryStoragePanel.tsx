@@ -187,7 +187,7 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
         for (let i = 0; i < data.length; i++) {
           total += Number(data[i][key]);
         }
-        arr.push({ key, total });
+        arr.push({ key, total: total * monthInterval });
       }
     });
     return arr;
@@ -204,7 +204,7 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
         }
       });
     }
-    return total;
+    return total * monthInterval;
   };
 
   const getLabels = (data: DatumEntry) => {
