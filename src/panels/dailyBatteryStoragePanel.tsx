@@ -98,7 +98,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
   const weather = useWeather(city);
   const lang = useLanguage();
   const { t } = useTranslation();
-  const { batteryStorageData, batteryRemainingEnergyMap } = useDailyEnergySorter(now, weather, hasSolarPanels, true);
+  const { batteryStorageData, batterySurplusEnergyMap } = useDailyEnergySorter(now, weather, hasSolarPanels, true);
 
   const getBatteryCountInGraph = (data: DatumEntry[] | null) => {
     if (!data) return 0;
@@ -138,7 +138,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
 
   const getRemainingBreakdownArray = () => {
     const arr: { key: string; value: number }[] = [];
-    batteryRemainingEnergyMap.forEach((value, key) => {
+    batterySurplusEnergyMap.forEach((value, key) => {
       arr.push({ key: key.slice(0, 4), value });
     });
     return arr;
@@ -146,7 +146,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
 
   const getDailyRemaining = () => {
     let total = 0;
-    batteryRemainingEnergyMap.forEach((value) => {
+    batterySurplusEnergyMap.forEach((value) => {
       total += value;
     });
     return total;
