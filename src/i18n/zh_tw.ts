@@ -862,7 +862,7 @@ export const i18n_zh_tw = {
 
     batteryStoragePanel: {
       DailyChargeDischargeCurve: '蓄電池日充放電曲綫',
-      MonthlyStorage: '蓄電池每月剩餘',
+      YearlyStorage: '蓄電池年度充電量',
       ShowResultsOfIndividualBatteryStorages: '顯示每個蓄電池的結果',
       DailySurplus: '每日剩餘',
       YearlySurplus: '每年剩餘',

@@ -97,6 +97,10 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
   const [graphDataSource, setGraphDataSource] = useState<DatumEntry[] | null>(null);
   const [graphLabels, setGraphLabels] = useState<string[]>();
 
+  const world = useStore.getState().world;
+  const daysPerYear = world.daysPerYear ?? 6;
+  const monthInterval = 12 / daysPerYear;
+
   const weather = useWeather(city);
   const lang = useLanguage();
   const { t } = useTranslation();
@@ -346,7 +350,7 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
         >
           <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {t('batteryStoragePanel.MonthlyStorage', lang) + ': '}
+              {t('batteryStoragePanel.YearlyStorage', lang) + ': '}
               <span style={{ fontSize: '10px' }}>
                 {t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + moment(now).format('MM/DD')}
               </span>
@@ -407,10 +411,7 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
                   <>
                     {yearlyTotal > 0 && (
                       <Space style={{ cursor: 'default' }}>
-                        {`${t('batteryStoragePanel.YearlySurplus', lang)}: ${yearlyTotal.toFixed(3)} ${t(
-                          'word.kWh',
-                          lang,
-                        )}`}
+                        {`${t('word.Total', lang)}: ${yearlyTotal.toFixed(3)} ${t('word.kWh', lang)}`}
                       </Space>
                     )}
                   </>
