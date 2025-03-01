@@ -255,7 +255,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
   const nodeRef = React.useRef(null);
   const labelX = t('word.Hour', lang);
-  const labelY = t('batteryStoragePanel.InputPower', lang);
+  const labelY = t('word.Energy', lang);
   const emptyGraph = !graphDataSource;
 
   const DailyRemaining = getDailyRemaining();
@@ -349,7 +349,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
                   <>
                     {DailyRemaining > 0 && (
                       <Space style={{ cursor: 'default' }}>
-                        {`${t('batteryStoragePanel.DailyRemaining', lang)}: ${DailyRemaining.toFixed(3)} ${t(
+                        {`${t('batteryStoragePanel.DailySurplus', lang)}: ${DailyRemaining.toFixed(3)} ${t(
                           'word.kWh',
                           lang,
                         )}`}
