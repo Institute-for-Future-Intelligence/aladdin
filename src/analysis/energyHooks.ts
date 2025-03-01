@@ -37,7 +37,7 @@ export const useDailyEnergySorter = (
   const sumSolarPanelMapRef = useRef<Map<string, number>>(new Map<string, number>());
 
   const batteryStorageDataArrayRef = useRef<DatumEntry[]>([]);
-  const batteryRemainingEnergyMapRef = useRef<Map<string, number>>(new Map());
+  const batterySurplusEnergyMapRef = useRef<Map<string, number>>(new Map());
   const hvacCostMapRef = useRef(new Map<string, number[]>()); // hvacId -> net
   const batteryInputMapRef = useRef(new Map<string, number[]>()); // batteryId -> energy input;
   const hvacSavingPercentMapRef = useRef(new Map<string, number>()); // hvacId -> percent;
@@ -473,7 +473,7 @@ export const useDailyEnergySorter = (
 
       // second round
       for (let hour = 0; hour < 24; hour++) {
-        batteryLevelMap.entries().forEach(([id, levels]) => {
+        [...batteryLevelMap.entries()].forEach(([id, levels]) => {
           const endHour = endHourMap.get(id);
           if (endHour !== undefined && endHour !== -1 && hour < endHour) {
             levels[hour] = levels[(24 + hour - 1) % 24];
@@ -500,17 +500,17 @@ export const useDailyEnergySorter = (
       }
 
       // set graph data array
-      batteryRemainingEnergyMapRef.current.clear();
+      batterySurplusEnergyMapRef.current.clear();
       batteryStorageDataArrayRef.current = new Array(24).fill({});
       const labelMap = getBatteryEditableIdMap();
 
-      batteryLevelMap.entries().forEach(([id, levels]) => {
+      [...batteryLevelMap.entries()].forEach(([id, levels]) => {
         const label = labelMap.get(id) ?? id.slice(0, 4); // todo
         let startHour = endHourMap.get(id);
         if (startHour === undefined || startHour === -1) {
           startHour = 0;
         }
-        batteryRemainingEnergyMapRef.current.set(id, levels[(startHour - 1 + 24) % 24]);
+        batterySurplusEnergyMapRef.current.set(id, levels[(startHour - 1 + 24) % 24]);
         for (let i = startHour; i < startHour + 24; i++) {
           const hour = i % 24;
           const level = levels[hour];
@@ -538,6 +538,6 @@ export const useDailyEnergySorter = (
     sumSolarPanelMap: sumSolarPanelMapRef.current,
     dataLabels,
     batteryStorageData,
-    batterySurplusEnergyMap: batteryRemainingEnergyMapRef.current,
+    batterySurplusEnergyMap: batterySurplusEnergyMapRef.current,
   };
 };
