@@ -328,13 +328,13 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
       onStop={onDragEnd}
       onMouseDown={() => {
         setCommonStore((state) => {
-          state.selectedFloatingWindow = 'yearlyBatteryStoragePanel';
+          state.selectedFloatingWindow = 'monthlyBatteryStoragePanel';
         });
       }}
     >
       <Container
         ref={nodeRef}
-        style={{ zIndex: selectedFloatingWindow === 'yearlyBatteryStoragePanel' ? Z_INDEX_FRONT_PANEL : 9 }}
+        style={{ zIndex: selectedFloatingWindow === 'monthlyBatteryStoragePanel' ? Z_INDEX_FRONT_PANEL : 9 }}
       >
         <ColumnWrapper
           ref={wrapperRef}
@@ -346,7 +346,7 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
         >
           <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {t('batteryStoragePanel.YearlyChargeDischargeCurve', lang) + ': '}
+              {t('batteryStoragePanel.MonthlyStorage', lang) + ': '}
               <span style={{ fontSize: '10px' }}>
                 {t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + moment(now).format('MM/DD')}
               </span>

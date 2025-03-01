@@ -881,7 +881,7 @@ export const i18n_ua = {
 
     batteryStoragePanel: {
       DailyChargeDischargeCurve: 'Battery Storage Daily Charge-Discharge Curve',
-      YearlyChargeDischargeCurve: 'Battery Storage Yearly Charge-Discharge Curve',
+      MonthlyStorage: 'Battery Storage Monthly Storage',
       ShowResultsOfIndividualBatteryStorages: 'Show Results of Individual Battery Storages',
       DailySurplus: 'Daily Surplus',
       YearlySurplus: 'Yearly Surplus',

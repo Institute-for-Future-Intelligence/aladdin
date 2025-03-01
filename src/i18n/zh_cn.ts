@@ -861,7 +861,7 @@ export const i18n_zh_cn = {
 
     batteryStoragePanel: {
       DailyChargeDischargeCurve: '蓄电池日充放电曲线',
-      YearlyChargeDischargeCurve: '蓄电池年充放电曲线',
+      MonthlyStorage: '蓄电池每月剩余',
       ShowResultsOfIndividualBatteryStorages: '显示每个蓄电池的结果',
       DailySurplus: '每日剩余',
       YearlySurplus: '每年剩余',

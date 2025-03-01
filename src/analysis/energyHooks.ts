@@ -43,6 +43,7 @@ export const useDailyEnergySorter = (
   const hvacSavingPercentMapRef = useRef(new Map<string, number>()); // hvacId -> percent;
   const batteryIdSetRef = useRef(new Set<string>());
   const foundationStatusMapRef = useRef(new Map<string, boolean>()); // foundation with no building
+  const batteryEfficiencyMapRef = useRef(new Map<string, { charge: number; discharge: number }>());
 
   const [batteryStorageData, setBatteryStorageData] = useState<DatumEntry[] | null>(null);
 
@@ -101,17 +102,19 @@ export const useDailyEnergySorter = (
     return [...nonEmptyIds];
   };
 
-  const consumeEnergy = (levelMap: Map<string, number[]>, ids: string[], hour: number, value: number) => {
+  const consumeEnergy = (levelMap: Map<string, number[]>, ids: string[], hour: number, cost: number) => {
     let remains = 0;
     for (const id of ids) {
       const levels = levelMap.get(id);
+      const efficiency = batteryEfficiencyMapRef.current.get(id) ?? { charge: 0.95, discharge: 0.95 };
       if (levels) {
         const currLevel = levels[hour];
-        if (currLevel >= value) {
-          levels[hour] = currLevel - value;
+        const actualCost = cost * efficiency.discharge;
+        if (currLevel >= actualCost) {
+          levels[hour] = currLevel - actualCost;
         } else {
           levels[hour] = 0;
-          remains += value - currLevel;
+          remains += actualCost - currLevel;
         }
       }
     }
@@ -136,10 +139,13 @@ export const useDailyEnergySorter = (
       hvacSavingPercentMapRef.current.clear();
       batteryIdSetRef.current.clear();
       foundationStatusMapRef.current.clear();
+      batteryEfficiencyMapRef.current.clear();
 
       for (const e of elements) {
         if (e.type === ObjectType.BatteryStorage) {
           batteryIdSetRef.current.add(e.id);
+          const { chargingEfficiency = 0.95, dischargingEfficiency = 0.95 } = e as BatteryStorageModel;
+          batteryEfficiencyMapRef.current.set(e.id, { charge: chargingEfficiency, discharge: dischargingEfficiency });
         }
         if (e.type === ObjectType.Foundation) {
           const status =
@@ -443,7 +449,8 @@ export const useDailyEnergySorter = (
           }
           const batteryLevels = batteryLevelMap.get(id);
           if (batteryLevels) {
-            const input = hourlyInput[hour];
+            const efficiency = batteryEfficiencyMapRef.current.get(id) ?? { charge: 0.95, discharge: 0.95 };
+            const input = hourlyInput[hour] * efficiency.charge;
             const prevLevel = batteryLevels[(24 + hour - 1) % 24];
             batteryLevels[hour] = input + prevLevel;
           }
