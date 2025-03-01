@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2025. Institute for Future Intelligence, Inc.
+ */
+
 import { MenuProps } from 'antd';
 import { BatteryStorageModel } from 'src/models/BatteryStorageModel';
 import { ElementModel } from 'src/models/ElementModel';
@@ -12,6 +16,7 @@ import BatteryStorageWidthInput from './batteryStorageWidthInput';
 import BatteryStorageLengthInput from './batteryStorageLengthInput';
 import BatteryStorageColorSelection from './batteryStorageColorSelection';
 import BatteryStorageHvacIdSelection from './batteryStorageHvacIdSelection';
+import BatteryStorageChargingEfficiencyInput from './batteryStorageChargingEfficiencyInput';
 
 export const createBatteryStorageMenu = (selectedElement: ElementModel) => {
   const items: MenuProps['items'] = [];
@@ -70,6 +75,15 @@ export const createBatteryStorageMenu = (selectedElement: ElementModel) => {
     items.push({
       key: 'battery-storage-azimuth',
       label: <DialogItem Dialog={BatteryStorageAzimuthInput}>{i18n.t('word.Azimuth', lang)} ...</DialogItem>,
+    });
+
+    items.push({
+      key: 'battery-storage-charging-efficiency',
+      label: (
+        <DialogItem Dialog={BatteryStorageChargingEfficiencyInput}>
+          {i18n.t('batteryStorageMenu.ChargingEfficiency', lang)} ...
+        </DialogItem>
+      ),
     });
 
     items.push({

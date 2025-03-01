@@ -201,6 +201,7 @@ export class ElementModelFactory {
       lx: 1.5,
       ly: 2,
       lz: 1.5,
+      chargingEfficiency: 0.95,
       normal: [0, 0, 0],
       rotation: [0, 0, 0],
       color: '#C7BABE',

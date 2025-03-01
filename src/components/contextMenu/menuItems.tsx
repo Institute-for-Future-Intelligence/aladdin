@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useState } from 'react';
@@ -469,7 +469,7 @@ export const EditableId = ({ element }: EditAbleIdProps) => {
 
   return (
     <MenuItem stayAfterClick>
-      ID:
+      <span style={{ paddingRight: '6px' }}>ID:</span>
       <Input
         value={id}
         onChange={(e) => setId(e.target.value)}

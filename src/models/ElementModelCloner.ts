@@ -706,6 +706,7 @@ export class ElementModelCloner {
       ly: batteryStorage.ly,
       lz: batteryStorage.lz,
       rotation: [...batteryStorage.rotation],
+      chargingEfficiency: batteryStorage.chargingEfficiency,
       color: batteryStorage.color,
       parentId: parentId,
       foundationId: parentId,
