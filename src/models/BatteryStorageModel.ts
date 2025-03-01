@@ -9,4 +9,5 @@ export interface BatteryStorageModel extends ElementModel {
   editableId?: string;
   energyDensity: number;
   chargingEfficiency: number;
+  dischargingEfficiency: number;
 }

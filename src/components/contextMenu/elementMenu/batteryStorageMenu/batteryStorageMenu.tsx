@@ -17,6 +17,7 @@ import BatteryStorageLengthInput from './batteryStorageLengthInput';
 import BatteryStorageColorSelection from './batteryStorageColorSelection';
 import BatteryStorageHvacIdSelection from './batteryStorageHvacIdSelection';
 import BatteryStorageChargingEfficiencyInput from './batteryStorageChargingEfficiencyInput';
+import BatteryStorageDischargingEfficiencyInput from './batteryStorageDischargingEfficiencyInput';
 
 export const createBatteryStorageMenu = (selectedElement: ElementModel) => {
   const items: MenuProps['items'] = [];
@@ -82,6 +83,15 @@ export const createBatteryStorageMenu = (selectedElement: ElementModel) => {
       label: (
         <DialogItem Dialog={BatteryStorageChargingEfficiencyInput}>
           {i18n.t('batteryStorageMenu.ChargingEfficiency', lang)} ...
+        </DialogItem>
+      ),
+    });
+
+    items.push({
+      key: 'battery-storage-discharging-efficiency',
+      label: (
+        <DialogItem Dialog={BatteryStorageDischargingEfficiencyInput}>
+          {i18n.t('batteryStorageMenu.DischargingEfficiency', lang)} ...
         </DialogItem>
       ),
     });
