@@ -109,7 +109,7 @@ export const useDailyEnergySorter = (
       const efficiency = batteryEfficiencyMapRef.current.get(id) ?? { charge: 0.95, discharge: 0.95 };
       if (levels) {
         const currLevel = levels[hour];
-        const actualCost = cost * efficiency.discharge;
+        const actualCost = cost / efficiency.discharge;
         if (currLevel >= actualCost) {
           levels[hour] = currLevel - actualCost;
         } else {
