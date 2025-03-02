@@ -811,25 +811,20 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
       label: <MenuItem noPadding>{i18n.t('batteryStorageMenu.BatteryStorage', lang)}</MenuItem>,
       children: [
         {
-          key: 'daily-yield',
+          key: 'daily-charge-discharge',
           label: (
             <MenuItem noPadding onClick={analyzeBatteryStorageDailyYield}>
-              {i18n.t('menu.solarPanel.AnalyzeDailyYield', lang)}
+              {i18n.t('menu.storage.AnalyzeDailyChargeDischarge', lang)}
             </MenuItem>
           ),
         },
         {
-          key: 'yearly-yield',
+          key: 'yearly-storage',
           label: (
             <MenuItem noPadding onClick={analyzeBatteryStorageYearlyYield}>
-              {i18n.t('menu.solarPanel.AnalyzeYearlyYield', lang)}
+              {i18n.t('menu.storage.AnalyzeYearlyStorage', lang)}
             </MenuItem>
           ),
-        },
-        {
-          key: 'analysis-options-submenu',
-          label: <MenuItem noPadding>{i18n.t('menu.building.EnergyAnalysisOptions', lang)}</MenuItem>,
-          children: buildingEnergySimulationSettingsSubmenu('battery-storage'),
         },
       ],
     });
