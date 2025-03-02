@@ -289,9 +289,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
           <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
               {t('batteryStoragePanel.DailyChargeDischargeCurve', lang) + ': '}
-              <span style={{ fontSize: '10px' }}>
-                {t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + moment(now).format('MM/DD')}
-              </span>
+              <span style={{ fontSize: '10px' }}>{moment(now).format('MM/DD')}</span>
             </span>
             <span style={{ cursor: 'pointer' }} onTouchStart={() => closePanel()} onMouseDown={() => closePanel()}>
               {t('word.Close', lang)}

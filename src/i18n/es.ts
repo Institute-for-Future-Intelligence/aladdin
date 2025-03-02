@@ -459,6 +459,10 @@ export const i18n_es = {
         AnalyzeYearlyYield: 'Analyze Yearly Yield',
         SolarUpdraftTowerSimulationNoAnimation: 'No Animation for Solar Updraft Tower Simulation',
       },
+      storage: {
+        AnalyzeDailyChargeDischarge: 'Analyze Daily Charge-Discharge Cycle',
+        AnalyzeYearlyStorage: 'Analyze Yearly Storage',
+      },
 
       tutorialsSubMenu: 'Tutorials',
 

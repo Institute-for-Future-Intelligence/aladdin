@@ -1,14 +1,14 @@
 {
-  "docid": "pq4BE3Xg2m4QKj8u11H2MP",
-  "time": "02/28/2025 06:05 PM",
-  "timestamp": 1740783923012,
+  "docid": "8U9T63Vgs1XdT9KCpmE8rY",
+  "time": "03/01/2025 06:48 PM",
+  "timestamp": 1740872906098,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
-  "version": "1.7.2",
+  "version": "1.7.3",
   "world": {
     "solarRadiationHeatmapGridCellSize": 0.5,
-    "date": "6/10/2022, 12:00:00 PM",
+    "date": "4/1/2022, 12:00:00 PM",
     "cspTimesPerHour": 4,
     "noAnimationForHeatmapSimulation": false,
     "cspGridCellSize": 0.5,
@@ -33,7 +33,7 @@
         0
       ]
     },
-    "daysPerYear": 4,
+    "daysPerYear": 6,
     "latitude": 42.2844063,
     "noAnimationForSensorDataCollection": false,
     "timesPerHour": 1,
@@ -157,7 +157,7 @@
         0.1
       ],
       "relativeAngle": 3.141592653589793,
-      "textureType": "No Wall Texture",
+      "textureType": "Wall Texture Default",
       "color": "#ffffff",
       "normal": [
         0,
@@ -224,7 +224,7 @@
         0.1
       ],
       "relativeAngle": 1.5707963267948963,
-      "textureType": "No Wall Texture",
+      "textureType": "Wall Texture Default",
       "color": "#ffffff",
       "normal": [
         0,
@@ -295,7 +295,7 @@
         0.1
       ],
       "relativeAngle": 4.71238898038469,
-      "textureType": "No Wall Texture",
+      "textureType": "Wall Texture Default",
       "color": "#ffffff",
       "normal": [
         0,
@@ -366,7 +366,7 @@
         0.1
       ],
       "relativeAngle": 0,
-      "textureType": "No Wall Texture",
+      "textureType": "Wall Texture Default",
       "color": "#ffffff",
       "normal": [
         0,
@@ -431,7 +431,7 @@
       "foundationId": "iFATUUjMA7c8wHKwioiCvi",
       "roofType": "Gable",
       "roofStructure": "Default",
-      "textureType": "No Roof Texture",
+      "textureType": "Roof Texture #1",
       "thickness": 0.2,
       "wallsId": [
         "py4fscALBHuoNNVWKoXS9c"
@@ -569,7 +569,7 @@
     },
     {
       "type": "Solar Panel",
-      "pvModelName": "SPR-X21-335-BLK",
+      "pvModelName": "SPR-X22-370",
       "trackerType": "None",
       "relativeAzimuth": 0,
       "tiltAngle": 0,
@@ -580,15 +580,15 @@
       "poleSpacing": 3,
       "cx": 0.05936984572051429,
       "cy": -2.6200591387543417,
-      "cz": 5.978247627321751,
+      "cz": 5.978247704408253,
       "lx": 10.906,
       "ly": 5.23,
       "lz": 0.046,
       "showLabel": true,
       "normal": [
         0,
-        -0.5695731099103674,
-        0.8219406745422887
+        -0.5695731099103675,
+        0.8219406745422888
       ],
       "rotation": [
         0.6059863932019177,
@@ -659,9 +659,9 @@
       "horizontalMullionSpacing": 0.5,
       "verticalMullionSpacing": 0.5,
       "mullionColor": "#ffffff",
-      "frame": false,
+      "frame": true,
       "frameWidth": 0.1,
-      "sillWidth": 0.1,
+      "sillWidth": 0.2,
       "windowType": "Default",
       "empty": false,
       "interior": false,
@@ -704,9 +704,9 @@
       "horizontalMullionSpacing": 0.5,
       "verticalMullionSpacing": 0.5,
       "mullionColor": "#ffffff",
-      "frame": false,
+      "frame": true,
       "frameWidth": 0.1,
-      "sillWidth": 0.1,
+      "sillWidth": 0.2,
       "windowType": "Default",
       "archHeight": 1,
       "color": "#ffffff",
@@ -733,6 +733,102 @@
       "interior": false,
       "parentType": "Wall",
       "selected": false
+    },
+    {
+      "type": "Window",
+      "cx": 0,
+      "cy": 0.3,
+      "cz": 0.8125,
+      "lx": 0.1,
+      "ly": 0.2,
+      "lz": 0.375,
+      "leftShutter": false,
+      "rightShutter": false,
+      "shutterColor": "gray",
+      "shutterWidth": 0.5,
+      "horizontalMullion": true,
+      "verticalMullion": true,
+      "mullionWidth": 0.06,
+      "horizontalMullionSpacing": 0.5,
+      "verticalMullionSpacing": 0.5,
+      "mullionColor": "#ffffff",
+      "frame": true,
+      "frameWidth": 0.1,
+      "sillWidth": 0.1,
+      "windowType": "Default",
+      "empty": false,
+      "interior": false,
+      "archHeight": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "#000000",
+      "showLabel": false,
+      "color": "#ffffff",
+      "tint": "#73D8FF",
+      "opacity": 0.5,
+      "uValue": 2,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "wugyuZMsPdNUQJ1PdoxEGD",
+      "parentType": "Wall",
+      "foundationId": "iFATUUjMA7c8wHKwioiCvi",
+      "id": "nRWpSeiwQLiP9VaxMqKTtq"
+    },
+    {
+      "type": "Window",
+      "cx": 0,
+      "cy": 0.3,
+      "cz": 0.8125,
+      "lx": 0.1,
+      "ly": 0.2,
+      "lz": 0.375,
+      "leftShutter": false,
+      "rightShutter": false,
+      "shutterColor": "gray",
+      "shutterWidth": 0.5,
+      "horizontalMullion": true,
+      "verticalMullion": true,
+      "mullionWidth": 0.06,
+      "horizontalMullionSpacing": 0.5,
+      "verticalMullionSpacing": 0.5,
+      "mullionColor": "#ffffff",
+      "frame": true,
+      "frameWidth": 0.1,
+      "sillWidth": 0.1,
+      "windowType": "Default",
+      "empty": false,
+      "interior": false,
+      "archHeight": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "#000000",
+      "showLabel": false,
+      "color": "#ffffff",
+      "tint": "#73D8FF",
+      "opacity": 0.5,
+      "uValue": 2,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "xi9Zz1pobWAhkAdtkZFZBZ",
+      "parentType": "Wall",
+      "foundationId": "iFATUUjMA7c8wHKwioiCvi",
+      "id": "k1j6vNqKdZ9neqpBWiMh6s"
     }
   ],
   "sceneRadius": 10,
@@ -765,15 +861,15 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -13.491228288698359,
-      -25.587983339191798,
-      4.78483323026465
+      -12.291155397992256,
+      -24.37687454445237,
+      4.110590456516631
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
     "dailyHeliostatYieldPanelY": 0,
     "dailyParabolicTroughYieldPanelY": 0,
-    "heliodonPanelY": 439,
+    "heliodonPanelY": 608,
     "yearlyParabolicTroughYieldPanelY": 0,
     "showWeatherPanel": false,
     "groundImage": false,
@@ -793,7 +889,7 @@
     "showDailyFresnelReflectorYieldPanel": false,
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
-    "heliodonPanelX": -14,
+    "heliodonPanelX": -203,
     "showStickyNotePanel": false,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
@@ -816,9 +912,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": false,
     "panCenter": [
-      11.394126869372666,
-      -4.644753622520805,
-      4.784833230264629
+      7.412337449531615,
+      -0.575048687685104,
+      4.11059045651662
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
@@ -846,8 +942,8 @@
     },
     "showYearlyBuildingEnergyPanel": false,
     "yearlyBuildingEnergyPanelRect": {
-      "x": 0,
-      "y": 0,
+      "x": -1001,
+      "y": 172,
       "width": 600,
       "height": 400
     },
@@ -863,7 +959,15 @@
       "y": 276,
       "width": 618,
       "height": 292
-    }
+    },
+    "showYearlyBatteryStorageEnergyPanel": false,
+    "yearlyBatteryStorageEnergyPanelRect": {
+      "x": -387,
+      "y": 175,
+      "width": 600,
+      "height": 400
+    },
+    "shadowCameraFar": 10000
   },
   "canvasPercentWidth": 100,
   "animate24Hours": false,
@@ -880,7 +984,8 @@
     "yearlyHeliostatIndividualOutputs": false,
     "dailyUpdraftTowerIndividualOutputs": false,
     "yearlyUpdraftTowerIndividualOutputs": false,
-    "dailyBatteryStorageIndividualOutputs": false
+    "dailyBatteryStorageIndividualOutputs": false,
+    "yearlyBatteryStorageIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

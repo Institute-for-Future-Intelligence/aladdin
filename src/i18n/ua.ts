@@ -462,6 +462,10 @@ export const i18n_ua = {
         AnalyzeYearlyYield: 'Аналізувати щорічний дохід',
         SolarUpdraftTowerSimulationNoAnimation: 'Немає анімації симулювати сонячну вежу з використаним повітрям',
       },
+      storage: {
+        AnalyzeDailyChargeDischarge: 'Analyze Daily Charge-Discharge Cycle',
+        AnalyzeYearlyStorage: 'Analyze Yearly Storage',
+      },
 
       tutorialsSubMenu: 'Посібники',
 

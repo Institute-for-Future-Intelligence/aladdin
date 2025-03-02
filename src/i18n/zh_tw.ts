@@ -457,6 +457,10 @@ export const i18n_zh_tw = {
         AnalyzeYearlyYield: '分析全年產出',
         SolarUpdraftTowerSimulationNoAnimation: '若無移動部件則省略動畫',
       },
+      storage: {
+        AnalyzeDailyChargeDischarge: '分析當天充放電曲線',
+        AnalyzeYearlyStorage: '分析全年儲存能量',
+      },
 
       tutorialsSubMenu: '教程',
 

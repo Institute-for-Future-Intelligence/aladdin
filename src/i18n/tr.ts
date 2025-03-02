@@ -458,6 +458,10 @@ export const i18n_tr = {
         AnalyzeYearlyYield: 'Yıllık Üretim Analizi',
         SolarUpdraftTowerSimulationNoAnimation: 'Animasyon Yok',
       },
+      storage: {
+        AnalyzeDailyChargeDischarge: 'Analyze Daily Charge-Discharge Cycle',
+        AnalyzeYearlyStorage: 'Analyze Yearly Storage',
+      },
 
       tutorialsSubMenu: 'Öğrenme Merkezi',
 
