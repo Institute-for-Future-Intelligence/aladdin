@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo, useRef } from 'react';
@@ -304,7 +304,7 @@ const BatteryStorageHvacIdSelection = ({ setDialogVisible }: { setDialogVisible:
 
   return (
     <Dialog
-      width={550}
+      width={600}
       title={i18n.t('batteryStorageMenu.HvacIdSelection', lang)}
       onApply={apply}
       onClose={close}
