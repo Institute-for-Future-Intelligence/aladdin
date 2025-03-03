@@ -145,6 +145,11 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
   useEffect(() => {
     if (!batteryStorageData || !startRef.current) return;
 
+    const month = MONTHS_ABBV[now.getMonth()];
+    if (yearlyBatteryStorageDataRef.current.find((data) => data['Month'] === month)) {
+      return;
+    }
+
     const monthlyDataSource: DatumEntry = { Month: MONTHS_ABBV[now.getMonth()] };
     Object.keys(batteryStorageData[0]).forEach((key) => {
       let total = 0;
