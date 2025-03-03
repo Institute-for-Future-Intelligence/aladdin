@@ -86,6 +86,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
   const hasSolarPanels = Util.hasSolarPanels(useStore.getState().elements);
   const panelRect = useStore(Selector.viewState.dailyBatteryStorageEnergyPanelRect);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
+  const clearDailySimulationResultsFlag = usePrimitiveStore(Selector.clearDailySimulationResultsFlag);
 
   const resizeObserverRef = useRef<ResizeObserver>();
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -113,6 +114,10 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
 
   const batteryCountInGraph = getBatteryCountInGraph(batteryStorageData);
   const isIndividual = individualOutputs && batteryCountInGraph > 1;
+
+  useEffect(() => {
+    setGraphDataSource(null);
+  }, [clearDailySimulationResultsFlag]);
 
   useEffect(() => {
     if (!batteryStorageData) return;

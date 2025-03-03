@@ -125,14 +125,22 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
   const startRef = useRef(false);
   const countRef = useRef(0);
 
+  const clear = () => {
+    setGraphDataSource(null);
+    yearlyBatteryStorageDataRef.current = [];
+    countRef.current = 0;
+  };
+
   useEffect(() => {
     if (runYearlySimulation) {
-      setGraphDataSource(null);
-      yearlyBatteryStorageDataRef.current = [];
-      countRef.current = 0;
+      clear();
       startRef.current = true;
     }
-  }, [runYearlySimulation, clearYearlySimulationResultsFlag]);
+  }, [runYearlySimulation]);
+
+  useEffect(() => {
+    clear();
+  }, [clearYearlySimulationResultsFlag]);
 
   useEffect(() => {
     if (!batteryStorageData || !startRef.current) return;
