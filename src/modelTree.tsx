@@ -31,6 +31,9 @@ import { FlowerModel } from './models/FlowerModel';
 import HumanSelection from './components/contextMenu/elementMenu/billboardMenu/humanSelection';
 import { HumanModel } from './models/HumanModel';
 import { PolygonModel } from './models/PolygonModel';
+import { SolarCollector } from './models/SolarCollector';
+import { HeliostatModel } from './models/HeliostatModel';
+import { ConcentratedSolarPowerCollector } from './models/ConcentratedSolarPowerCollector';
 
 const ModelTree = React.memo(() => {
   const modelTreeExpandedKeys = usePrimitiveStore(Selector.modelTreeExpandedKeys);
@@ -458,6 +461,62 @@ const ModelTree = React.memo(() => {
     );
   };
 
+  const createPoleHeightInput = (s: SolarCollector, extra?: boolean) => {
+    return (
+      <Space>
+        <span>{t(extra ? 'solarCollectorMenu.ExtraPoleHeight' : 'solarCollectorMenu.PoleHeight', lang)} : </span>
+        <InputNumber
+          value={parseFloat(s.poleHeight.toFixed(2))}
+          precision={2}
+          step={0.1}
+          min={0}
+          max={10}
+          disabled={s.locked}
+          onChange={(value) => {
+            if (value !== null) {
+              useStore.getState().set((state) => {
+                const element = state.elements.find((e) => e.id === s.id);
+                if (element) {
+                  const sc = element as SolarCollector;
+                  sc.poleHeight = value;
+                }
+              });
+            }
+          }}
+        />
+        {t('word.MeterAbbreviation', lang)}
+      </Space>
+    );
+  };
+
+  const createReflectanceInput = (s: ConcentratedSolarPowerCollector) => {
+    return (
+      <Space>
+        <span>{t('concentratedSolarPowerCollectorMenu.ReflectorReflectance', lang)} : </span>
+        <InputNumber
+          value={parseFloat(s.reflectance.toFixed(2))}
+          precision={2}
+          step={0.01}
+          min={0}
+          max={1}
+          disabled={s.locked}
+          onChange={(value) => {
+            if (value !== null) {
+              useStore.getState().set((state) => {
+                const element = state.elements.find((e) => e.id === s.id);
+                if (element) {
+                  const c = element as ConcentratedSolarPowerCollector;
+                  c.reflectance = value;
+                }
+              });
+            }
+          }}
+        />
+        {t('word.MeterAbbreviation', lang)}
+      </Space>
+    );
+  };
+
   const createAzimuthInput = (s: ElementModel, relative?: boolean) => {
     return (
       <Space>
@@ -481,6 +540,33 @@ const ModelTree = React.memo(() => {
             }
           }}
         />
+      </Space>
+    );
+  };
+
+  const createLatusRectumInput = (s: ParabolicDishModel | ParabolicTroughModel) => {
+    return (
+      <Space>
+        <span>{t('parabolicDishMenu.LatusRectum', lang)} : </span>
+        <InputNumber
+          value={parseFloat(s.latusRectum.toFixed(1))}
+          precision={2}
+          step={0.1}
+          min={1}
+          max={20}
+          disabled={s.locked}
+          onChange={(value) => {
+            if (value !== null) {
+              useStore.getState().set((state) => {
+                const element = state.elements.find((e) => e.id === s.id);
+                if (element) {
+                  (element as ParabolicDishModel | ParabolicTroughModel).latusRectum = value;
+                }
+              });
+            }
+          }}
+        />
+        {t('word.MeterAbbreviation', lang)}
       </Space>
     );
   };
@@ -722,31 +808,18 @@ const ModelTree = React.memo(() => {
             });
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('parabolicDishMenu.LatusRectum', lang)} : </span>
-                  <InputNumber
-                    value={dish.latusRectum}
-                    precision={2}
-                    min={1}
-                    max={20}
-                    step={0.1}
-                    disabled={dish.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === dish.id);
-                          if (el) {
-                            (el as ParabolicDishModel).latusRectum = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  {t('word.MeterAbbreviation', lang)}
-                </Space>
-              ),
+              title: createLatusRectumInput(dish),
               key: s.id + ' Latus Rectum',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: createPoleHeightInput(dish, true),
+              key: s.id + ' Extra Pole Height',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: createReflectanceInput(dish),
+              key: s.id + ' Reflectance',
             });
           } else if (s.type === ObjectType.ParabolicTrough) {
             const trough = s as ParabolicTroughModel;
@@ -769,33 +842,21 @@ const ModelTree = React.memo(() => {
             });
             grandChildren.push({
               checkable: false,
-              title: (
-                <Space>
-                  <span>{t('parabolicTroughMenu.LatusRectum', lang)} : </span>
-                  <InputNumber
-                    value={trough.latusRectum}
-                    precision={2}
-                    min={1}
-                    max={20}
-                    step={0.1}
-                    disabled={trough.locked}
-                    onChange={(value) => {
-                      if (value !== null) {
-                        useStore.getState().set((state) => {
-                          const el = state.elements.find((e) => e.id === trough.id);
-                          if (el) {
-                            (el as ParabolicTroughModel).latusRectum = value;
-                          }
-                        });
-                      }
-                    }}
-                  />
-                  {t('word.MeterAbbreviation', lang)}
-                </Space>
-              ),
+              title: createLatusRectumInput(trough),
               key: s.id + ' Latus Rectum',
             });
+            grandChildren.push({
+              checkable: false,
+              title: createPoleHeightInput(trough, true),
+              key: s.id + ' Extra Pole Height',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: createReflectanceInput(trough),
+              key: s.id + ' Reflectance',
+            });
           } else if (s.type === ObjectType.Heliostat) {
+            const heliostat = s as HeliostatModel;
             grandChildren.push({
               checkable: false,
               title: createLxLyLzInput(s, 'lx', t('word.Length', lang), 1, 20, 0.05),
@@ -805,6 +866,16 @@ const ModelTree = React.memo(() => {
               checkable: false,
               title: createLxLyLzInput(s, 'ly', t('word.Width', lang), 1, 20, 0.05),
               key: s.id + ' Width',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: createPoleHeightInput(heliostat, true),
+              key: s.id + ' Extra Pole Height',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: createReflectanceInput(heliostat),
+              key: s.id + ' Reflectance',
             });
           } else if (s.type === ObjectType.FresnelReflector) {
             const fresnel = s as FresnelReflectorModel;
@@ -824,6 +895,16 @@ const ModelTree = React.memo(() => {
               checkable: false,
               title: createLxLyLzInput(s, 'lx', t('word.Width', lang), 1, 10, 0.05),
               key: s.id + ' Width',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: createPoleHeightInput(fresnel, true),
+              key: s.id + ' Extra Pole Height',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: createReflectanceInput(fresnel),
+              key: s.id + ' Reflectance',
             });
           } else if (s.type === ObjectType.WindTurbine) {
             const turbine = s as WindTurbineModel;
@@ -1018,6 +1099,11 @@ const ModelTree = React.memo(() => {
               checkable: false,
               title: createSolarPanelWidthInput(solarPanel),
               key: s.id + ' Width',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: createPoleHeightInput(solarPanel),
+              key: s.id + ' Pole Height',
             });
             grandChildren.push({
               checkable: false,
@@ -1572,6 +1658,11 @@ const ModelTree = React.memo(() => {
                   checkable: false,
                   title: createSolarPanelWidthInput(solarPanel),
                   key: s.id + ' Width',
+                });
+                grandChildren.push({
+                  checkable: false,
+                  title: createPoleHeightInput(solarPanel),
+                  key: s.id + ' Pole Height',
                 });
                 grandChildren.push({
                   checkable: false,
