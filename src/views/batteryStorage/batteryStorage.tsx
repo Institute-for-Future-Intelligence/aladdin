@@ -73,7 +73,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
   // inner state
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
   const [showPolarGrid, setShowPolarGrid] = useState(false);
-  // const [hovered, setHovered] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   // variables ref
   const operationRef = useRef<Operation>(Operation.None);
@@ -415,7 +415,14 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
       <group ref={groupRef} position={[cx, cy, 0]} rotation={[0, 0, rz]} onPointerDown={onGroupPointerDown}>
         {/* center surface group */}
         <group ref={centerGroupRef} position={[0, 0, hz]}>
-          <Box ref={boxRef} scale={[lx, ly, lz]} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
+          <Box
+            ref={boxRef}
+            scale={[lx, ly, lz]}
+            castShadow={shadowEnabled}
+            receiveShadow={shadowEnabled}
+            onPointerOver={() => setHovered(true)}
+            onPointerOut={() => setHovered(false)}
+          >
             <Material ref={materialRef} lx={lx} ly={ly} lz={lz} color={color} />
           </Box>
         </group>
@@ -436,7 +443,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
         )}
 
         {/* label */}
-        {showLabel && !selected && <Label element={batteryStorage} groupRef={groupRef} />}
+        {(hovered || showLabel) && !selected && <Label element={batteryStorage} groupRef={groupRef} />}
 
         {/* wireframe */}
         {!selected && (
