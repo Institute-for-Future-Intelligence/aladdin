@@ -99,7 +99,8 @@ const CameraController = React.memo(() => {
   }, [orthographic]);
 
   useEffect(() => {
-    if (useStore.getState().viewState.cameraPosition2D[2] < 100) {
+    const cp = useStore.getState().viewState.cameraPosition2D;
+    if (cp && cp.length > 2 && cp[2] < 100) {
       setCommonStore((state) => {
         state.viewState.cameraPosition2D[2] = 150;
       });
