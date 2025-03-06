@@ -5,7 +5,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
-import { GetRef, Input, InputNumber, Radio, Select, Space, Tooltip, Tree, TreeDataNode } from 'antd';
+import { ColorPicker, GetRef, Input, InputNumber, Radio, Select, Space, Tooltip, Tree, TreeDataNode } from 'antd';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { useLanguage } from './hooks';
 import { useTranslation } from 'react-i18next';
@@ -259,6 +259,74 @@ const ModelTree = React.memo(() => {
                 element.label = e.target.value;
               }
             });
+          }}
+        />
+      </Space>
+    );
+  };
+
+  const createColorInput = (s: ElementModel) => {
+    return (
+      <Space>
+        <span>{t('word.Color', lang)} : </span>
+        <ColorPicker
+          showText
+          value={s.color}
+          disabled={s.locked}
+          onChange={(e) => {
+            useStore.getState().set((state) => {
+              const element = state.elements.find((e) => e.id === s.id);
+              if (element) {
+                element.color = '#' + e.toHex();
+              }
+            });
+          }}
+        />
+      </Space>
+    );
+  };
+
+  const createTintInput = (s: WindowModel) => {
+    return (
+      <Space>
+        <span>{t('windowMenu.Tint', lang)} : </span>
+        <ColorPicker
+          showText
+          value={s.tint}
+          disabled={s.locked}
+          onChange={(e) => {
+            useStore.getState().set((state) => {
+              const element = state.elements.find((e) => e.id === s.id);
+              if (element) {
+                (element as WindowModel).tint = '#' + e.toHex();
+              }
+            });
+          }}
+        />
+      </Space>
+    );
+  };
+
+  const createShgcInput = (window: WindowModel) => {
+    return (
+      <Space>
+        <span>SHGC : </span>
+        <InputNumber
+          value={1 - (window.opacity ?? 0.5)}
+          precision={2}
+          min={0}
+          max={1}
+          step={0.01}
+          disabled={window.locked}
+          onChange={(value) => {
+            if (value !== null) {
+              useStore.getState().set((state) => {
+                const el = state.elements.find((e) => e.id === window.id);
+                if (el) {
+                  (el as WindowModel).opacity = 1 - value;
+                }
+              });
+            }
           }}
         />
       </Space>
@@ -1210,42 +1278,27 @@ const ModelTree = React.memo(() => {
               key: s.id + ' Azimuth',
             });
           } else if (s.type === ObjectType.Wall) {
+            const wall = s as WallModel;
             const wallChildren = getChildren(s.id);
             for (const c of wallChildren) {
               switch (c.type) {
                 case ObjectType.Window: {
+                  const window = c as WindowModel;
                   const windowChildren: TreeDataNode[] = [];
                   windowChildren.push({
                     checkable: false,
-                    title: createUValueInput(c as WindowModel),
+                    title: createUValueInput(window),
                     key: c.id + ' U-value',
                   });
                   windowChildren.push({
                     checkable: false,
-                    title: (
-                      <Space>
-                        <span>SHGC : </span>
-                        <InputNumber
-                          value={1 - ((c as WindowModel).opacity ?? 0.5)}
-                          precision={2}
-                          min={0}
-                          max={1}
-                          step={0.01}
-                          disabled={c.locked}
-                          onChange={(value) => {
-                            if (value !== null) {
-                              useStore.getState().set((state) => {
-                                const el = state.elements.find((e) => e.id === c.id);
-                                if (el) {
-                                  (el as WindowModel).opacity = 1 - value;
-                                }
-                              });
-                            }
-                          }}
-                        />
-                      </Space>
-                    ),
+                    title: createShgcInput(window),
                     key: c.id + ' shgc',
+                  });
+                  windowChildren.push({
+                    checkable: false,
+                    title: createTintInput(window),
+                    key: c.id + ' Tint',
                   });
                   windowChildren.push(...getCoordinates(c, true));
                   windowChildren.push(...getDimension(c, true));
@@ -1268,6 +1321,11 @@ const ModelTree = React.memo(() => {
                     checkable: false,
                     title: createVolumetricHeatCapacityInput(c as DoorModel),
                     key: c.id + ' Heat Capacity',
+                  });
+                  doorChildren.push({
+                    checkable: false,
+                    title: createColorInput(c),
+                    key: c.id + ' Color',
                   });
                   doorChildren.push(...getCoordinates(c, true));
                   doorChildren.push(...getDimension(c, true));
@@ -1302,6 +1360,11 @@ const ModelTree = React.memo(() => {
                     title: createSolarPanelWidthInput(solarPanel),
                     key: c.id + ' Width',
                   });
+                  solarPanelChildren.push({
+                    checkable: false,
+                    title: createLabelInput(c),
+                    key: c.id + ' Label',
+                  });
                   solarPanelChildren.push(...getCoordinates(c, true));
                   grandChildren.push({
                     checkable: true,
@@ -1316,6 +1379,11 @@ const ModelTree = React.memo(() => {
                 }
                 case ObjectType.Sensor: {
                   const sensorChildren: TreeDataNode[] = [];
+                  sensorChildren.push({
+                    checkable: false,
+                    title: createLabelInput(c),
+                    key: c.id + ' Label',
+                  });
                   sensorChildren.push(...getCoordinates(c, true));
                   grandChildren.push({
                     checkable: true,
@@ -1327,6 +1395,11 @@ const ModelTree = React.memo(() => {
                 }
                 case ObjectType.Light: {
                   const lightChildren: TreeDataNode[] = [];
+                  lightChildren.push({
+                    checkable: false,
+                    title: createLabelInput(c),
+                    key: c.id + ' Label',
+                  });
                   lightChildren.push(...getCoordinates(c, true));
                   grandChildren.push({
                     checkable: true,
@@ -1340,13 +1413,18 @@ const ModelTree = React.memo(() => {
             }
             grandChildren.push({
               checkable: false,
-              title: createRValueInput(s as WallModel, t('word.RValue', lang)),
+              title: createRValueInput(wall, t('word.RValue', lang)),
               key: s.id + ' R-value',
             });
             grandChildren.push({
               checkable: false,
-              title: createVolumetricHeatCapacityInput(s as WallModel),
+              title: createVolumetricHeatCapacityInput(wall),
               key: s.id + ' Heat Capacity',
+            });
+            grandChildren.push({
+              checkable: false,
+              title: createColorInput(s),
+              key: s.id + ' Color',
             });
             grandChildren.push({
               checkable: false,
@@ -1358,7 +1436,7 @@ const ModelTree = React.memo(() => {
               title: (
                 <Space>
                   <span>{t('word.Height', lang)} : </span>
-                  <InputNumber value={(s as WallModel).lz} precision={2} disabled />
+                  <InputNumber value={wall.lz} precision={2} disabled />
                   {t('word.MeterAbbreviation', lang)}
                 </Space>
               ),
@@ -1370,7 +1448,7 @@ const ModelTree = React.memo(() => {
                 <Space>
                   <span>{t('wallMenu.EavesLength', lang)} : </span>
                   <InputNumber
-                    value={(s as WallModel).eavesLength}
+                    value={wall.eavesLength}
                     precision={2}
                     min={0}
                     max={5}
@@ -1397,38 +1475,22 @@ const ModelTree = React.memo(() => {
             for (const c of roofChildren) {
               switch (c.type) {
                 case ObjectType.Window: {
+                  const window = c as WindowModel;
                   const windowChildren: TreeDataNode[] = [];
                   windowChildren.push({
                     checkable: false,
-                    title: createUValueInput(c as WindowModel),
+                    title: createUValueInput(window),
                     key: c.id + ' U-value',
                   });
                   windowChildren.push({
                     checkable: false,
-                    title: (
-                      <Space>
-                        <span>SHGC : </span>
-                        <InputNumber
-                          value={1 - ((c as WindowModel).opacity ?? 0.5)}
-                          precision={2}
-                          min={0}
-                          max={1}
-                          step={0.01}
-                          disabled={c.locked}
-                          onChange={(value) => {
-                            if (value !== null) {
-                              useStore.getState().set((state) => {
-                                const el = state.elements.find((e) => e.id === c.id);
-                                if (el) {
-                                  (el as WindowModel).opacity = 1 - value;
-                                }
-                              });
-                            }
-                          }}
-                        />
-                      </Space>
-                    ),
+                    title: createShgcInput(window),
                     key: c.id + ' shgc',
+                  });
+                  windowChildren.push({
+                    checkable: false,
+                    title: createTintInput(window),
+                    key: c.id + ' Tint',
                   });
                   windowChildren.push(...getCoordinates(c));
                   windowChildren.push(...getDimension(c));
@@ -1463,6 +1525,11 @@ const ModelTree = React.memo(() => {
                     title: createSolarPanelWidthInput(solarPanel),
                     key: c.id + ' Width',
                   });
+                  solarPanelChildren.push({
+                    checkable: false,
+                    title: createLabelInput(c),
+                    key: c.id + ' Label',
+                  });
                   solarPanelChildren.push(...getCoordinates(c));
                   grandChildren.push({
                     checkable: true,
@@ -1477,6 +1544,16 @@ const ModelTree = React.memo(() => {
                 }
                 case ObjectType.SolarWaterHeater: {
                   const solarWaterHeaterChildren: TreeDataNode[] = [];
+                  solarWaterHeaterChildren.push({
+                    checkable: false,
+                    title: createColorInput(c),
+                    key: c.id + ' Color',
+                  });
+                  solarWaterHeaterChildren.push({
+                    checkable: false,
+                    title: createLabelInput(c),
+                    key: c.id + ' Label',
+                  });
                   solarWaterHeaterChildren.push(...getCoordinates(c));
                   solarWaterHeaterChildren.push(...getDimension(c));
                   grandChildren.push({
@@ -1576,13 +1653,20 @@ const ModelTree = React.memo(() => {
               ),
               key: s.id + ' Rise',
             });
-          }
-          if (s.type !== ObjectType.Roof) {
             grandChildren.push({
               checkable: false,
-              title: createLabelInput(s),
-              key: s.id + ' Label',
+              title: createColorInput(s),
+              key: s.id + ' Color',
             });
+          }
+          if (s.type !== ObjectType.Roof) {
+            if (s.type !== ObjectType.Human && s.type !== ObjectType.Flower) {
+              grandChildren.push({
+                checkable: false,
+                title: createLabelInput(s),
+                key: s.id + ' Label',
+              });
+            }
             const relative =
               s.type === ObjectType.ParabolicDish ||
               s.type === ObjectType.ParabolicTrough ||
@@ -1611,6 +1695,11 @@ const ModelTree = React.memo(() => {
           checkable: false,
           title: createAzimuthInput(f),
           key: f.id + ' Azimuth',
+        });
+        children.push({
+          checkable: false,
+          title: createColorInput(f),
+          key: f.id + ' Color',
         });
         children.push({
           checkable: false,
@@ -1651,6 +1740,11 @@ const ModelTree = React.memo(() => {
               checkable: false,
               title: createLxLyLzInput(e, 'lz', t('word.Height', lang), 1, 100, 1),
               key: e.id + ' Height',
+            });
+            properties.push({
+              checkable: false,
+              title: createLabelInput(e),
+              key: e.id + ' Label',
             });
             properties.push(...getCoordinates(e));
             break;
@@ -1779,6 +1873,13 @@ const ModelTree = React.memo(() => {
                   key: s.id + ' Azimuth',
                 });
                 grandChildren.push(...getDimension(s));
+              }
+              if (s.type !== ObjectType.Flower && s.type !== ObjectType.Human && s.type !== ObjectType.Polygon) {
+                grandChildren.push({
+                  checkable: false,
+                  title: createLabelInput(s),
+                  key: s.id + ' Label',
+                });
               }
               const relative = s.type === ObjectType.Light || s.type === ObjectType.Sensor;
               grandChildren.push(...getCoordinates(s, relative));
