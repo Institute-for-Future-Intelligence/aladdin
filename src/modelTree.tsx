@@ -271,6 +271,7 @@ const ModelTree = React.memo(() => {
         <span>{t('word.Color', lang)} : </span>
         <ColorPicker
           showText
+          size={'small'}
           value={s.color}
           disabled={s.locked}
           onChange={(e) => {
@@ -292,6 +293,7 @@ const ModelTree = React.memo(() => {
         <span>{t('windowMenu.Tint', lang)} : </span>
         <ColorPicker
           showText
+          size={'small'}
           value={s.tint}
           disabled={s.locked}
           onChange={(e) => {

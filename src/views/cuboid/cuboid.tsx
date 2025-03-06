@@ -1126,7 +1126,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     if (baseRef.current) {
       for (let i = 0; i < 6; i++) {
         // @ts-expect-error ignore
-        baseRef.current.material[i].needsUpdate = true;
+        if (baseRef.current.material[i]) baseRef.current.material[i].needsUpdate = true;
       }
     }
   }, [_transparent]);
