@@ -49,7 +49,7 @@ import { PerspectiveCamera, Vector2 } from 'three';
 import { useLanguage } from './hooks';
 import { AlertFilled, CloseOutlined } from '@ant-design/icons';
 import { UndoableCheck } from './undo/UndoableCheck';
-import ModelTree from './modelTree';
+import ModelTree from './modeltree/modelTree';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
