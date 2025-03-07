@@ -55,6 +55,7 @@ export const useLabelText = (element: ElementModel | undefined, labelText: strin
   return () => {
     if (element) {
       const oldLabel = element.label;
+      if (oldLabel === labelText) return;
       const undoableChange = {
         name: 'Set Label for ' + element.type,
         timestamp: Date.now(),

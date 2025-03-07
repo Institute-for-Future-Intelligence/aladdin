@@ -5,7 +5,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { ColorPicker, GetRef, InputNumber, Radio, Select, Space, Tooltip, Tree, TreeDataNode } from 'antd';
+import { GetRef, InputNumber, Radio, Select, Space, Tooltip, Tree, TreeDataNode } from 'antd';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useLanguage } from '../hooks';
 import { useTranslation } from 'react-i18next';
@@ -36,6 +36,10 @@ import { HeliostatModel } from '../models/HeliostatModel';
 import { ConcentratedSolarPowerCollector } from '../models/ConcentratedSolarPowerCollector';
 import { ParabolicCollector } from '../models/ParabolicCollector';
 import LabelInput from './labelInput';
+import ColorInput from './colorInput';
+import AzimuthInput from './azimuthInput';
+import TintInput from './tintInput';
+import ShgcInput from './shgcInput';
 
 const ModelTree = React.memo(() => {
   const modelTreeExpandedKeys = usePrimitiveStore(Selector.modelTreeExpandedKeys);
@@ -244,76 +248,6 @@ const ModelTree = React.memo(() => {
         key: e.id + ' lz',
       },
     ];
-  };
-
-  const createColorInput = (s: ElementModel) => {
-    return (
-      <Space>
-        <span>{t('word.Color', lang)} : </span>
-        <ColorPicker
-          showText
-          size={'small'}
-          value={s.color}
-          disabled={s.locked}
-          onChange={(e) => {
-            useStore.getState().set((state) => {
-              const element = state.elements.find((e) => e.id === s.id);
-              if (element) {
-                element.color = '#' + e.toHex();
-              }
-            });
-          }}
-        />
-      </Space>
-    );
-  };
-
-  const createTintInput = (s: WindowModel) => {
-    return (
-      <Space>
-        <span>{t('windowMenu.Tint', lang)} : </span>
-        <ColorPicker
-          showText
-          size={'small'}
-          value={s.tint}
-          disabled={s.locked}
-          onChange={(e) => {
-            useStore.getState().set((state) => {
-              const element = state.elements.find((e) => e.id === s.id);
-              if (element) {
-                (element as WindowModel).tint = '#' + e.toHex();
-              }
-            });
-          }}
-        />
-      </Space>
-    );
-  };
-
-  const createShgcInput = (window: WindowModel) => {
-    return (
-      <Space>
-        <span>SHGC : </span>
-        <InputNumber
-          value={1 - (window.opacity ?? 0.5)}
-          precision={2}
-          min={0}
-          max={1}
-          step={0.01}
-          disabled={window.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const el = state.elements.find((e) => e.id === window.id);
-                if (el) {
-                  (el as WindowModel).opacity = 1 - value;
-                }
-              });
-            }
-          }}
-        />
-      </Space>
-    );
   };
 
   const createSolarPanelOrientationRadioGroup = (s: SolarPanelModel) => {
@@ -642,33 +576,6 @@ const ModelTree = React.memo(() => {
     );
   };
 
-  const createAzimuthInput = (s: ElementModel, relative?: boolean) => {
-    return (
-      <Space>
-        <span>{t(relative ? 'solarCollectorMenu.RelativeAzimuth' : 'word.Azimuth', lang)} : </span>
-        <InputNumber
-          value={parseFloat(Util.toDegrees(s.rotation[2]).toFixed(2))}
-          precision={2}
-          step={1}
-          min={-180}
-          max={180}
-          formatter={(value) => `${value}°`}
-          disabled={s.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const element = state.elements.find((e) => e.id === s.id);
-                if (element) {
-                  element.rotation[2] = Util.toRadians(value);
-                }
-              });
-            }
-          }}
-        />
-      </Space>
-    );
-  };
-
   const createLatusRectumInput = (s: ParabolicDishModel | ParabolicTroughModel) => {
     return (
       <Space>
@@ -920,7 +827,7 @@ const ModelTree = React.memo(() => {
           if (s.type === ObjectType.BatteryStorage) {
             grandChildren.push({
               checkable: false,
-              title: createAzimuthInput(s, true),
+              title: <AzimuthInput element={s} relative={true} />,
               key: s.id + ' Azimuth',
             });
             grandChildren.push(...getDimension(s));
@@ -1257,7 +1164,7 @@ const ModelTree = React.memo(() => {
             });
             grandChildren.push({
               checkable: false,
-              title: createAzimuthInput(solarPanel, true),
+              title: <AzimuthInput element={solarPanel} relative={true} />,
               key: s.id + ' Azimuth',
             });
           } else if (s.type === ObjectType.Wall) {
@@ -1275,12 +1182,12 @@ const ModelTree = React.memo(() => {
                   });
                   windowChildren.push({
                     checkable: false,
-                    title: createShgcInput(window),
+                    title: <ShgcInput window={window} />,
                     key: c.id + ' shgc',
                   });
                   windowChildren.push({
                     checkable: false,
-                    title: createTintInput(window),
+                    title: <TintInput window={window} />,
                     key: c.id + ' Tint',
                   });
                   windowChildren.push(...getCoordinates(c, true));
@@ -1307,7 +1214,7 @@ const ModelTree = React.memo(() => {
                   });
                   doorChildren.push({
                     checkable: false,
-                    title: createColorInput(c),
+                    title: <ColorInput element={c} />,
                     key: c.id + ' Color',
                   });
                   doorChildren.push(...getCoordinates(c, true));
@@ -1406,7 +1313,7 @@ const ModelTree = React.memo(() => {
             });
             grandChildren.push({
               checkable: false,
-              title: createColorInput(s),
+              title: <ColorInput element={s} />,
               key: s.id + ' Color',
             });
             grandChildren.push({
@@ -1467,12 +1374,12 @@ const ModelTree = React.memo(() => {
                   });
                   windowChildren.push({
                     checkable: false,
-                    title: createShgcInput(window),
+                    title: <ShgcInput window={window} />,
                     key: c.id + ' shgc',
                   });
                   windowChildren.push({
                     checkable: false,
-                    title: createTintInput(window),
+                    title: <TintInput window={window} />,
                     key: c.id + ' Tint',
                   });
                   windowChildren.push(...getCoordinates(c));
@@ -1529,7 +1436,7 @@ const ModelTree = React.memo(() => {
                   const solarWaterHeaterChildren: TreeDataNode[] = [];
                   solarWaterHeaterChildren.push({
                     checkable: false,
-                    title: createColorInput(c),
+                    title: <ColorInput element={c} />,
                     key: c.id + ' Color',
                   });
                   solarWaterHeaterChildren.push({
@@ -1638,7 +1545,7 @@ const ModelTree = React.memo(() => {
             });
             grandChildren.push({
               checkable: false,
-              title: createColorInput(s),
+              title: <ColorInput element={s} />,
               key: s.id + ' Color',
             });
           }
@@ -1676,12 +1583,12 @@ const ModelTree = React.memo(() => {
         }
         children.push({
           checkable: false,
-          title: createAzimuthInput(f),
+          title: <AzimuthInput element={f} />,
           key: f.id + ' Azimuth',
         });
         children.push({
           checkable: false,
-          title: createColorInput(f),
+          title: <ColorInput element={f} />,
           key: f.id + ' Color',
         });
         children.push({
@@ -1852,7 +1759,7 @@ const ModelTree = React.memo(() => {
                 });
                 grandChildren.push({
                   checkable: false,
-                  title: createAzimuthInput(solarPanel, true),
+                  title: <AzimuthInput element={solarPanel} relative={true} />,
                   key: s.id + ' Azimuth',
                 });
                 grandChildren.push(...getDimension(s));
@@ -1874,7 +1781,7 @@ const ModelTree = React.memo(() => {
             }
             properties.push({
               checkable: false,
-              title: createAzimuthInput(e),
+              title: <AzimuthInput element={e} />,
               key: e.id + ' Azimuth',
             });
             properties.push(...getCoordinates(e));
