@@ -5,7 +5,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { ColorPicker, GetRef, Input, InputNumber, Radio, Select, Space, Tooltip, Tree, TreeDataNode } from 'antd';
+import { ColorPicker, GetRef, InputNumber, Radio, Select, Space, Tooltip, Tree, TreeDataNode } from 'antd';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useLanguage } from '../hooks';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +35,7 @@ import { SolarCollector } from '../models/SolarCollector';
 import { HeliostatModel } from '../models/HeliostatModel';
 import { ConcentratedSolarPowerCollector } from '../models/ConcentratedSolarPowerCollector';
 import { ParabolicCollector } from '../models/ParabolicCollector';
+import LabelInput from './labelInput';
 
 const ModelTree = React.memo(() => {
   const modelTreeExpandedKeys = usePrimitiveStore(Selector.modelTreeExpandedKeys);
@@ -243,26 +244,6 @@ const ModelTree = React.memo(() => {
         key: e.id + ' lz',
       },
     ];
-  };
-
-  const createLabelInput = (s: ElementModel) => {
-    return (
-      <Space>
-        <span>{t('labelSubMenu.Label', lang)} : </span>
-        <Input
-          value={s.label}
-          disabled={s.locked}
-          onChange={(e) => {
-            useStore.getState().set((state) => {
-              const element = state.elements.find((e) => e.id === s.id);
-              if (element) {
-                element.label = e.target.value;
-              }
-            });
-          }}
-        />
-      </Space>
-    );
   };
 
   const createColorInput = (s: ElementModel) => {
@@ -1364,7 +1345,7 @@ const ModelTree = React.memo(() => {
                   });
                   solarPanelChildren.push({
                     checkable: false,
-                    title: createLabelInput(c),
+                    title: <LabelInput element={c} />,
                     key: c.id + ' Label',
                   });
                   solarPanelChildren.push(...getCoordinates(c, true));
@@ -1383,7 +1364,7 @@ const ModelTree = React.memo(() => {
                   const sensorChildren: TreeDataNode[] = [];
                   sensorChildren.push({
                     checkable: false,
-                    title: createLabelInput(c),
+                    title: <LabelInput element={c} />,
                     key: c.id + ' Label',
                   });
                   sensorChildren.push(...getCoordinates(c, true));
@@ -1399,7 +1380,7 @@ const ModelTree = React.memo(() => {
                   const lightChildren: TreeDataNode[] = [];
                   lightChildren.push({
                     checkable: false,
-                    title: createLabelInput(c),
+                    title: <LabelInput element={c} />,
                     key: c.id + ' Label',
                   });
                   lightChildren.push(...getCoordinates(c, true));
@@ -1529,7 +1510,7 @@ const ModelTree = React.memo(() => {
                   });
                   solarPanelChildren.push({
                     checkable: false,
-                    title: createLabelInput(c),
+                    title: <LabelInput element={c} />,
                     key: c.id + ' Label',
                   });
                   solarPanelChildren.push(...getCoordinates(c));
@@ -1553,7 +1534,7 @@ const ModelTree = React.memo(() => {
                   });
                   solarWaterHeaterChildren.push({
                     checkable: false,
-                    title: createLabelInput(c),
+                    title: <LabelInput element={c} />,
                     key: c.id + ' Label',
                   });
                   solarWaterHeaterChildren.push(...getCoordinates(c));
@@ -1665,7 +1646,7 @@ const ModelTree = React.memo(() => {
             if (s.type !== ObjectType.Human && s.type !== ObjectType.Flower) {
               grandChildren.push({
                 checkable: false,
-                title: createLabelInput(s),
+                title: <LabelInput element={s} />,
                 key: s.id + ' Label',
               });
             }
@@ -1705,7 +1686,7 @@ const ModelTree = React.memo(() => {
         });
         children.push({
           checkable: false,
-          title: createLabelInput(f),
+          title: <LabelInput element={f} />,
           key: f.id + ' Label',
         });
         children.push(...getCoordinates(f));
@@ -1745,7 +1726,7 @@ const ModelTree = React.memo(() => {
             });
             properties.push({
               checkable: false,
-              title: createLabelInput(e),
+              title: <LabelInput element={e} />,
               key: e.id + ' Label',
             });
             properties.push(...getCoordinates(e));
@@ -1879,7 +1860,7 @@ const ModelTree = React.memo(() => {
               if (s.type !== ObjectType.Flower && s.type !== ObjectType.Human && s.type !== ObjectType.Polygon) {
                 grandChildren.push({
                   checkable: false,
-                  title: createLabelInput(s),
+                  title: <LabelInput element={s} />,
                   key: s.id + ' Label',
                 });
               }
