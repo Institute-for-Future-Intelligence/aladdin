@@ -1,9 +1,17 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { Undoable } from './Undoable';
-import { CuboidTexture, LineStyle, ObjectType, ParabolicDishStructureType, SolarStructure } from '../types';
+import {
+  CuboidTexture,
+  LineStyle,
+  ObjectType,
+  Orientation,
+  ParabolicDishStructureType,
+  SolarStructure,
+  TrackerType,
+} from '../types';
 import { Point2 } from '../models/Point2';
 import { Vector3 } from 'three';
 
@@ -18,6 +26,8 @@ export interface UndoableChange extends Undoable {
     | Point2[]
     | LineStyle
     | ParabolicDishStructureType
+    | Orientation
+    | TrackerType
     | SolarStructure;
   newValue:
     | boolean
@@ -29,6 +39,8 @@ export interface UndoableChange extends Undoable {
     | Point2[]
     | LineStyle
     | ParabolicDishStructureType
+    | Orientation
+    | TrackerType
     | SolarStructure;
   changedElementId: string;
   changedElementType?: ObjectType;

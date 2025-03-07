@@ -5,16 +5,14 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { GetRef, InputNumber, Radio, Select, Space, Tooltip, Tree, TreeDataNode } from 'antd';
+import { GetRef, InputNumber, Space, Tooltip, Tree, TreeDataNode } from 'antd';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useLanguage } from '../hooks';
 import { useTranslation } from 'react-i18next';
 import { ElementModel } from '../models/ElementModel';
 import { DEFAULT_DOOR_U_VALUE, DEFAULT_WINDOW_U_VALUE, GROUND_ID } from '../constants';
-import { ObjectType, Orientation, TrackerType } from '../types';
+import { ObjectType } from '../types';
 import { SolarPanelModel } from '../models/SolarPanelModel';
-import i18n from '../i18n/i18n';
-import { Util } from '../Util';
 import { WindowModel } from '../models/WindowModel';
 import { DoorModel } from '../models/DoorModel';
 import { FoundationModel } from '../models/FoundationModel';
@@ -40,6 +38,12 @@ import ColorInput from './colorInput';
 import AzimuthInput from './azimuthInput';
 import TintInput from './tintInput';
 import ShgcInput from './shgcInput';
+import SolarPanelOrientationRadioGroup from './solarPanelOrientationRadioGroup';
+import SolarPanelTrackerSelection from './solarPanelTrackerSelection';
+import SolarPanelModelSelection from './solarPanelModelSelection';
+import SolarPanelTiltAngleInput from './solarPanelTiltAngleInput';
+import SolarPanelLengthInput from './solarPanelLengthInput';
+import SolarPanelWidthInput from './solarPanelWidthInput';
 
 const ModelTree = React.memo(() => {
   const modelTreeExpandedKeys = usePrimitiveStore(Selector.modelTreeExpandedKeys);
@@ -248,223 +252,6 @@ const ModelTree = React.memo(() => {
         key: e.id + ' lz',
       },
     ];
-  };
-
-  const createSolarPanelOrientationRadioGroup = (s: SolarPanelModel) => {
-    return (
-      <Space>
-        <span>{t('solarPanelMenu.Orientation', lang)} : </span>
-        <Radio.Group
-          value={s.orientation}
-          options={[
-            { value: Orientation.portrait, label: t('solarPanelMenu.Portrait', lang) },
-            { value: Orientation.landscape, label: t('solarPanelMenu.Landscape', lang) },
-          ]}
-          onChange={(e) => {
-            useStore.getState().set((state) => {
-              const elem = state.elements.find((e) => e.id === s.id);
-              if (elem) {
-                let pvModel = state.supportedPvModules[s.pvModelName];
-                if (!pvModel) pvModel = state.customPvModules[s.pvModelName];
-                state.setSolarPanelOrientation(elem as SolarPanelModel, pvModel, e.target.value);
-              }
-            });
-          }}
-        />
-      </Space>
-    );
-  };
-
-  const createSolarPanelTrackerSelection = (s: SolarPanelModel) => {
-    return (
-      <Space>
-        <span>{t('solarPanelMenu.Tracker', lang)} : </span>
-        <Select
-          value={s.trackerType}
-          options={[
-            {
-              value: TrackerType.NO_TRACKER,
-              label: <span title={t('solarPanelMenu.NoTracker', lang)}>{t('solarPanelMenu.NoTracker', lang)}</span>,
-            },
-            {
-              value: TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER,
-              label: (
-                <span title={t('solarPanelMenu.HorizontalSingleAxisTracker', lang)}>
-                  {t('solarPanelMenu.HorizontalSingleAxisTracker', lang)}
-                </span>
-              ),
-            },
-            {
-              value: TrackerType.VERTICAL_SINGLE_AXIS_TRACKER,
-              label: (
-                <span title={t('solarPanelMenu.VerticalSingleAxisTracker', lang)}>
-                  {t('solarPanelMenu.VerticalSingleAxisTracker', lang)}
-                </span>
-              ),
-            },
-            {
-              value: TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER,
-              label: (
-                <span title={t('solarPanelMenu.AltazimuthDualAxisTracker', lang)}>
-                  {t('solarPanelMenu.AltazimuthDualAxisTracker', lang)}
-                </span>
-              ),
-            },
-          ]}
-          onChange={(value) => {
-            useStore.getState().set((state) => {
-              const elem = state.elements.find((e) => e.id === s.id);
-              if (elem) {
-                (elem as SolarPanelModel).trackerType = value;
-              }
-            });
-          }}
-        />
-      </Space>
-    );
-  };
-
-  const createSolarPanelModelSelection = (s: SolarPanelModel) => {
-    const options = [];
-    for (const key in pvModules) {
-      const panel = pvModules[key];
-      const t = key + (panel.bifacialityFactor > 0 ? ' (' + i18n.t('pvModelPanel.Bifacial', lang) + ')' : '');
-      options.push({
-        value: key,
-        label: (
-          <span
-            title={t}
-            style={{
-              alignItems: 'center',
-              display: 'flex',
-              justifyContent: 'start',
-            }}
-          >
-            {t}
-          </span>
-        ),
-      });
-    }
-    return (
-      <Space>
-        <span>{t('pvModelPanel.Model', lang)} : </span>
-        <Select
-          defaultValue="Custom"
-          options={options}
-          style={{ width: '200px' }}
-          value={s.pvModelName}
-          onChange={(value) => {
-            useStore.getState().set((state) => {
-              const elem = state.elements.find((e) => e.id === s.id);
-              if (elem) {
-                const panel = elem as SolarPanelModel;
-                panel.pvModelName = value;
-                let pvModel = state.supportedPvModules[value];
-                if (!pvModel) pvModel = state.customPvModules[value];
-                if (panel.orientation === Orientation.portrait) {
-                  // calculate the current x-y layout
-                  const nx = Math.max(1, Math.round(panel.lx / pvModel.width));
-                  const ny = Math.max(1, Math.round(panel.ly / pvModel.length));
-                  panel.lx = nx * pvModel.width;
-                  panel.ly = ny * pvModel.length;
-                } else {
-                  // calculate the current x-y layout
-                  const nx = Math.max(1, Math.round(panel.lx / pvModel.length));
-                  const ny = Math.max(1, Math.round(panel.ly / pvModel.width));
-                  panel.lx = nx * pvModel.length;
-                  panel.ly = ny * pvModel.width;
-                }
-              }
-            });
-          }}
-        />
-      </Space>
-    );
-  };
-
-  const createSolarPanelTiltAngleInput = (s: SolarPanelModel) => {
-    return (
-      <Space>
-        <span>{t('solarPanelMenu.TiltAngle', lang)} : </span>
-        <InputNumber
-          value={parseFloat(Util.toDegrees(s.tiltAngle).toFixed(2))}
-          precision={2}
-          step={1}
-          min={-90}
-          max={90}
-          formatter={(value) => `${value}°`}
-          disabled={s.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const element = state.elements.find((e) => e.id === s.id);
-                if (element) {
-                  (element as SolarPanelModel).tiltAngle = Util.toRadians(value);
-                }
-              });
-            }
-          }}
-        />
-      </Space>
-    );
-  };
-
-  const createSolarPanelLengthInput = (s: SolarPanelModel) => {
-    const pvModel = pvModules[s.pvModelName];
-    if (!pvModel) return null;
-    const dx = s.orientation === Orientation.portrait ? pvModel.width : pvModel.length;
-    return (
-      <Space>
-        <span>{t('word.Length', lang)} : </span>
-        <InputNumber
-          value={parseFloat(s.lx.toFixed(2))}
-          precision={2}
-          step={dx}
-          min={dx}
-          disabled={s.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const element = state.elements.find((e) => e.id === s.id);
-                if (element) {
-                  const sp = element as SolarPanelModel;
-                  sp.lx = Util.panelizeLx(sp, pvModel, value);
-                }
-              });
-            }
-          }}
-        />
-      </Space>
-    );
-  };
-
-  const createSolarPanelWidthInput = (s: SolarPanelModel) => {
-    const pvModel = pvModules[s.pvModelName];
-    if (!pvModel) return null;
-    const dy = s.orientation === Orientation.portrait ? pvModel.length : pvModel.width;
-    return (
-      <Space>
-        <span>{t('word.Width', lang)} : </span>
-        <InputNumber
-          value={parseFloat(s.ly.toFixed(2))}
-          precision={2}
-          step={dy}
-          min={dy}
-          disabled={s.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const element = state.elements.find((e) => e.id === s.id);
-                if (element) {
-                  const sp = element as SolarPanelModel;
-                  sp.ly = Util.panelizeLy(sp, pvModel, value);
-                }
-              });
-            }
-          }}
-        />
-      </Space>
-    );
   };
 
   const createPoleHeightInput = (s: SolarCollector, extra?: boolean) => {
@@ -1129,27 +916,27 @@ const ModelTree = React.memo(() => {
             const solarPanel = s as SolarPanelModel;
             grandChildren.push({
               checkable: false,
-              title: createSolarPanelModelSelection(solarPanel),
+              title: <SolarPanelModelSelection solarPanel={solarPanel} />,
               key: s.id + ' Model',
             });
             grandChildren.push({
               checkable: false,
-              title: createSolarPanelTrackerSelection(solarPanel),
+              title: <SolarPanelTrackerSelection solarPanel={solarPanel} />,
               key: s.id + ' Tracker',
             });
             grandChildren.push({
               checkable: false,
-              title: createSolarPanelOrientationRadioGroup(solarPanel),
+              title: <SolarPanelOrientationRadioGroup solarPanel={solarPanel} />,
               key: s.id + ' Orientation',
             });
             grandChildren.push({
               checkable: false,
-              title: createSolarPanelLengthInput(solarPanel),
+              title: <SolarPanelLengthInput solarPanel={solarPanel} />,
               key: s.id + ' Length',
             });
             grandChildren.push({
               checkable: false,
-              title: createSolarPanelWidthInput(solarPanel),
+              title: <SolarPanelWidthInput solarPanel={solarPanel} />,
               key: s.id + ' Width',
             });
             grandChildren.push({
@@ -1159,7 +946,7 @@ const ModelTree = React.memo(() => {
             });
             grandChildren.push({
               checkable: false,
-              title: createSolarPanelTiltAngleInput(solarPanel),
+              title: <SolarPanelTiltAngleInput solarPanel={solarPanel} />,
               key: s.id + ' Tilt Angle',
             });
             grandChildren.push({
@@ -1232,22 +1019,22 @@ const ModelTree = React.memo(() => {
                   const solarPanel = c as SolarPanelModel;
                   solarPanelChildren.push({
                     checkable: false,
-                    title: createSolarPanelModelSelection(solarPanel),
+                    title: <SolarPanelModelSelection solarPanel={solarPanel} />,
                     key: c.id + ' Model',
                   });
                   solarPanelChildren.push({
                     checkable: false,
-                    title: createSolarPanelOrientationRadioGroup(solarPanel),
+                    title: <SolarPanelOrientationRadioGroup solarPanel={solarPanel} />,
                     key: c.id + ' Orientation',
                   });
                   solarPanelChildren.push({
                     checkable: false,
-                    title: createSolarPanelLengthInput(solarPanel),
+                    title: <SolarPanelLengthInput solarPanel={solarPanel} />,
                     key: c.id + ' Length',
                   });
                   solarPanelChildren.push({
                     checkable: false,
-                    title: createSolarPanelWidthInput(solarPanel),
+                    title: <SolarPanelWidthInput solarPanel={solarPanel} />,
                     key: c.id + ' Width',
                   });
                   solarPanelChildren.push({
@@ -1397,22 +1184,22 @@ const ModelTree = React.memo(() => {
                   const solarPanel = c as SolarPanelModel;
                   solarPanelChildren.push({
                     checkable: false,
-                    title: createSolarPanelModelSelection(solarPanel),
+                    title: <SolarPanelModelSelection solarPanel={solarPanel} />,
                     key: c.id + ' Model',
                   });
                   solarPanelChildren.push({
                     checkable: false,
-                    title: createSolarPanelOrientationRadioGroup(solarPanel),
+                    title: <SolarPanelOrientationRadioGroup solarPanel={solarPanel} />,
                     key: c.id + ' Orientation',
                   });
                   solarPanelChildren.push({
                     checkable: false,
-                    title: createSolarPanelLengthInput(solarPanel),
+                    title: <SolarPanelLengthInput solarPanel={solarPanel} />,
                     key: c.id + ' Length',
                   });
                   solarPanelChildren.push({
                     checkable: false,
-                    title: createSolarPanelWidthInput(solarPanel),
+                    title: <SolarPanelWidthInput solarPanel={solarPanel} />,
                     key: c.id + ' Width',
                   });
                   solarPanelChildren.push({
@@ -1729,22 +1516,22 @@ const ModelTree = React.memo(() => {
                 const solarPanel = s as SolarPanelModel;
                 grandChildren.push({
                   checkable: false,
-                  title: createSolarPanelModelSelection(solarPanel),
+                  title: <SolarPanelModelSelection solarPanel={solarPanel} />,
                   key: s.id + ' Model',
                 });
                 grandChildren.push({
                   checkable: false,
-                  title: createSolarPanelOrientationRadioGroup(solarPanel),
+                  title: <SolarPanelOrientationRadioGroup solarPanel={solarPanel} />,
                   key: s.id + ' Orientation',
                 });
                 grandChildren.push({
                   checkable: false,
-                  title: createSolarPanelLengthInput(solarPanel),
+                  title: <SolarPanelLengthInput solarPanel={solarPanel} />,
                   key: s.id + ' Length',
                 });
                 grandChildren.push({
                   checkable: false,
-                  title: createSolarPanelWidthInput(solarPanel),
+                  title: <SolarPanelWidthInput solarPanel={solarPanel} />,
                   key: s.id + ' Width',
                 });
                 grandChildren.push({
@@ -1754,7 +1541,7 @@ const ModelTree = React.memo(() => {
                 });
                 grandChildren.push({
                   checkable: false,
-                  title: createSolarPanelTiltAngleInput(solarPanel),
+                  title: <SolarPanelTiltAngleInput solarPanel={solarPanel} />,
                   key: s.id + ' Tilt Angle',
                 });
                 grandChildren.push({
