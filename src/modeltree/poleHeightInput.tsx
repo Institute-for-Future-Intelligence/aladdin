@@ -4,7 +4,7 @@
 
 import { InputNumber, Space } from 'antd';
 import { useStore } from '../stores/common';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLanguage } from '../hooks';
 import { useTranslation } from 'react-i18next';
 import * as Selector from '../stores/selector';
@@ -16,10 +16,14 @@ const PoleHeightInput = ({ collector, extra }: { collector: SolarCollector; extr
   const addUndoable = useStore(Selector.addUndoable);
   const [value, setValue] = useState<number>(collector.poleHeight);
 
+  useEffect(() => {
+    setValue(collector.poleHeight);
+  }, [collector.poleHeight]);
+
   const lang = useLanguage();
   const { t } = useTranslation();
 
-  const updateHeight = (value: number) => {
+  const update = (value: number) => {
     useStore.getState().set((state) => {
       const a = state.elements.find((e) => e.id === collector.id);
       if (a) {
@@ -42,16 +46,16 @@ const PoleHeightInput = ({ collector, extra }: { collector: SolarCollector; extr
       undo: () => {
         const a = undoableChange.oldValue as number;
         setValue(a);
-        updateHeight(a);
+        update(a);
       },
       redo: () => {
         const a = undoableChange.newValue as number;
         setValue(a);
-        updateHeight(a);
+        update(a);
       },
     } as UndoableChange;
     addUndoable(undoableChange);
-    updateHeight(newValue);
+    update(newValue);
   };
 
   return (

@@ -313,10 +313,9 @@ const FresnelReflectorLengthInput = ({ setDialogVisible }: { setDialogVisible: (
 
   const modularize = (value: number) => {
     if (!fresnelReflector) return 1;
-    let length = value ?? 1;
+    const length = value ?? 1;
     const n = Math.max(1, Math.ceil((length - fresnelReflector.moduleLength / 2) / fresnelReflector.moduleLength));
-    length = n * fresnelReflector.moduleLength;
-    return length;
+    return n * fresnelReflector.moduleLength;
   };
 
   const apply = () => {

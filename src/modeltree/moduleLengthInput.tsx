@@ -4,7 +4,7 @@
 
 import { InputNumber, Space } from 'antd';
 import { useStore } from '../stores/common';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
@@ -17,10 +17,14 @@ const ModuleLengthInput = ({ collector }: { collector: FresnelReflectorModel | P
   const addUndoable = useStore(Selector.addUndoable);
   const [value, setValue] = useState<number>(collector.moduleLength);
 
+  useEffect(() => {
+    setValue(collector.moduleLength);
+  }, [collector.moduleLength]);
+
   const lang = useLanguage();
   const { t } = useTranslation();
 
-  const updateLength = (value: number) => {
+  const update = (value: number) => {
     useStore.getState().set((state) => {
       const a = state.elements.find((e) => e.id === collector.id);
       if (a) {
@@ -43,16 +47,16 @@ const ModuleLengthInput = ({ collector }: { collector: FresnelReflectorModel | P
       undo: () => {
         const a = undoableChange.oldValue as number;
         setValue(a);
-        updateLength(a);
+        update(a);
       },
       redo: () => {
         const a = undoableChange.newValue as number;
         setValue(a);
-        updateLength(a);
+        update(a);
       },
     } as UndoableChange;
     addUndoable(undoableChange);
-    updateLength(newValue);
+    update(newValue);
   };
 
   return (

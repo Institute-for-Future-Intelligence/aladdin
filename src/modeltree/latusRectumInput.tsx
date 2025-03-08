@@ -4,7 +4,7 @@
 
 import { InputNumber, Space } from 'antd';
 import { useStore } from '../stores/common';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { ZERO_TOLERANCE } from '../constants';
@@ -16,6 +16,10 @@ import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 const LatusRectumInput = ({ collector }: { collector: ParabolicDishModel | ParabolicTroughModel }) => {
   const addUndoable = useStore(Selector.addUndoable);
   const [value, setValue] = useState<number>(collector.latusRectum);
+
+  useEffect(() => {
+    setValue(collector.latusRectum);
+  }, [collector.latusRectum]);
 
   const lang = useLanguage();
   const { t } = useTranslation();

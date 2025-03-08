@@ -4,7 +4,7 @@
 
 import { InputNumber, Space } from 'antd';
 import { useStore } from '../stores/common';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { ZERO_TOLERANCE } from '../constants';
@@ -15,6 +15,10 @@ import { WallModel } from '../models/WallModel';
 const RValueInput = ({ element, title }: { element: FoundationModel | RoofModel | WallModel; title: string }) => {
   const addUndoable = useStore(Selector.addUndoable);
   const [value, setValue] = useState<number>(element.rValue ?? 2);
+
+  useEffect(() => {
+    setValue(element.rValue ?? 2);
+  }, [element.rValue]);
 
   const update = (value: number) => {
     useStore.getState().set((state) => {

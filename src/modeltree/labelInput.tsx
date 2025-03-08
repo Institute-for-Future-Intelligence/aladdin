@@ -4,7 +4,7 @@
 
 import { Input, Space } from 'antd';
 import { useStore } from '../stores/common';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ElementModel } from '../models/ElementModel';
 import { useLanguage } from '../hooks';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,10 @@ const LabelInput = ({ element }: { element: ElementModel }) => {
   const [text, setText] = useState<string>(element.label ?? '');
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const addUndoable = useStore(Selector.addUndoable);
+
+  useEffect(() => {
+    setText(element.label ?? '');
+  }, [element.label]);
 
   const lang = useLanguage();
   const { t } = useTranslation();

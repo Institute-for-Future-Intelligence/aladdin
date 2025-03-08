@@ -309,10 +309,9 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
 
   const modularize = (value: number) => {
     if (!parabolicTrough) return 1;
-    let length = value ?? 1;
+    const length = value ?? 1;
     const n = Math.max(1, Math.ceil((length - parabolicTrough.moduleLength / 2) / parabolicTrough.moduleLength));
-    length = n * parabolicTrough.moduleLength;
-    return length;
+    return n * parabolicTrough.moduleLength;
   };
 
   const apply = () => {

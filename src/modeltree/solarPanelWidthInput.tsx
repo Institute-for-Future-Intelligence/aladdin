@@ -4,7 +4,7 @@
 
 import { InputNumber, Space } from 'antd';
 import { useStore } from '../stores/common';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { SolarPanelModel } from '../models/SolarPanelModel';
@@ -20,6 +20,10 @@ const SolarPanelWidthInput = ({ solarPanel }: { solarPanel: SolarPanelModel }) =
   const customPvModules = useStore(Selector.customPvModules);
 
   const [value, setValue] = useState<number>(solarPanel.ly);
+
+  useEffect(() => {
+    setValue(solarPanel.ly);
+  }, [solarPanel.ly]);
 
   const lang = useLanguage();
   const { t } = useTranslation();

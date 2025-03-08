@@ -46,7 +46,7 @@ import ModuleLengthInput from './moduleLengthInput';
 import ReflectanceInput from './reflectanceInput';
 import AbsorptanceInput from './absorptanceInput';
 import LatusRectumInput from './latusRectumInput';
-import LxLyLzInput from './LxLyLzInput';
+import SizeInput from './sizeInput';
 import UValueInput from './uValueInput';
 import RValueInput from './rValueInput';
 import HeatCapacityInput from './heatCapacityInput';
@@ -363,7 +363,7 @@ const ModelTree = React.memo(() => {
             grandChildren.push({
               checkable: false,
               title: (
-                <LxLyLzInput
+                <SizeInput
                   element={s}
                   variable={'lx'}
                   title={t('parabolicDishMenu.RimDiameter', lang)}
@@ -399,12 +399,12 @@ const ModelTree = React.memo(() => {
             grandChildren.push({
               checkable: false,
               title: (
-                <LxLyLzInput
+                <SizeInput
                   element={s}
                   variable={'ly'}
                   title={t('word.Length', lang)}
                   min={trough.moduleLength}
-                  max={100 * trough.moduleLength}
+                  max={200 * trough.moduleLength}
                   step={trough.moduleLength}
                 />
               ),
@@ -413,7 +413,7 @@ const ModelTree = React.memo(() => {
             grandChildren.push({
               checkable: false,
               title: (
-                <LxLyLzInput element={s} variable={'lx'} title={t('word.Width', lang)} min={1} max={10} step={0.1} />
+                <SizeInput element={s} variable={'lx'} title={t('word.Width', lang)} min={1} max={10} step={0.1} />
               ),
               key: s.id + ' Width',
             });
@@ -447,14 +447,14 @@ const ModelTree = React.memo(() => {
             grandChildren.push({
               checkable: false,
               title: (
-                <LxLyLzInput element={s} variable={'lx'} title={t('word.Length', lang)} min={1} max={20} step={0.05} />
+                <SizeInput element={s} variable={'lx'} title={t('word.Length', lang)} min={1} max={20} step={0.05} />
               ),
               key: s.id + ' Length',
             });
             grandChildren.push({
               checkable: false,
               title: (
-                <LxLyLzInput element={s} variable={'ly'} title={t('word.Width', lang)} min={1} max={20} step={0.05} />
+                <SizeInput element={s} variable={'ly'} title={t('word.Width', lang)} min={1} max={20} step={0.05} />
               ),
               key: s.id + ' Width',
             });
@@ -473,12 +473,12 @@ const ModelTree = React.memo(() => {
             grandChildren.push({
               checkable: false,
               title: (
-                <LxLyLzInput
+                <SizeInput
                   element={s}
                   variable={'ly'}
                   title={t('word.Length', lang)}
                   min={fresnel.moduleLength}
-                  max={100 * fresnel.moduleLength}
+                  max={200 * fresnel.moduleLength}
                   step={fresnel.moduleLength}
                 />
               ),
@@ -487,7 +487,7 @@ const ModelTree = React.memo(() => {
             grandChildren.push({
               checkable: false,
               title: (
-                <LxLyLzInput element={s} variable={'lx'} title={t('word.Width', lang)} min={1} max={10} step={0.05} />
+                <SizeInput element={s} variable={'lx'} title={t('word.Width', lang)} min={1} max={10} step={0.05} />
               ),
               key: s.id + ' Width',
             });
@@ -634,21 +634,14 @@ const ModelTree = React.memo(() => {
             grandChildren.push({
               checkable: false,
               title: (
-                <LxLyLzInput
-                  element={s}
-                  variable={'lx'}
-                  title={t('treeMenu.Spread', lang)}
-                  min={1}
-                  max={100}
-                  step={1}
-                />
+                <SizeInput element={s} variable={'lx'} title={t('treeMenu.Spread', lang)} min={1} max={100} step={1} />
               ),
               key: s.id + ' Spread',
             });
             grandChildren.push({
               checkable: false,
               title: (
-                <LxLyLzInput element={s} variable={'lz'} title={t('word.Height', lang)} min={1} max={100} step={1} />
+                <SizeInput element={s} variable={'lz'} title={t('word.Height', lang)} min={1} max={100} step={1} />
               ),
               key: s.id + ' Height',
             });
@@ -878,7 +871,7 @@ const ModelTree = React.memo(() => {
             grandChildren.push({
               checkable: false,
               title: (
-                <LxLyLzInput
+                <SizeInput
                   element={s}
                   variable={'ly'}
                   title={t('word.Thickness', lang)}
@@ -1192,21 +1185,14 @@ const ModelTree = React.memo(() => {
             properties.push({
               checkable: false,
               title: (
-                <LxLyLzInput
-                  element={e}
-                  variable={'lx'}
-                  title={t('treeMenu.Spread', lang)}
-                  min={1}
-                  max={100}
-                  step={1}
-                />
+                <SizeInput element={e} variable={'lx'} title={t('treeMenu.Spread', lang)} min={1} max={100} step={1} />
               ),
               key: e.id + ' Spread',
             });
             properties.push({
               checkable: false,
               title: (
-                <LxLyLzInput element={e} variable={'lz'} title={t('word.Height', lang)} min={1} max={100} step={1} />
+                <SizeInput element={e} variable={'lz'} title={t('word.Height', lang)} min={1} max={100} step={1} />
               ),
               key: e.id + ' Height',
             });
@@ -1265,7 +1251,7 @@ const ModelTree = React.memo(() => {
                 grandChildren.push({
                   checkable: false,
                   title: (
-                    <LxLyLzInput
+                    <SizeInput
                       element={s}
                       variable={'lx'}
                       title={t('treeMenu.Spread', lang)}
@@ -1279,14 +1265,7 @@ const ModelTree = React.memo(() => {
                 grandChildren.push({
                   checkable: false,
                   title: (
-                    <LxLyLzInput
-                      element={s}
-                      variable={'lz'}
-                      title={t('word.Height', lang)}
-                      min={1}
-                      max={100}
-                      step={1}
-                    />
+                    <SizeInput element={s} variable={'lz'} title={t('word.Height', lang)} min={1} max={100} step={1} />
                   ),
                   key: s.id + ' Height',
                 });

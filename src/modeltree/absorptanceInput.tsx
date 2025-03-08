@@ -4,7 +4,7 @@
 
 import { InputNumber, Space } from 'antd';
 import { useStore } from '../stores/common';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { ZERO_TOLERANCE } from '../constants';
@@ -15,6 +15,10 @@ import { ParabolicCollector } from '../models/ParabolicCollector';
 const AbsorptanceInput = ({ collector }: { collector: ParabolicCollector }) => {
   const addUndoable = useStore(Selector.addUndoable);
   const [value, setValue] = useState<number>(collector.absorptance);
+
+  useEffect(() => {
+    setValue(collector.absorptance);
+  }, [collector.absorptance]);
 
   const lang = useLanguage();
   const { t } = useTranslation();

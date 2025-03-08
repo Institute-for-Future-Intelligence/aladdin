@@ -4,7 +4,7 @@
 
 import { InputNumber, Space } from 'antd';
 import { useStore } from '../stores/common';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { SolarPanelModel } from '../models/SolarPanelModel';
@@ -16,6 +16,10 @@ import { ZERO_TOLERANCE } from '../constants';
 const SolarPanelTiltAngleInput = ({ solarPanel }: { solarPanel: SolarPanelModel }) => {
   const addUndoable = useStore(Selector.addUndoable);
   const [value, setValue] = useState<number>(solarPanel.tiltAngle);
+
+  useEffect(() => {
+    setValue(solarPanel.tiltAngle);
+  }, [solarPanel.tiltAngle]);
 
   const lang = useLanguage();
   const { t } = useTranslation();

@@ -4,7 +4,7 @@
 
 import { InputNumber, Space } from 'antd';
 import { useStore } from '../stores/common';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { ZERO_TOLERANCE } from '../constants';
@@ -17,6 +17,10 @@ import { useTranslation } from 'react-i18next';
 const HeatCapacityInput = ({ element }: { element: WallModel | RoofModel | DoorModel }) => {
   const addUndoable = useStore(Selector.addUndoable);
   const [value, setValue] = useState<number>(element.volumetricHeatCapacity ?? 0.5);
+
+  useEffect(() => {
+    setValue(element.volumetricHeatCapacity ?? 0.5);
+  }, [element.volumetricHeatCapacity]);
 
   const lang = useLanguage();
   const { t } = useTranslation();

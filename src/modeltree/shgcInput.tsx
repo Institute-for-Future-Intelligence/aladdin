@@ -4,7 +4,7 @@
 
 import { InputNumber, Space } from 'antd';
 import { useStore } from '../stores/common';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { WindowModel } from '../models/WindowModel';
@@ -13,6 +13,10 @@ import { ZERO_TOLERANCE } from '../constants';
 const ShgcInput = ({ window }: { window: WindowModel }) => {
   const addUndoable = useStore(Selector.addUndoable);
   const [value, setValue] = useState<number>(1 - (window.opacity ?? 0.5));
+
+  useEffect(() => {
+    setValue(window.opacity ?? 0.5);
+  }, [window.opacity]);
 
   const updateOpacity = (opacity: number) => {
     useStore.getState().set((state) => {

@@ -4,13 +4,16 @@
 
 import { InputNumber, Space } from 'antd';
 import { useStore } from '../stores/common';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { ZERO_TOLERANCE } from '../constants';
 import { useLanguage } from '../hooks';
 import { useTranslation } from 'react-i18next';
 import { ElementModel } from '../models/ElementModel';
+import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
+import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
+import { ObjectType } from '../types';
 
 export interface LxLyLzInputProps {
   element: ElementModel;
@@ -22,9 +25,15 @@ export interface LxLyLzInputProps {
   relative?: boolean;
 }
 
-const LxLyLzInput = ({ element, variable, title, min, max, step, relative }: LxLyLzInputProps) => {
+const SizeInput = ({ element, variable, title, min, max, step, relative }: LxLyLzInputProps) => {
   const addUndoable = useStore(Selector.addUndoable);
-  const [value, setValue] = useState<number>(element[variable]);
+
+  const ev = element[variable];
+  const [value, setValue] = useState<number>(ev);
+
+  useEffect(() => {
+    setValue(ev);
+  }, [ev]);
 
   const lang = useLanguage();
   const { t } = useTranslation();
@@ -62,6 +71,14 @@ const LxLyLzInput = ({ element, variable, title, min, max, step, relative }: LxL
     update(newValue);
   };
 
+  const modularizeLength = (value: number) => {
+    if (element.type !== ObjectType.FresnelReflector && element.type !== ObjectType.ParabolicTrough) return 1;
+    const e = element as FresnelReflectorModel | ParabolicTroughModel;
+    const length = value ?? 1;
+    const n = Math.max(1, Math.ceil((length - e.moduleLength / 2) / e.moduleLength));
+    return n * e.moduleLength;
+  };
+
   return (
     <Space>
       <span>{title} : </span>
@@ -73,7 +90,13 @@ const LxLyLzInput = ({ element, variable, title, min, max, step, relative }: LxL
         step={step}
         disabled={element.locked}
         onChange={(value) => {
-          if (value !== null) setValue(value);
+          if (value !== null) {
+            if (variable === 'ly') {
+              setValue(modularizeLength(value));
+            } else {
+              setValue(value);
+            }
+          }
         }}
         onBlur={confirm}
         onPressEnter={confirm}
@@ -83,4 +106,4 @@ const LxLyLzInput = ({ element, variable, title, min, max, step, relative }: LxL
   );
 };
 
-export default LxLyLzInput;
+export default SizeInput;

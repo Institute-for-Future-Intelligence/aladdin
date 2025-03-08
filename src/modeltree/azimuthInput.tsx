@@ -4,7 +4,7 @@
 
 import { InputNumber, Space } from 'antd';
 import { useStore } from '../stores/common';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ElementModel } from '../models/ElementModel';
 import { useLanguage } from '../hooks';
 import { useTranslation } from 'react-i18next';
@@ -17,10 +17,14 @@ const AzimuthInput = ({ element, relative }: { element: ElementModel; relative?:
   const addUndoable = useStore(Selector.addUndoable);
   const [degree, setDegree] = useState<number>(Util.toDegrees(element.rotation[2]));
 
+  useEffect(() => {
+    setDegree(Util.toDegrees(element.rotation[2]));
+  }, [element.rotation[2]]);
+
   const lang = useLanguage();
   const { t } = useTranslation();
 
-  const updateAzimuth = (radianValue: number) => {
+  const update = (radianValue: number) => {
     useStore.getState().set((state) => {
       const a = state.elements.find((e) => e.id === element.id);
       if (a) {
@@ -43,16 +47,16 @@ const AzimuthInput = ({ element, relative }: { element: ElementModel; relative?:
       undo: () => {
         const rad = undoableChange.oldValue as number;
         setDegree(Util.toDegrees(rad));
-        updateAzimuth(rad);
+        update(rad);
       },
       redo: () => {
         const rad = undoableChange.newValue as number;
         setDegree(Util.toDegrees(rad));
-        updateAzimuth(rad);
+        update(rad);
       },
     } as UndoableChange;
     addUndoable(undoableChange);
-    updateAzimuth(radianValue);
+    update(radianValue);
   };
 
   return (
