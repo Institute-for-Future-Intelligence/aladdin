@@ -50,9 +50,8 @@ import RValueInput from './rValueInput';
 import { SolarWaterHeaterModel } from '../models/SolarWaterHeaterModel';
 import { RoofModel } from '../models/RoofModel';
 
-const lang = { lng: useStore.getState().language };
-
 export const createRoofNode = (roof: RoofModel) => {
+  const lang = { lng: useStore.getState().language };
   const node: TreeDataNode[] = [];
   const roofChildren = useStore.getState().getChildren(roof.id);
   for (const c of roofChildren) {
@@ -182,6 +181,7 @@ export const createRoofNode = (roof: RoofModel) => {
 };
 
 export const createWallNode = (wall: WallModel) => {
+  const lang = { lng: useStore.getState().language };
   const node: TreeDataNode[] = [];
   const wallChildren = useStore.getState().getChildren(wall.id);
   for (const c of wallChildren) {
@@ -442,6 +442,7 @@ export const createSolarPanelNode = (solarPanel: SolarPanelModel, fixed?: boolea
 };
 
 export const createPolygonNode = (polygon: PolygonModel) => {
+  const lang = { lng: useStore.getState().language };
   const node: TreeDataNode[] = [];
   node.push({
     checkable: false,
@@ -456,6 +457,7 @@ export const createPolygonNode = (polygon: PolygonModel) => {
 };
 
 export const createHumanNode = (human: HumanModel) => {
+  const lang = { lng: useStore.getState().language };
   const node: TreeDataNode[] = [];
   node.push({
     checkable: false,
@@ -472,6 +474,7 @@ export const createHumanNode = (human: HumanModel) => {
 };
 
 export const createFlowerNode = (flower: FlowerModel) => {
+  const lang = { lng: useStore.getState().language };
   const node: TreeDataNode[] = [];
   node.push({
     checkable: false,
@@ -488,6 +491,7 @@ export const createFlowerNode = (flower: FlowerModel) => {
 };
 
 export const createTreeNode = (tree: TreeModel) => {
+  const lang = { lng: useStore.getState().language };
   const node: TreeDataNode[] = [];
   node.push({
     checkable: false,
@@ -538,6 +542,7 @@ export const createBatteryStorageNode = (battery: BatteryStorageModel) => {
 };
 
 export const createParabolicDishNode = (dish: ParabolicDishModel) => {
+  const lang = { lng: useStore.getState().language };
   const node: TreeDataNode[] = [];
   node.push({
     checkable: false,
@@ -583,6 +588,7 @@ export const createParabolicDishNode = (dish: ParabolicDishModel) => {
 };
 
 export const createParabolicTroughNode = (trough: ParabolicTroughModel) => {
+  const lang = { lng: useStore.getState().language };
   const node: TreeDataNode[] = [];
   node.push({
     checkable: false,
@@ -640,6 +646,7 @@ export const createParabolicTroughNode = (trough: ParabolicTroughModel) => {
 };
 
 export const createHeliostatNode = (heliostat: HeliostatModel) => {
+  const lang = { lng: useStore.getState().language };
   const node: TreeDataNode[] = [];
   node.push({
     checkable: false,
@@ -675,6 +682,7 @@ export const createHeliostatNode = (heliostat: HeliostatModel) => {
 };
 
 export const createFresnelReflectorNode = (fresnel: FresnelReflectorModel) => {
+  const lang = { lng: useStore.getState().language };
   const node: TreeDataNode[] = [];
   node.push({
     checkable: false,
@@ -722,6 +730,7 @@ export const createFresnelReflectorNode = (fresnel: FresnelReflectorModel) => {
 };
 
 export const createWindTurbineNode = (turbine: WindTurbineModel) => {
+  const lang = { lng: useStore.getState().language };
   const node: TreeDataNode[] = [];
   node.push({
     checkable: false,

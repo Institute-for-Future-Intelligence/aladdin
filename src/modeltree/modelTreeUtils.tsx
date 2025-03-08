@@ -10,8 +10,6 @@ import React from 'react';
 import { useStore } from '../stores/common';
 import i18n from '../i18n/i18n';
 
-const lang = { lng: useStore.getState().language };
-
 const handleCoordinateChange = (element: ElementModel, prop: 'cx' | 'cy' | 'cz', value: number) => {
   if (element.parentId === GROUND_ID && prop === 'cz') return;
   useStore.getState().set((state) => {
@@ -23,6 +21,7 @@ const handleCoordinateChange = (element: ElementModel, prop: 'cx' | 'cy' | 'cz',
 };
 
 export const getCoordinates = (e: ElementModel, relative?: boolean) => {
+  const lang = { lng: useStore.getState().language };
   // hardcode the rules for allowing and disallowing coordinate changes from the model tree
   const parent = useStore.getState().getParent(e);
   const disableAll =
@@ -128,6 +127,7 @@ const handleDimensionChange = (element: ElementModel, prop: 'lx' | 'ly' | 'lz', 
 };
 
 export const getDimension = (e: ElementModel, relative?: boolean) => {
+  const lang = { lng: useStore.getState().language };
   const parent = useStore.getState().getParent(e);
   const disableAll = e.locked;
   const disableY = e.type == ObjectType.SolarWaterHeater || e.type === ObjectType.Window || e.type === ObjectType.Door;
@@ -210,6 +210,7 @@ export const createTooltip = (id: string, text: string) => {
 };
 
 export const i18nType = (e: ElementModel) => {
+  const lang = { lng: useStore.getState().language };
   switch (e.type) {
     case ObjectType.Human: {
       return i18n.t('shared.HumanElement', lang);
