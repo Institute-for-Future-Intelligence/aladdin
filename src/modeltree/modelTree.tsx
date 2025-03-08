@@ -10,7 +10,7 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useLanguage } from '../hooks';
 import { useTranslation } from 'react-i18next';
 import { ElementModel } from '../models/ElementModel';
-import { DEFAULT_DOOR_U_VALUE, DEFAULT_WINDOW_U_VALUE, GROUND_ID } from '../constants';
+import { GROUND_ID } from '../constants';
 import { ObjectType } from '../types';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { WindowModel } from '../models/WindowModel';
@@ -29,10 +29,7 @@ import { FlowerModel } from '../models/FlowerModel';
 import HumanSelection from '../components/contextMenu/elementMenu/billboardMenu/humanSelection';
 import { HumanModel } from '../models/HumanModel';
 import { PolygonModel } from '../models/PolygonModel';
-import { SolarCollector } from '../models/SolarCollector';
 import { HeliostatModel } from '../models/HeliostatModel';
-import { ConcentratedSolarPowerCollector } from '../models/ConcentratedSolarPowerCollector';
-import { ParabolicCollector } from '../models/ParabolicCollector';
 import LabelInput from './labelInput';
 import ColorInput from './colorInput';
 import AzimuthInput from './azimuthInput';
@@ -44,6 +41,15 @@ import SolarPanelModelSelection from './solarPanelModelSelection';
 import SolarPanelTiltAngleInput from './solarPanelTiltAngleInput';
 import SolarPanelLengthInput from './solarPanelLengthInput';
 import SolarPanelWidthInput from './solarPanelWidthInput';
+import PoleHeightInput from './poleHeightInput';
+import ModuleLengthInput from './moduleLengthInput';
+import ReflectanceInput from './reflectanceInput';
+import AbsorptanceInput from './absorptanceInput';
+import LatusRectumInput from './latusRectumInput';
+import LxLyLzInput from './LxLyLzInput';
+import UValueInput from './uValueInput';
+import RValueInput from './rValueInput';
+import HeatCapacityInput from './heatCapacityInput';
 
 const ModelTree = React.memo(() => {
   const modelTreeExpandedKeys = usePrimitiveStore(Selector.modelTreeExpandedKeys);
@@ -254,272 +260,6 @@ const ModelTree = React.memo(() => {
     ];
   };
 
-  const createPoleHeightInput = (s: SolarCollector, extra?: boolean) => {
-    return (
-      <Space>
-        <span>{t(extra ? 'solarCollectorMenu.ExtraPoleHeight' : 'solarCollectorMenu.PoleHeight', lang)} : </span>
-        <InputNumber
-          value={parseFloat(s.poleHeight.toFixed(2))}
-          precision={2}
-          step={0.1}
-          min={0}
-          max={10}
-          disabled={s.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const element = state.elements.find((e) => e.id === s.id);
-                if (element) {
-                  const sc = element as SolarCollector;
-                  sc.poleHeight = value;
-                }
-              });
-            }
-          }}
-        />
-        {t('word.MeterAbbreviation', lang)}
-      </Space>
-    );
-  };
-
-  const createModuleLengthInput = (s: FresnelReflectorModel | ParabolicTroughModel) => {
-    return (
-      <Space>
-        <span>{t('fresnelReflectorMenu.ModuleLength', lang)} : </span>
-        <InputNumber
-          value={parseFloat(s.moduleLength.toFixed(2))}
-          precision={2}
-          step={0.1}
-          min={1}
-          max={10}
-          disabled={s.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const element = state.elements.find((e) => e.id === s.id);
-                if (element) {
-                  (element as FresnelReflectorModel | ParabolicTroughModel).moduleLength = value;
-                }
-              });
-            }
-          }}
-        />
-        {t('word.MeterAbbreviation', lang)}
-      </Space>
-    );
-  };
-
-  const createReflectanceInput = (s: ConcentratedSolarPowerCollector) => {
-    return (
-      <Space>
-        <span>{t('concentratedSolarPowerCollectorMenu.ReflectorReflectance', lang)} : </span>
-        <InputNumber
-          value={parseFloat(s.reflectance.toFixed(2))}
-          precision={2}
-          step={0.01}
-          min={0}
-          max={1}
-          disabled={s.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const element = state.elements.find((e) => e.id === s.id);
-                if (element) {
-                  const c = element as ConcentratedSolarPowerCollector;
-                  c.reflectance = value;
-                }
-              });
-            }
-          }}
-        />
-        {t('word.MeterAbbreviation', lang)}
-      </Space>
-    );
-  };
-
-  const createAbsorptanceInput = (s: ParabolicCollector) => {
-    return (
-      <Space>
-        <span>{t('concentratedSolarPowerCollectorMenu.ReceiverAbsorptance', lang)} : </span>
-        <InputNumber
-          value={parseFloat(s.absorptance.toFixed(2))}
-          precision={2}
-          step={0.01}
-          min={0}
-          max={1}
-          disabled={s.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const element = state.elements.find((e) => e.id === s.id);
-                if (element) {
-                  (element as ParabolicCollector).absorptance = value;
-                }
-              });
-            }
-          }}
-        />
-      </Space>
-    );
-  };
-
-  const createLatusRectumInput = (s: ParabolicDishModel | ParabolicTroughModel) => {
-    return (
-      <Space>
-        <span>{t('parabolicDishMenu.LatusRectum', lang)} : </span>
-        <InputNumber
-          value={parseFloat(s.latusRectum.toFixed(1))}
-          precision={2}
-          step={0.1}
-          min={1}
-          max={20}
-          disabled={s.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const element = state.elements.find((e) => e.id === s.id);
-                if (element) {
-                  (element as ParabolicDishModel | ParabolicTroughModel).latusRectum = value;
-                }
-              });
-            }
-          }}
-        />
-        {t('word.MeterAbbreviation', lang)}
-      </Space>
-    );
-  };
-
-  const createLxLyLzInput = (
-    s: ElementModel,
-    variable: 'lx' | 'ly' | 'lz',
-    title: string,
-    min: number,
-    max: number,
-    step: number,
-    relative?: boolean,
-  ) => {
-    return (
-      <Space>
-        <span>{title} : </span>
-        <InputNumber
-          value={s[variable]}
-          precision={2}
-          min={min}
-          max={max}
-          step={step}
-          disabled={s.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const element = state.elements.find((e) => e.id === s.id);
-                if (element) element[variable] = value;
-              });
-            }
-          }}
-        />
-        {t(relative ? 'word.Relative' : 'word.MeterAbbreviation', lang)}
-      </Space>
-    );
-  };
-
-  const createUValueInput = (s: WindowModel | DoorModel) => {
-    return (
-      <Space>
-        <span>{t('word.UValue', lang)} : </span>
-        <InputNumber
-          value={s.type === ObjectType.Window ? s.uValue ?? DEFAULT_WINDOW_U_VALUE : s.uValue ?? DEFAULT_DOOR_U_VALUE}
-          precision={2}
-          min={0.01}
-          max={100}
-          step={0.05}
-          disabled={s.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const element = state.elements.find((e) => e.id === s.id);
-                if (element) {
-                  if (element.type === ObjectType.Window) {
-                    (element as WindowModel).uValue = value;
-                  } else {
-                    (element as DoorModel).uValue = value;
-                  }
-                }
-              });
-            }
-          }}
-        />
-        W/(m²·℃)
-      </Space>
-    );
-  };
-
-  const createRValueInput = (s: FoundationModel | RoofModel | WallModel, title: string) => {
-    return (
-      <Space>
-        <span>{title} : </span>
-        <InputNumber
-          value={s.rValue ?? 2}
-          precision={2}
-          min={0.01}
-          max={100}
-          step={0.05}
-          disabled={s.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const element = state.elements.find((e) => e.id === s.id);
-                if (element) {
-                  if (element.type === ObjectType.Foundation) {
-                    (element as FoundationModel).rValue = value;
-                  } else if (element.type === ObjectType.Roof) {
-                    (element as RoofModel).rValue = value;
-                  } else {
-                    (element as WallModel).rValue = value;
-                  }
-                }
-              });
-            }
-          }}
-        />
-        m²·℃/W
-      </Space>
-    );
-  };
-
-  const createVolumetricHeatCapacityInput = (s: WallModel | RoofModel | DoorModel) => {
-    return (
-      <Space>
-        <span>{t('word.VolumetricHeatCapacity', lang)} : </span>
-        <InputNumber
-          value={s.volumetricHeatCapacity ?? 0.5}
-          precision={2}
-          min={0.01}
-          max={100}
-          step={0.05}
-          disabled={s.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const element = state.elements.find((e) => e.id === s.id);
-                if (element) {
-                  if (element.type === ObjectType.Roof) {
-                    (element as RoofModel).volumetricHeatCapacity = value;
-                  } else if (element.type === ObjectType.Wall) {
-                    (element as WallModel).volumetricHeatCapacity = value;
-                  } else {
-                    (element as DoorModel).volumetricHeatCapacity = value;
-                  }
-                }
-              });
-            }
-          }}
-        />
-        kWh/(m³·℃)
-      </Space>
-    );
-  };
-
   const createTooltip = (id: string, text: string) => {
     return (
       <Tooltip
@@ -622,127 +362,148 @@ const ModelTree = React.memo(() => {
             const dish = s as ParabolicDishModel;
             grandChildren.push({
               checkable: false,
-              title: createLxLyLzInput(s, 'lx', t('parabolicDishMenu.RimDiameter', lang), 1, 10, 0.05),
+              title: (
+                <LxLyLzInput
+                  element={s}
+                  variable={'lx'}
+                  title={t('parabolicDishMenu.RimDiameter', lang)}
+                  min={1}
+                  max={10}
+                  step={0.05}
+                />
+              ),
               key: s.id + ' Rim Diameter',
             });
             grandChildren.push({
               checkable: false,
-              title: createLatusRectumInput(dish),
+              title: <LatusRectumInput collector={dish} />,
               key: s.id + ' Latus Rectum',
             });
             grandChildren.push({
               checkable: false,
-              title: createPoleHeightInput(dish, true),
+              title: <PoleHeightInput collector={dish} extra={true} />,
               key: s.id + ' Extra Pole Height',
             });
             grandChildren.push({
               checkable: false,
-              title: createReflectanceInput(dish),
+              title: <ReflectanceInput collector={dish} />,
               key: s.id + ' Reflectance',
             });
             grandChildren.push({
               checkable: false,
-              title: createAbsorptanceInput(dish),
+              title: <AbsorptanceInput collector={dish} />,
               key: s.id + ' Absorptance',
             });
           } else if (s.type === ObjectType.ParabolicTrough) {
             const trough = s as ParabolicTroughModel;
             grandChildren.push({
               checkable: false,
-              title: createLxLyLzInput(
-                s,
-                'ly',
-                t('word.Length', lang),
-                trough.moduleLength,
-                100 * trough.moduleLength,
-                trough.moduleLength,
+              title: (
+                <LxLyLzInput
+                  element={s}
+                  variable={'ly'}
+                  title={t('word.Length', lang)}
+                  min={trough.moduleLength}
+                  max={100 * trough.moduleLength}
+                  step={trough.moduleLength}
+                />
               ),
               key: s.id + ' Length',
             });
             grandChildren.push({
               checkable: false,
-              title: createLxLyLzInput(s, 'lx', t('word.Width', lang), 1, 10, 0.1),
+              title: (
+                <LxLyLzInput element={s} variable={'lx'} title={t('word.Width', lang)} min={1} max={10} step={0.1} />
+              ),
               key: s.id + ' Width',
             });
             grandChildren.push({
               checkable: false,
-              title: createModuleLengthInput(trough),
+              title: <ModuleLengthInput collector={trough} />,
               key: s.id + ' Module Length',
             });
             grandChildren.push({
               checkable: false,
-              title: createLatusRectumInput(trough),
+              title: <LatusRectumInput collector={trough} />,
               key: s.id + ' Latus Rectum',
             });
             grandChildren.push({
               checkable: false,
-              title: createPoleHeightInput(trough, true),
+              title: <PoleHeightInput collector={trough} extra={true} />,
               key: s.id + ' Extra Pole Height',
             });
             grandChildren.push({
               checkable: false,
-              title: createReflectanceInput(trough),
+              title: <ReflectanceInput collector={trough} />,
               key: s.id + ' Reflectance',
             });
             grandChildren.push({
               checkable: false,
-              title: createAbsorptanceInput(trough),
+              title: <AbsorptanceInput collector={trough} />,
               key: s.id + ' Absorptance',
             });
           } else if (s.type === ObjectType.Heliostat) {
             const heliostat = s as HeliostatModel;
             grandChildren.push({
               checkable: false,
-              title: createLxLyLzInput(s, 'lx', t('word.Length', lang), 1, 20, 0.05),
+              title: (
+                <LxLyLzInput element={s} variable={'lx'} title={t('word.Length', lang)} min={1} max={20} step={0.05} />
+              ),
               key: s.id + ' Length',
             });
             grandChildren.push({
               checkable: false,
-              title: createLxLyLzInput(s, 'ly', t('word.Width', lang), 1, 20, 0.05),
+              title: (
+                <LxLyLzInput element={s} variable={'ly'} title={t('word.Width', lang)} min={1} max={20} step={0.05} />
+              ),
               key: s.id + ' Width',
             });
             grandChildren.push({
               checkable: false,
-              title: createPoleHeightInput(heliostat, true),
+              title: <PoleHeightInput collector={heliostat} extra={true} />,
               key: s.id + ' Extra Pole Height',
             });
             grandChildren.push({
               checkable: false,
-              title: createReflectanceInput(heliostat),
+              title: <ReflectanceInput collector={heliostat} />,
               key: s.id + ' Reflectance',
             });
           } else if (s.type === ObjectType.FresnelReflector) {
             const fresnel = s as FresnelReflectorModel;
             grandChildren.push({
               checkable: false,
-              title: createLxLyLzInput(
-                s,
-                'ly',
-                t('word.Length', lang),
-                fresnel.moduleLength,
-                100 * fresnel.moduleLength,
-                fresnel.moduleLength,
+              title: (
+                <LxLyLzInput
+                  element={s}
+                  variable={'ly'}
+                  title={t('word.Length', lang)}
+                  min={fresnel.moduleLength}
+                  max={100 * fresnel.moduleLength}
+                  step={fresnel.moduleLength}
+                />
               ),
               key: s.id + ' Length',
             });
             grandChildren.push({
               checkable: false,
-              title: createLxLyLzInput(s, 'lx', t('word.Width', lang), 1, 10, 0.05),
+              title: (
+                <LxLyLzInput element={s} variable={'lx'} title={t('word.Width', lang)} min={1} max={10} step={0.05} />
+              ),
               key: s.id + ' Width',
             });
             grandChildren.push({
               checkable: false,
-              title: createModuleLengthInput(fresnel),
+              title: <ModuleLengthInput collector={fresnel} />,
               key: s.id + ' Module Length',
             });
             grandChildren.push({
               checkable: false,
-              title: createPoleHeightInput(fresnel, true),
+              title: <PoleHeightInput collector={fresnel} extra={true} />,
               key: s.id + ' Extra Pole Height',
             });
             grandChildren.push({
               checkable: false,
-              title: createReflectanceInput(fresnel),
+              title: <ReflectanceInput collector={fresnel} />,
               key: s.id + ' Reflectance',
             });
           } else if (s.type === ObjectType.WindTurbine) {
@@ -872,12 +633,23 @@ const ModelTree = React.memo(() => {
             });
             grandChildren.push({
               checkable: false,
-              title: createLxLyLzInput(s, 'lx', t('treeMenu.Spread', lang), 1, 100, 1),
+              title: (
+                <LxLyLzInput
+                  element={s}
+                  variable={'lx'}
+                  title={t('treeMenu.Spread', lang)}
+                  min={1}
+                  max={100}
+                  step={1}
+                />
+              ),
               key: s.id + ' Spread',
             });
             grandChildren.push({
               checkable: false,
-              title: createLxLyLzInput(s, 'lz', t('word.Height', lang), 1, 100, 1),
+              title: (
+                <LxLyLzInput element={s} variable={'lz'} title={t('word.Height', lang)} min={1} max={100} step={1} />
+              ),
               key: s.id + ' Height',
             });
           } else if (s.type === ObjectType.Flower) {
@@ -941,7 +713,7 @@ const ModelTree = React.memo(() => {
             });
             grandChildren.push({
               checkable: false,
-              title: createPoleHeightInput(solarPanel),
+              title: <PoleHeightInput collector={solarPanel} />,
               key: s.id + ' Pole Height',
             });
             grandChildren.push({
@@ -964,7 +736,7 @@ const ModelTree = React.memo(() => {
                   const windowChildren: TreeDataNode[] = [];
                   windowChildren.push({
                     checkable: false,
-                    title: createUValueInput(window),
+                    title: <UValueInput element={window} />,
                     key: c.id + ' U-value',
                   });
                   windowChildren.push({
@@ -991,12 +763,12 @@ const ModelTree = React.memo(() => {
                   const doorChildren: TreeDataNode[] = [];
                   doorChildren.push({
                     checkable: false,
-                    title: createUValueInput(c as DoorModel),
+                    title: <UValueInput element={c as DoorModel} />,
                     key: c.id + ' U-value',
                   });
                   doorChildren.push({
                     checkable: false,
-                    title: createVolumetricHeatCapacityInput(c as DoorModel),
+                    title: <HeatCapacityInput element={c as DoorModel} />,
                     key: c.id + ' Heat Capacity',
                   });
                   doorChildren.push({
@@ -1090,12 +862,12 @@ const ModelTree = React.memo(() => {
             }
             grandChildren.push({
               checkable: false,
-              title: createRValueInput(wall, t('word.RValue', lang)),
+              title: <RValueInput element={wall} title={t('word.RValue', lang)} />,
               key: s.id + ' R-value',
             });
             grandChildren.push({
               checkable: false,
-              title: createVolumetricHeatCapacityInput(wall),
+              title: <HeatCapacityInput element={wall} />,
               key: s.id + ' Heat Capacity',
             });
             grandChildren.push({
@@ -1105,7 +877,16 @@ const ModelTree = React.memo(() => {
             });
             grandChildren.push({
               checkable: false,
-              title: createLxLyLzInput(s, 'ly', t('word.Thickness', lang), 0.1, 1, 0.01),
+              title: (
+                <LxLyLzInput
+                  element={s}
+                  variable={'ly'}
+                  title={t('word.Thickness', lang)}
+                  min={0.1}
+                  max={1}
+                  step={0.01}
+                />
+              ),
               key: s.id + ' Thickness',
             });
             grandChildren.push({
@@ -1156,7 +937,7 @@ const ModelTree = React.memo(() => {
                   const windowChildren: TreeDataNode[] = [];
                   windowChildren.push({
                     checkable: false,
-                    title: createUValueInput(window),
+                    title: <UValueInput element={window} />,
                     key: c.id + ' U-value',
                   });
                   windowChildren.push({
@@ -1267,12 +1048,12 @@ const ModelTree = React.memo(() => {
             }
             grandChildren.push({
               checkable: false,
-              title: createRValueInput(s as RoofModel, t('word.RValue', lang)),
+              title: <RValueInput element={s as RoofModel} title={t('word.RValue', lang)} />,
               key: s.id + ' R-value',
             });
             grandChildren.push({
               checkable: false,
-              title: createVolumetricHeatCapacityInput(s as RoofModel),
+              title: <HeatCapacityInput element={s as RoofModel} />,
               key: s.id + ' Heat Capacity',
             });
             grandChildren.push({
@@ -1364,7 +1145,7 @@ const ModelTree = React.memo(() => {
         if (!f.notBuilding) {
           children.push({
             checkable: false,
-            title: createRValueInput(f, t('foundationMenu.GroundFloorRValue', lang)),
+            title: <RValueInput element={f} title={t('foundationMenu.GroundFloorRValue', lang)} />,
             key: f.id + ' R-value',
           });
         }
@@ -1410,12 +1191,23 @@ const ModelTree = React.memo(() => {
             });
             properties.push({
               checkable: false,
-              title: createLxLyLzInput(e, 'lx', t('treeMenu.Spread', lang), 1, 100, 1),
+              title: (
+                <LxLyLzInput
+                  element={e}
+                  variable={'lx'}
+                  title={t('treeMenu.Spread', lang)}
+                  min={1}
+                  max={100}
+                  step={1}
+                />
+              ),
               key: e.id + ' Spread',
             });
             properties.push({
               checkable: false,
-              title: createLxLyLzInput(e, 'lz', t('word.Height', lang), 1, 100, 1),
+              title: (
+                <LxLyLzInput element={e} variable={'lz'} title={t('word.Height', lang)} min={1} max={100} step={1} />
+              ),
               key: e.id + ' Height',
             });
             properties.push({
@@ -1472,12 +1264,30 @@ const ModelTree = React.memo(() => {
                 });
                 grandChildren.push({
                   checkable: false,
-                  title: createLxLyLzInput(s, 'lx', t('treeMenu.Spread', lang), 1, 100, 1),
+                  title: (
+                    <LxLyLzInput
+                      element={s}
+                      variable={'lx'}
+                      title={t('treeMenu.Spread', lang)}
+                      min={1}
+                      max={100}
+                      step={1}
+                    />
+                  ),
                   key: s.id + ' Spread',
                 });
                 grandChildren.push({
                   checkable: false,
-                  title: createLxLyLzInput(s, 'lz', t('word.Height', lang), 1, 100, 1),
+                  title: (
+                    <LxLyLzInput
+                      element={s}
+                      variable={'lz'}
+                      title={t('word.Height', lang)}
+                      min={1}
+                      max={100}
+                      step={1}
+                    />
+                  ),
                   key: s.id + ' Height',
                 });
               } else if (s.type === ObjectType.Flower) {
@@ -1536,7 +1346,7 @@ const ModelTree = React.memo(() => {
                 });
                 grandChildren.push({
                   checkable: false,
-                  title: createPoleHeightInput(solarPanel),
+                  title: <PoleHeightInput collector={solarPanel} />,
                   key: s.id + ' Pole Height',
                 });
                 grandChildren.push({
