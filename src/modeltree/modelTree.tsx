@@ -5,11 +5,10 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { GetRef, InputNumber, Space, Tooltip, Tree, TreeDataNode } from 'antd';
+import { GetRef, InputNumber, Space, Tree, TreeDataNode } from 'antd';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useLanguage } from '../hooks';
 import { useTranslation } from 'react-i18next';
-import { ElementModel } from '../models/ElementModel';
 import { GROUND_ID } from '../constants';
 import { ObjectType } from '../types';
 import { SolarPanelModel } from '../models/SolarPanelModel';
@@ -50,6 +49,7 @@ import SizeInput from './sizeInput';
 import UValueInput from './uValueInput';
 import RValueInput from './rValueInput';
 import HeatCapacityInput from './heatCapacityInput';
+import { createTooltip, getCoordinates, getDimension, i18nType } from './modelTreeUtils';
 
 const ModelTree = React.memo(() => {
   const modelTreeExpandedKeys = usePrimitiveStore(Selector.modelTreeExpandedKeys);
@@ -65,283 +65,9 @@ const ModelTree = React.memo(() => {
 
   const elements = useStore(Selector.elements);
   const getChildren = useStore(Selector.getChildren);
-  const getParent = useStore(Selector.getParent);
-  const getElementById = useStore(Selector.getElementById);
-  const supportedPvModules = useStore(Selector.supportedPvModules);
-  const customPvModules = useStore(Selector.customPvModules);
 
   const lang = useLanguage();
   const { t } = useTranslation();
-
-  const pvModules = useMemo(() => {
-    return { ...customPvModules, ...supportedPvModules };
-  }, [supportedPvModules, customPvModules]);
-
-  const handleCoordinateChange = (element: ElementModel, prop: 'cx' | 'cy' | 'cz', value: number) => {
-    if (element.parentId === GROUND_ID && prop === 'cz') return;
-    useStore.getState().set((state) => {
-      const el = state.elements.find((e) => e.id === element.id);
-      if (el) {
-        el[prop] = value;
-      }
-    });
-  };
-
-  const getCoordinates = (e: ElementModel, relative?: boolean) => {
-    // hardcode the rules for allowing and disallowing coordinate changes from the model tree
-    const parent = getParent(e);
-    const disableAll =
-      e.locked ||
-      e.type === ObjectType.SolarWaterHeater ||
-      (parent?.type === ObjectType.Roof &&
-        (e.type === ObjectType.SolarPanel || e.type === ObjectType.Sensor || e.type === ObjectType.Light));
-    const disableX = e.type === ObjectType.Wall;
-    const disableY =
-      e.type === ObjectType.Window ||
-      e.type === ObjectType.Door ||
-      e.type === ObjectType.Wall ||
-      (parent?.type === ObjectType.Wall &&
-        (e.type === ObjectType.SolarPanel || e.type === ObjectType.Sensor || e.type === ObjectType.Light));
-    const disableZ =
-      e.parentId === GROUND_ID ||
-      ((parent?.type === ObjectType.Foundation || parent?.type === ObjectType.Cuboid) &&
-        (e.type === ObjectType.SolarPanel ||
-          e.type === ObjectType.Sensor ||
-          e.type === ObjectType.Light ||
-          e.type === ObjectType.ParabolicDish ||
-          e.type === ObjectType.ParabolicTrough ||
-          e.type === ObjectType.FresnelReflector ||
-          e.type === ObjectType.Heliostat ||
-          e.type === ObjectType.Polygon ||
-          e.type === ObjectType.Human ||
-          e.type === ObjectType.Flower ||
-          e.type === ObjectType.Tree ||
-          e.type === ObjectType.BatteryStorage ||
-          e.type === ObjectType.WindTurbine)) ||
-      e.type === ObjectType.Wall;
-
-    return [
-      {
-        checkable: false,
-        title: (
-          <Space>
-            <span>x : </span>
-            <InputNumber
-              step={relative ? 0.01 : 0.1}
-              value={e.cx}
-              precision={2}
-              disabled={disableAll || disableX}
-              onChange={(value) => {
-                if (value !== null) handleCoordinateChange(e, 'cx', value);
-              }}
-            />
-            {t(relative ? 'word.Relative' : 'word.MeterAbbreviation', lang)}
-          </Space>
-        ),
-        key: e.id + ' x',
-      },
-      {
-        checkable: false,
-        title: (
-          <Space>
-            <span>y : </span>
-            <InputNumber
-              step={relative ? 0.01 : 0.1}
-              value={e.cy}
-              precision={2}
-              disabled={disableAll || disableY}
-              onChange={(value) => {
-                if (value !== null) handleCoordinateChange(e, 'cy', value);
-              }}
-            />
-            {t(relative ? 'word.Relative' : 'word.MeterAbbreviation', lang)}
-          </Space>
-        ),
-        key: e.id + ' y',
-      },
-      {
-        checkable: false,
-        title: (
-          <Space>
-            <span>z : </span>
-            <InputNumber
-              step={relative ? 0.01 : 0.1}
-              value={e.cz}
-              precision={2}
-              disabled={disableAll || disableZ}
-              onChange={(value) => {
-                if (value !== null) handleCoordinateChange(e, 'cz', value);
-              }}
-            />
-            {t(relative ? 'word.Relative' : 'word.MeterAbbreviation', lang)}
-          </Space>
-        ),
-        key: e.id + ' z',
-      },
-    ];
-  };
-
-  const handleDimensionChange = (element: ElementModel, prop: 'lx' | 'ly' | 'lz', value: number) => {
-    useStore.getState().set((state) => {
-      const el = state.elements.find((e) => e.id === element.id);
-      if (el) {
-        el[prop] = value;
-      }
-    });
-  };
-
-  const getDimension = (e: ElementModel, relative?: boolean) => {
-    const parent = getParent(e);
-    const disableAll = e.locked;
-    const disableY =
-      e.type == ObjectType.SolarWaterHeater || e.type === ObjectType.Window || e.type === ObjectType.Door;
-    const disableZ = e.type == ObjectType.SolarWaterHeater || e.type === ObjectType.Door;
-    return [
-      {
-        checkable: false,
-        title: (
-          <Space>
-            <span>Lx : </span>
-            <InputNumber
-              value={(relative && parent ? parent.lx : 1) * e.lx}
-              min={0.01}
-              precision={2}
-              step={relative ? 0.01 : 0.1}
-              disabled={disableAll}
-              onChange={(value) => {
-                if (value !== null) handleDimensionChange(e, 'lx', relative && parent ? value / parent.lx : value);
-              }}
-            />
-            {t('word.MeterAbbreviation', lang)}
-          </Space>
-        ),
-        key: e.id + ' lx',
-      },
-      {
-        checkable: false,
-        title: (
-          <Space>
-            <span>Ly : </span>
-            <InputNumber
-              value={(relative && parent ? parent.ly : 1) * e.ly}
-              precision={2}
-              min={0.01}
-              step={relative ? 0.01 : 0.1}
-              disabled={disableAll || disableY}
-              onChange={(value) => {
-                if (value !== null) handleDimensionChange(e, 'ly', relative && parent ? value / parent.ly : value);
-              }}
-            />
-            {t('word.MeterAbbreviation', lang)}
-          </Space>
-        ),
-        key: e.id + ' ly',
-      },
-      {
-        checkable: false,
-        title: (
-          <Space>
-            <span>Lz : </span>
-            <InputNumber
-              value={(relative && parent ? parent.lz : 1) * e.lz}
-              precision={2}
-              min={0.01}
-              step={relative ? 0.01 : 0.1}
-              disabled={disableAll || disableZ}
-              onChange={(value) => {
-                if (value !== null) handleDimensionChange(e, 'lz', relative && parent ? value / parent.lz : value);
-              }}
-            />
-            {t('word.MeterAbbreviation', lang)}
-          </Space>
-        ),
-        key: e.id + ' lz',
-      },
-    ];
-  };
-
-  const createTooltip = (id: string, text: string) => {
-    return (
-      <Tooltip
-        placement={'right'}
-        title={'ID: ' + id}
-        color={'white'}
-        styles={{ body: { color: 'gray', fontSize: '12px' } }}
-      >
-        <span>{text}</span>
-      </Tooltip>
-    );
-  };
-
-  const i18nType = (e: ElementModel) => {
-    switch (e.type) {
-      case ObjectType.Human: {
-        return t('shared.HumanElement', lang);
-      }
-      case ObjectType.Flower: {
-        return t('shared.FlowerElement', lang);
-      }
-      case ObjectType.Tree: {
-        return t('shared.TreeElement', lang);
-      }
-      case ObjectType.Polygon: {
-        return t('shared.PolygonElement', lang);
-      }
-      case ObjectType.Foundation: {
-        return t('shared.FoundationElement', lang);
-      }
-      case ObjectType.Cuboid: {
-        return t('shared.CuboidElement', lang);
-      }
-      case ObjectType.Wall: {
-        return t('shared.WallElement', lang);
-      }
-      case ObjectType.Roof: {
-        return t('shared.RoofElement', lang);
-      }
-      case ObjectType.Window: {
-        return t('shared.WindowElement', lang);
-      }
-      case ObjectType.Door: {
-        return t('shared.DoorElement', lang);
-      }
-      case ObjectType.SolarWaterHeater: {
-        return t('shared.SolarWaterHeaterElement', lang);
-      }
-      case ObjectType.Sensor: {
-        return t('shared.SensorElement', lang);
-      }
-      case ObjectType.Light: {
-        return t('shared.LightElement', lang);
-      }
-      case ObjectType.SolarPanel: {
-        const parent = getElementById(e.parentId);
-        return t(
-          parent?.type === ObjectType.Foundation ? 'modelTree.GroundMountedSolarPanels' : 'shared.SolarPanelElement',
-          lang,
-        );
-      }
-      case ObjectType.ParabolicDish: {
-        return t('shared.ParabolicDishElement', lang);
-      }
-      case ObjectType.ParabolicTrough: {
-        return t('shared.ParabolicTroughElement', lang);
-      }
-      case ObjectType.FresnelReflector: {
-        return t('shared.FresnelReflectorElement', lang);
-      }
-      case ObjectType.Heliostat: {
-        return t('shared.HeliostatElement', lang);
-      }
-      case ObjectType.WindTurbine: {
-        return t('shared.WindTurbineElement', lang);
-      }
-      case ObjectType.BatteryStorage: {
-        return t('shared.BatteryStorageElement', lang);
-      }
-    }
-    return 'Unknown';
-  };
 
   const modelTree = useMemo(() => {
     const array: TreeDataNode[] = [];
@@ -1373,7 +1099,7 @@ const ModelTree = React.memo(() => {
       }
     }
     return array;
-  }, [elements, lang, pvModules]);
+  }, [elements, lang]);
 
   return (
     <Tree
