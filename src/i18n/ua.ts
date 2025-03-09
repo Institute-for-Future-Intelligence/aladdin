@@ -961,7 +961,7 @@ export const i18n_ua = {
       FontOutlineWidth: 'Товщина контуру шрифту',
       FontStrokeColor: 'Колір обводки шрифту',
       FontStrokeWidth: 'Товщина обводки шрифту',
-      NoOutline: 'Без контуру',
+      Outline: 'контуру',
       Shiny: 'Блискучий',
       Filled: 'Заповнений',
       FillTexture: 'Текстура заповнення',

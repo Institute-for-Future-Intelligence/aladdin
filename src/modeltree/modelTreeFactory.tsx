@@ -54,6 +54,12 @@ import RoofTextureInput from './roofTextureInput';
 import PolygonTextureInput from './polygonTextureInput';
 import { ColorType } from '../constants';
 import LineWidthInput from './lineWidthInput';
+import LineStyleInput from './lineStyleInput';
+import {
+  PolygonFillCheckbox,
+  PolygonOutlineCheckbox,
+} from '../components/contextMenu/elementMenu/polygonMenu/polygonMenuItems';
+import OpacityInput from './opacityInput';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -470,8 +476,28 @@ export const createPolygonNode = (polygon: PolygonModel) => {
   });
   node.push({
     checkable: false,
+    title: <PolygonFillCheckbox polygon={polygon} forModelTree />,
+    key: polygon.id + ' Filled',
+  });
+  node.push({
+    checkable: false,
     title: <ColorInput element={polygon} title={i18n.t('polygonMenu.FillColor', lang)} />,
     key: polygon.id + ' Fill Color',
+  });
+  node.push({
+    checkable: false,
+    title: <PolygonTextureInput polygon={polygon} />,
+    key: polygon.id + ' Fill Texture',
+  });
+  node.push({
+    checkable: false,
+    title: <OpacityInput element={polygon} />,
+    key: polygon.id + ' Opacity',
+  });
+  node.push({
+    checkable: false,
+    title: <PolygonOutlineCheckbox polygon={polygon} forModelTree />,
+    key: polygon.id + ' Outline',
   });
   node.push({
     checkable: false,
@@ -485,8 +511,8 @@ export const createPolygonNode = (polygon: PolygonModel) => {
   });
   node.push({
     checkable: false,
-    title: <PolygonTextureInput polygon={polygon} />,
-    key: polygon.id + ' Texture',
+    title: <LineStyleInput polygon={polygon} />,
+    key: polygon.id + ' Line style',
   });
   return node;
 };

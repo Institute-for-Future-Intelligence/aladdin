@@ -1,9 +1,9 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
-import { Col, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
+import { Col, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import { CommonStoreState, useStore } from '../../../../stores/common';
 import * as Selector from '../../../../stores/selector';
 import { LineStyle, ObjectType, Scope } from '../../../../types';
@@ -15,6 +15,7 @@ import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
 import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
+import LineStyleSelect from './lineStyleSelect';
 
 const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -32,7 +33,6 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const [selectedLineStyle, setSelectedLineStyle] = useState<LineStyle>(polygon?.lineStyle ?? LineStyle.Solid);
 
   const lang = useLanguage();
-  const { Option } = Select;
 
   const updatePolygonLineStyleById = (id: string, style: LineStyle) => {
     setCommonStore((state: CommonStoreState) => {
@@ -317,59 +317,7 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
     <Dialog width={600} title={i18n.t('polygonMenu.LineStyle', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col span={10}>
-          <Select
-            style={{ width: '200px' }}
-            value={selectedLineStyle}
-            onChange={(value) => setSelectedLineStyle(value)}
-          >
-            <Option key={LineStyle.Solid} value={LineStyle.Solid}>
-              <div
-                style={{
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
-                  marginRight: '12px',
-                  width: '48px',
-                  height: '1px',
-                  border: '1px solid dimGray',
-                }}
-              >
-                {' '}
-              </div>
-              {i18n.t('polygonMenu.SolidLine', lang)}
-            </Option>
-
-            <Option key={LineStyle.Dashed} value={LineStyle.Dashed}>
-              <div
-                style={{
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
-                  marginRight: '12px',
-                  width: '48px',
-                  height: '1px',
-                  border: '1px dashed dimGray',
-                }}
-              >
-                {' '}
-              </div>
-              {i18n.t('polygonMenu.DashedLine', lang)}
-            </Option>
-
-            <Option key={LineStyle.Dotted} value={LineStyle.Dotted}>
-              <div
-                style={{
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
-                  marginRight: '12px',
-                  width: '48px',
-                  height: '1px',
-                  border: '1px dotted dimGray',
-                }}
-              >
-                {' '}
-              </div>
-              {i18n.t('polygonMenu.DottedLine', lang)}
-            </Option>
-          </Select>
+          <LineStyleSelect style={selectedLineStyle} setStyle={setSelectedLineStyle} />
         </Col>
         <Col
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}

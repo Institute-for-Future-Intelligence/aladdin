@@ -1,10 +1,10 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { PolygonModel } from 'src/models/PolygonModel';
 import { MenuItem } from '../../menuItems';
-import { Checkbox, Input, InputNumber } from 'antd';
+import { Checkbox, Input, InputNumber, Space } from 'antd';
 import { useLanguage } from 'src/hooks';
 import i18n from 'src/i18n/i18n';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
@@ -17,10 +17,10 @@ import { LabelAddonBefore } from '../../labelSubmenuItems';
 
 interface PolygonMenuItemProps {
   polygon: PolygonModel;
-  children?: React.ReactNode;
+  forModelTree?: boolean;
 }
 
-export const PolygonFillCheckbox = ({ polygon }: PolygonMenuItemProps) => {
+export const PolygonFillCheckbox = ({ polygon, forModelTree }: PolygonMenuItemProps) => {
   const lang = useLanguage();
 
   const updateFilledById = (id: string, filled: boolean) => {
@@ -52,7 +52,12 @@ export const PolygonFillCheckbox = ({ polygon }: PolygonMenuItemProps) => {
     updateFilledById(polygon.id, e.target.checked);
   };
 
-  return (
+  return forModelTree ? (
+    <Space>
+      <span>{i18n.t('polygonMenu.Filled', lang)}</span>:
+      <Checkbox style={{ width: '100%' }} checked={polygon.filled} onChange={toggleFilled} />
+    </Space>
+  ) : (
     <MenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={polygon.filled} onChange={toggleFilled}>
         {i18n.t('polygonMenu.Filled', lang)}
@@ -103,42 +108,47 @@ export const PolygonShinyCheckbox = ({ polygon }: PolygonMenuItemProps) => {
   );
 };
 
-export const PolygonOutlineCheckbox = ({ polygon }: PolygonMenuItemProps) => {
+export const PolygonOutlineCheckbox = ({ polygon, forModelTree }: PolygonMenuItemProps) => {
   const lang = useLanguage();
 
-  const updateNoOutlineById = (id: string, noOutline: boolean) => {
+  const updateOutlineById = (id: string, outline: boolean) => {
     useStore.getState().set((state) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Polygon && e.id === id) {
-          (e as PolygonModel).noOutline = noOutline;
+          (e as PolygonModel).noOutline = !outline;
           break;
         }
       }
     });
   };
 
-  const toggleNoOutline = (e: CheckboxChangeEvent) => {
+  const toggleOutline = (e: CheckboxChangeEvent) => {
     const undoableCheck = {
-      name: 'No Outline for Polygon',
+      name: 'Toggle Outline for Polygon',
       timestamp: Date.now(),
-      checked: !polygon.noOutline,
+      checked: polygon.noOutline,
       selectedElementId: polygon.id,
       selectedElementType: ObjectType.Polygon,
       undo: () => {
-        updateNoOutlineById(polygon.id, !undoableCheck.checked);
+        updateOutlineById(polygon.id, !undoableCheck.checked);
       },
       redo: () => {
-        updateNoOutlineById(polygon.id, undoableCheck.checked);
+        updateOutlineById(polygon.id, undoableCheck.checked);
       },
     } as UndoableCheck;
     useStore.getState().addUndoable(undoableCheck);
-    updateNoOutlineById(polygon.id, e.target.checked);
+    updateOutlineById(polygon.id, e.target.checked);
   };
 
-  return (
+  return forModelTree ? (
+    <Space>
+      <span>{i18n.t('polygonMenu.Outline', lang)}</span>:
+      <Checkbox style={{ width: '100%' }} checked={!polygon.noOutline} onChange={toggleOutline} />
+    </Space>
+  ) : (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox style={{ width: '100%' }} checked={polygon.noOutline} onChange={toggleNoOutline}>
-        {i18n.t('polygonMenu.NoOutline', lang)}
+      <Checkbox style={{ width: '100%' }} checked={!polygon.noOutline} onChange={toggleOutline}>
+        {i18n.t('polygonMenu.Outline', lang)}
       </Checkbox>
     </MenuItem>
   );

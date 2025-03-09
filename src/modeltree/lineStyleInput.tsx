@@ -9,43 +9,41 @@ import { useLanguage } from '../hooks';
 import { useTranslation } from 'react-i18next';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
-import { PolygonTexture } from '../types';
+import { LineStyle } from '../types';
 import { PolygonModel } from '../models/PolygonModel';
-import PolygonTextureSelect from '../components/contextMenu/elementMenu/polygonMenu/polygonTextureSelect';
+import LineStyleSelect from '../components/contextMenu/elementMenu/polygonMenu/lineStyleSelect';
 
-const PolygonTextureInput = ({ polygon }: { polygon: PolygonModel }) => {
+const LineStyleInput = ({ polygon }: { polygon: PolygonModel }) => {
   const addUndoable = useStore(Selector.addUndoable);
 
   const lang = useLanguage();
   const { t } = useTranslation();
 
-  const update = (texture: PolygonTexture) => {
+  const update = (value: LineStyle) => {
     useStore.getState().set((state) => {
-      for (const e of state.elements) {
-        if (e.id === polygon.id) {
-          (e as PolygonModel).textureType = texture;
-          break;
-        }
+      const a = state.elements.find((e) => e.id === polygon.id);
+      if (a) {
+        (a as PolygonModel).lineStyle = value;
       }
     });
   };
 
-  const setTexture = (texture: PolygonTexture) => {
-    const oldValue = polygon.textureType;
-    const newValue = texture;
-    if (oldValue === newValue) return;
+  const setStyle = (value: LineStyle) => {
+    const newValue = value;
+    const oldValue = polygon.lineStyle ?? LineStyle.Solid;
+    if (newValue === oldValue) return;
     const undoableChange = {
-      name: 'Set Polygon Texture',
+      name: 'Set Line Style for ' + polygon.type,
       timestamp: Date.now(),
       oldValue,
       newValue,
       changedElementId: polygon.id,
       changedElementType: polygon.type,
       undo: () => {
-        update(undoableChange.oldValue as PolygonTexture);
+        update(undoableChange.oldValue as LineStyle);
       },
       redo: () => {
-        update(undoableChange.newValue as PolygonTexture);
+        update(undoableChange.newValue as LineStyle);
       },
     } as UndoableChange;
     addUndoable(undoableChange);
@@ -54,10 +52,10 @@ const PolygonTextureInput = ({ polygon }: { polygon: PolygonModel }) => {
 
   return (
     <Space>
-      <span>{t('polygonMenu.FillTexture', lang)} : </span>
-      <PolygonTextureSelect texture={polygon.textureType} setTexture={setTexture} height={16} />
+      <span>{t('polygonMenu.LineStyle', lang)} : </span>
+      <LineStyleSelect style={polygon.lineStyle ?? LineStyle.Solid} setStyle={setStyle} />
     </Space>
   );
 };
 
-export default PolygonTextureInput;
+export default LineStyleInput;

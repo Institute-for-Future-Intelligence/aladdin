@@ -19,7 +19,7 @@ const LineWidthInput = ({ element }: { element: ElementModel }) => {
   const lang = useLanguage();
   const { t } = useTranslation();
 
-  const update = (value: number) => {
+  const update = (value: LineWidth) => {
     useStore.getState().set((state) => {
       const a = state.elements.find((e) => e.id === element.id);
       if (a) {

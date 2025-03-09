@@ -1,10 +1,11 @@
 {
-  "docid": "gj8mmfSE6fqAAUtvXZYGkb",
-  "time": "03/19/2023 02:00 pm",
-  "timestamp": 1679248844823,
+  "docid": "jcZzr87Dza7wGTae912oFG",
+  "time": "03/09/2025 06:36 PM",
+  "timestamp": 1741559812731,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
+  "version": "1.7.3",
   "world": {
     "solarRadiationHeatmapGridCellSize": 0.5,
     "date": "4/22/2022 11:00:00 AM",
@@ -68,7 +69,12 @@
         0,
         0
       ],
-      "cz": 0.05
+      "cz": 0.05,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "id": "2u4Fe7xnA6kkXXVGrQ4eyJ",
@@ -116,7 +122,7 @@
       ],
       "cy": 5.6732245690928105,
       "color": "#ffffff",
-      "opacity": 0.4,
+      "opacity": 0.2,
       "wallStructure": "Stud",
       "structureSpacing": 2,
       "structureWidth": 0.1,
@@ -134,7 +140,8 @@
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
       "leftTopPartialHeight": 3,
-      "rightTopPartialHeight": 3
+      "rightTopPartialHeight": 3,
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -182,7 +189,7 @@
       "rightRoofHeight": 3,
       "roofId": "vyQyu3QobXjxj1jDvhJ4sy",
       "color": "#ffffff",
-      "opacity": 0.4,
+      "opacity": 0.2,
       "wallStructure": "Stud",
       "centerRoofHeight": [
         0,
@@ -204,7 +211,8 @@
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
       "leftTopPartialHeight": 3,
-      "rightTopPartialHeight": 3
+      "rightTopPartialHeight": 3,
+      "unfilledHeight": 0.5
     },
     {
       "lx": 10,
@@ -252,7 +260,7 @@
       "ly": 0.3,
       "cx": -5.300056602144494,
       "color": "#ffffff",
-      "opacity": 0.4,
+      "opacity": 0.2,
       "wallStructure": "Stud",
       "centerRoofHeight": [
         0,
@@ -274,7 +282,8 @@
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
       "leftTopPartialHeight": 3,
-      "rightTopPartialHeight": 3
+      "rightTopPartialHeight": 3,
+      "unfilledHeight": 0.5
     },
     {
       "showLabel": false,
@@ -323,7 +332,7 @@
       "lx": 12,
       "color": "#ffffff",
       "wallStructure": "Stud",
-      "opacity": 0.4,
+      "opacity": 0.2,
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
@@ -340,7 +349,8 @@
       "leftUnfilledHeight": 0.5,
       "rightUnfilledHeight": 0.5,
       "leftTopPartialHeight": 3,
-      "rightTopPartialHeight": 3
+      "rightTopPartialHeight": 3,
+      "unfilledHeight": 0.5
     },
     {
       "type": "Human",
@@ -430,7 +440,8 @@
         1
       ],
       "rise": 1.790804943100949,
-      "ceiling": false
+      "ceiling": false,
+      "opacity": 0.2
     },
     {
       "type": "Flower",
@@ -2758,9 +2769,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -13.969061585407742,
-      -10.143303302147187,
-      2.3881460403679218
+      -13.437660433896838,
+      -10.684434284826036,
+      1.34371419517054
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -2771,7 +2782,7 @@
     "showWeatherPanel": false,
     "groundImage": false,
     "yearlyLightSensorPanelX": 0,
-    "ambientLightIntensity": 0.1,
+    "ambientLightIntensity": 0.30000000000000004,
     "yearlyFresnelReflectorYieldPanelX": 0,
     "enableRotate": true,
     "dailyLightSensorPanelX": 0,
@@ -2823,6 +2834,8 @@
     "showYearlyParabolicDishYieldPanel": false,
     "showYearlyFresnelReflectorYieldPanel": false
   },
+  "canvasPercentWidth": 100,
+  "animate24Hours": false,
   "graphState": {
     "dailyPvIndividualOutputs": false,
     "yearlyPvIndividualOutputs": false,
@@ -2898,5 +2911,9 @@
   "modelAuthor": null,
   "modelLabel": null,
   "modelDescription": null,
-  "notes": []
+  "designProjectType": null,
+  "notes": [],
+  "minimumNavigationMoveSpeed": 3,
+  "minimumNavigationTurnSpeed": 3,
+  "customPvModules": {}
 }
