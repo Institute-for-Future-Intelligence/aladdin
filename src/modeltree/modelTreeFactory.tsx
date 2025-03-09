@@ -51,6 +51,9 @@ import { SolarWaterHeaterModel } from '../models/SolarWaterHeaterModel';
 import { RoofModel } from '../models/RoofModel';
 import WallTextureInput from './wallTextureInput';
 import RoofTextureInput from './roofTextureInput';
+import PolygonTextureInput from './polygonTextureInput';
+import { ColorType } from '../constants';
+import LineWidthInput from './lineWidthInput';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -464,6 +467,26 @@ export const createPolygonNode = (polygon: PolygonModel) => {
       </span>
     ),
     key: polygon.id + ' Vertex Count',
+  });
+  node.push({
+    checkable: false,
+    title: <ColorInput element={polygon} title={i18n.t('polygonMenu.FillColor', lang)} />,
+    key: polygon.id + ' Fill Color',
+  });
+  node.push({
+    checkable: false,
+    title: <ColorInput element={polygon} type={ColorType.Line} title={i18n.t('polygonMenu.LineColor', lang)} />,
+    key: polygon.id + ' Line Color',
+  });
+  node.push({
+    checkable: false,
+    title: <LineWidthInput element={polygon} />,
+    key: polygon.id + ' Line Width',
+  });
+  node.push({
+    checkable: false,
+    title: <PolygonTextureInput polygon={polygon} />,
+    key: polygon.id + ' Texture',
   });
   return node;
 };

@@ -1,12 +1,12 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
-import { Col, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
+import { Col, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import { useStore } from '../../../../stores/common';
 import * as Selector from '../../../../stores/selector';
-import { LineStyle, LineWidth, ObjectType, Scope } from '../../../../types';
+import { LineWidth, ObjectType, Scope } from '../../../../types';
 import i18n from '../../../../i18n/i18n';
 import { UndoableChange } from '../../../../undo/UndoableChange';
 import { PolygonModel } from '../../../../models/PolygonModel';
@@ -15,6 +15,7 @@ import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
 import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
+import LineWidthSelect from './lineWidthSelect';
 
 const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
@@ -32,10 +33,9 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
 
   const polygon = useSelectedElement(ObjectType.Polygon) as PolygonModel | undefined;
 
-  const [selectedLineWidth, setSelectedLineWidth] = useState<LineStyle>(polygon?.lineWidth ?? 1);
+  const [selectedLineWidth, setSelectedLineWidth] = useState<LineWidth>(polygon?.lineWidth ?? LineWidth.One);
 
   const lang = useLanguage();
-  const { Option } = Select;
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setActionScope(e.target.value);
@@ -278,76 +278,7 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
     <Dialog width={560} title={i18n.t('polygonMenu.LineWidth', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col span={10}>
-          <Select
-            style={{ width: '200px' }}
-            value={selectedLineWidth}
-            onChange={(value) => setSelectedLineWidth(value)}
-          >
-            <Option key={LineWidth.One} value={LineWidth.One}>
-              <div
-                style={{
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
-                  marginRight: '24px',
-                  width: '100%',
-                  height: '1px',
-                  border: '1px solid dimGray',
-                }}
-              />
-            </Option>
-
-            <Option key={LineWidth.Two} value={LineWidth.Two}>
-              <div
-                style={{
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
-                  marginRight: '24px',
-                  width: '100%',
-                  height: '1px',
-                  border: '2px solid dimGray',
-                }}
-              />
-            </Option>
-
-            <Option key={LineWidth.Three} value={LineWidth.Three}>
-              <div
-                style={{
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
-                  marginRight: '24px',
-                  width: '100%',
-                  height: '1px',
-                  border: '3px solid dimGray',
-                }}
-              />
-            </Option>
-
-            <Option key={LineWidth.Four} value={LineWidth.Four}>
-              <div
-                style={{
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
-                  marginRight: '24px',
-                  width: '100%',
-                  height: '1px',
-                  border: '4px solid dimGray',
-                }}
-              />
-            </Option>
-
-            <Option key={LineWidth.Five} value={LineWidth.Five}>
-              <div
-                style={{
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
-                  marginRight: '24px',
-                  width: '100%',
-                  height: '1px',
-                  border: '5px solid dimGray',
-                }}
-              />
-            </Option>
-          </Select>
+          <LineWidthSelect width={selectedLineWidth} setWidth={setSelectedLineWidth} />
         </Col>
         <Col
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}

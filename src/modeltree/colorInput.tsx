@@ -10,21 +10,31 @@ import { useLanguage } from '../hooks';
 import { useTranslation } from 'react-i18next';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
+import { ColorType } from '../constants';
 
-const ColorInput = ({ element }: { element: ElementModel }) => {
+const ColorInput = ({ element, type, title }: { element: ElementModel; type?: ColorType; title?: string }) => {
   const updateElementColorById = useStore(Selector.updateElementColorById);
+  const updateElementLineColorById = useStore(Selector.updateElementLineColorById);
   const addUndoable = useStore(Selector.addUndoable);
 
   const lang = useLanguage();
   const { t } = useTranslation();
 
+  const update = (elementId: string, color: string) => {
+    if (type === ColorType.Line) {
+      updateElementLineColorById(elementId, color);
+    } else {
+      updateElementColorById(elementId, color);
+    }
+  };
+
   return (
     <Space>
-      <span>{t('word.Color', lang)} : </span>
+      <span>{title ?? t('word.Color', lang)} : </span>
       <ColorPicker
         showText
         size={'small'}
-        value={element.color}
+        value={type === ColorType.Line ? element.lineColor : element.color}
         disabled={element.locked}
         onChange={(e) => {
           const oldColor = element.color;
@@ -36,14 +46,14 @@ const ColorInput = ({ element }: { element: ElementModel }) => {
             changedElementId: element.id,
             changedElementType: element.type,
             undo: () => {
-              updateElementColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
+              update(undoableChange.changedElementId, undoableChange.oldValue as string);
             },
             redo: () => {
-              updateElementColorById(undoableChange.changedElementId, undoableChange.newValue as string);
+              update(undoableChange.changedElementId, undoableChange.newValue as string);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateElementColorById(element.id, '#' + e.toHex());
+          update(element.id, '#' + e.toHex());
         }}
       />
     </Space>

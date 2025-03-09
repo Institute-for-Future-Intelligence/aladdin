@@ -160,6 +160,11 @@ export enum SurfaceType {
   Inclined = 'Inclined',
 }
 
+export enum ColorType {
+  Filled = 'Filled',
+  Line = 'Line=',
+}
+
 function isMac() {
   const os = platform.os?.family;
   if (os) return os.includes('Mac') || os.includes('OS X');
