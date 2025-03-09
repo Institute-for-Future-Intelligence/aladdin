@@ -2,16 +2,8 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import Foundation_Texture_01_Menu from '../../../../resources/foundation_01_menu.png';
-import Foundation_Texture_02_Menu from '../../../../resources/foundation_02_menu.png';
-import Foundation_Texture_03_Menu from '../../../../resources/foundation_03_menu.png';
-import Foundation_Texture_04_Menu from '../../../../resources/foundation_04_menu.png';
-import Foundation_Texture_05_Menu from '../../../../resources/foundation_05_menu.png';
-import Foundation_Texture_06_Menu from '../../../../resources/foundation_06_menu.png';
-import Foundation_Texture_07_Menu from '../../../../resources/foundation_07_menu.png';
-
 import React, { useState } from 'react';
-import { Col, Radio, Row, Select, Space } from 'antd';
+import { Col, Radio, Row, Space } from 'antd';
 import { CommonStoreState, useStore } from '../../../../stores/common';
 import * as Selector from '../../../../stores/selector';
 import { FoundationTexture, ObjectType, Scope } from '../../../../types';
@@ -22,6 +14,7 @@ import { FoundationModel } from '../../../../models/FoundationModel';
 import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
+import FoundationTextureSelect from './foundationTextureSelect';
 
 const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -37,7 +30,6 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
   const [selectedTexture, setSelectedTexture] = useState(foundation?.textureType ?? FoundationTexture.NoTexture);
 
   const lang = useLanguage();
-  const { Option } = Select;
 
   const updateFoundationTextureById = (id: string, texture: FoundationTexture) => {
     setCommonStore((state: CommonStoreState) => {
@@ -205,100 +197,7 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
     <Dialog width={500} title={i18n.t('word.Texture', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col span={10}>
-          <Select style={{ width: '150px' }} value={selectedTexture} onChange={setSelectedTexture}>
-            <Option key={FoundationTexture.NoTexture} value={FoundationTexture.NoTexture}>
-              <div
-                style={{
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
-                  marginRight: '12px',
-                  width: '32px',
-                  height: '20px',
-                  border: '1px dashed dimGray',
-                }}
-              >
-                {' '}
-              </div>
-              {i18n.t('shared.NoTexture', lang)}
-            </Option>
-
-            <Option key={FoundationTexture.Texture01} value={FoundationTexture.Texture01}>
-              <img
-                alt={FoundationTexture.Texture01}
-                src={Foundation_Texture_01_Menu}
-                height={20}
-                width={40}
-                style={{ paddingRight: '8px' }}
-              />{' '}
-              {i18n.t('foundationMenu.Texture01', lang)}
-            </Option>
-
-            <Option key={FoundationTexture.Texture02} value={FoundationTexture.Texture02}>
-              <img
-                alt={FoundationTexture.Texture02}
-                src={Foundation_Texture_02_Menu}
-                height={20}
-                width={40}
-                style={{ paddingRight: '8px' }}
-              />{' '}
-              {i18n.t('foundationMenu.Texture02', lang)}
-            </Option>
-
-            <Option key={FoundationTexture.Texture03} value={FoundationTexture.Texture03}>
-              <img
-                alt={FoundationTexture.Texture03}
-                src={Foundation_Texture_03_Menu}
-                height={20}
-                width={40}
-                style={{ paddingRight: '8px' }}
-              />{' '}
-              {i18n.t('foundationMenu.Texture03', lang)}
-            </Option>
-
-            <Option key={FoundationTexture.Texture04} value={FoundationTexture.Texture04}>
-              <img
-                alt={FoundationTexture.Texture04}
-                src={Foundation_Texture_04_Menu}
-                height={20}
-                width={40}
-                style={{ paddingRight: '8px' }}
-              />{' '}
-              {i18n.t('foundationMenu.Texture04', lang)}
-            </Option>
-
-            <Option key={FoundationTexture.Texture05} value={FoundationTexture.Texture05}>
-              <img
-                alt={FoundationTexture.Texture05}
-                src={Foundation_Texture_05_Menu}
-                height={20}
-                width={40}
-                style={{ paddingRight: '8px' }}
-              />{' '}
-              {i18n.t('foundationMenu.Texture05', lang)}
-            </Option>
-
-            <Option key={FoundationTexture.Texture06} value={FoundationTexture.Texture06}>
-              <img
-                alt={FoundationTexture.Texture06}
-                src={Foundation_Texture_06_Menu}
-                height={20}
-                width={40}
-                style={{ paddingRight: '8px' }}
-              />{' '}
-              {i18n.t('foundationMenu.Texture06', lang)}
-            </Option>
-
-            <Option key={FoundationTexture.Texture07} value={FoundationTexture.Texture07}>
-              <img
-                alt={FoundationTexture.Texture07}
-                src={Foundation_Texture_07_Menu}
-                height={20}
-                width={40}
-                style={{ paddingRight: '8px' }}
-              />{' '}
-              {i18n.t('foundationMenu.Texture07', lang)}
-            </Option>
-          </Select>
+          <FoundationTextureSelect texture={selectedTexture} setTexture={setSelectedTexture} />
         </Col>
         <Col
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}

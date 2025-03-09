@@ -1,18 +1,9 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
-import RoofTextureDefaultIcon from 'src/resources/roof_edge_menu.png';
-import RoofTexture01Icon from 'src/resources/roof_01_menu.png';
-import RoofTexture02Icon from 'src/resources/roof_02_menu.png';
-import RoofTexture03Icon from 'src/resources/roof_03_menu.png';
-import RoofTexture04Icon from 'src/resources/roof_04_menu.png';
-import RoofTexture05Icon from 'src/resources/roof_05_menu.png';
-import RoofTexture06Icon from 'src/resources/roof_06_menu.png';
-import RoofTexture07Icon from 'src/resources/roof_07_menu.png';
-
 import React, { useState } from 'react';
-import { Col, Radio, Row, Select, Space } from 'antd';
+import { Col, Radio, Row, Space } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { ObjectType, Scope, RoofTexture } from 'src/types';
@@ -23,6 +14,7 @@ import { RoofModel } from 'src/models/RoofModel';
 import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
+import RoofTextureSelect from './roofTextureSelect';
 
 const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
@@ -38,7 +30,6 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const [selectedTexture, setSelectedTexture] = useState<RoofTexture>(roof?.textureType ?? RoofTexture.Default);
 
   const lang = useLanguage();
-  const { Option } = Select;
 
   const updateTextureById = (id: string, textureType: RoofTexture) => {
     setCommonStore((state) => {
@@ -237,111 +228,7 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
     <Dialog width={550} title={i18n.t('word.Texture', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col span={9}>
-          <Select style={{ width: '150px' }} value={selectedTexture} onChange={(value) => setSelectedTexture(value)}>
-            <Option key={RoofTexture.NoTexture} value={RoofTexture.NoTexture}>
-              <div
-                style={{
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
-                  marginRight: '12px',
-                  width: '32px',
-                  height: '20px',
-                  border: '1px dashed dimGray',
-                }}
-              >
-                {' '}
-              </div>
-              {i18n.t('shared.NoTexture', lang)}
-            </Option>
-
-            <Option key={RoofTexture.Default} value={RoofTexture.Default}>
-              <img
-                alt={RoofTexture.Default}
-                src={RoofTextureDefaultIcon}
-                height={20}
-                width={40}
-                style={{ paddingRight: '8px' }}
-              />{' '}
-              {i18n.t('roofMenu.TextureDefault', lang)}
-            </Option>
-
-            <Option key={RoofTexture.Texture01} value={RoofTexture.Texture01}>
-              <img
-                alt={RoofTexture.Texture01}
-                src={RoofTexture01Icon}
-                height={20}
-                width={40}
-                style={{ paddingRight: '8px' }}
-              />{' '}
-              {i18n.t('roofMenu.Texture01', lang)}
-            </Option>
-
-            <Option key={RoofTexture.Texture02} value={RoofTexture.Texture02}>
-              <img
-                alt={RoofTexture.Texture02}
-                src={RoofTexture02Icon}
-                height={20}
-                width={40}
-                style={{ paddingRight: '8px' }}
-              />{' '}
-              {i18n.t('roofMenu.Texture02', lang)}
-            </Option>
-
-            <Option key={RoofTexture.Texture03} value={RoofTexture.Texture03}>
-              <img
-                alt={RoofTexture.Texture03}
-                src={RoofTexture03Icon}
-                height={20}
-                width={40}
-                style={{ paddingRight: '8px' }}
-              />{' '}
-              {i18n.t('roofMenu.Texture03', lang)}
-            </Option>
-
-            <Option key={RoofTexture.Texture04} value={RoofTexture.Texture04}>
-              <img
-                alt={RoofTexture.Texture04}
-                src={RoofTexture04Icon}
-                height={20}
-                width={40}
-                style={{ paddingRight: '8px' }}
-              />{' '}
-              {i18n.t('roofMenu.Texture04', lang)}
-            </Option>
-
-            <Option key={RoofTexture.Texture05} value={RoofTexture.Texture05}>
-              <img
-                alt={RoofTexture.Texture05}
-                src={RoofTexture05Icon}
-                height={20}
-                width={40}
-                style={{ paddingRight: '8px' }}
-              />{' '}
-              {i18n.t('roofMenu.Texture05', lang)}
-            </Option>
-
-            <Option key={RoofTexture.Texture06} value={RoofTexture.Texture06}>
-              <img
-                alt={RoofTexture.Texture06}
-                src={RoofTexture06Icon}
-                height={20}
-                width={40}
-                style={{ paddingRight: '8px' }}
-              />{' '}
-              {i18n.t('roofMenu.Texture06', lang)}
-            </Option>
-
-            <Option key={RoofTexture.Texture07} value={RoofTexture.Texture07}>
-              <img
-                alt={RoofTexture.Texture07}
-                src={RoofTexture07Icon}
-                height={20}
-                width={40}
-                style={{ paddingRight: '8px' }}
-              />{' '}
-              {i18n.t('roofMenu.Texture07', lang)}
-            </Option>
-          </Select>
+          <RoofTextureSelect texture={selectedTexture} setTexture={setSelectedTexture} />
         </Col>
         <Col
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}

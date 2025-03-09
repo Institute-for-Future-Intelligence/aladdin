@@ -50,6 +50,7 @@ import RValueInput from './rValueInput';
 import { SolarWaterHeaterModel } from '../models/SolarWaterHeaterModel';
 import { RoofModel } from '../models/RoofModel';
 import WallTextureInput from './wallTextureInput';
+import RoofTextureInput from './roofTextureInput';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -177,6 +178,11 @@ export const createRoofNode = (roof: RoofModel) => {
     checkable: false,
     title: <ColorInput element={roof} />,
     key: roof.id + ' Color',
+  });
+  node.push({
+    checkable: false,
+    title: <RoofTextureInput roof={roof} />,
+    key: roof.id + ' Texture',
   });
   return node;
 };

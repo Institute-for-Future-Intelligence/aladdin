@@ -49,6 +49,7 @@ import {
 import { BatteryStorageModel } from '../models/BatteryStorageModel';
 import { LightModel } from '../models/LightModel';
 import { SensorModel } from '../models/SensorModel';
+import FoundationTextureInput from './foundationTextureInput';
 
 const ModelTree = React.memo(() => {
   const modelTreeExpandedKeys = usePrimitiveStore(Selector.modelTreeExpandedKeys);
@@ -146,6 +147,11 @@ const ModelTree = React.memo(() => {
           checkable: false,
           title: <ColorInput element={f} />,
           key: f.id + ' Color',
+        });
+        children.push({
+          checkable: false,
+          title: <FoundationTextureInput foundation={f} />,
+          key: f.id + ' Texture',
         });
         children.push({
           checkable: false,
