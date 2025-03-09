@@ -367,6 +367,7 @@ export const i18n_zh_tw = {
           Instruction: '操作說明',
           StickyNote: '便簽',
           Note: '便簽',
+          ShareLinks: '分享鏈接',
         },
       },
       settingsSubMenu: '設置',

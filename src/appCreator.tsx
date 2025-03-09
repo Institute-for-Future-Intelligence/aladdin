@@ -80,6 +80,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const canvasPercentWidth = useStore(Selector.canvasPercentWidth);
   const elements = useStore(Selector.elements);
   const showModelTree = useStore(Selector.viewState.showModelTree);
+  const hideShareLinks = useStore(Selector.viewState.hideShareLinks);
 
   const [initializing, setInitializing] = useState<boolean>(true);
   const [latestVersionReminder, setLatestVersionReminder] = useState<boolean>(false);
@@ -369,7 +370,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
         )}
       </div>
       {!showModelTree && createIfiLogo()}
-      {!viewOnly && (
+      {!viewOnly && !hideShareLinks && (
         <ShareLink size={16} round={true} margin={'2px'} style={{ position: 'absolute', right: '0', top: '80px' }} />
       )}
       <MainMenu viewOnly={viewOnly} canvas={canvasRef.current} />

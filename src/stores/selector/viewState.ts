@@ -89,6 +89,8 @@ export const heliodonPanelY = (state: CommonStoreState) => state.viewState.helio
 
 export const showModelTree = (state: CommonStoreState) => state.viewState.showModelTree;
 
+export const hideShareLinks = (state: CommonStoreState) => state.viewState.hideShareLinks;
+
 export const showMapPanel = (state: CommonStoreState) => state.viewState.showMapPanel;
 
 export const mapPanelX = (state: CommonStoreState) => state.viewState.mapPanelX;

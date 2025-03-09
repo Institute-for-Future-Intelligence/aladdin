@@ -42,6 +42,7 @@ export interface ViewState {
   windowShininess?: number;
 
   showModelTree: boolean;
+  hideShareLinks: boolean;
   showMapPanel: boolean;
   showHeliodonPanel: boolean;
   showWeatherPanel: boolean;

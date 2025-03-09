@@ -372,6 +372,7 @@ export const i18n_ua = {
           Instruction: 'Інструкція',
           StickyNote: 'Примітка',
           Note: 'Примітка',
+          ShareLinks: 'Share Links',
         },
       },
       settingsSubMenu: 'Налаштування',

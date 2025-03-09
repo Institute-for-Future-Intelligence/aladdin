@@ -54,6 +54,7 @@ export class DefaultViewState implements ViewState {
   windowShininess: number;
 
   showModelTree: boolean;
+  hideShareLinks: boolean;
   showMapPanel: boolean;
   showHeliodonPanel: boolean;
   showWeatherPanel: boolean;
@@ -155,6 +156,7 @@ export class DefaultViewState implements ViewState {
     this.windowShininess = DEFAULT_WINDOW_SHININESS;
 
     this.showModelTree = false;
+    this.hideShareLinks = false;
     this.showMapPanel = false;
     this.showHeliodonPanel = false;
     this.showWeatherPanel = false;

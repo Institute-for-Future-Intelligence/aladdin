@@ -368,6 +368,7 @@ export const i18n_tr = {
           Instruction: 'Yardım',
           StickyNote: 'Notlar',
           Note: 'Notlar',
+          ShareLinks: 'Share Links',
         },
       },
       settingsSubMenu: 'Settings',

@@ -34,7 +34,7 @@ const ColorInput = ({ element, type, title }: { element: ElementModel; type?: Co
       <ColorPicker
         showText
         size={'small'}
-        value={type === ColorType.Line ? element.lineColor : element.color}
+        value={type === ColorType.Line ? element.lineColor ?? '#000' : element.color}
         disabled={element.locked}
         onChange={(e) => {
           const oldColor = element.color;

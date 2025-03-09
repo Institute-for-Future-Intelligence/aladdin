@@ -53,7 +53,7 @@ const LineWidthInput = ({ element }: { element: ElementModel }) => {
   return (
     <Space>
       <span>{t('polygonMenu.LineWidth', lang)} : </span>
-      <LineWidthSelect width={element.lineWidth ?? LineWidth.One} setWidth={setWidth} />
+      <LineWidthSelect width={element.lineWidth ?? LineWidth.One} setWidth={setWidth} uiWidth={150} />
     </Space>
   );
 };

@@ -367,6 +367,7 @@ export const i18n_zh_cn = {
           Instruction: '操作说明',
           StickyNote: '便签',
           Note: '便签',
+          ShareLinks: '分享链接',
         },
       },
       settingsSubMenu: '设置',

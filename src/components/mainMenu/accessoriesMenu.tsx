@@ -106,6 +106,28 @@ export const createAccessoriesMenu = () => {
     });
   };
 
+  const toggleShareLinks = (e: CheckboxChangeEvent) => {
+    const undoableCheck = {
+      name: 'Show Share Links',
+      timestamp: Date.now(),
+      checked: !e.target.value,
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.hideShareLinks = !undoableCheck.checked;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.hideShareLinks = undoableCheck.checked;
+        });
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
+    setCommonStore((state) => {
+      state.viewState.hideShareLinks = !state.viewState.hideShareLinks;
+    });
+  };
+
   const items: MenuProps['items'] = [
     // site-info-panel-check-box
     {
@@ -140,6 +162,15 @@ export const createAccessoriesMenu = () => {
       label: (
         <MainMenuCheckbox selector={Selector.viewState.showStickyNotePanel} onChange={toggleStickyNote}>
           {i18n.t('menu.view.accessories.StickyNote', lang)}
+        </MainMenuCheckbox>
+      ),
+    },
+    // share-links-check-box
+    {
+      key: 'share-links-check-box',
+      label: (
+        <MainMenuCheckbox selector={Selector.viewState.hideShareLinks} onChange={toggleShareLinks} negate>
+          {i18n.t('menu.view.accessories.ShareLinks', lang)}
         </MainMenuCheckbox>
       ),
     },

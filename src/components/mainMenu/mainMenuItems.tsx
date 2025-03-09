@@ -16,6 +16,7 @@ interface MainMenuCheckboxProps {
   selector: (state: CommonStoreState) => CommonStoreState[keyof CommonStoreState];
   onChange: (e: CheckboxChangeEvent) => void;
   children?: React.ReactNode;
+  negate?: boolean;
 }
 
 interface MainMenuSwitchProps {
@@ -28,11 +29,11 @@ export const LabelMark = ({ children }: LabelMarkProps) => {
   return <span style={{ paddingLeft: '2px', fontSize: 9 }}>{children}</span>;
 };
 
-export const MainMenuCheckbox = ({ selector, onChange, children }: MainMenuCheckboxProps) => {
+export const MainMenuCheckbox = ({ selector, onChange, children, negate }: MainMenuCheckboxProps) => {
   const checked = useStore(selector);
   return (
     <MenuItem noPadding stayAfterClick>
-      <Checkbox style={{ width: '100%' }} checked={checked} onChange={onChange}>
+      <Checkbox style={{ width: '100%' }} checked={negate ? !checked : checked} onChange={onChange}>
         {children}
       </Checkbox>
     </MenuItem>

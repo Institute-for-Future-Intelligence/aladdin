@@ -9,9 +9,9 @@ import { LineWidth } from '../../../../types';
 const { Option } = Select;
 
 const LineWidthSelect = React.memo(
-  ({ width, setWidth }: { width: LineWidth; setWidth: (value: LineWidth) => void }) => {
+  ({ width, setWidth, uiWidth }: { width: LineWidth; setWidth: (value: LineWidth) => void; uiWidth?: number }) => {
     return (
-      <Select style={{ width: '200px' }} value={width} onChange={(value) => setWidth(value)}>
+      <Select style={{ width: (uiWidth ?? 200) + 'px' }} value={width} onChange={(value) => setWidth(value)}>
         <Option key={LineWidth.One} value={LineWidth.One}>
           <div
             style={{

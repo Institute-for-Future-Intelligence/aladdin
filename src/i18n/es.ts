@@ -369,6 +369,7 @@ export const i18n_es = {
           Instruction: 'Instrucción',
           StickyNote: 'Nota adhesiva',
           Note: 'Nota',
+          ShareLinks: 'Share Links',
         },
       },
       settingsSubMenu: 'Settings',
