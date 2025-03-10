@@ -47,7 +47,7 @@ import GroupMasterWrapper from './components/groupMaster';
 import { useRefStore } from './stores/commonRef';
 import { PerspectiveCamera, Vector2 } from 'three';
 import { useLanguage } from './hooks';
-import { AlertFilled, CloseOutlined } from '@ant-design/icons';
+import { AlertFilled, CloseOutlined, DoubleRightOutlined } from '@ant-design/icons';
 import { UndoableCheck } from './undo/UndoableCheck';
 import ModelTree from './modeltree/modelTree';
 
@@ -210,22 +210,51 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
     });
   };
 
+  const openModelTree = () => {
+    setCommonStore((state) => {
+      state.viewState.showModelTree = true;
+      state.canvasPercentWidth = 75;
+    });
+  };
+
   const undoableCloseModelTree = () => {
     const undoable = {
       name: 'Close Model Tree',
       timestamp: Date.now(),
-      undo: () => {
-        setCommonStore((state) => {
-          state.viewState.showModelTree = true;
-          state.canvasPercentWidth = 75;
-        });
-      },
-      redo: () => {
-        closeModelTree();
-      },
+      undo: () => openModelTree(),
+      redo: () => closeModelTree(),
     } as UndoableCheck;
     useStore.getState().addUndoable(undoable);
     closeModelTree();
+  };
+
+  const undoableOpenModelTree = () => {
+    const undoable = {
+      name: 'Open Model Tree',
+      timestamp: Date.now(),
+      undo: () => closeModelTree(),
+      redo: () => openModelTree(),
+    } as UndoableCheck;
+    useStore.getState().addUndoable(undoable);
+    openModelTree();
+  };
+
+  const createModelTreeOpener = () => {
+    return (
+      <DoubleRightOutlined
+        title={i18n.t('menu.view.OpenModelTree', lang)}
+        style={{
+          position: 'absolute',
+          bottom: `calc(50vh - ${HEADER_HEIGHT / 2}px)`,
+          left: '2px',
+          zIndex: 997,
+          fontSize: '12px',
+          userSelect: 'none',
+          color: groundImage ? (groundImageType !== 'roadmap' ? 'antiquewhite' : 'darkslategrey') : 'antiquewhite',
+        }}
+        onClick={undoableOpenModelTree}
+      />
+    );
   };
 
   const createIfiLogo = () => {
@@ -370,6 +399,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
         )}
       </div>
       {!showModelTree && createIfiLogo()}
+      {!showModelTree && createModelTreeOpener()}
       {!viewOnly && !hideShareLinks && (
         <ShareLink size={16} round={true} margin={'2px'} style={{ position: 'absolute', right: '0', top: '80px' }} />
       )}

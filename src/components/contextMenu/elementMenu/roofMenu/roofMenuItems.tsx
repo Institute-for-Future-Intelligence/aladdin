@@ -199,9 +199,9 @@ export const RoofStructureRadioGroup = ({ roof }: RoofMenuItemProps) => {
           <Radio style={{ width: '100%' }} value={RoofStructure.Rafter}>
             {i18n.t('roofMenu.RafterStructure', lang)}
           </Radio>
-          <Radio style={{ width: '100%' }} value={RoofStructure.Glass}>
-            {i18n.t('roofMenu.GlassStructure', lang)}
-          </Radio>
+          {/*<Radio style={{ width: '100%' }} value={RoofStructure.Glass}>*/}
+          {/*  {i18n.t('roofMenu.GlassStructure', lang)}*/}
+          {/*</Radio>*/}
         </Space>
       </Radio.Group>
     </MenuItem>

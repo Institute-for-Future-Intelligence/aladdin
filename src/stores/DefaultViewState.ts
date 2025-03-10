@@ -258,6 +258,8 @@ export class DefaultViewState implements ViewState {
     viewState.solarPanelShininess = DEFAULT_SOLAR_PANEL_SHININESS;
     viewState.windowShininess = DEFAULT_WINDOW_SHININESS;
 
+    viewState.showModelTree = false;
+    viewState.hideShareLinks = false;
     viewState.showMapPanel = false;
     viewState.showHeliodonPanel = false;
     viewState.showWeatherPanel = false;
