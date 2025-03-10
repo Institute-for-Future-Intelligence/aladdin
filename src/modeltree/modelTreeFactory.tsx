@@ -63,6 +63,8 @@ import OpacityInput from './opacityInput';
 import BatteryIdInput from './batteryIdInput';
 import ChargingEfficiencyInput from './chargingEfficiencyInput';
 import DischargingEfficiencyInput from './dischargingEfficiencyInput';
+import RoofSideColorInput from './roofSideColorInput';
+import WindowTypeInput from './windowTypeInput';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -190,6 +192,11 @@ export const createRoofNode = (roof: RoofModel) => {
     checkable: false,
     title: <ColorInput element={roof} />,
     key: roof.id + ' Color',
+  });
+  node.push({
+    checkable: false,
+    title: <RoofSideColorInput roof={roof} />,
+    key: roof.id + ' Side Color',
   });
   node.push({
     checkable: false,
@@ -402,6 +409,11 @@ export const createWindowNode = (window: WindowModel, skylight?: boolean) => {
     checkable: false,
     title: <TintInput window={window} />,
     key: window.id + ' Tint',
+  });
+  node.push({
+    checkable: false,
+    title: <WindowTypeInput window={window} />,
+    key: window.id + ' Type',
   });
   if (!skylight) {
     node.push(...getDimension(window, true));

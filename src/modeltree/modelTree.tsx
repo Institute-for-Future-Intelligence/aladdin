@@ -50,6 +50,8 @@ import { BatteryStorageModel } from '../models/BatteryStorageModel';
 import { LightModel } from '../models/LightModel';
 import { SensorModel } from '../models/SensorModel';
 import FoundationTextureInput from './foundationTextureInput';
+import TransparencyInput from './transparencyInput';
+import { CuboidModel } from '../models/CuboidModel';
 
 const ModelTree = React.memo(() => {
   const modelTreeExpandedKeys = usePrimitiveStore(Selector.modelTreeExpandedKeys);
@@ -206,6 +208,11 @@ const ModelTree = React.memo(() => {
           checkable: false,
           title: <AzimuthInput element={e} />,
           key: e.id + ' Azimuth',
+        });
+        children.push({
+          checkable: false,
+          title: <TransparencyInput cuboid={e as CuboidModel} />,
+          key: e.id + ' Transparency',
         });
         children.push({
           checkable: false,
