@@ -60,6 +60,9 @@ import {
   PolygonOutlineCheckbox,
 } from '../components/contextMenu/elementMenu/polygonMenu/polygonMenuItems';
 import OpacityInput from './opacityInput';
+import BatteryIdInput from './batteryIdInput';
+import ChargingEfficiencyInput from './chargingEfficiencyInput';
+import DischargingEfficiencyInput from './dischargingEfficiencyInput';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -589,8 +592,28 @@ export const createBatteryStorageNode = (battery: BatteryStorageModel) => {
   const node: TreeDataNode[] = [];
   node.push({
     checkable: false,
+    title: <BatteryIdInput battery={battery} />,
+    key: battery.id + ' ID',
+  });
+  node.push({
+    checkable: false,
+    title: <ChargingEfficiencyInput battery={battery} />,
+    key: battery.id + ' Charging Efficiency',
+  });
+  node.push({
+    checkable: false,
+    title: <DischargingEfficiencyInput battery={battery} />,
+    key: battery.id + ' Discharging Efficiency',
+  });
+  node.push({
+    checkable: false,
     title: <AzimuthInput element={battery} relative={true} />,
     key: battery.id + ' Azimuth',
+  });
+  node.push({
+    checkable: false,
+    title: <ColorInput element={battery} />,
+    key: battery.id + ' Color',
   });
   node.push({
     checkable: false,

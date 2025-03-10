@@ -15,7 +15,7 @@ const ShgcInput = ({ window }: { window: WindowModel }) => {
   const [value, setValue] = useState<number>(1 - (window.opacity ?? 0.5));
 
   useEffect(() => {
-    setValue(window.opacity ?? 0.5);
+    setValue(1 - (window.opacity ?? 0.5));
   }, [window.opacity]);
 
   const updateOpacity = (opacity: number) => {

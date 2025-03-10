@@ -12,9 +12,9 @@ import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 
 const LabelInput = ({ element }: { element: ElementModel }) => {
-  const [text, setText] = useState<string>(element.label ?? '');
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const addUndoable = useStore(Selector.addUndoable);
+  const [text, setText] = useState<string>(element.label ?? '');
 
   useEffect(() => {
     setText(element.label ?? '');
