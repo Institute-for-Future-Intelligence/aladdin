@@ -12,7 +12,17 @@ import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { ColorType } from '../constants';
 
-const ColorInput = ({ element, type, title }: { element: ElementModel; type?: ColorType; title?: string }) => {
+const ColorInput = ({
+  element,
+  type,
+  title,
+  defaultColor,
+}: {
+  element: ElementModel;
+  type?: ColorType;
+  title?: string;
+  defaultColor?: string;
+}) => {
   const updateElementColorById = useStore(Selector.updateElementColorById);
   const updateElementLineColorById = useStore(Selector.updateElementLineColorById);
   const addUndoable = useStore(Selector.addUndoable);
@@ -34,7 +44,7 @@ const ColorInput = ({ element, type, title }: { element: ElementModel; type?: Co
       <ColorPicker
         showText
         size={'small'}
-        value={type === ColorType.Line ? element.lineColor ?? '#000' : element.color}
+        value={type === ColorType.Line ? element.lineColor ?? '#000' : element.color ?? defaultColor ?? 'white'}
         disabled={element.locked}
         onChange={(e) => {
           const oldColor = element.color;

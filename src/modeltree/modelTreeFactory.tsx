@@ -351,7 +351,7 @@ export const createSolarWaterHeaterNode = (heater: SolarWaterHeaterModel) => {
   const node: TreeDataNode[] = [];
   node.push({
     checkable: false,
-    title: <ColorInput element={heater} />,
+    title: <ColorInput element={heater} defaultColor={'grey'} />,
     key: heater.id + ' Color',
   });
   node.push({

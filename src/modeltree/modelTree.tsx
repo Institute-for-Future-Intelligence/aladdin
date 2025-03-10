@@ -145,7 +145,7 @@ const ModelTree = React.memo(() => {
         });
         children.push({
           checkable: false,
-          title: <ColorInput element={f} />,
+          title: <ColorInput element={f} defaultColor={'gray'} />,
           key: f.id + ' Color',
         });
         children.push({

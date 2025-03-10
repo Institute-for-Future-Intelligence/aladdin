@@ -49,7 +49,7 @@ const Polygon = ({
   filled = false,
   rotation = [0, 0, 0],
   normal = [0, 0, 1],
-  color = 'yellow',
+  color = 'white',
   label,
   text,
   fontSize = 1,
