@@ -6,7 +6,7 @@ import type { MenuProps } from 'antd';
 import { ElementModel } from 'src/models/ElementModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { Copy, Cut, DialogItem, Lock, MenuItem } from '../../menuItems';
+import { Copy, Cut, DialogItem, Lock, MenuItem, SolarCollectorSunBeamCheckbox } from '../../menuItems';
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 import i18n from 'src/i18n/i18n';
 import SolarWaterHeaterLengthInput from './solarWaterHeaterLengthInput';
@@ -78,6 +78,11 @@ export const createSolarWaterHeaterMenu = (selectedElement: ElementModel) => {
     items.push({
       key: 'water-heater-frame-color',
       label: <DialogItem Dialog={SolarWaterHeaterColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>,
+    });
+
+    items.push({
+      key: 'water-heater-draw-sun-beam',
+      label: <SolarCollectorSunBeamCheckbox solarCollector={waterHeater} />,
     });
 
     items.push({
