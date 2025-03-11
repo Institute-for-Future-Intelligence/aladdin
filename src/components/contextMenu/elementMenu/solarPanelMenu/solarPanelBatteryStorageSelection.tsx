@@ -216,7 +216,7 @@ const SolarPanelBatteryStorageSelection = ({ setDialogVisible }: { setDialogVisi
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Battery Stroage ID for Selected Solar Panels',
+          name: 'Set Battery Storage ID for Selected Solar Panels',
           timestamp: Date.now(),
           oldValues: oldSelections,
           newValue: selection,

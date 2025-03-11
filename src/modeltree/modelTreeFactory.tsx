@@ -29,7 +29,7 @@ import HumanSelection from '../components/contextMenu/elementMenu/billboardMenu/
 import { PolygonModel } from '../models/PolygonModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import SolarPanelModelSelection from './solarPanelModelSelection';
-import SolarPanelOrientationRadioGroup from './solarPanelOrientationRadioGroup';
+import SolarPanelOrientationSelect from './solarPanelOrientationSelect';
 import SolarPanelLengthInput from './solarPanelLengthInput';
 import SolarPanelWidthInput from './solarPanelWidthInput';
 import SolarPanelTiltAngleInput from './solarPanelTiltAngleInput';
@@ -65,6 +65,8 @@ import ChargingEfficiencyInput from './chargingEfficiencyInput';
 import DischargingEfficiencyInput from './dischargingEfficiencyInput';
 import RoofSideColorInput from './roofSideColorInput';
 import WindowTypeInput from './windowTypeInput';
+import SolarPanelBatterySelect from './solarPanelBatterySelect';
+import SolarPanelFrameColorInput from './solarPanelFrameColorInput';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -438,7 +440,7 @@ export const createSolarPanelNode = (solarPanel: SolarPanelModel, fixed?: boolea
   }
   node.push({
     checkable: false,
-    title: <SolarPanelOrientationRadioGroup solarPanel={solarPanel} />,
+    title: <SolarPanelOrientationSelect solarPanel={solarPanel} />,
     key: solarPanel.id + ' Orientation',
   });
   node.push({
@@ -468,6 +470,16 @@ export const createSolarPanelNode = (solarPanel: SolarPanelModel, fixed?: boolea
       key: solarPanel.id + ' Azimuth',
     });
   }
+  node.push({
+    checkable: false,
+    title: <SolarPanelBatterySelect solarPanel={solarPanel} />,
+    key: solarPanel.id + ' Battery',
+  });
+  node.push({
+    checkable: false,
+    title: <SolarPanelFrameColorInput solarPanel={solarPanel} />,
+    key: solarPanel.id + ' Frame Color',
+  });
   node.push({
     checkable: false,
     title: <LabelInput element={solarPanel} />,
