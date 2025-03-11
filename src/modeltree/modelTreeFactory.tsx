@@ -68,6 +68,10 @@ import WindowTypeInput from './windowTypeInput';
 import SolarPanelBatterySelect from './solarPanelBatterySelect';
 import SolarPanelFrameColorInput from './solarPanelFrameColorInput';
 import { SolarCollectorSunBeamCheckbox } from '../components/contextMenu/menuItems';
+import ReflectorOpticalEfficiencyInput from './reflectorOpticalEfficiencyInput';
+import ReceiverThermalEfficiencyInput from './receiverThermalEfficiencyInput';
+import HeliostatTowerSelect from './heliostatTowerSelect';
+import FresnelReceiverSelect from './fresnelReceiverSelect';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -699,6 +703,16 @@ export const createParabolicDishNode = (dish: ParabolicDishModel) => {
   });
   node.push({
     checkable: false,
+    title: <ReflectorOpticalEfficiencyInput collector={dish} />,
+    key: dish.id + ' Reflector Optical Efficiency',
+  });
+  node.push({
+    checkable: false,
+    title: <ReceiverThermalEfficiencyInput collector={dish} />,
+    key: dish.id + ' Receiver Thermal Efficiency',
+  });
+  node.push({
+    checkable: false,
     title: <SolarCollectorSunBeamCheckbox solarCollector={dish} forModelTree />,
     key: dish.id + ' Sun Beam',
   });
@@ -762,6 +776,16 @@ export const createParabolicTroughNode = (trough: ParabolicTroughModel) => {
   });
   node.push({
     checkable: false,
+    title: <ReflectorOpticalEfficiencyInput collector={trough} />,
+    key: trough.id + ' Reflector Optical Efficiency',
+  });
+  node.push({
+    checkable: false,
+    title: <ReceiverThermalEfficiencyInput collector={trough} />,
+    key: trough.id + ' Receiver Thermal Efficiency',
+  });
+  node.push({
+    checkable: false,
     title: <SolarCollectorSunBeamCheckbox solarCollector={trough} forModelTree />,
     key: trough.id + ' Sun Beam',
   });
@@ -790,6 +814,11 @@ export const createHeliostatNode = (heliostat: HeliostatModel) => {
       <SizeInput element={heliostat} variable={'ly'} title={i18n.t('word.Width', lang)} min={1} max={20} step={0.05} />
     ),
     key: heliostat.id + ' Width',
+  });
+  node.push({
+    checkable: false,
+    title: <HeliostatTowerSelect heliostat={heliostat} />,
+    key: heliostat.id + ' Tower',
   });
   node.push({
     checkable: false,
@@ -843,6 +872,11 @@ export const createFresnelReflectorNode = (fresnel: FresnelReflectorModel) => {
     checkable: false,
     title: <ModuleLengthInput collector={fresnel} />,
     key: fresnel.id + ' Module Length',
+  });
+  node.push({
+    checkable: false,
+    title: <FresnelReceiverSelect fresnel={fresnel} />,
+    key: fresnel.id + ' Receiver',
   });
   node.push({
     checkable: false,
