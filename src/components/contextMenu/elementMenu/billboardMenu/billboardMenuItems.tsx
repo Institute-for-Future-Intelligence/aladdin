@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { Checkbox, Space, InputNumber } from 'antd';
@@ -21,93 +21,107 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 
 type BillBoardModel = HumanModel | TreeModel | FlowerModel;
 
-export const BillboardFlipCheckbox = React.memo(({ billboardModel }: { billboardModel: BillBoardModel }) => {
-  const lang = useLanguage();
+export const BillboardFlipCheckbox = React.memo(
+  ({ billboardModel, forModelTree }: { billboardModel: BillBoardModel; forModelTree?: boolean }) => {
+    const lang = useLanguage();
 
-  const updateBillboardFlipById = (id: string, yes: boolean) => {
-    useStore.getState().set((state) => {
-      for (const e of state.elements) {
-        if (
-          e.id === id &&
-          (e.type === ObjectType.Human || e.type === ObjectType.Tree || e.type === ObjectType.Flower)
-        ) {
-          const billboard = e as BillBoardModel;
-          billboard.flip = yes;
-          break;
+    const updateBillboardFlipById = (id: string, yes: boolean) => {
+      useStore.getState().set((state) => {
+        for (const e of state.elements) {
+          if (
+            e.id === id &&
+            (e.type === ObjectType.Human || e.type === ObjectType.Tree || e.type === ObjectType.Flower)
+          ) {
+            const billboard = e as BillBoardModel;
+            billboard.flip = yes;
+            break;
+          }
         }
-      }
-    });
-  };
+      });
+    };
 
-  const handleChange = (e: CheckboxChangeEvent) => {
-    const checked = e.target.checked;
-    const undoableCheck = {
-      name: `Flip ${billboardModel.type}`,
-      timestamp: Date.now(),
-      checked: checked,
-      selectedElementId: billboardModel.id,
-      selectedElementType: ObjectType.Human,
-      undo: () => {
-        updateBillboardFlipById(billboardModel.id, !undoableCheck.checked);
-      },
-      redo: () => {
-        updateBillboardFlipById(billboardModel.id, undoableCheck.checked);
-      },
-    } as UndoableCheck;
-    useStore.getState().addUndoable(undoableCheck);
-    updateBillboardFlipById(billboardModel.id, checked);
-  };
+    const handleChange = (e: CheckboxChangeEvent) => {
+      const checked = e.target.checked;
+      const undoableCheck = {
+        name: `Flip ${billboardModel.type}`,
+        timestamp: Date.now(),
+        checked: checked,
+        selectedElementId: billboardModel.id,
+        selectedElementType: ObjectType.Human,
+        undo: () => {
+          updateBillboardFlipById(billboardModel.id, !undoableCheck.checked);
+        },
+        redo: () => {
+          updateBillboardFlipById(billboardModel.id, undoableCheck.checked);
+        },
+      } as UndoableCheck;
+      useStore.getState().addUndoable(undoableCheck);
+      updateBillboardFlipById(billboardModel.id, checked);
+    };
 
-  return (
-    <MenuItem stayAfterClick noPadding>
-      <Checkbox style={{ width: '100%' }} checked={billboardModel.flip} onChange={handleChange}>
-        {i18n.t('peopleMenu.Flip', lang)}
-      </Checkbox>
-    </MenuItem>
-  );
-});
+    return forModelTree ? (
+      <Space>
+        <span>{i18n.t('peopleMenu.Flip', lang)}</span>
+        <Checkbox style={{ width: '100%' }} checked={billboardModel.flip} onChange={handleChange} />
+      </Space>
+    ) : (
+      <MenuItem stayAfterClick noPadding>
+        <Checkbox style={{ width: '100%' }} checked={billboardModel.flip} onChange={handleChange}>
+          {i18n.t('peopleMenu.Flip', lang)}
+        </Checkbox>
+      </MenuItem>
+    );
+  },
+);
 
-export const HumanObserverCheckbox = React.memo(({ human }: { human: HumanModel }) => {
-  const lang = useLanguage();
+export const HumanObserverCheckbox = React.memo(
+  ({ human, forModelTree }: { human: HumanModel; forModelTree?: boolean }) => {
+    const lang = useLanguage();
 
-  const updateHumanObserverById = (id: string, yes: boolean) => {
-    useStore.getState().set((state) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.Human && e.id === id) {
-          (e as HumanModel).observer = yes;
-          break;
+    const updateHumanObserverById = (id: string, yes: boolean) => {
+      useStore.getState().set((state) => {
+        for (const e of state.elements) {
+          if (e.type === ObjectType.Human && e.id === id) {
+            (e as HumanModel).observer = yes;
+            break;
+          }
         }
-      }
-    });
-  };
+      });
+    };
 
-  const handleChange = (e: CheckboxChangeEvent) => {
-    const checked = e.target.checked;
-    const undoableCheck = {
-      name: 'Set Observer',
-      timestamp: Date.now(),
-      checked: checked,
-      selectedElementId: human.id,
-      selectedElementType: ObjectType.Human,
-      undo: () => {
-        updateHumanObserverById(human.id, !undoableCheck.checked);
-      },
-      redo: () => {
-        updateHumanObserverById(human.id, undoableCheck.checked);
-      },
-    } as UndoableCheck;
-    useStore.getState().addUndoable(undoableCheck);
-    updateHumanObserverById(human.id, checked);
-  };
+    const handleChange = (e: CheckboxChangeEvent) => {
+      const checked = e.target.checked;
+      const undoableCheck = {
+        name: 'Set Observer',
+        timestamp: Date.now(),
+        checked: checked,
+        selectedElementId: human.id,
+        selectedElementType: ObjectType.Human,
+        undo: () => {
+          updateHumanObserverById(human.id, !undoableCheck.checked);
+        },
+        redo: () => {
+          updateHumanObserverById(human.id, undoableCheck.checked);
+        },
+      } as UndoableCheck;
+      useStore.getState().addUndoable(undoableCheck);
+      updateHumanObserverById(human.id, checked);
+    };
 
-  return (
-    <MenuItem stayAfterClick noPadding>
-      <Checkbox style={{ width: '100%' }} checked={human.observer} onChange={handleChange}>
-        {i18n.t('peopleMenu.Observer', lang)}
-      </Checkbox>
-    </MenuItem>
-  );
-});
+    return forModelTree ? (
+      <Space>
+        <span>{i18n.t('peopleMenu.Observer', lang)}</span>
+        <Checkbox style={{ width: '100%' }} checked={human.observer} onChange={handleChange} />
+      </Space>
+    ) : (
+      <MenuItem stayAfterClick noPadding>
+        <Checkbox style={{ width: '100%' }} checked={human.observer} onChange={handleChange}>
+          {i18n.t('peopleMenu.Observer', lang)}
+        </Checkbox>
+      </MenuItem>
+    );
+  },
+);
 
 export const HumanMoveViewItem = React.memo(({ human }: { human: HumanModel }) => {
   const lang = useLanguage();
@@ -191,50 +205,61 @@ export const HumanMoveViewItem = React.memo(({ human }: { human: HumanModel }) =
   return <MenuItem onClick={handleClick}>{i18n.t('peopleMenu.ViewFromThisPerson', lang)}</MenuItem>;
 });
 
-export const TreeShowModelCheckbox = React.memo(({ tree }: { tree: TreeModel }) => {
-  const lang = useLanguage();
+export const TreeShowModelCheckbox = React.memo(
+  ({ tree, forModelTree }: { tree: TreeModel; forModelTree?: boolean }) => {
+    const lang = useLanguage();
 
-  const updateTreeShowModelById = (id: string, showModel: boolean) => {
-    useStore.getState().set((state) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.Tree && e.id === id) {
-          (e as TreeModel).showModel = showModel;
-          break;
+    const updateTreeShowModelById = (id: string, showModel: boolean) => {
+      useStore.getState().set((state) => {
+        for (const e of state.elements) {
+          if (e.type === ObjectType.Tree && e.id === id) {
+            (e as TreeModel).showModel = showModel;
+            break;
+          }
         }
-      }
-    });
-  };
+      });
+    };
 
-  const showTreeModel = (on: boolean) => {
-    const undoableCheck = {
-      name: 'Show Tree Model',
-      timestamp: Date.now(),
-      checked: on,
-      selectedElementId: tree.id,
-      selectedElementType: ObjectType.Tree,
-      undo: () => {
-        updateTreeShowModelById(tree.id, !undoableCheck.checked);
-      },
-      redo: () => {
-        updateTreeShowModelById(tree.id, undoableCheck.checked);
-      },
-    } as UndoableCheck;
-    useStore.getState().addUndoable(undoableCheck);
-    updateTreeShowModelById(tree.id, on);
-  };
+    const showTreeModel = (on: boolean) => {
+      const undoableCheck = {
+        name: 'Show Tree Model',
+        timestamp: Date.now(),
+        checked: on,
+        selectedElementId: tree.id,
+        selectedElementType: ObjectType.Tree,
+        undo: () => {
+          updateTreeShowModelById(tree.id, !undoableCheck.checked);
+        },
+        redo: () => {
+          updateTreeShowModelById(tree.id, undoableCheck.checked);
+        },
+      } as UndoableCheck;
+      useStore.getState().addUndoable(undoableCheck);
+      updateTreeShowModelById(tree.id, on);
+    };
 
-  return (
-    <MenuItem stayAfterClick noPadding>
-      <Checkbox
-        style={{ width: '100%' }}
-        checked={tree?.showModel && tree?.type === ObjectType.Tree}
-        onChange={(e) => showTreeModel(e.target.checked)}
-      >
-        {i18n.t('treeMenu.ShowModel', lang)}
-      </Checkbox>
-    </MenuItem>
-  );
-});
+    return forModelTree ? (
+      <Space>
+        <span>{i18n.t('treeMenu.ShowModel', lang)}</span>
+        <Checkbox
+          style={{ width: '100%' }}
+          checked={tree?.showModel && tree?.type === ObjectType.Tree}
+          onChange={(e) => showTreeModel(e.target.checked)}
+        />
+      </Space>
+    ) : (
+      <MenuItem stayAfterClick noPadding>
+        <Checkbox
+          style={{ width: '100%' }}
+          checked={tree?.showModel && tree?.type === ObjectType.Tree}
+          onChange={(e) => showTreeModel(e.target.checked)}
+        >
+          {i18n.t('treeMenu.ShowModel', lang)}
+        </Checkbox>
+      </MenuItem>
+    );
+  },
+);
 
 export const TreeSpreadInput = React.memo(({ tree }: { tree: TreeModel }) => {
   const updateElementLxById = useStore.getState().updateElementLxById;

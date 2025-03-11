@@ -72,6 +72,11 @@ import ReflectorOpticalEfficiencyInput from './reflectorOpticalEfficiencyInput';
 import ReceiverThermalEfficiencyInput from './receiverThermalEfficiencyInput';
 import HeliostatTowerSelect from './heliostatTowerSelect';
 import FresnelReceiverSelect from './fresnelReceiverSelect';
+import {
+  BillboardFlipCheckbox,
+  HumanObserverCheckbox,
+  TreeShowModelCheckbox,
+} from '../components/contextMenu/elementMenu/billboardMenu/billboardMenuItems';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -572,6 +577,16 @@ export const createHumanNode = (human: HumanModel) => {
     ),
     key: human.id + ' Name',
   });
+  node.push({
+    checkable: false,
+    title: <HumanObserverCheckbox human={human} forModelTree />,
+    key: human.id + ' Observer',
+  });
+  node.push({
+    checkable: false,
+    title: <BillboardFlipCheckbox billboardModel={human} forModelTree />,
+    key: human.id + ' Flip',
+  });
   node.push(...getCoordinates(human));
   return node;
 };
@@ -588,6 +603,11 @@ export const createFlowerNode = (flower: FlowerModel) => {
       </Space>
     ),
     key: flower.id + ' Type',
+  });
+  node.push({
+    checkable: false,
+    title: <BillboardFlipCheckbox billboardModel={flower} forModelTree />,
+    key: flower.id + ' Flip',
   });
   node.push(...getCoordinates(flower));
   return node;
@@ -617,6 +637,16 @@ export const createTreeNode = (tree: TreeModel) => {
     checkable: false,
     title: <SizeInput element={tree} variable={'lz'} title={i18n.t('word.Height', lang)} min={1} max={100} step={1} />,
     key: tree.id + ' Height',
+  });
+  node.push({
+    checkable: false,
+    title: <TreeShowModelCheckbox tree={tree} forModelTree />,
+    key: tree.id + ' Show Model',
+  });
+  node.push({
+    checkable: false,
+    title: <BillboardFlipCheckbox billboardModel={tree} forModelTree />,
+    key: tree.id + ' Flip',
   });
   node.push({
     checkable: false,
