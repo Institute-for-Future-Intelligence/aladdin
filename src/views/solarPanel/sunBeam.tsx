@@ -98,8 +98,8 @@ const SunBeam = React.memo(
     const getAngleLinePoints = () => {
       if (!topTiltGroupRef.current || !groupRef.current) return null;
 
-      const eulerZ = tempEuler.setFromQuaternion(groupRef.current.getWorldQuaternion(tempQuaternion_0)).z;
-      tempEuler.set(0, 0, -eulerZ);
+      const euler = tempEuler.setFromQuaternion(groupRef.current.getWorldQuaternion(tempQuaternion_0), 'ZXY');
+      tempEuler.set(-euler.x, 0, -euler.z, 'XYZ');
 
       const worldPos = groupRef.current.getWorldPosition(tempVector3_2);
 

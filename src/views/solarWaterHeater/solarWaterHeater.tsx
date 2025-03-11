@@ -2,7 +2,7 @@
  * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
-import { Box, Cylinder, Line, Plane } from '@react-three/drei';
+import { Box, Cylinder, Plane } from '@react-three/drei';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI, Operation, SurfaceType } from 'src/constants';
@@ -890,7 +890,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
           ref={sunBeamGroupRef}
           topTiltGroupRef={panelOffsetGroupRef}
           positionZ={(waterTankRadius + mountHeight) / 2}
-          rotationX={rotation[0]}
+          rotationX={0}
         />
       )}
 
