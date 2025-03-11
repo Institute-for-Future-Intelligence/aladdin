@@ -30,7 +30,7 @@ import PanelMaterial, { MaterialRefProps } from './panelMaterial';
 import BarMaterial from './barMaterial';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import Label from './label';
-import { getSunDirection } from '../../analysis/sunTools';
+import SunBeam, { NormalPointer, SunBeamRefProps } from '../solarPanel/sunBeam';
 
 const MOUNT_LEFT = 'Mount Left';
 const MOUNT_RIGHT = 'Mount Right';
@@ -60,27 +60,12 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
     drawSunBeam,
   } = waterHeater;
 
-  const date = useStore(Selector.world.date);
-  const latitude = useStore(Selector.world.latitude);
-  const sceneRadius = useStore(Selector.sceneRadius);
-
   // constants
   const panelWidth = Math.hypot(lz - waterTankRadius, ly);
   const waterTankLength = lx + 0.25;
   const mountHeight = lz - waterTankRadius * 2; // surface to tank bottom, lz is from surface to top
   const angle = Math.atan2(lz - waterTankRadius, ly);
   const rotateHandleOffset = 0.5;
-  const sunBeamLength = Math.max(100, 10 * sceneRadius);
-
-  const sunDirection = useMemo(() => {
-    return getSunDirection(new Date(date), latitude);
-  }, [date, latitude]);
-  const sunPoint = sunDirection.clone().multiplyScalar(sunBeamLength);
-
-  // in model coordinate system
-  const euler = useMemo(() => {
-    return new Euler(0, 0, rotation[2], 'ZXY');
-  }, [rotation]);
 
   // variable ref
   const operationRef = useRef<Operation | null>(null);
@@ -111,6 +96,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
   const waterTankGroupRef = useRef<Group>(null!);
   const materialRefFront = useRef<MaterialRefProps>(null!);
   const materialRefBack = useRef<MaterialRefProps>(null!);
+  const sunBeamGroupRef = useRef<SunBeamRefProps>(null!);
 
   // states
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -724,6 +710,9 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
             if (rotateHandleGroupRef.current) {
               rotateHandleGroupRef.current.position.z = newMountHeight / 2;
             }
+            if (sunBeamGroupRef.current) {
+              sunBeamGroupRef.current.setPositionZ((newMountHeight + waterTankRadius) / 2);
+            }
           }
         }
         break;
@@ -822,6 +811,9 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
                   </>
                 )}
 
+                {/* normal pointer */}
+                {drawSunBeam && <NormalPointer />}
+
                 {/* lock wireframe */}
                 {selected && locked && (
                   <Wireframe
@@ -886,25 +878,21 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
           </group>
         )}
 
-        {/* draw sun beam */}
-        {drawSunBeam && sunDirection.z > 0 && (
-          <Line
-            rotation={[-euler.x, 0, -euler.z]}
-            userData={{ unintersectable: true }}
-            points={[new Vector3(0, 0, (waterTankRadius + mountHeight) / 2), sunPoint]}
-            name={'Sun Beam'}
-            lineWidth={0.25}
-            color={'white'}
-            castShadow={false}
-            receiveShadow={false}
-          />
-        )}
-
         {/* label */}
         {(hovered || waterHeater.showLabel) && !selected && (
           <Label solarWaterHeater={waterHeater} groupRef={groupRef} />
         )}
       </group>
+
+      {/* draw sun beam */}
+      {drawSunBeam && (
+        <SunBeam
+          ref={sunBeamGroupRef}
+          topTiltGroupRef={panelOffsetGroupRef}
+          positionZ={(waterTankRadius + mountHeight) / 2}
+          rotationX={rotation[0]}
+        />
+      )}
 
       {/* XY intersection plane */}
       {showXYIntersectionPlane && xYPlaneHeight !== null && (
