@@ -2,7 +2,7 @@
  * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
-import { Box, Cylinder, Plane } from '@react-three/drei';
+import { Box, Cylinder, Line, Plane } from '@react-three/drei';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI, Operation, SurfaceType } from 'src/constants';
@@ -30,6 +30,7 @@ import PanelMaterial, { MaterialRefProps } from './panelMaterial';
 import BarMaterial from './barMaterial';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import Label from './label';
+import { getSunDirection } from '../../analysis/sunTools';
 
 const MOUNT_LEFT = 'Mount Left';
 const MOUNT_RIGHT = 'Mount Right';
@@ -56,7 +57,12 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
     parentType,
     locked,
     color = 'grey',
+    drawSunBeam,
   } = waterHeater;
+
+  const date = useStore(Selector.world.date);
+  const latitude = useStore(Selector.world.latitude);
+  const sceneRadius = useStore(Selector.sceneRadius);
 
   // constants
   const panelWidth = Math.hypot(lz - waterTankRadius, ly);
@@ -64,6 +70,17 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
   const mountHeight = lz - waterTankRadius * 2; // surface to tank bottom, lz is from surface to top
   const angle = Math.atan2(lz - waterTankRadius, ly);
   const rotateHandleOffset = 0.5;
+  const sunBeamLength = Math.max(100, 10 * sceneRadius);
+
+  const sunDirection = useMemo(() => {
+    return getSunDirection(new Date(date), latitude);
+  }, [date, latitude]);
+  const sunPoint = sunDirection.clone().multiplyScalar(sunBeamLength);
+
+  // in model coordinate system
+  const euler = useMemo(() => {
+    return new Euler(0, 0, rotation[2], 'ZXY');
+  }, [rotation]);
 
   // variable ref
   const operationRef = useRef<Operation | null>(null);
@@ -867,6 +884,20 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
               onPointerDown={onRotateHandlePointerDown}
             />
           </group>
+        )}
+
+        {/* draw sun beam */}
+        {drawSunBeam && sunDirection.z > 0 && (
+          <Line
+            rotation={[-euler.x, 0, -euler.z]}
+            userData={{ unintersectable: true }}
+            points={[new Vector3(0, 0, (waterTankRadius + mountHeight) / 2), sunPoint]}
+            name={'Sun Beam'}
+            lineWidth={0.25}
+            color={'white'}
+            castShadow={false}
+            receiveShadow={false}
+          />
         )}
 
         {/* label */}

@@ -67,6 +67,7 @@ import RoofSideColorInput from './roofSideColorInput';
 import WindowTypeInput from './windowTypeInput';
 import SolarPanelBatterySelect from './solarPanelBatterySelect';
 import SolarPanelFrameColorInput from './solarPanelFrameColorInput';
+import { SolarCollectorSunBeamCheckbox } from '../components/contextMenu/menuItems';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -365,6 +366,11 @@ export const createSolarWaterHeaterNode = (heater: SolarWaterHeaterModel) => {
   });
   node.push({
     checkable: false,
+    title: <SolarCollectorSunBeamCheckbox solarCollector={heater} forModelTree />,
+    key: heater.id + ' Sun Beam',
+  });
+  node.push({
+    checkable: false,
     title: <LabelInput element={heater} />,
     key: heater.id + ' Label',
   });
@@ -479,6 +485,11 @@ export const createSolarPanelNode = (solarPanel: SolarPanelModel, fixed?: boolea
     checkable: false,
     title: <SolarPanelFrameColorInput solarPanel={solarPanel} />,
     key: solarPanel.id + ' Frame Color',
+  });
+  node.push({
+    checkable: false,
+    title: <SolarCollectorSunBeamCheckbox solarCollector={solarPanel} forModelTree />,
+    key: solarPanel.id + ' Sun Beam',
   });
   node.push({
     checkable: false,
@@ -688,6 +699,11 @@ export const createParabolicDishNode = (dish: ParabolicDishModel) => {
   });
   node.push({
     checkable: false,
+    title: <SolarCollectorSunBeamCheckbox solarCollector={dish} forModelTree />,
+    key: dish.id + ' Sun Beam',
+  });
+  node.push({
+    checkable: false,
     title: <LabelInput element={dish} />,
     key: dish.id + ' Label',
   });
@@ -746,6 +762,11 @@ export const createParabolicTroughNode = (trough: ParabolicTroughModel) => {
   });
   node.push({
     checkable: false,
+    title: <SolarCollectorSunBeamCheckbox solarCollector={trough} forModelTree />,
+    key: trough.id + ' Sun Beam',
+  });
+  node.push({
+    checkable: false,
     title: <LabelInput element={trough} />,
     key: trough.id + ' Label',
   });
@@ -779,6 +800,11 @@ export const createHeliostatNode = (heliostat: HeliostatModel) => {
     checkable: false,
     title: <ReflectanceInput collector={heliostat} />,
     key: heliostat.id + ' Reflectance',
+  });
+  node.push({
+    checkable: false,
+    title: <SolarCollectorSunBeamCheckbox solarCollector={heliostat} forModelTree />,
+    key: heliostat.id + ' Sun Beam',
   });
   node.push({
     checkable: false,
@@ -827,6 +853,11 @@ export const createFresnelReflectorNode = (fresnel: FresnelReflectorModel) => {
     checkable: false,
     title: <ReflectanceInput collector={fresnel} />,
     key: fresnel.id + ' Reflectance',
+  });
+  node.push({
+    checkable: false,
+    title: <SolarCollectorSunBeamCheckbox solarCollector={fresnel} forModelTree />,
+    key: fresnel.id + ' Sun Beam',
   });
   node.push({
     checkable: false,

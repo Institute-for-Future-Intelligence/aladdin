@@ -1092,6 +1092,7 @@ export const i18n_es = {
       PoleRadius: 'Pole Radius',
       ExtraPoleHeight: 'Extra Pole Height',
       ExtraPoleHeightInAdditionToHalfWidth: 'Extra Pole Height in Addition to Half Width',
+      SunBeam: 'Sun Beam',
       DrawSunBeam: 'Dibujar rayo del sol',
     },
 

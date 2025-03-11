@@ -1068,6 +1068,7 @@ export const i18n_zh_cn = {
       PoleRadius: '支柱半径',
       ExtraPoleHeight: '额外的支柱高度',
       ExtraPoleHeightInAdditionToHalfWidth: '宽度一半额外的支柱高度',
+      SunBeam: '光束',
       DrawSunBeam: '显示光束',
     },
 

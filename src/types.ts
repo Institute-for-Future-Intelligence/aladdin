@@ -16,6 +16,7 @@ import { HeliostatModel } from './models/HeliostatModel';
 import { ParabolicDishModel } from './models/ParabolicDishModel';
 import { ParabolicTroughModel } from './models/ParabolicTroughModel';
 import { Filter } from './Filter';
+import { SolarWaterHeaterModel } from './models/SolarWaterHeaterModel';
 
 // Extend makes these JSX elements (with the first character lower-cased)
 extend({ TextSprite });
@@ -669,6 +670,7 @@ export type BoxArgs = [width?: number | undefined, height?: number | undefined, 
 
 export type SolarCollector =
   | SolarPanelModel
+  | SolarWaterHeaterModel
   | FresnelReflectorModel
   | HeliostatModel
   | ParabolicDishModel

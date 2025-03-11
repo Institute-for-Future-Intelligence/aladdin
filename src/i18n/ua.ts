@@ -1095,6 +1095,7 @@ export const i18n_ua = {
       PoleRadius: 'Pole Radius',
       ExtraPoleHeight: 'Додаткова висота стовпа',
       ExtraPoleHeightInAdditionToHalfWidth: 'Додаткова висота стовпа на додаток до половини ширини',
+      SunBeam: 'Sun Beam',
       DrawSunBeam: 'Намалювати промінь сонця',
     },
 

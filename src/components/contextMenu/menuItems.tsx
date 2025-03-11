@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Checkbox, Input, Slider } from 'antd';
+import { Checkbox, Input, Slider, Space } from 'antd';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
 import i18n from '../../i18n/i18n';
@@ -53,6 +53,7 @@ interface LightSideItemProps {
 
 interface SolarCollectorSunBeamCheckboxProps {
   solarCollector: SolarCollector;
+  forModelTree?: boolean;
 }
 
 interface CheckboxMenuItemProps {
@@ -390,7 +391,7 @@ export const LightSideItem = ({ element, inside, children }: LightSideItemProps)
   );
 };
 
-export const SolarCollectorSunBeamCheckbox = ({ solarCollector }: SolarCollectorSunBeamCheckboxProps) => {
+export const SolarCollectorSunBeamCheckbox = ({ solarCollector, forModelTree }: SolarCollectorSunBeamCheckboxProps) => {
   const updateSolarCollectorDrawSunBeamById = useStore.getState().updateSolarCollectorDrawSunBeamById;
 
   const lang = useLanguage();
@@ -413,7 +414,16 @@ export const SolarCollectorSunBeamCheckbox = ({ solarCollector }: SolarCollector
     updateSolarCollectorDrawSunBeamById(solarCollector.id, checked);
   };
 
-  return (
+  return forModelTree ? (
+    <Space>
+      <span>{i18n.t('solarCollectorMenu.SunBeam', lang)}</span>
+      <Checkbox
+        style={{ width: '100%' }}
+        checked={solarCollector.drawSunBeam}
+        onChange={(e) => drawSunBeam(e.target.checked)}
+      />
+    </Space>
+  ) : (
     <MenuItem stayAfterClick noPadding>
       <Checkbox
         style={{ width: '100%' }}
@@ -449,8 +459,8 @@ export const EditableId = ({ element }: EditAbleIdProps) => {
   const [id, setId] = useState(element.editableId ?? element.id.slice(0, 4));
 
   const setEditableId = (str: string) => {
-    const trimed = str.trim();
-    const id = trimed.length > 0 ? trimed : element.id.slice(0, 4);
+    const trimmed = str.trim();
+    const id = trimmed.length > 0 ? trimmed : element.id.slice(0, 4);
 
     setId(id);
     useStore.getState().set((state) => {

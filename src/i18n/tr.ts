@@ -1093,6 +1093,7 @@ export const i18n_tr = {
       PoleRadius: 'Pole Radius',
       ExtraPoleHeight: 'Ekstra Direk Yüksekliği',
       ExtraPoleHeightInAdditionToHalfWidth: 'Yarım Genişliğe Ek Ekstra Direk Yüksekliği',
+      SunBeam: 'Sun Beam',
       DrawSunBeam: 'Güneş Işını Çiz',
     },
 
