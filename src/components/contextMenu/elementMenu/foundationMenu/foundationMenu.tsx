@@ -192,7 +192,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  if (editable) {
+  if (editable && foundation.notBuilding) {
     items.push({
       key: 'select-solar-structure',
       label: <MenuItem>{i18n.t('foundationMenu.SolarStructure', lang)}</MenuItem>,

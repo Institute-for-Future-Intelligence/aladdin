@@ -55,7 +55,11 @@ const FoundationTextureInput = ({ foundation }: { foundation: FoundationModel })
   return (
     <Space>
       <span>{t('word.Texture', lang)} : </span>
-      <FoundationTextureSelect texture={foundation.textureType} setTexture={setTexture} height={16} />
+      <FoundationTextureSelect
+        texture={foundation.textureType ?? FoundationTexture.NoTexture}
+        setTexture={setTexture}
+        height={16}
+      />
     </Space>
   );
 };

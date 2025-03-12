@@ -10,39 +10,38 @@ import { UndoableChange } from '../undo/UndoableChange';
 import { ZERO_TOLERANCE } from '../constants';
 import { useLanguage } from '../hooks';
 import { useTranslation } from 'react-i18next';
-import { PolygonModel } from '../models/PolygonModel';
+import { LightModel } from '../models/LightModel';
 
-const OpacityInput = ({ element }: { element: PolygonModel }) => {
+const LightDistanceInput = ({ light }: { light: LightModel }) => {
   const addUndoable = useStore(Selector.addUndoable);
-  const [value, setValue] = useState<number>(element.opacity ?? 1);
-
-  useEffect(() => {
-    setValue(element.opacity ?? 1);
-  }, [element.opacity]);
+  const [value, setValue] = useState<number>(light.distance);
 
   const lang = useLanguage();
   const { t } = useTranslation();
 
+  useEffect(() => {
+    setValue(light.distance);
+  }, [light.distance]);
+
   const update = (value: number) => {
     useStore.getState().set((state) => {
-      const a = state.elements.find((e) => e.id === element.id);
+      const a = state.elements.find((e) => e.id === light.id);
       if (a) {
-        (a as PolygonModel).opacity = value;
+        (a as LightModel).distance = value;
       }
     });
   };
 
   const confirm = () => {
-    const oldValue = element.opacity ?? 1;
-    const newValue = value;
-    if (Math.abs(oldValue - newValue) < ZERO_TOLERANCE) return;
+    const oldValue = light.distance;
+    if (Math.abs(value - oldValue) < ZERO_TOLERANCE) return;
     const undoableChange = {
-      name: 'Set Opacity for ' + element.type,
+      name: 'Set Light Distance',
       timestamp: Date.now(),
       oldValue,
-      newValue,
-      changedElementId: element.id,
-      changedElementType: element.type,
+      newValue: value,
+      changedElementId: light.id,
+      changedElementType: light.type,
       undo: () => {
         const a = undoableChange.oldValue as number;
         setValue(a);
@@ -55,19 +54,19 @@ const OpacityInput = ({ element }: { element: PolygonModel }) => {
       },
     } as UndoableChange;
     addUndoable(undoableChange);
-    update(newValue);
+    update(value);
   };
 
   return (
     <Space>
-      <span>{t('polygonMenu.Opacity', lang)} : </span>
+      <span>{t('lightMenu.MaximumDistance', lang)}: </span>
       <InputNumber
         value={parseFloat(value.toFixed(2))}
-        precision={2}
-        min={0}
-        max={1}
-        step={0.01}
-        disabled={element.locked}
+        precision={1}
+        min={1}
+        max={10}
+        step={1}
+        disabled={light.locked}
         onChange={(value) => {
           if (value !== null) setValue(value);
         }}
@@ -78,4 +77,4 @@ const OpacityInput = ({ element }: { element: PolygonModel }) => {
   );
 };
 
-export default OpacityInput;
+export default LightDistanceInput;

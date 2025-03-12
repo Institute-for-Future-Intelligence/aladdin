@@ -79,6 +79,9 @@ import {
 } from '../components/contextMenu/elementMenu/billboardMenu/billboardMenuItems';
 import DoorTextureInput from './doorTextureInput';
 import DoorTypeInput from './doorTypeInput';
+import LightIntensityInput from './lightIntensityInput';
+import LightDistanceInput from './lightDistanceInput';
+import DoorFrameColorInput from './doorFrameColorInput';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -244,6 +247,15 @@ export const createWallNode = (wall: WallModel) => {
         });
         break;
       }
+      case ObjectType.Polygon: {
+        node.push({
+          checkable: true,
+          title: createTooltip(c.id, i18nType(c)),
+          key: c.id,
+          children: createPolygonNode(c as PolygonModel),
+        });
+        break;
+      }
       case ObjectType.SolarPanel: {
         const solarPanelChildren: TreeDataNode[] = createSolarPanelNode(c as SolarPanelModel, true, true);
         node.push({
@@ -364,6 +376,21 @@ export const createLightNode = (light: LightModel, relative?: boolean) => {
     title: <LabelInput element={light} />,
     key: light.id + ' Label',
   });
+  node.push({
+    checkable: false,
+    title: <ColorInput element={light} />,
+    key: light.id + ' Color',
+  });
+  node.push({
+    checkable: false,
+    title: <LightIntensityInput light={light} />,
+    key: light.id + ' Intensity',
+  });
+  node.push({
+    checkable: false,
+    title: <LightDistanceInput light={light} />,
+    key: light.id + ' Distance',
+  });
   node.push(...getCoordinates(light, relative));
   return node;
 };
@@ -411,6 +438,11 @@ export const createDoorNode = (door: DoorModel) => {
     checkable: false,
     title: <ColorInput element={door} />,
     key: door.id + ' Color',
+  });
+  node.push({
+    checkable: false,
+    title: <DoorFrameColorInput door={door} defaultColor={'#fff'} />,
+    key: door.id + ' Frame Color',
   });
   node.push({
     checkable: false,
