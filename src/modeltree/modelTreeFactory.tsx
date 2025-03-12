@@ -77,6 +77,8 @@ import {
   HumanObserverCheckbox,
   TreeShowModelCheckbox,
 } from '../components/contextMenu/elementMenu/billboardMenu/billboardMenuItems';
+import DoorTextureInput from './doorTextureInput';
+import DoorTypeInput from './doorTypeInput';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -402,8 +404,18 @@ export const createDoorNode = (door: DoorModel) => {
   });
   node.push({
     checkable: false,
+    title: <DoorTypeInput door={door} />,
+    key: door.id + ' Type',
+  });
+  node.push({
+    checkable: false,
     title: <ColorInput element={door} />,
     key: door.id + ' Color',
+  });
+  node.push({
+    checkable: false,
+    title: <DoorTextureInput door={door} />,
+    key: door.id + ' Texture',
   });
   node.push(...getDimension(door, true));
   node.push(...getCoordinates(door, true));
