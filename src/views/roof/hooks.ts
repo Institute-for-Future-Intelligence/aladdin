@@ -105,7 +105,7 @@ export const useTransparent = (transparent?: boolean, opacity?: number) => {
   const orthographic = useStore(Selector.viewState.orthographic);
 
   const _transparent = transparent || (groundImage && orthographic);
-  const _opacity = groundImage && orthographic ? 0.25 : transparent ? 0.25 : 1;
+  const _opacity = groundImage && orthographic ? 0.25 : transparent ? opacity ?? 0.25 : 1;
 
   return { transparent: _transparent, opacity: Math.min(opacity !== undefined ? opacity : 1, _opacity) };
 };
