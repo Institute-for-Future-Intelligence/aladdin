@@ -1012,7 +1012,7 @@ const GableRoof = ({ roofModel, foundationModel }: GableRoofProps) => {
       )}
 
       {/* rafter */}
-      {roofStructure === RoofStructure.Rafter && composedWalls && composedWalls.length === 4 && (
+      {roofStructure === RoofStructure.Rafter && opacity < 0.9 && composedWalls && composedWalls.length === 4 && (
         <group
           onContextMenu={(e) => {
             handleContextMenu(e, id);
