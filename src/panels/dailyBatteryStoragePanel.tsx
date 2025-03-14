@@ -99,7 +99,7 @@ const DailyBatteryStoragePanel = ({ city }: Props) => {
   const weather = useWeather(city);
   const lang = useLanguage();
   const { t } = useTranslation();
-  const { batteryStorageData, batterySurplusEnergyMap } = useDailyEnergySorter(now, weather, hasSolarPanels, true);
+  const { batteryStorageData, batterySurplusEnergyMap } = useDailyEnergySorter(now, weather, hasSolarPanels);
 
   const getBatteryCountInGraph = (data: DatumEntry[] | null) => {
     if (!data) return 0;

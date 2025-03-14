@@ -104,15 +104,18 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
   const [heaterSum, setHeaterSum] = useState(0);
   const [acSum, setAcSum] = useState(0);
   const [solarPanelSum, setSolarPanelSum] = useState(0);
-  const [netSum, setNetSum] = useState(0);
   const [labels, setLabels] = useState(['Heater', 'AC', 'Net']);
+  const [hasBattery, setHasBattery] = useState(false);
+  const [showNet, setShowNet] = useState(true);
 
   const lang = useLanguage();
   const weather = useWeather(city);
   const tooltipHeaterBreakdown = useRef<string[]>([]);
   const tooltipAcBreakdown = useRef<string[]>([]);
   const tooltipSolarPanelBreakdown = useRef<string[]>([]);
-  const tooltipNetBreakdown = useRef<string[]>([]);
+  const tooltipSummaryBreakdown = useRef<string[]>([]);
+  // const tooltipGridBreakdown = useRef<string[]>([]);
+  // const tooltipNetBreakdown = useRef<string[]>([]);
 
   useEffect(() => {
     if (runDailySimulation) {
@@ -129,17 +132,21 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
     setHeaterSum(0);
     setAcSum(0);
     setSolarPanelSum(0);
-    setNetSum(0);
     setLabels([]);
+    setHasBattery(false);
   };
 
-  const { sum, sumHeaterMap, sumAcMap, sumSolarPanelMap, dataLabels } = useDailyEnergySorter(
+  const { sum, sumHeaterMap, sumAcMap, sumSolarPanelMap, summaryMap, dataLabels } = useDailyEnergySorter(
     now,
     weather,
     hasSolarPanels,
   );
 
   useEffect(() => {
+    const hasBattery = sum[0] !== undefined && Object.keys(sum[0]).findIndex((key) => key.includes('Battery')) !== -1;
+    const showNet = !Boolean(summaryMap.keys().find((key) => key.slice(0, 4) === 'Grid'));
+    setHasBattery(hasBattery);
+    setShowNet(showNet);
     setData(sum);
     let sumHeater = 0;
     let sumAc = 0;
@@ -181,51 +188,48 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
         }
       }
     }
-    if (sumHeaterMap && sumAcMap && sumSolarPanelMap) {
-      tooltipNetBreakdown.current = [];
-      for (const key of sumHeaterMap.keys()) {
-        let net = 0;
-        const heater = sumHeaterMap.get(key);
-        const ac = sumAcMap.get(key);
-        const solarPanel = sumSolarPanelMap.get(key);
-        if (heater) net += heater;
-        if (ac) net += ac;
-        if (solarPanel) net -= solarPanel;
-        if (multiple) {
-          tooltipNetBreakdown.current.push(key + ': ' + net.toFixed(2) + ' ' + i18n.t('word.kWh', lang));
-        }
-      }
-    }
     setHeaterSum(sumHeater);
     setAcSum(sumAc);
     setSolarPanelSum(sumSolarPanel);
-    setNetSum(sumHeater + sumAc - sumSolarPanel);
     // for logger
     setTotalBuildingHeater(sumHeater);
     setTotalBuildingAc(sumAc);
     setTotalBuildingSolarPanel(sumSolarPanel);
-    const countBuildings = (Object.keys(sum[0]).length - 1) / (hasSolarPanels ? 4 : 3);
+    let keysNumber = 3;
+    if (hasSolarPanels) keysNumber++;
+    if (hasBattery) keysNumber += 2;
+    const countBuildings = (Object.keys(sum[0]).length - 1) / keysNumber;
     if (countBuildings > 1) {
-      const l = [];
+      const labels = [];
       let i = 0;
       for (let index = 0; index < countBuildings; index++) {
         // If the data label is not set, we will give it a default label by its index,
         // but some labels may be set, so we have to use an incrementer here.
         if (!dataLabels[index]) i++;
         const id = dataLabels[index] ?? i;
+        const l = ['Heater ' + id, 'AC ' + id];
         if (hasSolarPanels) {
-          l.push('Heater ' + id, 'AC ' + id, 'Solar ' + id, 'Net ' + id);
-        } else {
-          l.push('Heater ' + id, 'AC ' + id, 'Net ' + id);
+          l.push('Solar ' + id);
         }
+        if (hasBattery) {
+          l.push('Battery ' + id);
+          l.push('Grid ' + id);
+        }
+        l.push('Net ' + id);
+        labels.push(...l);
       }
-      setLabels(l);
+      setLabels(labels);
     } else {
+      const labels = ['Heater', 'AC'];
       if (hasSolarPanels) {
-        setLabels(['Heater', 'AC', 'Solar', 'Net']);
-      } else {
-        setLabels(['Heater', 'AC', 'Net']);
+        labels.push('Solar');
       }
+      if (hasBattery) {
+        labels.push('Battery');
+        labels.push('Grid');
+      }
+      labels.push('Net');
+      setLabels(labels);
     }
   }, [flagOfDailySimulation]);
 
@@ -302,6 +306,83 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
     });
   };
 
+  const summarySection = () => {
+    if (summaryMap.size === 0) return null;
+    else if (summaryMap.size === 1) {
+      for (const [key, val] of summaryMap) {
+        if (key.slice(0, 3) === 'Net') {
+          return (
+            <Space style={{ cursor: 'default' }}>
+              {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + val.toFixed(1)}
+            </Space>
+          );
+        } else if (key.slice(0, 4) === 'Grid') {
+          return (
+            <Space style={{ cursor: 'default' }}>
+              {i18n.t('buildingEnergyPanel.Grid', lang) + ': ' + val.toFixed(1)}
+            </Space>
+          );
+        }
+      }
+    } else {
+      let isAllNet = true;
+      let netSum = 0;
+      let isAllGrid = true;
+      let gridSum = 0;
+
+      const content: string[] = [];
+      for (const [key, val] of summaryMap) {
+        if (key.slice(0, 3) === 'Net') {
+          netSum += val;
+          isAllGrid = false;
+        } else if (key.slice(0, 4) === 'Grid') {
+          gridSum += val;
+          isAllNet = false;
+        }
+        content.push(key + ': ' + val.toFixed(2) + ' ' + i18n.t('word.kWh', lang));
+      }
+      content.sort((a, b) => a.localeCompare(b));
+      return (
+        <Popover
+          content={content.map((val, i) => {
+            if (isAllNet) return <div key={i}>{val.slice(4)}</div>;
+            if (isAllGrid) return <div key={i}>{val.slice(5)}</div>;
+            return <div key={i}>{val}</div>;
+          })}
+        >
+          {isAllNet && (
+            <Space style={{ cursor: 'default' }}>
+              {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(1)}{' '}
+            </Space>
+          )}
+          {isAllGrid && (
+            <Space
+              style={{
+                cursor: 'default',
+              }}
+            >
+              {i18n.t('buildingEnergyPanel.Grid', lang) + ': ' + gridSum.toFixed(1)}
+            </Space>
+          )}
+          {!isAllGrid && !isAllNet && (
+            <Space
+              style={{
+                cursor: 'help',
+                border: 'solid black 1px',
+                padding: '5px',
+                borderColor: 'lightgrey',
+                borderRadius: '6px',
+              }}
+            >
+              {i18n.t('buildingEnergyPanel.Summary', lang)}
+            </Space>
+          )}
+        </Popover>
+      );
+    }
+    return null;
+  };
+
   const labelX = i18n.t('word.Hour', lang);
   const labelY = i18n.t('word.Energy', lang);
   const emptyGraph = data && data[0] ? Object.keys(data[0]).length === 0 : true;
@@ -356,6 +437,8 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
             type={GraphDataType.DailyBuildingEnergy}
             dataSource={data}
             hasSolarPanels={hasSolarPanels}
+            hasBattery={hasBattery}
+            showNet={showNet}
             labels={labels}
             height={100}
             dataKeyAxisX={'Hour'}
@@ -419,21 +502,8 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
                   )}
                 </>
               )}
-              {tooltipNetBreakdown.current.length === 0 ? (
-                <Space style={{ cursor: 'default' }}>
-                  {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(1)}
-                </Space>
-              ) : (
-                <Popover
-                  content={tooltipNetBreakdown.current.map((e, i) => (
-                    <div key={i}>{e}</div>
-                  ))}
-                >
-                  <Space style={{ cursor: 'help' }}>
-                    {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(1)}
-                  </Space>
-                </Popover>
-              )}
+              {summarySection()}
+
               <Button
                 type="default"
                 icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}

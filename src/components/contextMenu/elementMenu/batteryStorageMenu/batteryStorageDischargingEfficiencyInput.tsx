@@ -255,7 +255,7 @@ const BatteryStorageDischargingEfficiencyInput = ({ setDialogVisible }: { setDia
         <Col span={6}>
           <InputNumber
             min={30}
-            max={99}
+            max={100}
             style={{ width: 120 }}
             step={1}
             precision={0}
@@ -267,7 +267,7 @@ const BatteryStorageDischargingEfficiencyInput = ({ setDialogVisible }: { setDia
             }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [30, 99]
+            {i18n.t('word.Range', lang)}: [30, 100]
           </div>
         </Col>
         <Col

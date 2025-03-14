@@ -1536,6 +1536,8 @@ export const i18n_es = {
       AC: 'AC',
       SolarPanel: 'Solar Panel',
       Net: 'Net',
+      Grid: 'Grid',
+      Summary: 'Summary',
     },
 
     solarPanelYieldPanel: {

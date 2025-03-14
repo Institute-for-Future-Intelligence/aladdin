@@ -155,8 +155,12 @@ const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPane
   };
 
   useEffect(() => {
+    const hasBattery = sum[0] !== undefined && Object.keys(sum[0]).findIndex((key) => key.includes('Battery')) !== -1;
     const indexOfMonth = Math.floor(now.getMonth() / monthInterval);
-    const countBuildings = (Object.keys(sum[0]).length - 1) / (hasSolarPanels ? 4 : 3);
+    let n = 3;
+    if (hasSolarPanels) n++;
+    if (hasBattery) n += 2;
+    const countBuildings = (Object.keys(sum[0]).length - 1) / n;
     tooltipHeaterBreakdown.current = [];
     tooltipAcBreakdown.current = [];
     tooltipNetBreakdown.current = [];

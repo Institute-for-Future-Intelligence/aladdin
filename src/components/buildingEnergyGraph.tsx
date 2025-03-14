@@ -26,6 +26,8 @@ import { SYMBOLS } from './symbolConstants';
 export interface BuildingEnergyGraphProps {
   type: GraphDataType;
   hasSolarPanels: boolean;
+  hasBattery?: boolean;
+  showNet?: boolean;
   dataSource: DatumEntry[];
   labels: string[];
   height: number;
@@ -59,6 +61,8 @@ const BuildingEnergyGraph = ({
   referenceX,
   fractionDigits = 2,
   symbolCount = 12,
+  hasBattery,
+  showNet = true,
 }: BuildingEnergyGraphProps) => {
   const [buildingCount, setBuildingCount] = useState<number>(0);
   const [buildingId, setBuildingId] = useState<string | undefined>();
@@ -75,7 +79,9 @@ const BuildingEnergyGraph = ({
       return;
     }
     // there are four lines for each dataset [Heater, AC, Solar, Net] when there are solar panels
-    const n = hasSolarPanels ? 4 : 3;
+    let n = 3;
+    if (hasSolarPanels) n++;
+    if (hasBattery) n += 2;
     const len =
       (Array.isArray(dataSource) ? Object.keys(dataSource[0]).length - 1 : Object.keys(dataSource).length - 1) / n;
     if (buildingCount !== len) {
@@ -91,14 +97,17 @@ const BuildingEnergyGraph = ({
         }
       }
     }
-  }, [dataSource]);
+  }, [dataSource, hasBattery]);
 
   const getRepresentations = useMemo(() => {
     const representations = [];
-    const n = hasSolarPanels ? 4 : 3;
+    let n = 3;
+    if (hasSolarPanels) n++;
+    if (hasBattery) n += 2;
     let defaultSymbol;
     const barStrokeColor = 'gray';
     const barStrokeWidth = 1;
+
     for (let i = 0; i < buildingCount; i++) {
       let name = buildingCount > 1 ? labels[i * n] : buildingId ? 'Heater ' + buildingId : 'Heater';
       representations.push(
@@ -144,29 +153,48 @@ const BuildingEnergyGraph = ({
           />,
         );
       }
+      if (hasBattery) {
+        name = buildingCount > 1 ? labels[i * n + 3] : buildingId ? 'Battery ' + buildingId : 'Battery';
+        representations.push(
+          <Bar
+            key={i * n + 3}
+            name={name}
+            dataKey={name}
+            fill={'#f0ac54'}
+            opacity={legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25}
+            stroke={barStrokeColor}
+            strokeWidth={barStrokeWidth}
+            isAnimationActive={false}
+            stackId={'stack' + i}
+          />,
+        );
+      }
     }
-    const m = n - 1;
-    for (let i = 0; i < buildingCount; i++) {
-      const name = buildingCount > 1 ? labels[i * n + m] : buildingId ? 'Net ' + buildingId : 'Net';
-      const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
-      const symbol = createSymbol(SYMBOLS[i], symbolSize, dataSource.length, symbolCount, opacity);
-      if (i === 0) defaultSymbol = symbol;
-      representations.push(
-        <Line
-          key={i * n + m}
-          type={curveType}
-          name={name}
-          dataKey={name}
-          stroke={PRESET_COLORS[i]}
-          opacity={legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25}
-          strokeWidth={lineWidth}
-          dot={symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
-          isAnimationActive={false}
-        />,
-      );
+    console.log('source', dataSource);
+    if (showNet) {
+      const m = n - 1;
+      for (let i = 0; i < buildingCount; i++) {
+        const name = buildingCount > 1 ? labels[i * n + m] : buildingId ? 'Net ' + buildingId : 'Net';
+        const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
+        const symbol = createSymbol(SYMBOLS[i], symbolSize, dataSource.length, symbolCount, opacity);
+        if (i === 0) defaultSymbol = symbol;
+        representations.push(
+          <Line
+            key={i * n + m}
+            type={curveType}
+            name={name}
+            dataKey={name}
+            stroke={PRESET_COLORS[i]}
+            opacity={legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25}
+            strokeWidth={lineWidth}
+            dot={symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
+            isAnimationActive={false}
+          />,
+        );
+      }
     }
     return representations;
-  }, [type, curveType, labels, buildingCount, buildingId, lineWidth, symbolCount, symbolSize, legendDataKey]);
+  }, [type, curveType, labels, buildingCount, buildingId, lineWidth, symbolCount, symbolSize, legendDataKey, showNet]);
 
   const onMouseDown = () => {};
 

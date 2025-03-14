@@ -1539,6 +1539,8 @@ export const i18n_ua = {
       AC: 'Кондиціонер',
       SolarPanel: 'Сонячна панель',
       Net: 'Всього',
+      Grid: 'Grid',
+      Summary: 'Summary',
     },
 
     solarPanelYieldPanel: {

@@ -1512,6 +1512,8 @@ export const i18n_zh_cn = {
       AC: '空调',
       SolarPanel: '光伏',
       Net: '净能耗',
+      Grid: '电网耗能',
+      Summary: '汇总',
     },
 
     solarPanelYieldPanel: {
