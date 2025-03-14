@@ -420,6 +420,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
             scale={[lx, ly, lz]}
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
+            userData={{ simulation: true }}
             onPointerOver={() => setHovered(true)}
             onPointerOut={() => setHovered(false)}
           >

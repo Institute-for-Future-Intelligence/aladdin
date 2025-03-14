@@ -645,8 +645,8 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
       });
     }
 
-    console.log('sum', sum);
-    console.log('bat', batteryStorageDataArrayRef.current);
+    // console.log('sum', sum);
+    // console.log('bat', batteryStorageDataArrayRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flagOfDailySimulation, weather]);
 

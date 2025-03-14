@@ -170,7 +170,6 @@ const BuildingEnergyGraph = ({
         );
       }
     }
-    console.log('source', dataSource);
     if (showNet) {
       const m = n - 1;
       for (let i = 0; i < buildingCount; i++) {
