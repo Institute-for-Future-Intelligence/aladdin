@@ -1,11 +1,11 @@
 {
-  "docid": "8U9T63Vgs1XdT9KCpmE8rY",
-  "time": "03/01/2025 06:48 PM",
-  "timestamp": 1740872906098,
+  "docid": "eUWFSr3siqjanjMzosWRiG",
+  "time": "03/14/2025 10:27 AM",
+  "timestamp": 1741962430782,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
-  "version": "1.7.3",
+  "version": "1.7.4",
   "world": {
     "solarRadiationHeatmapGridCellSize": 0.5,
     "date": "4/1/2022, 12:00:00 PM",
@@ -50,8 +50,8 @@
     {
       "type": "Human",
       "name": "Jack",
-      "cx": -7.637491248658358,
-      "cy": -0.34549986401738053,
+      "cx": -7.502055319592815,
+      "cy": -3.7260828499138436,
       "cz": 0.05000000074505806,
       "lx": 0.42,
       "lz": 1.8,
@@ -68,11 +68,12 @@
       "parentId": "iFATUUjMA7c8wHKwioiCvi",
       "id": "3LYQCPYTZ6WYqLSGF4X7Lr",
       "selected": false,
-      "ly": 0.42
+      "ly": 0.42,
+      "locked": true
     },
     {
       "type": "Foundation",
-      "cx": 0.04010933354963697,
+      "cx": -0.15989066645036307,
       "cy": 0.9027012918374098,
       "cz": 0.05,
       "lx": 16.34049294383023,
@@ -127,7 +128,8 @@
       "showLabel": false,
       "labelHeight": 8.5,
       "labelSize": 0.8,
-      "color": "#999999"
+      "color": "#999999",
+      "locked": true
     },
     {
       "type": "Wall",
@@ -194,7 +196,8 @@
       "rightUnfilledHeight": 0.5,
       "leftTopPartialHeight": 4,
       "rightTopPartialHeight": 4,
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "locked": true
     },
     {
       "type": "Wall",
@@ -265,7 +268,8 @@
       "rightUnfilledHeight": 0.5,
       "leftTopPartialHeight": 4,
       "rightTopPartialHeight": 4,
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "locked": true
     },
     {
       "type": "Wall",
@@ -336,7 +340,8 @@
       "rightUnfilledHeight": 0.5,
       "leftTopPartialHeight": 4,
       "rightTopPartialHeight": 4,
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "locked": true
     },
     {
       "type": "Wall",
@@ -403,7 +408,8 @@
       "rightUnfilledHeight": 0.5,
       "leftTopPartialHeight": 4,
       "rightTopPartialHeight": 4,
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "locked": true
     },
     {
       "id": "45EQZzpZDmcCPwStDm4gUQ",
@@ -446,7 +452,8 @@
       ],
       "selected": false,
       "rValue": 2.641654309594841,
-      "ceiling": false
+      "ceiling": false,
+      "locked": true
     },
     {
       "type": "Window",
@@ -491,7 +498,8 @@
       "leftShutter": false,
       "rightShutter": false,
       "shutterColor": "grey",
-      "shutterWidth": 0.5
+      "shutterWidth": 0.5,
+      "locked": true
     },
     {
       "type": "Window",
@@ -533,7 +541,8 @@
       "leftShutter": false,
       "rightShutter": false,
       "shutterColor": "grey",
-      "shutterWidth": 0.5
+      "shutterWidth": 0.5,
+      "locked": true
     },
     {
       "type": "Door",
@@ -565,7 +574,8 @@
       ],
       "parentId": "py4fscALBHuoNNVWKoXS9c",
       "foundationId": "iFATUUjMA7c8wHKwioiCvi",
-      "id": "afEtgeFVMoeDZdyxJU1psm"
+      "id": "afEtgeFVMoeDZdyxJU1psm",
+      "locked": true
     },
     {
       "type": "Solar Panel",
@@ -606,18 +616,19 @@
       "batteryStorageId": "jLiHUvS8TUH5959HNGDQo9",
       "label": "Solar Panels",
       "labelHeight": 1.2,
-      "labelSize": 0.5
+      "labelSize": 0.5,
+      "locked": false
     },
     {
       "type": "Battery Storage",
       "id": "jLiHUvS8TUH5959HNGDQo9",
       "parentId": "iFATUUjMA7c8wHKwioiCvi",
       "foundationId": "iFATUUjMA7c8wHKwioiCvi",
-      "cx": -6.53431166366607,
+      "cx": -6.83,
       "cy": -0.27583764728456117,
       "cz": 0.9783548432634959,
-      "lx": 0.5168858500766378,
-      "ly": 2.5383861853346428,
+      "lx": 1.21,
+      "ly": 2.54,
       "lz": 1.9567096865269917,
       "normal": [
         0,
@@ -639,7 +650,8 @@
       "showLabel": true,
       "labelHeight": 0.2,
       "labelSize": 0.5,
-      "labelFontSize": 20
+      "labelFontSize": 20,
+      "locked": false
     },
     {
       "type": "Window",
@@ -687,7 +699,8 @@
       "parentId": "s4gNJy8vD8tdJGQTaw6DQj",
       "parentType": "Wall",
       "foundationId": "iFATUUjMA7c8wHKwioiCvi",
-      "id": "1GhYdHMfGaCGWrmEPTGDY6"
+      "id": "1GhYdHMfGaCGWrmEPTGDY6",
+      "locked": true
     },
     {
       "type": "Window",
@@ -732,7 +745,8 @@
       "empty": false,
       "interior": false,
       "parentType": "Wall",
-      "selected": false
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Window",
@@ -780,7 +794,8 @@
       "parentId": "wugyuZMsPdNUQJ1PdoxEGD",
       "parentType": "Wall",
       "foundationId": "iFATUUjMA7c8wHKwioiCvi",
-      "id": "nRWpSeiwQLiP9VaxMqKTtq"
+      "id": "nRWpSeiwQLiP9VaxMqKTtq",
+      "locked": true
     },
     {
       "type": "Window",
@@ -828,7 +843,8 @@
       "parentId": "xi9Zz1pobWAhkAdtkZFZBZ",
       "parentType": "Wall",
       "foundationId": "iFATUUjMA7c8wHKwioiCvi",
-      "id": "k1j6vNqKdZ9neqpBWiMh6s"
+      "id": "k1j6vNqKdZ9neqpBWiMh6s",
+      "locked": true
     }
   ],
   "sceneRadius": 10,
@@ -846,7 +862,7 @@
     "yearlyHeliostatYieldPanelX": 0,
     "cameraPosition2D": [
       -0.042868749999999976,
-      -0.0001500066673827405,
+      -0.001000377445848244,
       150
     ],
     "theme": "Default",
@@ -861,8 +877,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -12.291155397992256,
-      -24.37687454445237,
+      -12.37386898655279,
+      -20.22599214052103,
       4.110590456516631
     ],
     "showYearlyHeliostatYieldPanel": false,
@@ -880,7 +896,7 @@
     "dailyLightSensorPanelX": 0,
     "heliodon": false,
     "solarRadiationHeatMapReflectionOnly": false,
-    "cameraZoom": 23.327015599941696,
+    "cameraZoom": 37.01235612443423,
     "mapType": "roadmap",
     "showMapPanel": false,
     "yearlyParabolicDishYieldPanelY": 0,
@@ -930,8 +946,8 @@
     "dailyBuildingEnergyPanelRect": {
       "x": -11,
       "y": 8,
-      "width": 620,
-      "height": 267
+      "width": 623,
+      "height": 328
     },
     "showDiurnalTemperaturePanel": false,
     "diurnalTemperaturePanelRect": {
@@ -955,10 +971,10 @@
     },
     "showDailyBatteryStorageEnergyPanel": true,
     "dailyBatteryStorageEnergyPanelRect": {
-      "x": -9,
-      "y": 276,
-      "width": 618,
-      "height": 292
+      "x": -8,
+      "y": 344,
+      "width": 625,
+      "height": 334
     },
     "showYearlyBatteryStorageEnergyPanel": false,
     "yearlyBatteryStorageEnergyPanelRect": {
@@ -967,7 +983,10 @@
       "width": 600,
       "height": 400
     },
-    "shadowCameraFar": 10000
+    "shadowCameraFar": 10000,
+    "heatFluxScaleFactor": 5,
+    "navigationView": false,
+    "showModelTree": false
   },
   "canvasPercentWidth": 100,
   "animate24Hours": false,

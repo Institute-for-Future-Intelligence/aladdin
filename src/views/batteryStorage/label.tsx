@@ -23,7 +23,7 @@ const Label = React.memo(({ element, groupRef }: LabelProps) => {
     const { x, y, z } = groupRef.current.getWorldPosition(tempVector3_0.set(0, 0, 0));
     setText(
       (label || i18n.t('batteryStorageMenu.BatteryStorage', lang)) +
-        (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+        (locked ? '🔒' : '') +
         (label
           ? ''
           : '\n' +

@@ -16,7 +16,7 @@ import { useRefStore } from 'src/stores/commonRef';
 import { FOUNDATION_GROUP_NAME, FOUNDATION_NAME } from '../foundation/foundation';
 import { BATTERY_STORAGE_WRAPPER_NAME, Operation } from './batteryStorageConstants';
 import { tempEuler, tempQuaternion_0, tempVector3_0, tempVector3_1, tempVector3_2, tempVector3_3 } from 'src/helpers';
-import { HALF_PI } from 'src/constants';
+import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import HandlesGroup, { HandlesGroupRefProps } from './handlesGroup';
 import { BatteryStorageUtil } from './batteryStorageUtil';
 import { Util } from 'src/Util';
@@ -446,9 +446,9 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
         {(hovered || showLabel) && !selected && <Label element={batteryStorage} groupRef={groupRef} />}
 
         {/* wireframe */}
-        {!selected && (
+        {selected && locked && (
           <group position={[0, 0, hz]}>
-            <Wireframe hx={hx} hy={hy} hz={hz} lineColor={lineColor} lineWidth={lineWidth} />
+            <Wireframe hx={hx} hy={hy} hz={hz} lineColor={LOCKED_ELEMENT_SELECTION_COLOR} lineWidth={3} />
           </group>
         )}
 

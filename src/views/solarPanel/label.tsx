@@ -34,7 +34,7 @@ const Label = React.memo(({ solarPanel, boxRef }: LabelProps) => {
 
     setText(
       (label || i18n.t('shared.SolarPanelElement', lang)) +
-        (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+        (locked ? '🔒' : '') +
         (label
           ? ''
           : '\n' +
