@@ -205,6 +205,7 @@ export const i18n_zh_tw = {
     },
 
     message: {
+      IdIsAlreadyTaken: '此ID已被占用，請更換',
       DoNotShowAgain: '別再顯示',
       NewVersionAvailable: '有新版本',
       CalculationMayBeSlowDoYouWantToContinue: '計算可能會很慢。您想繼續嗎？',

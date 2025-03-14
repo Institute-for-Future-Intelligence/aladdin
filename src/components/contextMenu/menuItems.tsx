@@ -12,7 +12,7 @@ import { UndoableDelete } from '../../undo/UndoableDelete';
 import { UndoablePaste } from '../../undo/UndoablePaste';
 import { UndoableCheck } from '../../undo/UndoableCheck';
 import { ActionInfo, ObjectType, SolarCollector } from '../../types';
-import { showInfo } from 'src/helpers';
+import { showError, showInfo } from 'src/helpers';
 import { WallModel } from 'src/models/WallModel';
 import { useRefStore } from 'src/stores/commonRef';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
@@ -457,20 +457,34 @@ export const SliderMenuItem = ({ min, max, value, onChange, children }: SliderMe
 
 export const EditableId = ({ element }: EditAbleIdProps) => {
   const [id, setId] = useState(element.editableId ?? element.id.slice(0, 4));
+  const lang = useLanguage();
 
   const setEditableId = (str: string) => {
     const trimmed = str.trim();
     const id = trimmed.length > 0 ? trimmed : element.id.slice(0, 4);
 
-    setId(id);
-    useStore.getState().set((state) => {
-      for (const e of state.elements) {
-        if (e.id === element.id && e.type === ObjectType.BatteryStorage) {
-          (e as BatteryStorageModel).editableId = id;
-          break;
-        }
+    const idSet = new Set<string>();
+    for (const e of useStore.getState().elements) {
+      if (e.type === ObjectType.BatteryStorage) {
+        const id = (e as BatteryStorageModel).editableId ?? e.id.slice(0, 4);
+        idSet.add(id);
       }
-    });
+    }
+
+    if (idSet.has(id)) {
+      showError(i18n.t('message.IdIsAlreadyTaken', lang));
+      return;
+    } else {
+      setId(id);
+      useStore.getState().set((state) => {
+        for (const e of state.elements) {
+          if (e.id === element.id && e.type === ObjectType.BatteryStorage) {
+            (e as BatteryStorageModel).editableId = id;
+            break;
+          }
+        }
+      });
+    }
   };
 
   useEffect(() => {

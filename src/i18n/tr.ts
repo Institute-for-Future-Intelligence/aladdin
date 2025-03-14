@@ -205,6 +205,7 @@ export const i18n_tr = {
     },
 
     message: {
+      IdIsAlreadyTaken: 'This ID is already taken, please use another one.',
       DoNotShowAgain: "Don't show again",
       NewVersionAvailable: 'A new version is available',
       CalculationMayBeSlowDoYouWantToContinue: 'Calculation may be slow. Do you want to continue?',
