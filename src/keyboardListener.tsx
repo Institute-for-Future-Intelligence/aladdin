@@ -569,6 +569,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
             break;
           }
           case ObjectType.SolarPanel:
+          case ObjectType.BatteryStorage:
           case ObjectType.ParabolicDish:
           case ObjectType.ParabolicTrough:
           case ObjectType.FresnelReflector:
