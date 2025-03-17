@@ -648,7 +648,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
 
   const handleKeyDown = (key: string) => {
     const selectedElement = getSelectedElement();
-    const step = 1;
+    const step = 5;
     switch (key) {
       case 'left':
         moveByKey(MoveDirection.Left, step);

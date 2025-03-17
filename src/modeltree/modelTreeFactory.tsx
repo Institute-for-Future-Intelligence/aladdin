@@ -82,6 +82,11 @@ import DoorTypeInput from './doorTypeInput';
 import LightIntensityInput from './lightIntensityInput';
 import LightDistanceInput from './lightDistanceInput';
 import DoorFrameColorInput from './doorFrameColorInput';
+import WindTurbineTowerHeightInput from './windTurbineTowerHeightInput';
+import WindTurbineTowerRadiusInput from './windTurbineTowerRadiusInput';
+import WindTurbineBladeNumberInput from './windTurbineBladeNumberInput';
+import WindTurbineBladeRadiusInput from './windTurbineBladeRadiusInput';
+import WindTurbineYawInput from './windTurbineYawInput';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -977,118 +982,31 @@ export const createFresnelReflectorNode = (fresnel: FresnelReflectorModel) => {
 };
 
 export const createWindTurbineNode = (turbine: WindTurbineModel) => {
-  const lang = { lng: useStore.getState().language };
   const node: TreeDataNode[] = [];
   node.push({
     checkable: false,
-    title: (
-      <Space>
-        <span>{i18n.t('windTurbineMenu.TowerHeight', lang)} : </span>
-        <InputNumber
-          value={turbine.towerHeight}
-          precision={2}
-          min={1}
-          max={100}
-          step={1}
-          disabled={turbine.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const el = state.elements.find((e) => e.id === turbine.id);
-                if (el) {
-                  (el as WindTurbineModel).towerHeight = value;
-                }
-              });
-            }
-          }}
-        />
-        {i18n.t('word.MeterAbbreviation', lang)}
-      </Space>
-    ),
+    title: <WindTurbineTowerHeightInput turbine={turbine} />,
     key: turbine.id + ' Tower Height',
   });
   node.push({
     checkable: false,
-    title: (
-      <Space>
-        <span>{i18n.t('windTurbineMenu.TowerRadius', lang)} : </span>
-        <InputNumber
-          value={turbine.towerRadius}
-          precision={2}
-          min={0.1}
-          max={2}
-          step={0.1}
-          disabled={turbine.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const el = state.elements.find((e) => e.id === turbine.id);
-                if (el) {
-                  (el as WindTurbineModel).towerRadius = value;
-                }
-              });
-            }
-          }}
-        />
-        {i18n.t('word.MeterAbbreviation', lang)}
-      </Space>
-    ),
+    title: <WindTurbineTowerRadiusInput turbine={turbine} />,
     key: turbine.id + ' Tower Radius',
   });
   node.push({
     checkable: false,
-    title: (
-      <Space>
-        <span>{i18n.t('windTurbineMenu.BladeNumber', lang)} : </span>
-        <InputNumber
-          value={turbine.numberOfBlades}
-          precision={0}
-          min={1}
-          max={8}
-          step={1}
-          disabled={turbine.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const el = state.elements.find((e) => e.id === turbine.id);
-                if (el) {
-                  (el as WindTurbineModel).numberOfBlades = value;
-                }
-              });
-            }
-          }}
-        />
-      </Space>
-    ),
+    title: <WindTurbineBladeNumberInput turbine={turbine} />,
     key: turbine.id + ' Blade Number',
   });
   node.push({
     checkable: false,
-    title: (
-      <Space>
-        <span>{i18n.t('windTurbineMenu.RotorBladeRadius', lang)} : </span>
-        <InputNumber
-          value={turbine.bladeRadius}
-          precision={2}
-          min={1}
-          max={100}
-          step={1}
-          disabled={turbine.locked}
-          onChange={(value) => {
-            if (value !== null) {
-              useStore.getState().set((state) => {
-                const el = state.elements.find((e) => e.id === turbine.id);
-                if (el) {
-                  (el as WindTurbineModel).bladeRadius = value;
-                }
-              });
-            }
-          }}
-        />
-        {i18n.t('word.MeterAbbreviation', lang)}
-      </Space>
-    ),
+    title: <WindTurbineBladeRadiusInput turbine={turbine} />,
     key: turbine.id + ' Blade Radius',
+  });
+  node.push({
+    checkable: false,
+    title: <WindTurbineYawInput turbine={turbine} />,
+    key: turbine.id + ' Yaw',
   });
   node.push({
     checkable: false,
