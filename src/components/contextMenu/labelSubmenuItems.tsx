@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import { Checkbox, Input, InputNumber } from 'antd';
+import { Checkbox, Input, InputNumber, Space } from 'antd';
 import {
   useLabel,
   useLabelColor,
@@ -20,6 +20,7 @@ import i18n from 'src/i18n/i18n';
 
 interface LabelSubmenuItemProps {
   element: ElementModel;
+  forModelTree?: boolean;
 }
 
 interface LabelAddonBeforeProps {
@@ -31,11 +32,16 @@ export const LabelAddonBefore = ({ children, width = '90px' }: LabelAddonBeforeP
   return <div style={{ width: width }}>{children}</div>;
 };
 
-export const ShowLabelCheckbox = ({ element }: LabelSubmenuItemProps) => {
+export const ShowLabelCheckbox = ({ element, forModelTree }: LabelSubmenuItemProps) => {
   const showLabel = useLabelShow(element);
   const lang = useLanguage();
 
-  return (
+  return forModelTree ? (
+    <Space>
+      <span>{i18n.t('labelSubMenu.KeepShowingLabel', lang)}</span>
+      <Checkbox style={{ width: '100%' }} checked={!!element?.showLabel} onChange={showLabel} />
+    </Space>
+  ) : (
     <MenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={!!element?.showLabel} onChange={showLabel}>
         {i18n.t('labelSubMenu.KeepShowingLabel', lang)}

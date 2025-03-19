@@ -87,6 +87,8 @@ import WindTurbineTowerRadiusInput from './windTurbineTowerRadiusInput';
 import WindTurbineBladeNumberInput from './windTurbineBladeNumberInput';
 import WindTurbineBladeRadiusInput from './windTurbineBladeRadiusInput';
 import WindTurbineYawInput from './windTurbineYawInput';
+import WindTurbinePitchInput from './windTurbinePitchInput';
+import { ShowLabelCheckbox } from '../components/contextMenu/labelSubmenuItems';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -370,6 +372,11 @@ export const createSensorNode = (sensor: SensorModel, relative?: boolean) => {
     title: <LabelInput element={sensor} />,
     key: sensor.id + ' Label',
   });
+  node.push({
+    checkable: false,
+    title: <ShowLabelCheckbox element={sensor} forModelTree />,
+    key: sensor.id + ' Show Label',
+  });
   node.push(...getCoordinates(sensor, relative));
   return node;
 };
@@ -380,6 +387,11 @@ export const createLightNode = (light: LightModel, relative?: boolean) => {
     checkable: false,
     title: <LabelInput element={light} />,
     key: light.id + ' Label',
+  });
+  node.push({
+    checkable: false,
+    title: <ShowLabelCheckbox element={light} forModelTree />,
+    key: light.id + ' Show Label',
   });
   node.push({
     checkable: false,
@@ -416,6 +428,11 @@ export const createSolarWaterHeaterNode = (heater: SolarWaterHeaterModel) => {
     checkable: false,
     title: <LabelInput element={heater} />,
     key: heater.id + ' Label',
+  });
+  node.push({
+    checkable: false,
+    title: <ShowLabelCheckbox element={heater} forModelTree />,
+    key: heater.id + ' Show Label',
   });
   node.push(...getCoordinates(heater));
   node.push(...getDimension(heater));
@@ -553,6 +570,11 @@ export const createSolarPanelNode = (solarPanel: SolarPanelModel, fixed?: boolea
     checkable: false,
     title: <LabelInput element={solarPanel} />,
     key: solarPanel.id + ' Label',
+  });
+  node.push({
+    checkable: false,
+    title: <ShowLabelCheckbox element={solarPanel} forModelTree />,
+    key: solarPanel.id + ' Show Label',
   });
   node.push(...getCoordinates(solarPanel, relative));
   return node;
@@ -702,6 +724,11 @@ export const createTreeNode = (tree: TreeModel) => {
     title: <LabelInput element={tree} />,
     key: tree.id + ' Label',
   });
+  node.push({
+    checkable: false,
+    title: <ShowLabelCheckbox element={tree} forModelTree />,
+    key: tree.id + ' Show Label',
+  });
   node.push(...getCoordinates(tree));
   return node;
 };
@@ -737,6 +764,11 @@ export const createBatteryStorageNode = (battery: BatteryStorageModel) => {
     checkable: false,
     title: <LabelInput element={battery} />,
     key: battery.id + ' Label',
+  });
+  node.push({
+    checkable: false,
+    title: <ShowLabelCheckbox element={battery} forModelTree />,
+    key: battery.id + ' Show Label',
   });
   node.push(...getDimension(battery));
   node.push(...getCoordinates(battery));
@@ -799,6 +831,11 @@ export const createParabolicDishNode = (dish: ParabolicDishModel) => {
     checkable: false,
     title: <LabelInput element={dish} />,
     key: dish.id + ' Label',
+  });
+  node.push({
+    checkable: false,
+    title: <ShowLabelCheckbox element={dish} forModelTree />,
+    key: dish.id + ' Show Label',
   });
   node.push(...getCoordinates(dish, true));
   return node;
@@ -873,6 +910,11 @@ export const createParabolicTroughNode = (trough: ParabolicTroughModel) => {
     title: <LabelInput element={trough} />,
     key: trough.id + ' Label',
   });
+  node.push({
+    checkable: false,
+    title: <ShowLabelCheckbox element={trough} forModelTree />,
+    key: trough.id + ' Show Label',
+  });
   node.push(...getCoordinates(trough, true));
   return node;
 };
@@ -918,6 +960,11 @@ export const createHeliostatNode = (heliostat: HeliostatModel) => {
     checkable: false,
     title: <LabelInput element={heliostat} />,
     key: heliostat.id + ' Label',
+  });
+  node.push({
+    checkable: false,
+    title: <ShowLabelCheckbox element={heliostat} forModelTree />,
+    key: heliostat.id + ' Show Label',
   });
   node.push(...getCoordinates(heliostat, true));
   return node;
@@ -977,6 +1024,11 @@ export const createFresnelReflectorNode = (fresnel: FresnelReflectorModel) => {
     title: <LabelInput element={fresnel} />,
     key: fresnel.id + ' Label',
   });
+  node.push({
+    checkable: false,
+    title: <ShowLabelCheckbox element={fresnel} forModelTree />,
+    key: fresnel.id + ' Show Label',
+  });
   node.push(...getCoordinates(fresnel, true));
   return node;
 };
@@ -1005,6 +1057,11 @@ export const createWindTurbineNode = (turbine: WindTurbineModel) => {
   });
   node.push({
     checkable: false,
+    title: <WindTurbinePitchInput turbine={turbine} />,
+    key: turbine.id + ' Pitch',
+  });
+  node.push({
+    checkable: false,
     title: <WindTurbineYawInput turbine={turbine} />,
     key: turbine.id + ' Yaw',
   });
@@ -1012,6 +1069,11 @@ export const createWindTurbineNode = (turbine: WindTurbineModel) => {
     checkable: false,
     title: <LabelInput element={turbine} />,
     key: turbine.id + ' Label',
+  });
+  node.push({
+    checkable: false,
+    title: <ShowLabelCheckbox element={turbine} forModelTree />,
+    key: turbine.id + ' Show Label',
   });
   node.push(...getCoordinates(turbine, true));
   return node;
