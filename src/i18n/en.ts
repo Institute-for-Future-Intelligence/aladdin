@@ -757,6 +757,8 @@ export const i18n_en = {
     },
 
     foundationMenu: {
+      EnableSlope: 'Enable Slope',
+      Slope: 'Slope',
       RemoveAllUnlockedSolarPanels: 'Remove All Unlocked Solar Panels',
       RemoveAllUnlockedParabolicTroughs: 'Remove All Unlocked Parabolic Troughs',
       RemoveAllUnlockedParabolicDishes: 'Remove All Unlocked Parabolic Dishes',

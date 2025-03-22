@@ -757,6 +757,8 @@ export const i18n_tr = {
     },
 
     foundationMenu: {
+      EnableSlope: 'Enable Slope',
+      Slope: 'Slope',
       RemoveAllUnlockedSolarPanels: 'Tüm Kilitlenmemiş Güneş Panellerini Kaldır',
       RemoveAllUnlockedParabolicTroughs: 'Tüm Kilitlenmemiş Parabolik Olukları Kaldır',
       RemoveAllUnlockedParabolicDishes: 'Tüm Kilitlenmemiş Parabolik Çanakları Kaldır',

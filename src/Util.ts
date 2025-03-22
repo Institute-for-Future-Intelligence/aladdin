@@ -71,6 +71,11 @@ import { HvacSystem } from './models/HvacSystem';
 import { BatteryStorageModel } from './models/BatteryStorageModel';
 
 export class Util {
+  static getZOnSlope(fLx: number, slope: number | undefined = 0, cx: number) {
+    // cx is absolute x to center
+    return (cx + fLx / 2) * Math.tan(slope);
+  }
+
   static getHeatingSetpoint(now: Date, hvac: HvacSystem | undefined) {
     if (!hvac) return 20;
     if (!hvac.type || hvac.type === 'Simple') {

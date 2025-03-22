@@ -32,6 +32,8 @@ export interface ActionState {
   foundationHeight: number;
   foundationColor: string;
   foundationTexture: FoundationTexture;
+  foundationEnableSlope: boolean;
+  foundationSlope: number;
   groundFloorRValue: number;
 
   cuboidHeight: number;

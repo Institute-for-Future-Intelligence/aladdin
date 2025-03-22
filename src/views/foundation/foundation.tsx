@@ -13,7 +13,7 @@ import FoundationTexture07 from '../../resources/foundation_07.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Plane, Sphere, useTexture } from '@react-three/drei';
-import { CanvasTexture, Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
+import { CanvasTexture, Euler, Group, Mesh, Raycaster, RepeatWrapping, Vector2, Vector3 } from 'three';
 import { useStore } from '../../stores/common';
 import { useRefStore } from '../../stores/commonRef';
 import { FoundationModel } from '../../models/FoundationModel';
@@ -83,6 +83,7 @@ import SolarPanelWrapper from '../solarPanel/solarPanelWrapper';
 import { useTransparent } from '../roof/hooks';
 import SolarWaterHeaterWrapper from '../solarWaterHeater/solarWaterHeaterWrapper';
 import BatteryStorageWrapper from '../batteryStorage/batteryStorageWrapper';
+import Slope from './Slope';
 
 interface SnapTargetType {
   id: string | null;
@@ -111,6 +112,8 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
     showLabel = false,
     textureType = FoundationTexture.NoTexture,
     solarStructure,
+    enableSlope,
+    slope = 0.2,
   } = foundationModel;
 
   const selected = useSelected(id);
@@ -2832,62 +2835,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
           const angle = collector.relativeAzimuth + rotation[2]; // world panel azimuth
           const rp = new Vector2().subVectors(wp, resizeAnchor2D); // relative vector from anchor to pointer
           const wbc = new Vector2(cx, cy); // world foundation center
-          if (collector.type === ObjectType.SolarPanel) {
-            const solarPanel = collector as SolarPanelModel;
-            const pvModel = getPvModule(solarPanel.pvModelName);
-            switch (resizeHandleType) {
-              case ResizeHandleType.Lower:
-              case ResizeHandleType.Upper:
-                {
-                  const sign = resizeHandleType === ResizeHandleType.Lower ? 1 : -1;
-                  const theta = rp.angle() - angle + sign * HALF_PI;
-                  let dyl = distance * Math.cos(theta);
-                  if (solarPanel.orientation === Orientation.portrait) {
-                    const nx = Math.max(1, Math.ceil((dyl - pvModel.length / 2) / pvModel.length));
-                    dyl = nx * pvModel.length;
-                  } else {
-                    const nx = Math.max(1, Math.ceil((dyl - pvModel.width / 2) / pvModel.width));
-                    dyl = nx * pvModel.width;
-                  }
-                  const wcx = resizeAnchor.x + (sign * (dyl * Math.sin(angle))) / 2;
-                  const wcy = resizeAnchor.y - (sign * (dyl * Math.cos(angle))) / 2;
-                  const wc = new Vector2(wcx, wcy); // world panel center
-                  const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
-                  const newCx = rc.x / lx;
-                  const newCy = rc.y / ly;
-                  if (isSolarCollectorNewSizeOk(collector, newCx, newCy, collector.lx, dyl)) {
-                    updateElementLyById(collector.id, dyl);
-                    setElementPosition(collector.id, newCx, newCy);
-                  }
-                }
-                break;
-              case ResizeHandleType.Left:
-              case ResizeHandleType.Right:
-                {
-                  const sign = resizeHandleType === ResizeHandleType.Left ? -1 : 1;
-                  const theta = rp.angle() - angle + (resizeHandleType === ResizeHandleType.Left ? Math.PI : 0);
-                  let dxl = distance * Math.cos(theta);
-                  if (solarPanel.orientation === Orientation.portrait) {
-                    const nx = Math.max(1, Math.ceil((dxl - pvModel.width / 2) / pvModel.width));
-                    dxl = nx * pvModel.width;
-                  } else {
-                    const nx = Math.max(1, Math.ceil((dxl - pvModel.length / 2) / pvModel.length));
-                    dxl = nx * pvModel.length;
-                  }
-                  const wcx = resizeAnchor.x + (sign * (dxl * Math.cos(angle))) / 2;
-                  const wcy = resizeAnchor.y + (sign * (dxl * Math.sin(angle))) / 2;
-                  const wc = new Vector2(wcx, wcy);
-                  const rc = new Vector2().subVectors(wc, wbc).rotateAround(ORIGIN_VECTOR2, -rotation[2]);
-                  const newCx = rc.x / lx;
-                  const newCy = rc.y / ly;
-                  if (isSolarCollectorNewSizeOk(collector, newCx, newCy, dxl, collector.ly)) {
-                    updateElementLxById(collector.id, dxl);
-                    setElementPosition(collector.id, newCx, newCy);
-                  }
-                }
-                break;
-            }
-          } else if (collector.type === ObjectType.ParabolicTrough) {
+          if (collector.type === ObjectType.ParabolicTrough) {
             const parabolicTrough = collector as ParabolicTroughModel;
             switch (resizeHandleType) {
               case ResizeHandleType.Lower:
@@ -3102,50 +3050,51 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
           plz={lz}
         />
 
-        <SolarWaterHeaterWrapper foundationId={id} wrapperType={ObjectType.Foundation} />
-
         <BatteryStorageWrapper foundationId={id} hz={hz} />
 
-        {/* draw rectangle */}
-        <Box
-          castShadow={shadowEnabled}
-          receiveShadow={shadowEnabled}
-          uuid={id}
-          userData={{ simulation: true, stand: true, id: id, aabb: true }}
-          ref={baseRef}
-          name={FOUNDATION_NAME}
-          args={[lx, ly, lz]}
-          onContextMenu={handleContextMenu}
-          onPointerOver={handlePointerOver}
-          onPointerDown={handlePointerDown}
-          onPointerUp={handlePointerUp}
-          onPointerMove={throttle(handlePointerMove, THROTTLE_WAIT, { trailing: false })}
-          onPointerOut={handlePointerOut}
-          onPointerEnter={handlePointerEnter}
-        >
-          <meshStandardMaterial attach="material-0" color={color} />
-          <meshStandardMaterial attach="material-1" color={color} />
-          <meshStandardMaterial attach="material-2" color={color} />
-          <meshStandardMaterial attach="material-3" color={color} />
-          {showSolarRadiationHeatmap && heatmapTexture ? (
-            <meshBasicMaterial
-              attach="material-4"
-              color={'white'}
-              map={heatmapTexture}
-              transparent={transparent}
-              opacity={opacity}
-            />
-          ) : (
-            <meshStandardMaterial
-              attach="material-4"
-              color={textureType === FoundationTexture.NoTexture ? color : 'white'}
-              map={_texture}
-              transparent={transparent}
-              opacity={opacity}
-            />
-          )}
-          <meshStandardMaterial attach="material-5" color={color} />
-        </Box>
+        {enableSlope ? (
+          <Slope foundation={foundationModel} selected={selected} enableShadow={shadowEnabled} />
+        ) : (
+          <Box
+            castShadow={shadowEnabled}
+            receiveShadow={shadowEnabled}
+            uuid={id}
+            userData={{ simulation: true, stand: true, id: id, aabb: true }}
+            ref={baseRef}
+            name={FOUNDATION_NAME}
+            args={[lx, ly, lz]}
+            onContextMenu={handleContextMenu}
+            onPointerOver={handlePointerOver}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onPointerMove={throttle(handlePointerMove, THROTTLE_WAIT, { trailing: false })}
+            onPointerOut={handlePointerOut}
+            onPointerEnter={handlePointerEnter}
+          >
+            <meshStandardMaterial attach="material-0" color={color} />
+            <meshStandardMaterial attach="material-1" color={color} />
+            <meshStandardMaterial attach="material-2" color={color} />
+            <meshStandardMaterial attach="material-3" color={color} />
+            {showSolarRadiationHeatmap && heatmapTexture ? (
+              <meshBasicMaterial
+                attach="material-4"
+                color={'white'}
+                map={heatmapTexture}
+                transparent={transparent}
+                opacity={opacity}
+              />
+            ) : (
+              <meshStandardMaterial
+                attach="material-4"
+                color={textureType === FoundationTexture.NoTexture ? color : 'white'}
+                map={_texture}
+                transparent={transparent}
+                opacity={opacity}
+              />
+            )}
+            <meshStandardMaterial attach="material-5" color={color} />
+          </Box>
+        )}
 
         {/* intersection plane */}
         {ifShowIntersectionPlane() && (
@@ -3574,23 +3523,6 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
         {solarStructure === SolarStructure.UpdraftTower && <SolarUpdraftTower foundation={foundationModel} />}
 
         <BuildingRenderer {...foundationModel} />
-        {/* {solarPanelsOnFoundation.map((sp) => {
-          if (sp.type === ObjectType.SolarPanel) {
-            return (
-              <SolarPanel
-                key={sp.id}
-                {...sp}
-                cx={sp.cx * lx}
-                cy={sp.cy * ly}
-                cz={sp.poleHeight + sp.lz / 2 + lz / 2}
-                parentPosition={[cx, cy, lz / 2]}
-                parentRotation={rotation[2]}
-              />
-            );
-          } else {
-            return null;
-          }
-        })} */}
       </group>
     </>
   );

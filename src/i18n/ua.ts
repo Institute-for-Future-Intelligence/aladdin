@@ -759,6 +759,8 @@ export const i18n_ua = {
     },
 
     foundationMenu: {
+      EnableSlope: 'Enable Slope',
+      Slope: 'Slope',
       RemoveAllUnlockedSolarPanels: 'Видалити всі незаблоковані сонячні панелі',
       RemoveAllUnlockedParabolicTroughs: 'Видалити всі незаблоковані параболічні сонячні колектори',
       RemoveAllUnlockedParabolicDishes: 'Видалити всі незаблоковані параболічні антени',

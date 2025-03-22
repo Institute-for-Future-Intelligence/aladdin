@@ -25,6 +25,7 @@ import Label from './label';
 import Wireframe from 'src/components/wireframe';
 import { TEXT_SPRITE_NAME } from './horizontalRuler';
 import Material, { BatteryStroageMaterialRef } from './material';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 /**
  * todo:
@@ -40,6 +41,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
     parentId,
     cx,
     cy,
+    cz,
     lx,
     ly,
     lz,
@@ -84,6 +86,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
   const directionVectorRef = useRef(new Vector3());
   const parentGroupRef = useRef<Object3D | null>(null);
   const newParentIdRef = useRef<string | null>(null);
+  const foundationSlopeOffsetRef = useRef(0);
 
   // constants
   const [hx, hy, hz] = [lx / 2, ly / 2, lz / 2];
@@ -190,13 +193,20 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
     const isTopHandles = handleType.includes('Top');
     if (isTopHandles) {
       operationRef.current = Operation.ResizeZ;
-      const foundation = useStore.getState().elements.find((e) => e.id === parentId);
+      const foundation = useStore
+        .getState()
+        .elements.find((e) => e.id === parentId && e.type === ObjectType.Foundation) as FoundationModel;
       if (foundation) {
         const cameraDirection = useStore.getState().cameraDirection;
         const angle =
           Math.atan2(-cameraDirection.y, -cameraDirection.x) - groupRef.current.rotation.z - foundation.rotation[2];
         intersectionPlanePositionRef.current.copy(event.object.position);
         intersectionPlaneRotationRef.current.set(HALF_PI, 0, -HALF_PI + angle, 'ZXY');
+        if (foundation.enableSlope) {
+          foundationSlopeOffsetRef.current = Util.getZOnSlope(foundation.lx, foundation.slope, cx);
+        } else {
+          foundationSlopeOffsetRef.current = 0;
+        }
       }
     } else {
       if (handleType === ResizeHandleType.Left || handleType === ResizeHandleType.Right) {
@@ -255,17 +265,23 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
     const oldElement = useStore.getState().elements.find((e) => e.id === id) as BatteryStorageModel | undefined;
     setCommonStore((state) => {
       if (groupRef.current && centerGroupRef.current && boxRef.current) {
-        const batteryStorage = state.elements.find((e) => e.id === id && e.type === ObjectType.BatteryStorage) as
-          | BatteryStorageModel
-          | undefined;
+        const batteryStorage = state.elements.find(
+          (e) => e.id === id && e.type === ObjectType.BatteryStorage,
+        ) as BatteryStorageModel;
         if (batteryStorage) {
+          const foundation = state.elements.find(
+            (e) => e.id === batteryStorage.parentId && e.type === ObjectType.Foundation,
+          ) as FoundationModel;
           batteryStorage.cx = groupRef.current.position.x;
           batteryStorage.cy = groupRef.current.position.y;
-          batteryStorage.cz = centerGroupRef.current.position.z;
+          batteryStorage.cz = groupRef.current.position.z;
           batteryStorage.lx = boxRef.current.scale.x;
           batteryStorage.ly = boxRef.current.scale.y;
           batteryStorage.lz = boxRef.current.scale.z;
           batteryStorage.rotation[2] = groupRef.current.rotation.z;
+          if (foundation && foundation.enableSlope) {
+            batteryStorage.cz = foundation.cz + Util.getZOnSlope(foundation.lx, foundation.slope, batteryStorage.cx);
+          }
           if (newParentIdRef.current && newParentIdRef.current) {
             batteryStorage.parentId = newParentIdRef.current;
             batteryStorage.foundationId = newParentIdRef.current;
@@ -281,6 +297,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
     setShowIntersectionPlane(false);
     operationRef.current = Operation.None;
     newParentIdRef.current = null;
+    foundationSlopeOffsetRef.current = 0;
     setShowPolarGrid(false);
   }, []);
 
@@ -314,6 +331,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
             .applyEuler(tempEuler.set(0, 0, parentGroup.rotation.z + groupRef.current.rotation.z));
           groupRef.current.position.x = point.x + moveOffset.x - parentGroup.position.x;
           groupRef.current.position.y = point.y + moveOffset.y - parentGroup.position.y;
+          groupRef.current.position.z = point.z - parentGroup.position.z;
           groupRef.current.position.applyEuler(tempEuler.set(0, 0, -parentGroup.rotation.z));
         }
         break;
@@ -372,7 +390,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
       }
       case Operation.ResizeZ: {
         if (centerGroupRef.current) {
-          const newLz = Math.max(MIN_SIZE, point.z - parentGroup.position.z * 2);
+          const newLz = Math.max(MIN_SIZE, point.z - parentGroup.position.z * 2 - foundationSlopeOffsetRef.current);
           boxRef.current.scale.z = newLz;
           centerGroupRef.current.position.z = newLz / 2;
           if (materialRef.current) {
@@ -412,7 +430,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
   return (
     <>
       {/* bottom surface group */}
-      <group ref={groupRef} position={[cx, cy, 0]} rotation={[0, 0, rz]} onPointerDown={onGroupPointerDown}>
+      <group ref={groupRef} position={[cx, cy, cz]} rotation={[0, 0, rz]} onPointerDown={onGroupPointerDown}>
         {/* center surface group */}
         <group ref={centerGroupRef} position={[0, 0, hz]}>
           <Box

@@ -8,7 +8,7 @@ import { BuildingCompletionStatus, FoundationTexture, ObjectType, SolarStructure
 import { Copy, Cut, DialogItem, GroupMasterCheckbox, Lock, MenuItem, Paste } from '../../menuItems';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ElementModel } from 'src/models/ElementModel';
-import { AddPolygonItem, BuildingCheckbox, SolarStructureRadioGroup } from './foundationMenuItems';
+import { AddPolygonItem, BuildingCheckbox, SlopeCheckbox, SolarStructureRadioGroup } from './foundationMenuItems';
 import i18n from 'src/i18n/i18n';
 import FoundationTextureSelection from './foundationTextureSelection';
 import FoundationColorSelection from './foundationColorSelection';
@@ -42,6 +42,7 @@ import SolarPanelTiltAnglePsoWizard from '../solarPanelTiltAnglePsoWizard';
 import { createLabelSubmenu } from '../../labelSubmenuItems';
 import { createFoundationElementCounterSubmenu } from './foundationElementCounterSubmenu';
 import BuildingHVACSystem from './buildingHVACSystem';
+import FoundationSlopeInput from './foundationSlopeInput';
 
 const legalToPasteOnFoundation = () => {
   const elementsToPaste = useStore.getState().elementsToPaste;
@@ -122,10 +123,23 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  items.push({
-    key: 'building',
-    label: <BuildingCheckbox foundation={foundation} />,
-  });
+  if (!foundation.enableSlope) {
+    items.push({
+      key: 'building',
+      label: <BuildingCheckbox foundation={foundation} />,
+    });
+  }
+
+  if (
+    editable &&
+    counterAll.wallCount === 0 &&
+    (foundation.solarStructure === undefined || foundation.solarStructure === SolarStructure.None)
+  ) {
+    items.push({
+      key: 'enable-solpe',
+      label: <SlopeCheckbox foundation={foundation} />,
+    });
+  }
 
   if (counterAll.gotSome()) {
     items.push({
@@ -136,6 +150,13 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
   }
 
   if (editable) {
+    if (foundation.enableSlope) {
+      items.push({
+        key: 'foundation-slope-input',
+        label: <DialogItem Dialog={FoundationSlopeInput}>{i18n.t('foundationMenu.Slope', lang)} ...</DialogItem>,
+      });
+    }
+
     if (!foundation.textureType || foundation.textureType === FoundationTexture.NoTexture) {
       items.push({
         key: 'foundation-color',
@@ -192,7 +213,7 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  if (editable && foundation.notBuilding) {
+  if (editable && foundation.notBuilding && !foundation.enableSlope) {
     items.push({
       key: 'select-solar-structure',
       label: <MenuItem>{i18n.t('foundationMenu.SolarStructure', lang)}</MenuItem>,

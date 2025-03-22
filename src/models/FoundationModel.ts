@@ -15,6 +15,9 @@ export interface FoundationModel extends ElementModel, Groupable {
 
   notBuilding?: boolean;
 
+  enableSlope?: boolean;
+  slope?: number;
+
   solarStructure?: SolarStructure;
 
   // tower for heliostats

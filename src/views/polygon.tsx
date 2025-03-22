@@ -41,6 +41,7 @@ import { Point2 } from '../models/Point2';
 import { useRefStore } from '../stores/commonRef';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useLanguage, useSelected } from '../hooks';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 // maybe we should not wrap this with React.memo as the polygon seems to need to update with its parent
 const Polygon = ({
@@ -209,6 +210,9 @@ const Polygon = ({
     if (Util.isSame(n, UNIT_VECTOR_NEG_Y)) {
       return new Euler(HALF_PI, 0, r, 'ZXY');
     }
+    if (parent?.type === ObjectType.Foundation && (parent as FoundationModel).enableSlope) {
+      return new Euler(0, -Number((parent as FoundationModel).slope), r, 'ZXY');
+    }
     // top face
     return new Euler(0, 0, r, 'ZXY');
   };
@@ -249,6 +253,12 @@ const Polygon = ({
       } else if (parent.type === ObjectType.Wall) {
         // polygon on wall is relative to the wall
         return new Vector3(0, -0.01, 0);
+      } else if (parent.type === ObjectType.Foundation && (parent as FoundationModel).enableSlope) {
+        return new Vector3(
+          parent.cx,
+          parent.cy,
+          cz + Util.getZOnSlope(parent.lx, Number((parent as FoundationModel).slope), 0),
+        );
       }
     }
     return new Vector3(parent?.cx ?? 0, parent?.cy ?? 0, cz);

@@ -28,6 +28,7 @@ import { Util } from '../Util';
 import { TreeData } from '../TreeData';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { useLanguage, useSelected } from '../hooks';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 const Tree = React.memo((treeModel: TreeModel) => {
   const {
@@ -46,18 +47,28 @@ const Tree = React.memo((treeModel: TreeModel) => {
   } = treeModel;
 
   let isRender = false;
-  useStore((state) => {
+  const parent = useStore((state) => {
     if (parentId === GROUND_ID) {
       isRender = true;
+      return null;
     } else {
       for (const e of state.elements) {
         if (e.id === parentId) {
           isRender = true;
-          break;
+          return e;
         }
       }
     }
   });
+
+  let _cz = cz;
+  if (parent && parent.type === ObjectType.Foundation) {
+    const foundation = parent as FoundationModel;
+    if (foundation.enableSlope) {
+      _cz = foundation.cz + Util.getZOnSlope(foundation.lx, foundation.slope, cx);
+    }
+  }
+
   const removeElementById = useStore(Selector.removeElementById);
   useEffect(() => {
     if (!isRender) {
@@ -246,7 +257,7 @@ const Tree = React.memo((treeModel: TreeModel) => {
   return (
     <>
       {isRender ? (
-        <group ref={groupRef} name={'Tree Group ' + id} userData={{ aabb: true }} position={[cx, cy, cz ?? 0]}>
+        <group ref={groupRef} name={'Tree Group ' + id} userData={{ aabb: true }} position={[cx, cy, _cz ?? 0]}>
           <group position={[0, 0, lz / 2]}>
             <Billboard ref={solidTreeRef} uuid={id} name={name} follow={false}>
               <Plane args={[lx, lz]}>

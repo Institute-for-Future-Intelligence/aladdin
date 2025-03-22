@@ -1142,7 +1142,6 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                 }
                 for (const e of state.elements) {
                   if (e.id === id) {
-                    e.selected = true;
                     state.selectedElement = e;
                     state.selectedElementIdSet.add(id);
                     if (!keepModelTreeKeys && state.viewState.showModelTree) {
@@ -1150,8 +1149,6 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                         s.modelTreeExpandedKeys = [id];
                       });
                     }
-                  } else {
-                    e.selected = false;
                   }
                 }
               } else {

@@ -754,6 +754,8 @@ export const i18n_zh_tw = {
     },
 
     foundationMenu: {
+      EnableSlope: '啓用斜坡',
+      Slope: '坡度',
       RemoveAllUnlockedSolarPanels: '刪除此地基上所有非固定的光伏板',
       RemoveAllUnlockedParabolicTroughs: '刪除此地基上所有非固定的拋物線槽',
       RemoveAllUnlockedParabolicDishes: '刪除此地基上所有非固定的拋物線碟',

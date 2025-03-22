@@ -115,6 +115,10 @@ const FresnelReflector = React.memo((fresnelReflector: FresnelReflectorModel) =>
     switch (parent.type) {
       case ObjectType.Foundation:
         rz = actualPoleHeight + hz + parent.lz;
+        const foundation = parent as FoundationModel;
+        if (foundation.enableSlope) {
+          rz = rz + Util.getZOnSlope(foundation.lx, foundation.slope, cx * foundation.lx);
+        }
         if (Util.isZero(rotation[2])) {
           rx = parent.cx + cx * parent.lx;
           ry = parent.cy + cy * parent.ly;

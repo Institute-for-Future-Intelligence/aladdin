@@ -50,6 +50,8 @@ export class DefaultActionState implements ActionState {
   foundationHeight: number;
   foundationColor: string;
   foundationTexture: FoundationTexture;
+  foundationEnableSlope: boolean;
+  foundationSlope: number;
   groundFloorRValue: number;
 
   cuboidHeight: number;
@@ -203,6 +205,8 @@ export class DefaultActionState implements ActionState {
     this.foundationHeight = 0.1;
     this.foundationColor = '#808080';
     this.foundationTexture = FoundationTexture.NoTexture;
+    this.foundationEnableSlope = false;
+    this.foundationSlope = 0.2;
     this.groundFloorRValue = DEFAULT_GROUND_FLOOR_R_VALUE;
 
     this.cuboidHeight = 4;

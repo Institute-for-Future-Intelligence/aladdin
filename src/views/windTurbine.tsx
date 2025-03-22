@@ -22,6 +22,7 @@ import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { WindTurbineModel } from '../models/WindTurbineModel';
 import { useLanguage, useSelected } from '../hooks';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 const WindTurbine = React.memo(
   ({
@@ -91,6 +92,10 @@ const WindTurbine = React.memo(
       switch (parent.type) {
         case ObjectType.Foundation:
           cz = parent.lz;
+          const foundation = parent as FoundationModel;
+          if (foundation.enableSlope) {
+            cz = cz + Util.getZOnSlope(foundation.lx, foundation.slope, cx * foundation.lx);
+          }
           if (Util.isZero(rotation[2])) {
             cx = parent.cx + cx * parent.lx;
             cy = parent.cy + cy * parent.ly;

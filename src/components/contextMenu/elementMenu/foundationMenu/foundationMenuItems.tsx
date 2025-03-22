@@ -19,6 +19,7 @@ import { Vector3 } from 'three';
 import { UNIT_VECTOR_POS_Z } from 'src/constants';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
 import { UndoableChange } from 'src/undo/UndoableChange';
+import { Util } from 'src/Util';
 
 interface FoundationItemProps {
   foundation: FoundationModel;
@@ -68,6 +69,57 @@ export const BuildingCheckbox = ({ foundation }: FoundationItemProps) => {
     <MenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={!foundation.notBuilding} onChange={onChange}>
         {i18n.t('word.Building', lang)}
+      </Checkbox>
+    </MenuItem>
+  );
+};
+
+export const SlopeCheckbox = ({ foundation }: FoundationItemProps) => {
+  const lang = useLanguage();
+
+  const toggleSlope = (checked: boolean) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.id === foundation.id) {
+          const foundation = e as FoundationModel;
+          foundation.enableSlope = checked;
+          if (foundation.slope === undefined) {
+            foundation.slope = 0.2;
+          }
+        }
+        if (e.parentId === foundation.id) {
+          const slope = checked ? foundation.slope ?? 0.2 : 0;
+          switch (e.type) {
+            case ObjectType.BatteryStorage:
+            case ObjectType.SolarPanel: {
+              e.cz = foundation.lz / 2 + Util.getZOnSlope(foundation.lx, slope, e.cx);
+              break;
+            }
+          }
+        }
+      }
+      state.actionState.foundationEnableSlope = checked;
+    });
+  };
+
+  const onChange = (e: CheckboxChangeEvent) => {
+    const undoableCheck = {
+      name: 'Enable Slope',
+      timestamp: Date.now(),
+      checked: e.target.checked,
+      selectedElementId: foundation.id,
+      selectedElementType: foundation.type,
+      undo: () => toggleSlope(!undoableCheck.checked),
+      redo: () => toggleSlope(undoableCheck.checked),
+    } as UndoableCheck;
+    useStore.getState().addUndoable(undoableCheck);
+    toggleSlope(e.target.checked);
+  };
+
+  return (
+    <MenuItem stayAfterClick noPadding>
+      <Checkbox style={{ width: '100%' }} checked={foundation.enableSlope} onChange={onChange}>
+        {i18n.t('foundationMenu.EnableSlope', lang)}
       </Checkbox>
     </MenuItem>
   );

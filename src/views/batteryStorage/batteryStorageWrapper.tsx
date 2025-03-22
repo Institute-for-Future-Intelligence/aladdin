@@ -27,7 +27,7 @@ const BatteryStorageWrapper = ({ foundationId, hz }: Props) => {
   const batteryStorage = useStore((state) => state.elements.filter(filterFn) as BatteryStorageModel[], shallow);
 
   return (
-    <group name={BATTERY_STORAGE_WRAPPER_NAME} position={[0, 0, hz]}>
+    <group name={BATTERY_STORAGE_WRAPPER_NAME}>
       {batteryStorage.map((bs) => (
         <BatteryStorage key={bs.id} {...bs} />
       ))}

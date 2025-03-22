@@ -41,6 +41,7 @@ import { useDataStore } from '../stores/commonData';
 import { useLanguage, useSelected } from '../hooks';
 import GlowImage_Cylinderic from '../resources/glow_cylinderic.png';
 import GlowImage_Corner from '../resources/glow_corner.png';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 const ParabolicTrough = React.memo((trough: ParabolicTroughModel) => {
   const {
@@ -133,6 +134,10 @@ const ParabolicTrough = React.memo((trough: ParabolicTroughModel) => {
       switch (parent.type) {
         case ObjectType.Foundation:
           rz = actualPoleHeight + hz + parent.lz;
+          const foundation = parent as FoundationModel;
+          if (foundation.enableSlope) {
+            rz = rz + Util.getZOnSlope(foundation.lx, foundation.slope, cx * foundation.lx);
+          }
           if (Util.isZero(rotation[2])) {
             rx = parent.cx + cx * parent.lx;
             ry = parent.cy + cy * parent.ly;

@@ -26,23 +26,34 @@ import { FlowerModel } from '../models/FlowerModel';
 import { FlowerData } from '../FlowerData';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { useSelected } from '../hooks';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 const Flower = React.memo((flowerModel: FlowerModel) => {
   const { parentId, id, cx, cy, cz, name = FlowerType.WhiteFlower, flip = false, locked = false } = flowerModel;
 
   let isRender = false;
-  useStore((state) => {
+  const parent = useStore((state) => {
     if (parentId === GROUND_ID) {
       isRender = true;
+      return null;
     } else {
       for (const e of state.elements) {
         if (e.id === parentId) {
           isRender = true;
-          break;
+          return e;
         }
       }
     }
   });
+
+  let _cz = cz;
+  if (parent && parent.type === ObjectType.Foundation) {
+    const foundation = parent as FoundationModel;
+    if (foundation.enableSlope) {
+      _cz = foundation.cz + Util.getZOnSlope(foundation.lx, foundation.slope, cx);
+    }
+  }
+
   const removeElementById = useStore(Selector.removeElementById);
   useEffect(() => {
     if (!isRender) {
@@ -228,7 +239,7 @@ const Flower = React.memo((flowerModel: FlowerModel) => {
           ref={groupRef}
           name={'Flower Group ' + id}
           userData={{ aabb: true }}
-          position={[cx, cy, (cz ?? 0) + (orthographic ? 0.25 : 0)]}
+          position={[cx, cy, (_cz ?? 0) + (orthographic ? 0.25 : 0)]}
         >
           <group position={[0, 0, height / 2]}>
             <Billboard ref={flowerRef} uuid={id} name={name} follow={false} rotation={[HALF_PI, 0, 0]}>

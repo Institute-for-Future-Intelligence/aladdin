@@ -98,8 +98,12 @@ const Light = React.memo((lightModel: LightModel) => {
   if (parentId) {
     if (parent) {
       switch (parent.type) {
-        case ObjectType.Foundation:
-          rz = parent.cz + parent.lz / 2;
+        case ObjectType.Foundation: {
+          rz = parent.lz;
+          const foundation = parent as FoundationModel;
+          if (foundation.enableSlope) {
+            rz = rz + Util.getZOnSlope(foundation.lx, foundation.slope, cx * foundation.lx);
+          }
           if (Util.isZero(rotation[2])) {
             rx = parent.cx + cx * parent.lx;
             ry = parent.cy + cy * parent.ly;
@@ -111,7 +115,8 @@ const Light = React.memo((lightModel: LightModel) => {
             ry = parent.cy + v.y;
           }
           break;
-        case ObjectType.Wall:
+        }
+        case ObjectType.Wall: {
           if (foundation?.type === ObjectType.Foundation) {
             const absoluteCoordinates = Util.absoluteCoordinates(cx, cy, cz, parent, foundation as FoundationModel);
             rx = absoluteCoordinates.x;
@@ -120,7 +125,8 @@ const Light = React.memo((lightModel: LightModel) => {
           }
           parentThickness = (parent as WallModel).ly;
           break;
-        case ObjectType.Roof:
+        }
+        case ObjectType.Roof: {
           if (foundation?.type === ObjectType.Foundation) {
             const absoluteCoordinates = Util.absoluteCoordinates(
               cx * foundation.lx,
@@ -135,6 +141,7 @@ const Light = React.memo((lightModel: LightModel) => {
           }
           parentThickness = (parent as RoofModel).thickness;
           break;
+        }
       }
     }
   }

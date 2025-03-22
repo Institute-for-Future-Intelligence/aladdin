@@ -37,6 +37,7 @@ import PanelBox from './panelBox';
 import HeatmapLines from './heatmapLines';
 import PolarGrid, { PolarGridRefProps } from './polarGrid';
 import Mount, { MountRefProps } from './mount';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 const INTERSECTION_PLANE_XY_NAME = 'Intersection Plane XY';
 
@@ -621,6 +622,14 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
               sp.cx = groupRef.current.position.x / parentWall.lx;
               sp.cy = 0;
               sp.cz = groupRef.current.position.z / parentWall.lz;
+            }
+          } else if (sp.parentType === ObjectType.Foundation) {
+            const foundation = state.elements.find(
+              (e) => e.id === sp.parentId && e.type === ObjectType.Foundation,
+            ) as FoundationModel;
+            [sp.cx, sp.cy, sp.cz] = groupRef.current.position;
+            if (foundation && foundation.enableSlope) {
+              sp.cz = foundation.cz + Util.getZOnSlope(foundation.lx, foundation.slope, groupRef.current.position.x);
             }
           } else {
             if (sp.parentType === ObjectType.Roof) {

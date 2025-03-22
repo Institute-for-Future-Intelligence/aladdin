@@ -154,7 +154,12 @@ export class ElementModelCloner {
       }
       case ObjectType.BatteryStorage: {
         if (parent) {
-          clone = ElementModelCloner.cloneBatteryStorage(parent.id, e as BatteryStorageModel, x, y);
+          const foundation = parent as FoundationModel;
+          let cz = parent.lz / 2;
+          if (foundation.enableSlope) {
+            cz = cz + Util.getZOnSlope(foundation.lx, foundation.slope, x);
+          }
+          clone = ElementModelCloner.cloneBatteryStorage(parent.id, e as BatteryStorageModel, x, y, cz);
         }
       }
     }
@@ -661,6 +666,8 @@ export class ElementModelCloner {
       labelSize: foundation.labelSize,
       showLabel: foundation.showLabel,
       rValue: foundation.rValue ?? DEFAULT_GROUND_FLOOR_R_VALUE,
+      enableSlope: foundation.enableSlope,
+      slope: foundation.slope,
       id: short.generate() as string,
     } as FoundationModel;
   }
@@ -696,12 +703,18 @@ export class ElementModelCloner {
     } as CuboidModel;
   }
 
-  private static cloneBatteryStorage(parentId: string, batteryStorage: BatteryStorageModel, x: number, y: number) {
+  private static cloneBatteryStorage(
+    parentId: string,
+    batteryStorage: BatteryStorageModel,
+    x: number,
+    y: number,
+    z: number,
+  ) {
     const b = {
       type: ObjectType.BatteryStorage,
       cx: x,
       cy: y,
-      cz: batteryStorage.cz,
+      cz: z,
       lx: batteryStorage.lx,
       ly: batteryStorage.ly,
       lz: batteryStorage.lz,

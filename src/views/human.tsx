@@ -33,6 +33,7 @@ import { HumanData } from '../HumanData';
 import { Util } from '../Util';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { useLanguage, useSelected } from '../hooks';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 const Human = React.memo((humanModel: HumanModel) => {
   const {
@@ -48,18 +49,28 @@ const Human = React.memo((humanModel: HumanModel) => {
   } = humanModel;
 
   let isRender = false;
-  useStore((state) => {
+  const parent = useStore((state) => {
     if (parentId === GROUND_ID) {
       isRender = true;
+      return null;
     } else {
       for (const e of state.elements) {
         if (e.id === parentId) {
           isRender = true;
-          break;
+          return e;
         }
       }
     }
   });
+
+  let _cz = cz;
+  if (parent && parent.type === ObjectType.Foundation) {
+    const foundation = parent as FoundationModel;
+    if (foundation.enableSlope) {
+      _cz = foundation.cz + Util.getZOnSlope(foundation.lx, foundation.slope, cx);
+    }
+  }
+
   const removeElementById = useStore(Selector.removeElementById);
   useEffect(() => {
     if (!isRender) {
@@ -212,7 +223,7 @@ const Human = React.memo((humanModel: HumanModel) => {
   if (!isRender) return null;
 
   return (
-    <group ref={groupRef} name={'Human Group ' + id} userData={{ aabb: true }} position={[cx, cy, cz ?? 0]}>
+    <group ref={groupRef} name={'Human Group ' + id} userData={{ aabb: true }} position={[cx, cy, _cz ?? 0]}>
       <group position={[0, 0.1, height / 2]}>
         <Billboard rotation={[HALF_PI, 0, 0]} uuid={id} name={name} follow={false}>
           <Plane

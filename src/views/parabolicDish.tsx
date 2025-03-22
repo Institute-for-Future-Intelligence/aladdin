@@ -37,6 +37,7 @@ import GlowImage from '../resources/glow.png';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { useLanguage, useSelected } from '../hooks';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 const ParabolicDish = React.memo((dish: ParabolicDishModel) => {
   const {
@@ -128,6 +129,10 @@ const ParabolicDish = React.memo((dish: ParabolicDishModel) => {
       switch (parent.type) {
         case ObjectType.Foundation:
           rz = actualPoleHeight + hz + parent.lz;
+          const foundation = parent as FoundationModel;
+          if (foundation.enableSlope) {
+            rz = rz + Util.getZOnSlope(foundation.lx, foundation.slope, cx * foundation.lx);
+          }
           if (Util.isZero(rotation[2])) {
             rx = parent.cx + cx * parent.lx;
             ry = parent.cy + cy * parent.ly;
