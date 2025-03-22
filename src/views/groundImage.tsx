@@ -65,6 +65,7 @@ const GroundImage = React.memo(() => {
 
   return texture ? (
     <mesh
+      name={'Ground Image'}
       rotation={[0, 0, 0]}
       position={[0, 0, 0]}
       renderOrder={-1}

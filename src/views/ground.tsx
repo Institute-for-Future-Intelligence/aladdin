@@ -2,7 +2,7 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import React, { RefObject, useEffect, useMemo, useRef } from 'react';
+import React, { RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import { CommonStoreState, useStore } from '../stores/common';
 import { useRefStore } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
@@ -114,6 +114,7 @@ const Ground = React.memo(() => {
   const baseGroupNewPosMapRef = useRef<Map<string, number[]>>(new Map());
   const moveHandleWorldDiffV3Ref = useRef(new Vector3());
 
+  const [updateFlag, setUpdateFlag] = useState(false);
   const lang = useLanguage();
 
   // add pointer up event to window
@@ -1013,6 +1014,7 @@ const Ground = React.memo(() => {
         }
       }
       grabRef.current = null;
+      setUpdateFlag((f) => !f);
     }
     setCommonStore((state) => {
       state.moveHandleType = null;
@@ -1135,7 +1137,8 @@ const Ground = React.memo(() => {
       return;
     }
 
-    const groundClicked = e.intersections[0].object === groundPlaneRef.current;
+    const groundClicked =
+      e.intersections[0].object === groundPlaneRef.current || e.intersections[0].object.name === 'Ground Image';
     if (groundClicked) {
       if (!useStore.getState().multiSelectionsMode) {
         setCommonStore((state) => {
