@@ -131,7 +131,7 @@ const Heliostat = React.memo((heliostat: HeliostatModel) => {
   const labelText = useMemo(() => {
     return (
       (heliostat?.label ? heliostat.label : i18n.t('shared.HeliostatElement', lang)) +
-      (heliostat?.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (heliostat?.locked ? ' (🔒)' : '') +
       (heliostat?.label
         ? ''
         : '\n' +

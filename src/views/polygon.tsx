@@ -623,10 +623,7 @@ const Polygon = ({
         <textSprite
           userData={{ unintersectable: true }}
           name={'Label'}
-          text={
-            (label ?? i18n.t('shared.PolygonElement', lang)) +
-            (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')
-          }
+          text={(label ?? i18n.t('shared.PolygonElement', lang)) + (locked ? ' (🔒)' : '')}
           fontSize={20 * ratio}
           fontFace={'Times Roman'}
           textHeight={0.2 * ratio}

@@ -170,7 +170,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
   const labelText = useMemo(() => {
     return (
       (cuboidModel?.label ? cuboidModel.label : i18n.t('shared.CuboidElement', lang)) +
-      (cuboidModel?.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (cuboidModel?.locked ? ' (🔒)' : '') +
       (cuboidModel?.label
         ? ''
         : '\n' +

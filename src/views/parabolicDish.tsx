@@ -175,7 +175,7 @@ const ParabolicDish = React.memo((dish: ParabolicDishModel) => {
   const labelText = useMemo(() => {
     return (
       (dish?.label ? dish.label : i18n.t('shared.ParabolicDishElement', lang)) +
-      (dish?.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (dish?.locked ? ' (🔒)' : '') +
       (dish?.label
         ? ''
         : '\n' +

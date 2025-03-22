@@ -127,7 +127,7 @@ const Flower = React.memo((flowerModel: FlowerModel) => {
   const labelText = useMemo(() => {
     return (
       FlowerData.fetchLabel(name, lang) +
-      (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (locked ? ' (🔒)' : '') +
       '\n' +
       i18n.t('word.Coordinates', lang) +
       ': (' +

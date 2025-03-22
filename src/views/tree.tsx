@@ -153,7 +153,7 @@ const Tree = React.memo((treeModel: TreeModel) => {
   const labelText = useMemo(() => {
     return (
       (treeModel?.label ? treeModel.label : TreeData.fetchLabel(name, lang)) +
-      (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (locked ? ' (🔒)' : '') +
       (treeModel?.label
         ? ''
         : '\n' +

@@ -161,7 +161,7 @@ const FresnelReflector = React.memo((fresnelReflector: FresnelReflectorModel) =>
   const labelText = useMemo(() => {
     return (
       (fresnelReflector?.label ? fresnelReflector.label : i18n.t('shared.FresnelReflectorElement', lang)) +
-      (fresnelReflector?.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (fresnelReflector?.locked ? ' (🔒)' : '') +
       (fresnelReflector?.label
         ? ''
         : '\n' +

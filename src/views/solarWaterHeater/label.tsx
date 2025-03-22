@@ -28,7 +28,7 @@ const Label = React.memo(({ solarWaterHeater, groupRef }: LabelProps) => {
     const { x, y, z } = groupRef.current.getWorldPosition(tempVector3_0);
     setText(
       (label || i18n.t('shared.SolarWaterHeaterElement', lang)) +
-        (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+        (locked ? ' (🔒)' : '') +
         (label
           ? ''
           : '\n' +

@@ -3514,7 +3514,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
                 name={'Label'}
                 text={
                   (foundationModel?.label ? foundationModel.label : i18n.t('shared.FoundationElement', lang)) +
-                  (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')
+                  (locked ? ' (🔒)' : '')
                 }
                 color={foundationModel?.labelColor ?? 'white'}
                 fontSize={foundationModel?.labelFontSize ?? 20}

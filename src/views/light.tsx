@@ -182,7 +182,7 @@ const Light = React.memo((lightModel: LightModel) => {
   const labelText = useMemo(() => {
     return (
       (label ? label : i18n.t('shared.LightElement', lang)) +
-      (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (locked ? ' (🔒)' : '') +
       '\n' +
       i18n.t('word.Coordinates', lang) +
       ': (' +

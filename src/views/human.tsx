@@ -132,7 +132,7 @@ const Human = React.memo((humanModel: HumanModel) => {
   const labelText = useMemo(() => {
     return (
       HumanData.fetchLabel(name, lang) +
-      (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (locked ? ' (🔒)' : '') +
       '\n' +
       i18n.t('word.Coordinates', lang) +
       ': (' +
