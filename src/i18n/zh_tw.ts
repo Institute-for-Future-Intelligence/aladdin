@@ -31,6 +31,8 @@ export const i18n_zh_tw = {
     },
 
     word: {
+      Sky: '天空',
+      Ground: '地面',
       Relative: '相對',
       Mute: '勿擾',
       BrandName: '品牌',

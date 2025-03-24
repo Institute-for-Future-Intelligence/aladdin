@@ -5,6 +5,7 @@
 import { Color, Euler, Vector2, Vector3 } from 'three';
 import platform from 'platform';
 import { HvacSystem } from './models/HvacSystem';
+import { Theme } from './types';
 
 export const VERSION = '1.7.5';
 
@@ -164,6 +165,18 @@ export enum ColorType {
   Filled = 'Filled',
   Line = 'Line=',
 }
+
+export const themes = [
+  { value: Theme.Default, label: 'skyMenu.ThemeDefault' },
+  { value: Theme.Desert, label: 'skyMenu.ThemeDesert' },
+  { value: Theme.Dune, label: 'skyMenu.ThemeDune' },
+  { value: Theme.Forest, label: 'skyMenu.ThemeForest' },
+  { value: Theme.Grassland, label: 'skyMenu.ThemeGrassland' },
+  { value: Theme.Hill, label: 'skyMenu.ThemeHill' },
+  { value: Theme.Lake, label: 'skyMenu.ThemeLake' },
+  { value: Theme.Mountain, label: 'skyMenu.ThemeMountain' },
+  { value: Theme.Rural, label: 'skyMenu.ThemeRural' },
+];
 
 function isMac() {
   const os = platform.os?.family;

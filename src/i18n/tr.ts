@@ -31,6 +31,8 @@ export const i18n_tr = {
     },
 
     word: {
+      Sky: 'Sky',
+      Ground: 'Ground',
       Relative: 'Relative',
       Mute: 'Mute',
       BrandName: 'Brand Name',

@@ -41,6 +41,7 @@ import {
   createPolygonNode,
   createRoofNode,
   createSensorNode,
+  createSkyNode,
   createSolarPanelNode,
   createTreeNode,
   createWallNode,
@@ -73,6 +74,13 @@ const ModelTree = React.memo(() => {
 
   const modelTree = useMemo(() => {
     const array: TreeDataNode[] = [];
+    // sky
+    array.push({
+      title: t('word.Sky', lang),
+      key: 'Sky',
+      children: createSkyNode(),
+    });
+    // ground
     for (const e of elements) {
       if (e.type === ObjectType.Foundation) {
         const foundationChildren = getChildren(e.id);

@@ -196,11 +196,11 @@ export const getDimension = (e: ElementModel, relative?: boolean) => {
   ];
 };
 
-export const createTooltip = (id: string, text: string) => {
+export const createTooltip = (id: string | null, text: string) => {
   return (
     <Tooltip
       placement={'right'}
-      title={'ID: ' + id}
+      title={id ? 'ID: ' + id : undefined}
       color={'white'}
       styles={{ body: { color: 'gray', fontSize: '12px' } }}
     >

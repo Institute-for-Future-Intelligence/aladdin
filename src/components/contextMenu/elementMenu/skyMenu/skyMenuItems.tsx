@@ -12,9 +12,9 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
 import type { RadioChangeEvent } from 'antd';
 import { UndoableChange } from 'src/undo/UndoableChange';
-import { Theme } from 'src/types';
 import { computeSunriseAndSunsetInMinutes } from 'src/analysis/sunTools';
 import { useMemo } from 'react';
+import { themes } from '../../../../constants';
 
 export const AxesCheckBox = () => {
   const axes = useStore(Selector.viewState.axes);
@@ -81,23 +81,11 @@ export const ThemeRadioGroup = () => {
     setTheme(newTheme);
   };
 
-  const radioArray = [
-    { value: Theme.Default, label: 'skyMenu.ThemeDefault' },
-    { value: Theme.Desert, label: 'skyMenu.ThemeDesert' },
-    { value: Theme.Dune, label: 'skyMenu.ThemeDune' },
-    { value: Theme.Forest, label: 'skyMenu.ThemeForest' },
-    { value: Theme.Grassland, label: 'skyMenu.ThemeGrassland' },
-    { value: Theme.Hill, label: 'skyMenu.ThemeHill' },
-    { value: Theme.Lake, label: 'skyMenu.ThemeLake' },
-    { value: Theme.Mountain, label: 'skyMenu.ThemeMountain' },
-    { value: Theme.Rural, label: 'skyMenu.ThemeRural' },
-  ];
-
   return (
     <MenuItem stayAfterClick noPadding>
       <Radio.Group value={theme} onChange={onChange}>
         <Space direction="vertical">
-          {radioArray.map((radio, idx) => (
+          {themes.map((radio, idx) => (
             <Radio style={{ width: '100%' }} key={`${idx}-${radio.value}`} value={radio.value}>
               {i18n.t(radio.label, lang)}
             </Radio>

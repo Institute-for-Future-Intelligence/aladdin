@@ -89,6 +89,7 @@ import WindTurbineBladeRadiusInput from './windTurbineBladeRadiusInput';
 import WindTurbineYawInput from './windTurbineYawInput';
 import WindTurbinePitchInput from './windTurbinePitchInput';
 import { ShowLabelCheckbox } from '../components/contextMenu/labelSubmenuItems';
+import SkyThemeSelect from './skyThemeSelect';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -1076,5 +1077,21 @@ export const createWindTurbineNode = (turbine: WindTurbineModel) => {
     key: turbine.id + ' Show Label',
   });
   node.push(...getCoordinates(turbine, true));
+  return node;
+};
+
+export const createSkyNode = () => {
+  const lang = { lng: useStore.getState().language };
+  const node: TreeDataNode[] = [];
+  node.push({
+    checkable: false,
+    title: (
+      <Space>
+        <span>{i18n.t('skyMenu.Theme', lang)} :</span>
+        <SkyThemeSelect />
+      </Space>
+    ),
+    key: 'Sky Theme',
+  });
   return node;
 };
