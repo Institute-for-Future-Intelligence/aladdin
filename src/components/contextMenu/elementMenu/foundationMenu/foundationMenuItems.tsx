@@ -90,6 +90,9 @@ export const SlopeCheckbox = ({ foundation }: FoundationItemProps) => {
         if (e.parentId === foundation.id) {
           const slope = checked ? foundation.slope ?? 0.2 : 0;
           switch (e.type) {
+            case ObjectType.Tree:
+            case ObjectType.Flower:
+            case ObjectType.Human:
             case ObjectType.BatteryStorage:
             case ObjectType.SolarPanel: {
               e.cz = foundation.lz / 2 + Util.getZOnSlope(foundation.lx, slope, e.cx);

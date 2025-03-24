@@ -160,15 +160,9 @@ const Slope = ({ foundation, selected, enableShadow }: Props) => {
   };
 
   const onGroupPointerDown = (event: ThreeEvent<PointerEvent>) => {
-    if (event.intersections.length == 0 || event.intersections[0].object !== event.object) return;
-
-    useStore.getState().selectElement(id);
-    // right click
-    if (event.button === 2) {
-      setCommonStore((state) => {
-        state.contextMenuObjectType = ObjectType.Foundation;
-      });
-    } else {
+    if (event.intersections.length == 0) {
+      return;
+    } else if (event.intersections[0].object.name === 'Polygon') {
       if (legalToAdd(useStore.getState().objectTypeToAdd)) {
         const addedElement = useStore.getState().addElement(foundation, event.point);
         if (addedElement) {
@@ -178,6 +172,25 @@ const Slope = ({ foundation, selected, enableShadow }: Props) => {
           if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
         });
       }
+      return;
+    } else if (event.intersections[0].object !== event.object) {
+      return;
+    }
+
+    useStore.getState().selectElement(id);
+    // right click
+    if (event.button === 2) {
+      setCommonStore((state) => {
+        state.contextMenuObjectType = ObjectType.Foundation;
+      });
+    } else if (legalToAdd(useStore.getState().objectTypeToAdd)) {
+      const addedElement = useStore.getState().addElement(foundation, event.point);
+      if (addedElement) {
+        handleUndoableAdd(addedElement);
+      }
+      setCommonStore((state) => {
+        if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
+      });
     }
   };
 
@@ -420,8 +433,6 @@ const Slope = ({ foundation, selected, enableShadow }: Props) => {
 
   /**
    * Todos:
-   * - add sp inside polygon
-   * - change foundation height/length by context menu impact some children (tree/sp)
    * - undo move/resize child(without sp/bs)
    * - paste sp/bs by key
    * - paste children by point

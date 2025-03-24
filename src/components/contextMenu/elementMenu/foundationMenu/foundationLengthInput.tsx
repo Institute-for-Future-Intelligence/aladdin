@@ -187,7 +187,12 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           case ObjectType.Wall: {
             break;
           }
-          case ObjectType.SolarPanel:
+          case ObjectType.SolarPanel: {
+            const p = new Vector2(c.cx, c.cy).rotateAround(ORIGIN_VECTOR2, azimuth);
+            denormalizedPosMapRef.current.set(c.id, p);
+            oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
+            break;
+          }
           case ObjectType.ParabolicTrough:
           case ObjectType.ParabolicDish:
           case ObjectType.FresnelReflector:
@@ -212,6 +217,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             break;
           }
           case ObjectType.Human:
+          case ObjectType.Flower:
           case ObjectType.Tree: {
             oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
             break;
@@ -229,7 +235,27 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             // TODO
             break;
           }
-          case ObjectType.SolarPanel:
+          case ObjectType.SolarPanel: {
+            const p = denormalizedPosMapRef.current.get(c.id);
+            if (p) {
+              const relativePos = new Vector2(p.x, p.y).rotateAround(ORIGIN_VECTOR2, -azimuth);
+              const newCx = relativePos.x;
+              if (parent.enableSlope) {
+                useStore.getState().set((state) => {
+                  const e = state.elements.find((e) => e.id === c.id);
+                  if (e) {
+                    e.cx = newCx;
+                    e.cz = parent.lz / 2 + Util.getZOnSlope(value, parent.slope, newCx);
+                    newChildrenPositionsMapRef.current.set(c.id, new Vector3(newCx, c.cy, e.cz));
+                  }
+                });
+              } else {
+                updateElementCxById(c.id, newCx);
+                newChildrenPositionsMapRef.current.set(c.id, new Vector3(newCx, c.cy, c.cz));
+              }
+            }
+            break;
+          }
           case ObjectType.ParabolicTrough:
           case ObjectType.ParabolicDish:
           case ObjectType.FresnelReflector:
