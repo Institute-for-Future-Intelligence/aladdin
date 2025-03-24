@@ -1125,6 +1125,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               if (state.viewState.showModelTree) {
                 usePrimitiveStore.getState().set((s) => {
                   s.modelTreeExpandedKeys = [];
+                  if (state.clickObjectType === ObjectType.Sky) s.modelTreeExpandedKeys = ['Sky'];
                 });
               }
             });

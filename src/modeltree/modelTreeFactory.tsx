@@ -90,6 +90,7 @@ import WindTurbineYawInput from './windTurbineYawInput';
 import WindTurbinePitchInput from './windTurbinePitchInput';
 import { ShowLabelCheckbox } from '../components/contextMenu/labelSubmenuItems';
 import SkyThemeSelect from './skyThemeSelect';
+import { AxesCheckBox } from '../components/contextMenu/elementMenu/skyMenu/skyMenuItems';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -1081,17 +1082,16 @@ export const createWindTurbineNode = (turbine: WindTurbineModel) => {
 };
 
 export const createSkyNode = () => {
-  const lang = { lng: useStore.getState().language };
   const node: TreeDataNode[] = [];
   node.push({
     checkable: false,
-    title: (
-      <Space>
-        <span>{i18n.t('skyMenu.Theme', lang)} :</span>
-        <SkyThemeSelect />
-      </Space>
-    ),
+    title: <SkyThemeSelect />,
     key: 'Sky Theme',
+  });
+  node.push({
+    checkable: false,
+    title: <AxesCheckBox forModelTree />,
+    key: 'World Axis',
   });
   return node;
 };

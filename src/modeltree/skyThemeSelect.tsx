@@ -2,7 +2,7 @@
  * @Copyright 2025. Institute for Future Intelligence, Inc.
  */
 
-import { Select } from 'antd';
+import { Select, Space } from 'antd';
 import { useStore } from '../stores/common';
 import React from 'react';
 import { useLanguage } from '../hooks';
@@ -11,6 +11,7 @@ import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { Theme } from '../types';
 import { themes } from '../constants';
+import i18n from '../i18n/i18n';
 
 const SkyThemeSelect = () => {
   const theme = useStore(Selector.viewState.theme);
@@ -65,13 +66,16 @@ const SkyThemeSelect = () => {
   }
 
   return (
-    <Select
-      defaultValue={Theme.Default}
-      options={options}
-      style={{ width: '160px' }}
-      value={theme as Theme}
-      onChange={setTheme}
-    />
+    <Space>
+      <span>{i18n.t('skyMenu.Theme', lang)} :</span>
+      <Select
+        defaultValue={Theme.Default}
+        options={options}
+        style={{ width: '160px' }}
+        value={theme as Theme}
+        onChange={setTheme}
+      />
+    </Space>
   );
 };
 

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { useStore } from 'src/stores/common';
@@ -16,7 +16,7 @@ import { computeSunriseAndSunsetInMinutes } from 'src/analysis/sunTools';
 import { useMemo } from 'react';
 import { themes } from '../../../../constants';
 
-export const AxesCheckBox = () => {
+export const AxesCheckBox = ({ forModelTree }: { forModelTree?: boolean }) => {
   const axes = useStore(Selector.viewState.axes);
   const lang = useLanguage();
 
@@ -43,7 +43,12 @@ export const AxesCheckBox = () => {
     setAxes(checked);
   };
 
-  return (
+  return forModelTree ? (
+    <Space>
+      <span> {i18n.t('skyMenu.Axes', lang)}</span>
+      <Checkbox style={{ width: '100%' }} checked={axes} onChange={onChange} />
+    </Space>
+  ) : (
     <MenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={axes} onChange={onChange}>
         {i18n.t('skyMenu.Axes', lang)}
