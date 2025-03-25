@@ -538,7 +538,6 @@ const Slope = ({ foundation, selected, enableShadow }: Props) => {
   /**
    * Todos:
    * - wireframe
-   * - move sp/bs by key
    * - child position on group master
    * - textures
    * - battery polar grid

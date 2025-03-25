@@ -32,6 +32,7 @@ import { GroupableModel, isGroupable } from './models/Groupable';
 import { Point2 } from './models/Point2';
 import { resetView, zoomView } from './components/mainMenu/viewMenu';
 import { message } from 'antd';
+import { FoundationModel } from './models/FoundationModel';
 
 export interface KeyboardListenerProps {
   canvas?: HTMLCanvasElement | null;
@@ -487,6 +488,15 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
             }
             e.cx = newCx;
             e.cy = newCy;
+
+            if (e.type === ObjectType.BatteryStorage || e.type === ObjectType.SolarPanel) {
+              const foundation = state.elements.find(
+                (el) => el.id === e.parentId && el.type === ObjectType.Foundation,
+              ) as FoundationModel;
+              if (foundation && foundation.enableSlope) {
+                e.cz = foundation.lz + Util.getZOnSlope(foundation.lx, foundation.slope, e.cx);
+              }
+            }
           }
         } else if (state.selectedElementIdSet.has(e.id)) {
           state.selectedElementIdSet.delete(e.id);
