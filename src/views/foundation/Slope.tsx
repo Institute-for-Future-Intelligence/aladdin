@@ -4,7 +4,7 @@
 
 import { Box, Extrude, Plane } from '@react-three/drei';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { HALF_PI, ORIGIN_VECTOR2, RESIZE_HANDLE_COLOR } from 'src/constants';
+import { HALF_PI, ORIGIN_VECTOR2, RESIZE_HANDLE_COLOR, UNIT_VECTOR_POS_Z } from 'src/constants';
 import { DoubleSide, Euler, Mesh, Object3D, Shape, Vector2, Vector3 } from 'three';
 import { useHandleSize } from '../wall/hooks';
 import { ObjectType, ResizeHandleType, SolarCollector, XYZO } from 'src/types';
@@ -198,7 +198,15 @@ const Slope = ({ foundation, selected, enableShadow }: Props) => {
     // right click
     if (event.button === 2) {
       setCommonStore((state) => {
-        state.contextMenuObjectType = ObjectType.Foundation;
+        state.clickObjectType = ObjectType.Foundation;
+        state.pastePoint.copy(event.intersections[0].point);
+        state.pasteNormal = UNIT_VECTOR_POS_Z;
+        if (event.altKey) {
+          // when alt key is pressed, don't invoke context menu as it is reserved for fast click-paste
+          state.contextMenuObjectType = null;
+        } else {
+          state.contextMenuObjectType = ObjectType.Foundation;
+        }
       });
     } else if (legalToAdd(useStore.getState().objectTypeToAdd)) {
       const addedElement = useStore.getState().addElement(foundation, event.point);
@@ -529,8 +537,6 @@ const Slope = ({ foundation, selected, enableShadow }: Props) => {
 
   /**
    * Todos:
-   * - paste sp/bs by key
-   * - paste children by point
    * - wireframe
    * - move sp/bs by key
    * - child position on group master
