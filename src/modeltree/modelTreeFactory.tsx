@@ -90,7 +90,17 @@ import WindTurbineYawInput from './windTurbineYawInput';
 import WindTurbinePitchInput from './windTurbinePitchInput';
 import { ShowLabelCheckbox } from '../components/contextMenu/labelSubmenuItems';
 import SkyThemeSelect from './skyThemeSelect';
-import { AxesCheckBox } from '../components/contextMenu/elementMenu/skyMenu/skyMenuItems';
+import {
+  AirAttenuationCoefficientInput,
+  AirConvectiveCoefficientInput,
+  AmbientLightIntensityInput,
+  AxesCheckbox,
+  DirectLightIntensityInput,
+  ShowAzimuthAngleCheckbox,
+  ShowElevationAngleCheckbox,
+  ShowZenithAngleCheckbox,
+} from '../components/contextMenu/elementMenu/skyMenu/skyMenuItems';
+import HeliodonCheckbox from './heliodonCheckbox';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -1090,8 +1100,50 @@ export const createSkyNode = () => {
   });
   node.push({
     checkable: false,
-    title: <AxesCheckBox forModelTree />,
+    title: <AxesCheckbox forModelTree />,
     key: 'World Axis',
+  });
+  node.push({
+    checkable: false,
+    title: <HeliodonCheckbox />,
+    key: 'Heliodon Switch',
+  });
+  if (useStore.getState().viewState.heliodon && useStore.getState().viewState.showSunAngles) {
+    node.push({
+      checkable: false,
+      title: <ShowAzimuthAngleCheckbox forModelTree />,
+      key: 'Azimuth Angle',
+    });
+    node.push({
+      checkable: false,
+      title: <ShowElevationAngleCheckbox forModelTree />,
+      key: 'Elevation Angle',
+    });
+    node.push({
+      checkable: false,
+      title: <ShowZenithAngleCheckbox forModelTree />,
+      key: 'Zenith Angle',
+    });
+  }
+  node.push({
+    checkable: false,
+    title: <DirectLightIntensityInput forModelTree />,
+    key: 'Direct Light Intensity',
+  });
+  node.push({
+    checkable: false,
+    title: <AmbientLightIntensityInput forModelTree />,
+    key: 'Ambient Light Intensity',
+  });
+  node.push({
+    checkable: false,
+    title: <AirAttenuationCoefficientInput forModelTree />,
+    key: 'Air Attenuation',
+  });
+  node.push({
+    checkable: false,
+    title: <AirConvectiveCoefficientInput forModelTree />,
+    key: 'Air Convection',
   });
   return node;
 };

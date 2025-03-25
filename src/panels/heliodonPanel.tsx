@@ -291,7 +291,7 @@ const HeliodonPanel = React.memo(() => {
               {t('word.Close', lang)}
             </span>
           </Header>
-          <Space style={{ padding: '20px' }} align={'baseline'} size={20}>
+          <Space style={{ padding: '20px' }} align={'baseline'} size={16}>
             <Space direction={'vertical'}>
               <span>{t('menu.settings.Heliodon', lang)}</span>
               <Switch

@@ -7,12 +7,12 @@ import {
   AirAttenuationCoefficientInput,
   AirConvectiveCoefficientInput,
   AmbientLightIntensityInput,
-  AxesCheckBox,
+  AxesCheckbox,
   DirectLightIntensityInput,
   HighestTemperatureTimeInput,
   ShowAzimuthAngleCheckbox,
-  ShowElevationAngle,
-  ShowZenithAngle,
+  ShowElevationAngleCheckbox,
+  ShowZenithAngleCheckbox,
   ThemeRadioGroup,
 } from './skyMenuItems';
 import { MenuItem } from '../../menuItems';
@@ -26,7 +26,7 @@ export const createSkyMenu = () => {
 
   items.push({
     key: 'axes',
-    label: <AxesCheckBox />,
+    label: <AxesCheckbox />,
   });
 
   items.push({
@@ -51,11 +51,11 @@ export const createSkyMenu = () => {
       },
       {
         key: 'ShowElevationAngle',
-        label: <ShowElevationAngle />,
+        label: <ShowElevationAngleCheckbox />,
       },
       {
         key: 'ShowZenithAngle',
-        label: <ShowZenithAngle />,
+        label: <ShowZenithAngleCheckbox />,
       },
     ],
   });

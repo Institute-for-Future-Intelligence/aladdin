@@ -67,6 +67,8 @@ const ModelTree = React.memo(() => {
   }, [modelTreeExpandedKeys]);
 
   const elements = useStore(Selector.elements);
+  const heliodon = useStore(Selector.viewState.heliodon);
+  const showSunAngles = useStore(Selector.viewState.showSunAngles);
   const getChildren = useStore(Selector.getChildren);
 
   const lang = useLanguage();
@@ -255,7 +257,7 @@ const ModelTree = React.memo(() => {
       }
     }
     return array;
-  }, [elements, lang]);
+  }, [elements, heliodon, showSunAngles, lang]);
 
   return (
     <Tree
