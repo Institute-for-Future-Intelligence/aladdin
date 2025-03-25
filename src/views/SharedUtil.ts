@@ -25,13 +25,19 @@ export class SharedUtil {
     );
   }
 
-  static addUndoableMove() {
+  static addUndoableMove(ableToChangeParent = true) {
     const oldElement = useStore.getState().selectedElement;
     if (!oldElement) return;
     const newElement = useStore.getState().getElementById(oldElement.id);
-    const oldParentId = usePrimitiveStore.getState().oldParentId;
-    const oldFoundationId = usePrimitiveStore.getState().oldFoundationId;
-    if (!newElement || !oldParentId || !oldFoundationId) return;
+    let oldParentId = usePrimitiveStore.getState().oldParentId;
+    let oldFoundationId = usePrimitiveStore.getState().oldFoundationId;
+    if (!newElement) return;
+    if (ableToChangeParent) {
+      if (!oldParentId || !oldFoundationId) return;
+    } else {
+      oldParentId = newElement.parentId;
+      oldFoundationId = newElement.foundationId;
+    }
 
     const isSolarPanel = oldElement.type === ObjectType.SolarPanel;
     const isPolygon = oldElement.type === ObjectType.Polygon;

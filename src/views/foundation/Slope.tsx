@@ -28,6 +28,8 @@ import { FresnelReflectorModel } from 'src/models/FresnelReflectorModel';
 import { ParabolicDishModel } from 'src/models/ParabolicDishModel';
 import { PolygonModel } from 'src/models/PolygonModel';
 import { Point2 } from 'src/models/Point2';
+import { SharedUtil } from '../SharedUtil';
+import { UndoableResize } from 'src/undo/UndoableResize';
 
 interface ResizeHandleProps {
   cx: number;
@@ -72,6 +74,7 @@ const Slope = ({ foundation, selected, enableShadow }: Props) => {
 
   const oldSlopeRef = useRef(slope);
   const planeRef = useRef<Mesh>(null!);
+  const operationRef = useRef<'move' | 'resize' | null>(null);
 
   const shape = useMemo(() => {
     const s = new Shape();
@@ -123,6 +126,20 @@ const Slope = ({ foundation, selected, enableShadow }: Props) => {
       },
     } as UndoableAdd;
     useStore.getState().addUndoable(undoableAdd);
+  };
+
+  const updateUndoResize = (id: string, cx: number, cy: number, cz: number, lx: number, ly: number, lz: number) => {
+    useStore.getState().set((state) => {
+      const e = state.elements.find((e) => e.id === id);
+      if (e) {
+        e.cx = cx;
+        e.cy = cy;
+        e.cz = cz;
+        e.lx = lx;
+        e.ly = ly;
+        e.lz = lz;
+      }
+    });
   };
 
   const updateSlope = (id: string, slope: number) => {
@@ -196,7 +213,7 @@ const Slope = ({ foundation, selected, enableShadow }: Props) => {
 
   const onGroupPointerMove = (event: ThreeEvent<PointerEvent>) => {
     const selectedElement = useStore.getState().selectedElement;
-    if (!selectedElement) return;
+    if (!selectedElement || selectedElement.parentId !== id) return;
 
     const moveHandleType = useStore.getState().moveHandleType;
     const resizeHandleType = useStore.getState().resizeHandleType;
@@ -241,6 +258,7 @@ const Slope = ({ foundation, selected, enableShadow }: Props) => {
           break;
         }
       }
+      operationRef.current = 'move';
     } else if (resizeHandleType) {
       if (Util.isCspCollectorType(selectedElement.type)) {
         const collector = selectedElement as SolarCollector;
@@ -389,6 +407,9 @@ const Slope = ({ foundation, selected, enableShadow }: Props) => {
         p.y /= foundation.ly;
         useStore.getState().updatePolygonVertexPositionById(polygon.id, polygon.selectedIndex, p.x, p.y);
       }
+      operationRef.current = 'resize';
+    } else {
+      operationRef.current = null;
     }
   };
 
@@ -403,28 +424,103 @@ const Slope = ({ foundation, selected, enableShadow }: Props) => {
   // pointer up
   useEffect(() => {
     const onPointerUp = () => {
-      if (!intersectionPlane) return;
-      setIntersectionPlane(null);
-      useRefStore.getState().setEnableOrbitController(true);
-      const foundation = useStore
-        .getState()
-        .elements.find((e) => e.id === id && e.type === ObjectType.Foundation) as FoundationModel;
-      if (foundation) {
-        const undoableChange = {
-          name: 'Update Foundation Slope',
-          timestamp: Date.now(),
-          oldValue: oldSlopeRef.current,
-          newValue: foundation.slope,
-          changedElementId: foundation.id,
-          changedElementType: foundation.type,
-          undo: () => {
-            updateSlope(undoableChange.changedElementId, undoableChange.oldValue as number);
-          },
-          redo: () => {
-            updateSlope(undoableChange.changedElementId, undoableChange.newValue as number);
-          },
-        } as UndoableChange;
-        useStore.getState().addUndoable(undoableChange);
+      // add undo slope
+      if (intersectionPlane) {
+        setIntersectionPlane(null);
+        useRefStore.getState().setEnableOrbitController(true);
+        const foundation = useStore
+          .getState()
+          .elements.find((e) => e.id === id && e.type === ObjectType.Foundation) as FoundationModel;
+        if (foundation) {
+          const undoableChange = {
+            name: 'Update Foundation Slope',
+            timestamp: Date.now(),
+            oldValue: oldSlopeRef.current,
+            newValue: foundation.slope,
+            changedElementId: foundation.id,
+            changedElementType: foundation.type,
+            undo: () => {
+              updateSlope(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updateSlope(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          useStore.getState().addUndoable(undoableChange);
+        }
+      }
+
+      const selectedElement = useStore.getState().selectedElement;
+      if (selectedElement && selectedElement.parentId === id) {
+        if (operationRef.current === 'move') {
+          if (
+            selectedElement.type === ObjectType.Tree ||
+            selectedElement.type === ObjectType.Flower ||
+            selectedElement.type === ObjectType.Human
+          ) {
+            SharedUtil.addUndoableMove(true);
+          } else {
+            SharedUtil.addUndoableMove(false);
+          }
+        } else if (operationRef.current === 'resize') {
+          switch (selectedElement.type) {
+            case ObjectType.Polygon: {
+              SharedUtil.addUndoableMove(false);
+              break;
+            }
+            case ObjectType.ParabolicDish:
+            case ObjectType.ParabolicTrough:
+            case ObjectType.FresnelReflector: {
+              const oldElement = selectedElement;
+              const newElement = useStore.getState().elements.find((e) => e.id === oldElement.id);
+              if (newElement) {
+                const undoableResize = {
+                  name: 'Resize ' + oldElement.type,
+                  timestamp: Date.now(),
+                  resizedElementId: oldElement.id,
+                  resizedElementType: oldElement.type,
+                  oldCx: oldElement.cx,
+                  oldCy: oldElement.cy,
+                  oldCz: oldElement.cz,
+                  newCx: newElement.cx,
+                  newCy: newElement.cy,
+                  newCz: newElement.cz,
+                  oldLx: oldElement.lx,
+                  oldLy: oldElement.ly,
+                  oldLz: oldElement.lz,
+                  newLx: newElement.lx,
+                  newLy: newElement.ly,
+                  newLz: newElement.lz,
+                  undo: () => {
+                    updateUndoResize(
+                      undoableResize.resizedElementId,
+                      undoableResize.oldCx,
+                      undoableResize.oldCy,
+                      undoableResize.oldCz,
+                      undoableResize.oldLx,
+                      undoableResize.oldLy,
+                      undoableResize.oldLz,
+                    );
+                  },
+                  redo: () => {
+                    updateUndoResize(
+                      undoableResize.resizedElementId,
+                      undoableResize.newCx,
+                      undoableResize.newCy,
+                      undoableResize.newCz,
+                      undoableResize.newLx,
+                      undoableResize.newLy,
+                      undoableResize.newLz,
+                    );
+                  },
+                } as UndoableResize;
+                useStore.getState().addUndoable(undoableResize);
+              }
+              break;
+            }
+          }
+        }
+        operationRef.current = null;
       }
     };
     window.addEventListener('pointerup', onPointerUp);
@@ -433,7 +529,6 @@ const Slope = ({ foundation, selected, enableShadow }: Props) => {
 
   /**
    * Todos:
-   * - undo move/resize child(without sp/bs)
    * - paste sp/bs by key
    * - paste children by point
    * - wireframe
