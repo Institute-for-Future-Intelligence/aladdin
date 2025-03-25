@@ -101,6 +101,8 @@ import {
   ShowZenithAngleCheckbox,
 } from '../components/contextMenu/elementMenu/skyMenu/skyMenuItems';
 import HeliodonCheckbox from './heliodonCheckbox';
+import GroundColorInput from './groundColorInput';
+import { AlbedoInput, GroundImageCheckbox } from '../components/contextMenu/elementMenu/groundMenu/groundMenuItems';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -1144,6 +1146,26 @@ export const createSkyNode = () => {
     checkable: false,
     title: <AirConvectiveCoefficientInput forModelTree />,
     key: 'Air Convection',
+  });
+  return node;
+};
+
+export const createGroundNode = () => {
+  const node: TreeDataNode[] = [];
+  node.push({
+    checkable: false,
+    title: <GroundColorInput />,
+    key: 'Ground Color',
+  });
+  node.push({
+    checkable: false,
+    title: <GroundImageCheckbox forModelTree />,
+    key: 'Ground Image',
+  });
+  node.push({
+    checkable: false,
+    title: <AlbedoInput forModelTree />,
+    key: 'Ground Albedo',
   });
   return node;
 };

@@ -31,7 +31,7 @@ interface LockElementsItemProps {
   label: string;
 }
 
-export const GroundImageCheckbox = () => {
+export const GroundImageCheckbox = ({ forModelTree }: { forModelTree?: boolean }) => {
   const groundImage = useStore(Selector.viewState.groundImage);
   const lang = useLanguage();
 
@@ -59,7 +59,12 @@ export const GroundImageCheckbox = () => {
     setGroundImage(checked);
   };
 
-  return (
+  return forModelTree ? (
+    <Space>
+      <span> {i18n.t('groundMenu.ImageOnGround', lang)} :</span>
+      <Checkbox style={{ width: '100%' }} checked={groundImage} onChange={onChange} />
+    </Space>
+  ) : (
     <MenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={groundImage} onChange={onChange}>
         {i18n.t('groundMenu.ImageOnGround', lang)}
@@ -307,7 +312,7 @@ export const IrradianceLossInput = ({ monthIndex }: { monthIndex: number }) => {
   );
 };
 
-export const AlbedoInput = () => {
+export const AlbedoInput = ({ forModelTree }: { forModelTree?: boolean }) => {
   const albedo = useStore((state) => state.world.ground.albedo);
   const lang = useLanguage();
 
@@ -319,13 +324,13 @@ export const AlbedoInput = () => {
 
   const onChange = (value: number | null) => {
     if (value === null) return;
-    const oldAlbedo = albedo;
-    const newAlbedo = value;
+    const oldValue = albedo;
+    const newValue = value;
     const undoableChange = {
       name: 'Set Ground Albedo',
       timestamp: Date.now(),
-      oldValue: oldAlbedo,
-      newValue: newAlbedo,
+      oldValue,
+      newValue,
       undo: () => {
         setAlbedo(undoableChange.oldValue as number);
       },
@@ -334,10 +339,15 @@ export const AlbedoInput = () => {
       },
     } as UndoableChange;
     useStore.getState().addUndoable(undoableChange);
-    setAlbedo(newAlbedo);
+    setAlbedo(newValue);
   };
 
-  return (
+  return forModelTree ? (
+    <Space>
+      <span>{i18n.t('groundMenu.Albedo', lang)} :</span>
+      <InputNumber min={0.05} max={1} step={0.01} precision={2} value={albedo} onChange={onChange} />
+    </Space>
+  ) : (
     <MenuItem stayAfterClick>
       <Space style={{ width: '60px' }}>{i18n.t('groundMenu.Albedo', lang)}:</Space>
       <InputNumber min={0.05} max={1} step={0.01} precision={2} value={albedo} onChange={onChange} />

@@ -33,6 +33,7 @@ import {
   createBatteryStorageNode,
   createFlowerNode,
   createFresnelReflectorNode,
+  createGroundNode,
   createHeliostatNode,
   createHumanNode,
   createLightNode,
@@ -83,6 +84,11 @@ const ModelTree = React.memo(() => {
       children: createSkyNode(),
     });
     // ground
+    array.push({
+      title: t('word.Ground', lang),
+      key: 'Ground',
+      children: createGroundNode(),
+    });
     for (const e of elements) {
       if (e.type === ObjectType.Foundation) {
         const foundationChildren = getChildren(e.id);

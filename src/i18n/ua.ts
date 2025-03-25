@@ -724,6 +724,8 @@ export const i18n_ua = {
 
     groundMenu: {
       MonthlyIrradianceLoss: 'Monthly Irradiance Loss',
+      MonthlyIrradianceLossExplanation:
+        'The reduction of solar radiation reaching a surface due to factors such as soiling and snow.',
       Vegetation: 'Рослинність',
       LeafOutDay: 'День розпускання листя',
       LeafOffDay: 'День опадання листя',

@@ -720,6 +720,7 @@ export const i18n_zh_tw = {
 
     groundMenu: {
       MonthlyIrradianceLoss: '月份輻射度損失比',
+      MonthlyIrradianceLossExplanation: '由於污垢和積雪等因素，到達表面的太陽輻射減少的程度。',
       Vegetation: '植被',
       LeafOutDay: '樹葉長出的日子',
       LeafOffDay: '樹葉脫落的日子',

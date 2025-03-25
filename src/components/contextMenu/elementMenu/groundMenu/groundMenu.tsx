@@ -7,7 +7,7 @@ import { ObjectType } from '../../../../types';
 import { MenuItem, Paste } from '../../menuItems';
 import i18n from '../../../../i18n/i18n';
 import { ElementCounter } from '../../../../stores/ElementCounter';
-import type { MenuProps } from 'antd';
+import { Flex, MenuProps, Space } from 'antd';
 import {
   AlbedoInput,
   GroundColorPicker,
@@ -78,7 +78,8 @@ const legalToPaste = () => {
 };
 
 const createMonthlyIrradianceLossSubmenu = () => {
-  return MONTHS_ABBV.slice().reduce((acc, curr, idx, arr) => {
+  const lang = { lng: useStore.getState().language };
+  const c = MONTHS_ABBV.slice().reduce((acc, curr, idx, arr) => {
     if (acc && idx % 2 !== 0) {
       acc.push({
         key: `${arr[idx - 1]}-${arr[idx]}`,
@@ -92,6 +93,19 @@ const createMonthlyIrradianceLossSubmenu = () => {
     }
     return acc;
   }, [] as MenuProps['items']);
+  c?.push({
+    key: `title`,
+    label: (
+      <>
+        <hr style={{ marginTop: '6px' }} />
+        <Flex style={{ width: '240px' }}>
+          <span style={{ fontSize: '32px', marginTop: '-6px', paddingRight: '8px', verticalAlign: 'top' }}>🎓</span>
+          <span style={{ fontSize: '12px' }}>{i18n.t('groundMenu.MonthlyIrradianceLossExplanation', lang)}</span>
+        </Flex>
+      </>
+    ),
+  });
+  return c;
 };
 
 export const createGroundMenu = () => {
