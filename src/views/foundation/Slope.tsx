@@ -5,14 +5,13 @@
 import { Box, Extrude, Plane } from '@react-three/drei';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI, ORIGIN_VECTOR2, RESIZE_HANDLE_COLOR, UNIT_VECTOR_POS_Z } from 'src/constants';
-import { DoubleSide, Euler, Mesh, Object3D, Shape, Vector2, Vector3 } from 'three';
+import { DoubleSide, Euler, Mesh, Shape, Texture, Vector2 } from 'three';
 import { useHandleSize } from '../wall/hooks';
-import { ObjectType, ResizeHandleType, SolarCollector, XYZO } from 'src/types';
+import { FoundationTexture, ObjectType, ResizeHandleType, SolarCollector, XYZO } from 'src/types';
 import { useHandle } from '../solarPanel/hooks';
 import React from 'react';
-import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
+import { ThreeEvent } from '@react-three/fiber';
 import { useStore } from 'src/stores/common';
-import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { useRefStore } from 'src/stores/commonRef';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { UndoableChange } from 'src/undo/UndoableChange';
@@ -25,7 +24,6 @@ import { FOUNDATION_NAME } from './foundation';
 import { useTransparent } from '../roof/hooks';
 import { ParabolicTroughModel } from 'src/models/ParabolicTroughModel';
 import { FresnelReflectorModel } from 'src/models/FresnelReflectorModel';
-import { ParabolicDishModel } from 'src/models/ParabolicDishModel';
 import { PolygonModel } from 'src/models/PolygonModel';
 import { Point2 } from 'src/models/Point2';
 import { SharedUtil } from '../SharedUtil';
@@ -58,9 +56,11 @@ interface Props {
   foundation: FoundationModel;
   selected: boolean;
   enableShadow: boolean;
+  textureType: FoundationTexture;
+  texture: Texture;
 }
 
-const Slope = ({ foundation, selected, enableShadow }: Props) => {
+const Slope = ({ foundation, selected, enableShadow, textureType, texture }: Props) => {
   const { id, lx, ly, lz, slope = 0.2, cx, cy, rotation, color } = foundation;
   const [hx, hy, hz] = [lx / 2, ly / 2, lz / 2];
   const slopeLz = Math.tan(slope) * lx;
@@ -535,19 +535,32 @@ const Slope = ({ foundation, selected, enableShadow }: Props) => {
     return () => window.removeEventListener('pointer', onPointerUp);
   }, [intersectionPlane]);
 
+  const bodyRef = useRef<Mesh>(null!);
+  const texturePlaneRef = useRef<Mesh>(null!);
+
+  useEffect(() => {
+    if (bodyRef.current) {
+      // @ts-expect-error ignore
+      bodyRef.current.material.needsUpdate = true;
+    }
+    if (texturePlaneRef.current) {
+      // @ts-expect-error ignore
+      texturePlaneRef.current.material.needsUpdate = true;
+    }
+  }, [transparent]);
+
   /**
    * Todos:
-   * - wireframe
-   * - child position on group master
-   * - textures
    * - battery polar grid
    *
+   * - child position on group master
    * - group master need change slope height?
    */
   return (
     // don't wrap a group here, element's movement need parent object.
     <>
       <Extrude
+        ref={bodyRef}
         name={FOUNDATION_NAME}
         userData={{ simulation: true, stand: true, id: id, aabb: true }}
         args={[shape, { steps: 1, depth: ly, bevelEnabled: false }]}
@@ -560,6 +573,19 @@ const Slope = ({ foundation, selected, enableShadow }: Props) => {
       >
         <meshStandardMaterial color={color} transparent={transparent} opacity={opacity} />
       </Extrude>
+
+      {textureType !== FoundationTexture.NoTexture && (
+        <Plane
+          ref={texturePlaneRef}
+          args={[lx / Math.cos(slope), ly]}
+          rotation={[0, -slope, 0]}
+          position={[0, 0, hz + slopeLz / 2 + 0.001]}
+          receiveShadow={enableShadow}
+          castShadow={false}
+        >
+          <meshStandardMaterial color={'white'} map={texture} transparent={transparent} opacity={opacity} />
+        </Plane>
+      )}
 
       {selected && !orthographic && (
         <group position={[hx, 0, hz + slopeLz]} onPointerDown={onResizeHandlePointerDown}>

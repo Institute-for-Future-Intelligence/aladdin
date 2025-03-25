@@ -23,7 +23,6 @@ import {
   FoundationTexture,
   MoveHandleType,
   ObjectType,
-  Orientation,
   ResizeHandleType,
   RotateHandleType,
   SolarStructure,
@@ -51,7 +50,6 @@ import { ParabolicDishModel } from '../../models/ParabolicDishModel';
 import { PolarGrid } from '../polarGrid';
 import { WallModel } from '../../models/WallModel';
 import RotateHandle from '../../components/rotateHandle';
-import Wireframe from '../../components/wireframe';
 import * as Selector from '../../stores/selector';
 import { FlippedWallSide, UndoableAdd, UndoableAddWall } from '../../undo/UndoableAdd';
 import { UndoableMoveWall } from '../../undo/UndoableMove';
@@ -81,9 +79,9 @@ import { SharedUtil } from '../SharedUtil';
 import WallAuxiliaryLine, { WallAuxiliaryType } from './wallAuxiliaryLine';
 import SolarPanelWrapper from '../solarPanel/solarPanelWrapper';
 import { useTransparent } from '../roof/hooks';
-import SolarWaterHeaterWrapper from '../solarWaterHeater/solarWaterHeaterWrapper';
 import BatteryStorageWrapper from '../batteryStorage/batteryStorageWrapper';
-import Slope from './Slope';
+import Slope from './slope';
+import Wireframe from './wireframe';
 
 interface SnapTargetType {
   id: string | null;
@@ -569,10 +567,11 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
     const cloned = texture.clone();
     cloned.wrapS = cloned.wrapT = RepeatWrapping;
     const param = fetchRepeatDividers(textureType);
-    cloned.repeat.set(lx / param.x, ly / param.y);
+    const _lx = enableSlope ? lx / Math.cos(slope) : lx;
+    cloned.repeat.set(_lx / param.x, ly / param.y);
     cloned.needsUpdate = true;
     return cloned;
-  }, [texture, lx, ly]);
+  }, [texture, lx, ly, enableSlope, slope]);
 
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
@@ -3053,7 +3052,13 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
         <BatteryStorageWrapper foundationId={id} hz={hz} />
 
         {enableSlope ? (
-          <Slope foundation={foundationModel} selected={selected} enableShadow={shadowEnabled} />
+          <Slope
+            foundation={foundationModel}
+            textureType={textureType}
+            texture={_texture}
+            selected={selected}
+            enableShadow={shadowEnabled}
+          />
         ) : (
           <Box
             castShadow={shadowEnabled}
@@ -3126,9 +3131,10 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
         {/* wireFrame */}
         {(!selected || groundImage) && (
           <Wireframe
-            hx={hx}
-            hy={hy}
-            hz={hz}
+            lx={lx}
+            ly={ly}
+            lz={lz}
+            slope={enableSlope ? slope : 0}
             lineColor={groundImage && orthographic ? 'white' : lineColor}
             lineWidth={groundImage && orthographic ? lineWidth * 3 : lineWidth}
           />
@@ -3136,7 +3142,14 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
 
         {/* highlight with a thick wireframe when it is selected but locked */}
         {selected && locked && (
-          <Wireframe hx={hx} hy={hy} hz={hz} lineColor={LOCKED_ELEMENT_SELECTION_COLOR} lineWidth={lineWidth * 5} />
+          <Wireframe
+            lx={lx}
+            ly={ly}
+            lz={lz}
+            slope={enableSlope ? slope : 0}
+            lineColor={LOCKED_ELEMENT_SELECTION_COLOR}
+            lineWidth={lineWidth * 5}
+          />
         )}
 
         {/* wall axis auxiliary line */}
