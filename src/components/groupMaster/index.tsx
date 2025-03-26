@@ -15,6 +15,7 @@ import { WallModel } from 'src/models/WallModel';
 import { RoofModel } from 'src/models/RoofModel';
 import { Vector3 } from 'three';
 import { GroupableModel, isGroupable } from 'src/models/Groupable';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 const isBaseElement = (e: ElementModel) => {
   return e.parentId === GROUND_ID && (e.type === ObjectType.Foundation || e.type === ObjectType.Cuboid);
@@ -119,6 +120,9 @@ const GroupMasterController = React.memo(() => {
         if (elem.parentId !== GROUND_ID) {
           childCuboidIdSet.add(elem.id);
         }
+      } else if (elem.type === ObjectType.Foundation && (elem as FoundationModel).enableSlope) {
+        const slope = (elem as FoundationModel).slope ?? 0;
+        maxBaseZ = Math.max(maxBaseZ, elem.lz + Math.tan(slope) * elem.lx);
       }
     }
     const position = new Vector3(bound.x + bound.width / 2, bound.y + bound.height / 2);

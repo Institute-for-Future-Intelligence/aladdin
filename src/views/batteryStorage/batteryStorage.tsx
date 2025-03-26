@@ -269,9 +269,6 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
           (e) => e.id === id && e.type === ObjectType.BatteryStorage,
         ) as BatteryStorageModel;
         if (batteryStorage) {
-          const foundation = state.elements.find(
-            (e) => e.id === batteryStorage.parentId && e.type === ObjectType.Foundation,
-          ) as FoundationModel;
           batteryStorage.cx = groupRef.current.position.x;
           batteryStorage.cy = groupRef.current.position.y;
           batteryStorage.cz = groupRef.current.position.z;
@@ -279,12 +276,15 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
           batteryStorage.ly = boxRef.current.scale.y;
           batteryStorage.lz = boxRef.current.scale.z;
           batteryStorage.rotation[2] = groupRef.current.rotation.z;
-          if (foundation && foundation.enableSlope) {
-            batteryStorage.cz = foundation.cz + Util.getZOnSlope(foundation.lx, foundation.slope, batteryStorage.cx);
-          }
           if (newParentIdRef.current && newParentIdRef.current) {
             batteryStorage.parentId = newParentIdRef.current;
             batteryStorage.foundationId = newParentIdRef.current;
+          }
+          const foundation = state.elements.find(
+            (e) => e.id === batteryStorage.parentId && e.type === ObjectType.Foundation,
+          ) as FoundationModel;
+          if (foundation && foundation.enableSlope) {
+            batteryStorage.cz = foundation.cz + Util.getZOnSlope(foundation.lx, foundation.slope, batteryStorage.cx);
           }
         }
       }
@@ -486,7 +486,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
 
       {/* polar grid */}
       {showPolarGrid && (
-        <group ref={polarGridGroupRef} position={[cx, cy, 0]}>
+        <group ref={polarGridGroupRef} position={[cx, cy, cz]}>
           <PolarGrid ref={polarGridRef} lx={lx} ly={ly} relativeAzimuth={rotation[2]} />
         </group>
       )}

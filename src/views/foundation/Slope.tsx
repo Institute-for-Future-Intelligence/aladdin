@@ -532,7 +532,7 @@ const Slope = ({ foundation, selected, enableShadow, textureType, texture }: Pro
       }
     };
     window.addEventListener('pointerup', onPointerUp);
-    return () => window.removeEventListener('pointer', onPointerUp);
+    return () => window.removeEventListener('pointerup', onPointerUp);
   }, [intersectionPlane]);
 
   const bodyRef = useRef<Mesh>(null!);
@@ -549,13 +549,6 @@ const Slope = ({ foundation, selected, enableShadow, textureType, texture }: Pro
     }
   }, [transparent]);
 
-  /**
-   * Todos:
-   * - battery polar grid
-   *
-   * - child position on group master
-   * - group master need change slope height?
-   */
   return (
     // don't wrap a group here, element's movement need parent object.
     <>

@@ -21,6 +21,7 @@ import { isGroupable } from 'src/models/Groupable';
 import { Util } from 'src/Util';
 import { WindowModel } from 'src/models/WindowModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 interface GroupMasterProps {
   groupedElementsIdSet: Set<string>;
@@ -232,10 +233,11 @@ const GroupMaster = React.memo(
                 [window.cx, window.cy] = position;
                 break;
               }
+              case ObjectType.BatteryStorage:
               case ObjectType.SolarPanel: {
                 const position = skylightPosMap.get(elem.id);
                 if (!position) continue;
-                [elem.cx, elem.cy] = position;
+                [elem.cx, elem.cy, elem.cz] = position;
                 break;
               }
             }
@@ -335,8 +337,8 @@ const GroupMaster = React.memo(
             const window = elem as WindowModel;
             if (window.parentType !== ObjectType.Roof) continue;
             newChildPosMap.set(window.id, [window.cx, window.cy]);
-          } else if (elem.type === ObjectType.SolarPanel) {
-            newChildPosMap.set(elem.id, [elem.cx, elem.cy]);
+          } else if (elem.type === ObjectType.SolarPanel || elem.type === ObjectType.BatteryStorage) {
+            newChildPosMap.set(elem.id, [elem.cx, elem.cy, elem.cz]);
           }
         }
       }
@@ -482,6 +484,19 @@ const GroupMaster = React.memo(
                         wall.rightPoint = [...rightPoint];
                         break;
                       }
+                      case ObjectType.BatteryStorage: {
+                        const relativePosition = childRelPosMapRef.current.get(elem.id);
+                        if (!relativePosition) continue;
+                        elem.cx = relativePosition[0] * lx;
+                        elem.cy = relativePosition[1] * ly;
+                        const foundation = state.elements.find(
+                          (e) => e.id === elem.parentId && e.type === ObjectType.Foundation,
+                        ) as FoundationModel;
+                        if (foundation && foundation.enableSlope) {
+                          elem.cz = foundation.lz + Util.getZOnSlope(foundation.lx, foundation.slope, elem.cx);
+                        }
+                        break;
+                      }
                       case ObjectType.SolarPanel: {
                         const solarPanel = e as SolarPanelModel;
                         const relativePosition = childRelPosMapRef.current.get(solarPanel.id);
@@ -496,6 +511,15 @@ const GroupMaster = React.memo(
                         ) {
                           solarPanel.cx = relativePosition[0] * newLx;
                           solarPanel.cy = relativePosition[1] * newLy;
+                          if (parentType === ObjectType.Foundation) {
+                            const foundation = state.elements.find(
+                              (e) => e.id === elem.parentId && e.type === ObjectType.Foundation,
+                            ) as FoundationModel;
+                            if (foundation && foundation.enableSlope) {
+                              solarPanel.cz =
+                                foundation.lz + Util.getZOnSlope(foundation.lx, foundation.slope, solarPanel.cx);
+                            }
+                          }
                         } else if (parentType === ObjectType.Cuboid) {
                           // north face
                           if (Util.isEqual(x, 0) && Util.isEqual(y, 1)) {
@@ -532,6 +556,16 @@ const GroupMaster = React.memo(
                     }
                   }
                 }
+              }
+            }
+          }
+          for (const elem of state.elements) {
+            if (elem.type === ObjectType.SolarPanel || elem.type === ObjectType.BatteryStorage) {
+              const foundation = state.elements.find(
+                (e) => e.id === elem.parentId && e.type === ObjectType.Foundation,
+              ) as FoundationModel;
+              if (foundation && foundation.enableSlope) {
+                elem.cz = foundation.lz / 2 + Util.getZOnSlope(foundation.lx, foundation.slope, elem.cx);
               }
             }
           }
@@ -585,6 +619,14 @@ const GroupMaster = React.memo(
                   ) {
                     solarPanel.cx = relativePosition[0] * lx;
                     solarPanel.cy = relativePosition[1] * ly;
+                    if (parentType === ObjectType.Foundation) {
+                      const foundation = state.elements.find(
+                        (e) => e.id === elem.parentId && e.type === ObjectType.Foundation,
+                      ) as FoundationModel;
+                      if (foundation && foundation.enableSlope) {
+                        solarPanel.cz = foundation.lz + Util.getZOnSlope(lx, foundation.slope, solarPanel.cx);
+                      }
+                    }
                   } else if (parentType === ObjectType.Cuboid) {
                     // north face
                     if (Util.isEqual(x, 0) && Util.isEqual(y, 1)) {
@@ -606,6 +648,19 @@ const GroupMaster = React.memo(
                       solarPanel.cx = lx / 2;
                       solarPanel.cy = relativePosition[1] * ly;
                     }
+                  }
+                  break;
+                }
+                case ObjectType.BatteryStorage: {
+                  const relativePosition = childRelPosMapRef.current.get(elem.id);
+                  if (!relativePosition) continue;
+                  elem.cx = relativePosition[0] * lx;
+                  elem.cy = relativePosition[1] * ly;
+                  const foundation = state.elements.find(
+                    (e) => e.id === elem.parentId && e.type === ObjectType.Foundation,
+                  ) as FoundationModel;
+                  if (foundation && foundation.enableSlope) {
+                    elem.cz = foundation.lz + Util.getZOnSlope(lx, foundation.slope, elem.cx);
                   }
                   break;
                 }
@@ -756,11 +811,12 @@ const GroupMaster = React.memo(
               wallOldPointsMapRef.current.set(wall.id, [...wall.leftPoint, ...wall.rightPoint]);
               break;
             }
+            case ObjectType.BatteryStorage:
             case ObjectType.SolarPanel:
             case ObjectType.Window: {
               const child = elem as WindowModel | SolarPanelModel;
               childRelPosMapRef.current.set(child.id, [child.cx / foundation.lx, child.cy / foundation.ly]);
-              oldChildPosMapRef.current.set(child.id, [child.cx, child.cy]);
+              oldChildPosMapRef.current.set(child.id, [child.cx, child.cy, child.cz]);
               break;
             }
           }

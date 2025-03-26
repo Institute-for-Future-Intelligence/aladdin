@@ -49,6 +49,7 @@ import { WindowModel } from 'src/models/WindowModel';
 import { throttle } from 'lodash';
 import { useLanguage } from '../hooks';
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 const Ground = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -2061,6 +2062,10 @@ const Ground = React.memo(() => {
                     .rotateAround(ORIGIN_VECTOR2, -grabRef.current!.rotation[2]);
                   e.cx = relativePos.x;
                   e.cy = relativePos.y;
+                  const foundation = grabRef.current as FoundationModel;
+                  if (foundation.enableSlope) {
+                    e.cz = foundation.lz / 2 + Util.getZOnSlope(lx, foundation.slope, e.cx);
+                  }
                 }
                 break;
               }
@@ -2075,6 +2080,10 @@ const Ground = React.memo(() => {
                   if (Util.isEqual(z, 1)) {
                     e.cx = relativePos.x;
                     e.cy = relativePos.y;
+                    const foundation = grabRef.current as FoundationModel;
+                    if (foundation.enableSlope) {
+                      e.cz = foundation.lz / 2 + Util.getZOnSlope(lx, foundation.slope, e.cx);
+                    }
                   }
                   // north face
                   if (Util.isEqual(x, 0) && Util.isEqual(y, 1)) {
@@ -2171,6 +2180,7 @@ const Ground = React.memo(() => {
                 break;
             }
           }
+          // rooftop elements
           if (
             e.foundationId === grabRef.current.id &&
             (e.type === ObjectType.SolarPanel ||
