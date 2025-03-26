@@ -187,6 +187,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           case ObjectType.Wall: {
             break;
           }
+          case ObjectType.BatteryStorage:
           case ObjectType.SolarPanel: {
             const p = new Vector2(c.cx, c.cy).rotateAround(ORIGIN_VECTOR2, azimuth);
             denormalizedPosMapRef.current.set(c.id, p);
@@ -235,6 +236,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             // TODO
             break;
           }
+          case ObjectType.BatteryStorage:
           case ObjectType.SolarPanel: {
             const p = denormalizedPosMapRef.current.get(c.id);
             if (p) {

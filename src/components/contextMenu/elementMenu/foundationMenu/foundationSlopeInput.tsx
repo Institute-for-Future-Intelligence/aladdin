@@ -81,7 +81,7 @@ const FoundationSlopeInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           const f = state.elements.find(
             (el) => el.id === e.parentId && el.type === ObjectType.Foundation,
           ) as FoundationModel;
-          if (f) {
+          if (f && f.enableSlope) {
             switch (e.type) {
               case ObjectType.BatteryStorage:
               case ObjectType.SolarPanel: {
@@ -127,7 +127,11 @@ const FoundationSlopeInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
       case Scope.AllSelectedObjectsOfThisType: {
         const oldVal = new Map<string, number>();
         for (const elem of elements) {
-          if (elem.type === ObjectType.Foundation && useStore.getState().selectedElementIdSet.has(elem.id)) {
+          if (
+            elem.type === ObjectType.Foundation &&
+            useStore.getState().selectedElementIdSet.has(elem.id) &&
+            !elem.locked
+          ) {
             oldVal.set(elem.id, (elem as FoundationModel).slope ?? 0);
           }
         }
@@ -151,7 +155,7 @@ const FoundationSlopeInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
       case Scope.AllObjectsOfThisType: {
         const oldVal = new Map<string, number>();
         for (const elem of elements) {
-          if (elem.type === ObjectType.Foundation) {
+          if (elem.type === ObjectType.Foundation && !elem.locked) {
             oldVal.set(elem.id, (elem as FoundationModel).slope ?? 0);
           }
         }
