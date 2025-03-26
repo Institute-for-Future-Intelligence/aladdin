@@ -58,9 +58,11 @@ interface Props {
   enableShadow: boolean;
   textureType: FoundationTexture;
   texture: Texture;
+  locked: boolean;
+  setHovered: (b: boolean) => void;
 }
 
-const Slope = ({ foundation, selected, enableShadow, textureType, texture }: Props) => {
+const Slope = ({ foundation, selected, enableShadow, textureType, texture, locked, setHovered }: Props) => {
   const { id, lx, ly, lz, slope = 0.2, cx, cy, rotation, color } = foundation;
   const [hx, hy, hz] = [lx / 2, ly / 2, lz / 2];
   const slopeLz = Math.tan(slope) * lx;
@@ -563,6 +565,8 @@ const Slope = ({ foundation, selected, enableShadow, textureType, texture }: Pro
         receiveShadow={enableShadow}
         onPointerDown={onGroupPointerDown}
         onPointerMove={onGroupPointerMove}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
       >
         <meshStandardMaterial color={color} transparent={transparent} opacity={opacity} />
       </Extrude>
@@ -580,7 +584,7 @@ const Slope = ({ foundation, selected, enableShadow, textureType, texture }: Pro
         </Plane>
       )}
 
-      {selected && !orthographic && (
+      {selected && !orthographic && !locked && (
         <group position={[hx, 0, hz + slopeLz]} onPointerDown={onResizeHandlePointerDown}>
           <ResizeHandle cx={0} cy={hy} size={handleSize} type={ResizeHandleType.Upper} />
           <ResizeHandle cx={0} cy={0} size={handleSize} type={ResizeHandleType.Right} />

@@ -3058,6 +3058,8 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
             texture={_texture}
             selected={selected}
             enableShadow={shadowEnabled}
+            locked={locked}
+            setHovered={setHovered}
           />
         ) : (
           <Box
@@ -3482,7 +3484,11 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
                 fontSize={foundationModel?.labelFontSize ?? 20}
                 fontFace={'Roboto'}
                 textHeight={foundationModel?.labelSize ?? 0.2}
-                position={[0, 0, foundationModel?.labelHeight ?? hz + 0.2]}
+                position={[
+                  0,
+                  0,
+                  foundationModel?.labelHeight ?? hz + 0.2 + (enableSlope ? (lx * Math.tan(slope)) / 2 + 0.2 : 0),
+                ]}
               />
             )}
             {!locked && hoveredHandle === ResizeHandleType.LowerLeft && (

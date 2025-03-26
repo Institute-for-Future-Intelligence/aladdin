@@ -4446,6 +4446,9 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                             // a loner
                             e.cx += 1.25 * e.lx; // give a small offset to ensure no overlap
                           }
+                          if (parent.type === ObjectType.Foundation && (parent as FoundationModel).enableSlope) {
+                            e.cz = parent.lz / 2 + Util.getZOnSlope(parent.lx, (parent as FoundationModel).slope, e.cx);
+                          }
                           const lang = { lng: state.language };
                           if (!state.overlapWithSibling(e)) {
                             if (
@@ -4967,6 +4970,10 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     }
                     case ObjectType.BatteryStorage: {
                       e.cx += e.lx * 1.25;
+                      const foundation = parent as FoundationModel;
+                      if (foundation.enableSlope) {
+                        e.cz = foundation.lz / 2 + Util.getZOnSlope(foundation.lx, foundation.slope, e.cx);
+                      }
                       state.elements.push(e);
                       state.elementsToPaste = [e];
                       approved = true;

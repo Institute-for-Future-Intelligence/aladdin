@@ -69,13 +69,30 @@ const FoundationSlopeInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     useStore.getState().set((state) => {
       for (const e of state.elements) {
         if (map.has(e.id) && e.type === ObjectType.Foundation) {
-          const f = e as FoundationModel;
           if (value !== undefined) {
-            f.slope = value;
+            (e as FoundationModel).slope = value;
           } else {
-            const rot = map.get(e.id);
-            if (rot !== undefined) {
-              f.slope = -rot;
+            const val = map.get(e.id) ?? 0;
+            (e as FoundationModel).slope = val;
+          }
+        }
+
+        if (map.has(e.parentId)) {
+          const f = state.elements.find(
+            (el) => el.id === e.parentId && el.type === ObjectType.Foundation,
+          ) as FoundationModel;
+          if (f) {
+            switch (e.type) {
+              case ObjectType.BatteryStorage:
+              case ObjectType.SolarPanel: {
+                if (value !== undefined) {
+                  e.cz = f.lz / 2 + Util.getZOnSlope(f.lx, value, e.cx);
+                } else {
+                  const val = map.get(e.parentId) ?? 0;
+                  e.cz = f.lz / 2 + Util.getZOnSlope(f.lx, val, e.cx);
+                }
+                break;
+              }
             }
           }
         }
@@ -91,6 +108,7 @@ const FoundationSlopeInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         }
         if (e.parentId === id && foundation) {
           switch (e.type) {
+            case ObjectType.BatteryStorage:
             case ObjectType.SolarPanel: {
               e.cz = foundation.lz / 2 + Util.getZOnSlope(foundation.lx, val, e.cx);
               break;

@@ -157,7 +157,7 @@ export class ElementModelCloner {
           const foundation = parent as FoundationModel;
           let cz = parent.lz / 2;
           if (foundation.enableSlope) {
-            cz = parent.lz + Util.getZOnSlope(foundation.lx, foundation.slope, x);
+            cz = cz + Util.getZOnSlope(foundation.lx, foundation.slope, x);
           }
           clone = ElementModelCloner.cloneBatteryStorage(parent.id, e as BatteryStorageModel, x, y, cz);
         }
@@ -387,7 +387,7 @@ export class ElementModelCloner {
 
     let cz = z;
     if (parent.type === ObjectType.Foundation && (parent as FoundationModel).enableSlope) {
-      cz = parent.lz + Util.getZOnSlope(parent.lx, (parent as FoundationModel).slope, x);
+      cz = parent.cz + Util.getZOnSlope(parent.lx, (parent as FoundationModel).slope, x);
     }
     return {
       type: ObjectType.SolarPanel,
