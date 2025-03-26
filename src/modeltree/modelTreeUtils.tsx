@@ -9,6 +9,8 @@ import { InputNumber, Space, Tooltip } from 'antd';
 import React from 'react';
 import { useStore } from '../stores/common';
 import i18n from '../i18n/i18n';
+import { FoundationModel } from 'src/models/FoundationModel';
+import { Util } from 'src/Util';
 
 const handleCoordinateChange = (element: ElementModel, prop: 'cx' | 'cy' | 'cz', value: number) => {
   if (element.parentId === GROUND_ID && prop === 'cz') return;
@@ -122,6 +124,17 @@ const handleDimensionChange = (element: ElementModel, prop: 'lx' | 'ly' | 'lz', 
     const el = state.elements.find((e) => e.id === element.id);
     if (el) {
       el[prop] = value;
+    }
+    if (prop !== 'ly' && el?.type === ObjectType.Foundation && (el as FoundationModel).enableSlope) {
+      const foundation = el as FoundationModel;
+      for (const child of state.elements) {
+        if (
+          child.parentId === foundation.id &&
+          (child.type === ObjectType.SolarPanel || child.type === ObjectType.BatteryStorage)
+        ) {
+          child.cz = foundation.lz / 2 + Util.getZOnSlope(foundation.lx, foundation.slope, child.cx);
+        }
+      }
     }
   });
 };
