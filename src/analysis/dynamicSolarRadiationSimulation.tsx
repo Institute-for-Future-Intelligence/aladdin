@@ -1734,12 +1734,7 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
         .map(() => Array(ny).fill(0));
       cellOutputsMapRef.current.set(dish.id, cellOutputs);
     }
-    const rot = parent.rotation[2];
-    const zRot = rot + dish.relativeAzimuth;
-    const zRotZero = Util.isZero(zRot);
-    const rotatedSunDirection = rot
-      ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
-      : sunDirection.clone();
+    const rotatedSunDirection = sunDirection.clone();
     const qRot = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
     const normalEuler = new Euler().setFromQuaternion(qRot);
     normal.copy(originalNormal.clone().applyEuler(normalEuler));
@@ -1777,7 +1772,6 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
         cellOutputs[ku][kv] += indirectRadiation;
         if (dot > 0) {
           v2d.set(tmpX, tmpY);
-          if (!zRotZero) v2d.rotateAround(center2d, zRot);
           dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
           dv.applyEuler(normalEuler);
           v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
