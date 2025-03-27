@@ -82,6 +82,7 @@ import { useTransparent } from '../roof/hooks';
 import BatteryStorageWrapper from '../batteryStorage/batteryStorageWrapper';
 import Slope from './slope';
 import Wireframe from './wireframe';
+import SolarWaterHeaterWrapper from '../solarWaterHeater/solarWaterHeaterWrapper';
 
 interface SnapTargetType {
   id: string | null;
@@ -3048,7 +3049,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
           ply={ly}
           plz={lz}
         />
-
+        <SolarWaterHeaterWrapper foundationId={id} wrapperType={ObjectType.Foundation} />
         <BatteryStorageWrapper foundationId={id} hz={hz} />
 
         {enableSlope ? (

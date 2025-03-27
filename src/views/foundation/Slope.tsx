@@ -561,6 +561,7 @@ const Slope = ({
     }
   }, [transparent]);
 
+  const receiveShadow = enableShadow && !showHeatmap;
   // pv limitation (tilt/resize)
   // cube texture on building simulation
   return (
@@ -589,10 +590,14 @@ const Slope = ({
           args={[lx / Math.cos(slope), ly]}
           rotation={[0, -slope, 0]}
           position={[0, 0, hz + slopeLz / 2 + 0.001]}
-          receiveShadow={enableShadow}
+          receiveShadow={receiveShadow}
           castShadow={false}
         >
-          <meshStandardMaterial color={'white'} map={texture} transparent={transparent} opacity={opacity} />
+          {showHeatmap ? (
+            <meshBasicMaterial color={'white'} map={texture} />
+          ) : (
+            <meshStandardMaterial color={'white'} map={texture} transparent={transparent} opacity={opacity} />
+          )}
         </Plane>
       )}
 
