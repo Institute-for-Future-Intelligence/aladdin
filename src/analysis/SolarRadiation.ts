@@ -40,6 +40,7 @@ export class SolarRadiation {
   ): { heatmap: number[][]; average: number } {
     const rooftop = panel.parentType === ObjectType.Roof;
     const walltop = panel.parentType === ObjectType.Wall;
+    const slopetop = parent.type === ObjectType.Foundation && (parent as FoundationModel).enableSlope;
     if (rooftop) {
       // x and y coordinates of a rooftop solar panel are relative to the foundation
       parent = foundation;
@@ -71,6 +72,10 @@ export class SolarRadiation {
       const dr = (panel.ly * Math.abs(Math.sin(panel.tiltAngle))) / 2;
       center.x += dr * Math.cos(an); // panel.ly has been rotated based on the orientation
       center.y += dr * Math.sin(an);
+    }
+    if (slopetop) {
+      const f = parent as FoundationModel;
+      center.z = f.lz + Util.getZOnSlope(f.lx, f.slope, panel.cx);
     }
     const normal = new Vector3().fromArray(panel.normal);
     const month = now.getMonth();
@@ -108,7 +113,7 @@ export class SolarRadiation {
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - dCell) / 2;
     const y0 = center.y - (ly - dCell) / 2;
-    const z0 = rooftop || walltop ? center.z : parent.lz + panel.poleHeight + panel.lz;
+    const z0 = rooftop || walltop ? center.z : (slopetop ? center.z : parent.lz) + panel.poleHeight + panel.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));

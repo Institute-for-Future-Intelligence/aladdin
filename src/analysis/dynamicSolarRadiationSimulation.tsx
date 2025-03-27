@@ -635,7 +635,8 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
     const lx = foundation.lx;
     const ly = foundation.ly;
     const lz = foundation.lz;
-    const nx = Math.max(2, Math.round(lx / cellSize));
+    const lengthX = foundation.enableSlope ? foundation.lx / Math.cos(foundation.slope ?? 0) : foundation.lx;
+    const nx = Math.max(2, Math.round(lengthX / cellSize));
     const ny = Math.max(2, Math.round(ly / cellSize));
     const dx = lx / nx;
     const dy = ly / ny;
@@ -650,22 +651,31 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
         .map(() => Array(ny).fill(0));
       cellOutputsMapRef.current.set(foundation.id, cellOutputs);
     }
+    const normal = new Vector3(0, 0, 1);
+    if (foundation.enableSlope && foundation.slope) {
+      normal.applyEuler(new Euler(0, -foundation.slope, foundation.rotation[2], 'ZXY'));
+    }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(
       world.ground,
       now.getMonth(),
-      UNIT_VECTOR_POS_Z,
+      normal,
       peakRadiation,
     );
-    const dot = UNIT_VECTOR_POS_Z.dot(sunDirection);
+    const dot = normal.dot(sunDirection);
     const v2 = new Vector2();
     for (let kx = 0; kx < nx; kx++) {
       for (let ky = 0; ky < ny; ky++) {
         cellOutputs[kx][ky] += indirectRadiation;
         if (dot > 0) {
-          v2.set(x0 + (kx + 0.5) * dx, y0 + (ky + 0.5) * dy);
+          const vx = (kx + 0.5) * dx;
+          let vz = lz;
+          if (foundation.enableSlope) {
+            vz = lz + Util.getZOnSlope(lx, foundation.slope, -lx / 2 + vx);
+          }
+          v2.set(x0 + vx, y0 + (ky + 0.5) * dy);
           v2.rotateAround(center2d, foundation.rotation[2]);
-          v.set(v2.x, v2.y, lz);
+          v.set(v2.x, v2.y, vz);
           if (!inShadow(foundation.id, v, sunDirection)) {
             // direct radiation
             cellOutputs[kx][ky] += dot * peakRadiation;
@@ -1386,6 +1396,7 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
     if (!parent) throw new Error('parent of solar panel does not exist');
     const rooftop = panel.parentType === ObjectType.Roof;
     const walltop = panel.parentType === ObjectType.Wall;
+    const slopetop = parent.type === ObjectType.Foundation && (parent as FoundationModel).enableSlope;
     if (rooftop) {
       // x and y coordinates of a rooftop solar panel are relative to the foundation
       parent = getFoundation(parent);
@@ -1421,6 +1432,10 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
       center.x += dr * Math.cos(an); // panel.ly has been rotated based on the orientation
       center.y += dr * Math.sin(an);
     }
+    if (slopetop) {
+      const f = parent as FoundationModel;
+      center.z = f.lz + Util.getZOnSlope(f.lx, f.slope, panel.cx);
+    }
     const normal = new Vector3().fromArray(panel.normal);
     const lx = panel.lx;
     const ly = panel.ly;
@@ -1431,7 +1446,7 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = rooftop || walltop ? center.z : parent.lz + panel.poleHeight + panel.lz;
+    const z0 = rooftop || walltop ? center.z : (slopetop ? center.z : parent.lz) + panel.poleHeight + panel.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     let cellOutputs = cellOutputsMapRef.current.get(panel.id);
@@ -1600,6 +1615,11 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
     if (!parent) throw new Error('parent of parabolic trough does not exist');
     const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(trough.cx, trough.cy, trough.cz, parent);
+    const slopetop = parent.type === ObjectType.Foundation && (parent as FoundationModel).enableSlope;
+    if (slopetop) {
+      const f = parent as FoundationModel;
+      center.z = f.lz + Util.getZOnSlope(f.lx, f.slope, trough.cx * f.lx);
+    }
     const normal = new Vector3().fromArray(trough.normal);
     const originalNormal = normal.clone();
     const lx = trough.lx;
@@ -1613,7 +1633,7 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = parent.lz + actualPoleHeight + trough.lz + depth;
+    const z0 = (slopetop ? center.z : parent.lz) + actualPoleHeight + trough.lz + depth;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     let cellOutputs = cellOutputsMapRef.current.get(trough.id);
@@ -1686,6 +1706,11 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
     if (!parent) throw new Error('parent of parabolic dish does not exist');
     const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(dish.cx, dish.cy, dish.cz, parent);
+    const slopetop = parent.type === ObjectType.Foundation && (parent as FoundationModel).enableSlope;
+    if (slopetop) {
+      const f = parent as FoundationModel;
+      center.z = f.lz + Util.getZOnSlope(f.lx, f.slope, dish.cx * f.lx);
+    }
     const normal = new Vector3().fromArray(dish.normal);
     const originalNormal = normal.clone();
     const lx = dish.lx;
@@ -1699,7 +1724,7 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = parent.lz + actualPoleHeight + dish.lz + depth;
+    const z0 = (slopetop ? center.z : parent.lz) + actualPoleHeight + dish.lz + depth;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     let cellOutputs = cellOutputsMapRef.current.get(dish.id);
@@ -1776,6 +1801,10 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
     if (!absorberPipe) return;
     const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(reflector.cx, reflector.cy, reflector.cz, parent);
+    if (foundation.enableSlope) {
+      const f = parent as FoundationModel;
+      center.z = f.lz + Util.getZOnSlope(f.lx, f.slope, reflector.cx * f.lx);
+    }
     const normal = new Vector3().fromArray(reflector.normal);
     const originalNormal = normal.clone();
     const lx = reflector.lx;
@@ -1788,7 +1817,7 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = foundation.lz + actualPoleHeight + reflector.lz;
+    const z0 = (foundation.enableSlope ? center.z : parent.lz) + actualPoleHeight + reflector.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     let cellOutputs = cellOutputsMapRef.current.get(reflector.id);
@@ -1895,6 +1924,10 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
     if (!powerTower) return;
     const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(heliostat.cx, heliostat.cy, heliostat.cz, parent);
+    if (foundation.enableSlope) {
+      const f = parent as FoundationModel;
+      center.z = f.lz + Util.getZOnSlope(f.lx, f.slope, heliostat.cx * f.lx);
+    }
     const normal = new Vector3().fromArray(heliostat.normal);
     const originalNormal = normal.clone();
     const lx = heliostat.lx;
@@ -1907,7 +1940,7 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = foundation.lz + actualPoleHeight + heliostat.lz;
+    const z0 = (foundation.enableSlope ? center.z : parent.lz) + actualPoleHeight + heliostat.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     let cellOutputs = cellOutputsMapRef.current.get(heliostat.id);

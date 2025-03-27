@@ -59,10 +59,20 @@ interface Props {
   textureType: FoundationTexture;
   texture: Texture;
   locked: boolean;
+  showHeatmap: boolean;
   setHovered: (b: boolean) => void;
 }
 
-const Slope = ({ foundation, selected, enableShadow, textureType, texture, locked, setHovered }: Props) => {
+const Slope = ({
+  foundation,
+  selected,
+  enableShadow,
+  textureType,
+  texture,
+  locked,
+  showHeatmap,
+  setHovered,
+}: Props) => {
   const { id, lx, ly, lz, slope = 0.2, cx, cy, rotation, color } = foundation;
   const [hx, hy, hz] = [lx / 2, ly / 2, lz / 2];
   const slopeLz = Math.tan(slope) * lx;
@@ -551,6 +561,8 @@ const Slope = ({ foundation, selected, enableShadow, textureType, texture, locke
     }
   }, [transparent]);
 
+  // pv limitation (tilt/resize)
+  // cube texture on building simulation
   return (
     // don't wrap a group here, element's movement need parent object.
     <>
@@ -571,7 +583,7 @@ const Slope = ({ foundation, selected, enableShadow, textureType, texture, locke
         <meshStandardMaterial color={color} transparent={transparent} opacity={opacity} />
       </Extrude>
 
-      {textureType !== FoundationTexture.NoTexture && (
+      {(textureType !== FoundationTexture.NoTexture || showHeatmap) && (
         <Plane
           ref={texturePlaneRef}
           args={[lx / Math.cos(slope), ly]}

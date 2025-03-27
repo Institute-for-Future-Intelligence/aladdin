@@ -3055,10 +3055,11 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
           <Slope
             foundation={foundationModel}
             textureType={textureType}
-            texture={_texture}
+            texture={showSolarRadiationHeatmap && heatmapTexture ? heatmapTexture : _texture}
             selected={selected}
             enableShadow={shadowEnabled}
             locked={locked}
+            showHeatmap={!!(showSolarRadiationHeatmap && heatmapTexture)}
             setHovered={setHovered}
           />
         ) : (

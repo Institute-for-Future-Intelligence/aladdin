@@ -479,6 +479,7 @@ const StaticSolarRadiationSimulation = React.memo(({ city }: StaticSolarRadiatio
     if (!parent) throw new Error('parent of solar panel does not exist');
     const rooftop = panel.parentType === ObjectType.Roof;
     const walltop = panel.parentType === ObjectType.Wall;
+    const slopetop = parent.type === ObjectType.Foundation && (parent as FoundationModel).enableSlope;
     if (rooftop) {
       // x and y coordinates of a rooftop solar panel are relative to the foundation
       parent = getFoundation(parent);
@@ -517,6 +518,10 @@ const StaticSolarRadiationSimulation = React.memo(({ city }: StaticSolarRadiatio
       center.x += dr * Math.cos(an); // panel.ly has been rotated based on the orientation
       center.y += dr * Math.sin(an);
     }
+    if (slopetop) {
+      const f = parent as FoundationModel;
+      center.z = f.lz + Util.getZOnSlope(f.lx, f.slope, panel.cx);
+    }
     // TODO: right now we assume a parent rotation is always around the z-axis
     // normal has been set if it is on top of a tilted roof, but has not if it is on top of a foundation or flat roof.
     // so we only need to tilt the normal for a solar panel on a foundation or flat roof
@@ -535,7 +540,7 @@ const StaticSolarRadiationSimulation = React.memo(({ city }: StaticSolarRadiatio
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = rooftop || walltop ? center.z : parent.lz + panel.poleHeight + panel.lz;
+    const z0 = rooftop || walltop ? center.z : (slopetop ? center.z : parent.lz) + panel.poleHeight + panel.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputTotals = Array(nx)
