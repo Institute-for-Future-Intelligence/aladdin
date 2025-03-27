@@ -190,14 +190,6 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  if (counterAll.gotSome()) {
-    items.push({
-      key: 'lock-unlock-clear-on-foundation',
-      label: <MenuItem>{i18n.t('word.Elements', lang)}</MenuItem>,
-      children: createFoundationElementCounterSubmenu(foundation, counterAll, counterUnlocked),
-    });
-  }
-
   if (editable) {
     items.push({
       key: 'foundation-size-submenu',
@@ -461,6 +453,14 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     ],
   });
 
+  if (counterAll.gotSome()) {
+    items.push({
+      key: 'lock-unlock-clear-on-foundation',
+      label: <MenuItem>{i18n.t('word.Elements', lang)}</MenuItem>,
+      children: createFoundationElementCounterSubmenu(foundation, counterAll, counterUnlocked),
+    });
+  }
+
   if (editable) {
     items.push({
       key: 'foundation-label',
@@ -468,6 +468,5 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
       children: createLabelSubmenu(foundation),
     });
   }
-
   return { items } as MenuProps;
 };

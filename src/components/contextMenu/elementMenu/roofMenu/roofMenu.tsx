@@ -67,42 +67,7 @@ export const createRoofMenu = (selectedElement: ElementModel) => {
     label: <Lock selectedElement={roof} />,
   });
 
-  // roof-ceiling
-  if (roof.rise > 0) {
-    items.push({
-      key: 'roof-ceiling-submenu',
-      label: <MenuItem>{i18n.t('roofMenu.Ceiling', lang)}</MenuItem>,
-      children: createRoofCeilingSubmenu(roof),
-    });
-  }
-
-  if (counterAll.gotSome()) {
-    // element-counter
-    items.push({
-      key: 'lock-unlock-clear-on-roof',
-      label: <MenuItem>{i18n.t('word.Elements', lang)}</MenuItem>,
-      children: createRoofElementCounterSubmenu(roof, counterAll, counterUnlocked),
-    });
-  }
-
   if (editable) {
-    // roof-structure-submenu and opacity
-    if (roof.roofType === RoofType.Gable) {
-      items.push({
-        key: 'roof-structure-submenu',
-        label: <MenuItem>{i18n.t('roofMenu.RoofStructure', lang)}</MenuItem>,
-        children: createRoofStructureSubmenu(roof),
-      });
-
-      // opacity
-      if (roof.roofStructure === RoofStructure.Rafter || roof.roofStructure === RoofStructure.Glass) {
-        items.push({
-          key: 'opacity',
-          label: <DialogItem Dialog={RoofOpacityInput}>{i18n.t('roofMenu.Opacity', lang)} ...</DialogItem>,
-        });
-      }
-    }
-
     // roof-thickness
     items.push({
       key: 'roof-thickness',
@@ -150,6 +115,41 @@ export const createRoofMenu = (selectedElement: ElementModel) => {
       items.push({
         key: 'roof-side-color',
         label: <DialogItem Dialog={RoofSideColorSelection}>{i18n.t('roofMenu.RoofSideColor', lang)} ...</DialogItem>,
+      });
+    }
+
+    // roof-structure-submenu and opacity
+    if (roof.roofType === RoofType.Gable) {
+      // opacity
+      if (roof.roofStructure === RoofStructure.Rafter || roof.roofStructure === RoofStructure.Glass) {
+        items.push({
+          key: 'opacity',
+          label: <DialogItem Dialog={RoofOpacityInput}>{i18n.t('roofMenu.Opacity', lang)} ...</DialogItem>,
+        });
+      }
+
+      items.push({
+        key: 'roof-structure-submenu',
+        label: <MenuItem>{i18n.t('roofMenu.RoofStructure', lang)}</MenuItem>,
+        children: createRoofStructureSubmenu(roof),
+      });
+    }
+
+    // roof-ceiling
+    if (roof.rise > 0) {
+      items.push({
+        key: 'roof-ceiling-submenu',
+        label: <MenuItem>{i18n.t('roofMenu.Ceiling', lang)}</MenuItem>,
+        children: createRoofCeilingSubmenu(roof),
+      });
+    }
+
+    if (counterAll.gotSome()) {
+      // element-counter
+      items.push({
+        key: 'lock-unlock-clear-on-roof',
+        label: <MenuItem>{i18n.t('word.Elements', lang)}</MenuItem>,
+        children: createRoofElementCounterSubmenu(roof, counterAll, counterUnlocked),
       });
     }
   }

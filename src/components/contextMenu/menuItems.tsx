@@ -292,6 +292,8 @@ export const MenuItem: React.FC<MenuItemProps> = ({
         display: 'inline-block',
         fontWeight: fontWeight,
         width: '100%',
+        paddingTop: '0px',
+        paddingBottom: '0px',
         paddingLeft: noPadding ? '0px' : '24px',
       }}
     >

@@ -10,12 +10,20 @@
 
 .ant-dropdown-menu-item,
 .ant-dropdown-menu-submenu {
-  padding-top: 0px !important;
-  padding-bottom: 0px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
-.ant-dropdown-menu-title-content,
+.ant-dropdown-menu-title-content {
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
 .ant-dropdown-menu-submenu-title {
-  padding-top: 3px !important;
-  padding-bottom: 3px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  vertical-align: center !important;
+}
+
+.ant-dropdown-menu-submenu-expand-icon {
+  top: 3px !important;
 }

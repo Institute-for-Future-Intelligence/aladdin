@@ -85,29 +85,6 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
       },
     );
 
-    items.push({
-      key: 'solar-panel-coordinates-submenu',
-      label: <MenuItem>{i18n.t('solarCollectorMenu.Coordinates', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'solar-panel-center-x',
-          label: (
-            <DialogItem Dialog={SolarPanelXInput} noPadding>
-              {i18n.t('solarCollectorMenu.RelativeXCoordinateOfCenter', lang)} ...
-            </DialogItem>
-          ),
-        },
-        {
-          key: 'solar-panel-center-y',
-          label: (
-            <DialogItem Dialog={SolarPanelYInput} noPadding>
-              {i18n.t('solarCollectorMenu.RelativeYCoordinateOfCenter', lang)} ...
-            </DialogItem>
-          ),
-        },
-      ],
-    });
-
     if (solarPanel.parentType === ObjectType.Wall) {
       items.push({
         key: 'solar-panel-tilt-angle-on-wall',
@@ -156,6 +133,29 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
     items.push({
       key: 'solar-panel-draw-sun-beam',
       label: <SolarCollectorSunBeamCheckbox solarCollector={solarPanel} />,
+    });
+
+    items.push({
+      key: 'solar-panel-coordinates-submenu',
+      label: <MenuItem>{i18n.t('solarCollectorMenu.Coordinates', lang)}</MenuItem>,
+      children: [
+        {
+          key: 'solar-panel-center-x',
+          label: (
+            <DialogItem Dialog={SolarPanelXInput} noPadding>
+              {i18n.t('solarCollectorMenu.RelativeXCoordinateOfCenter', lang)} ...
+            </DialogItem>
+          ),
+        },
+        {
+          key: 'solar-panel-center-y',
+          label: (
+            <DialogItem Dialog={SolarPanelYInput} noPadding>
+              {i18n.t('solarCollectorMenu.RelativeYCoordinateOfCenter', lang)} ...
+            </DialogItem>
+          ),
+        },
+      ],
     });
 
     items.push({

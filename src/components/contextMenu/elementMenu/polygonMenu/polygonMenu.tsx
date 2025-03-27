@@ -59,45 +59,6 @@ export const createPolygonMenu = (selectedElement: ElementModel) => {
     });
   }
 
-  if (parent && (parent.type === ObjectType.Foundation || parent.type === ObjectType.Cuboid)) {
-    items.push({
-      key: 'polygon-layout-submenu',
-      label: <MenuItem>{i18n.t('polygonMenu.Layout', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'solar-panel-layout-wizard',
-          label: (
-            <DialogItem noPadding Dialog={SolarPanelLayoutWizard}>
-              {i18n.t('polygonMenu.SolarPanelArrayLayoutParametricDesign', lang)} ...
-            </DialogItem>
-          ),
-        },
-        {
-          key: 'solar-panel-layout-ai',
-          label: <MenuItem noPadding>{i18n.t('polygonMenu.SolarPanelArrayLayoutGenerativeDesign', lang)}</MenuItem>,
-          children: [
-            {
-              key: 'solar-panel-layout-ga',
-              label: (
-                <DialogItem noPadding Dialog={SolarPanelArrayGaWizard}>
-                  {i18n.t('optimizationMenu.GeneticAlgorithm', lang)} ...
-                </DialogItem>
-              ),
-            },
-            {
-              key: 'solar-panel-layout-pso',
-              label: (
-                <DialogItem noPadding Dialog={SolarPanelArrayPsoWizard}>
-                  {i18n.t('optimizationMenu.ParticleSwarmOptimization', lang)} ...
-                </DialogItem>
-              ),
-            },
-          ],
-        },
-      ],
-    });
-  }
-
   items.push({
     key: 'polygon-lock',
     label: <Lock selectedElement={polygon} />,
@@ -160,6 +121,45 @@ export const createPolygonMenu = (selectedElement: ElementModel) => {
           label: <DialogItem Dialog={PolygonOpacityInput}>{i18n.t('polygonMenu.Opacity', lang)} ...</DialogItem>,
         },
       );
+    }
+
+    if (parent && (parent.type === ObjectType.Foundation || parent.type === ObjectType.Cuboid)) {
+      items.push({
+        key: 'polygon-layout-submenu',
+        label: <MenuItem>{i18n.t('polygonMenu.Layout', lang)}</MenuItem>,
+        children: [
+          {
+            key: 'solar-panel-layout-wizard',
+            label: (
+              <DialogItem noPadding Dialog={SolarPanelLayoutWizard}>
+                {i18n.t('polygonMenu.SolarPanelArrayLayoutParametricDesign', lang)} ...
+              </DialogItem>
+            ),
+          },
+          {
+            key: 'solar-panel-layout-ai',
+            label: <MenuItem noPadding>{i18n.t('polygonMenu.SolarPanelArrayLayoutGenerativeDesign', lang)}</MenuItem>,
+            children: [
+              {
+                key: 'solar-panel-layout-ga',
+                label: (
+                  <DialogItem noPadding Dialog={SolarPanelArrayGaWizard}>
+                    {i18n.t('optimizationMenu.GeneticAlgorithm', lang)} ...
+                  </DialogItem>
+                ),
+              },
+              {
+                key: 'solar-panel-layout-pso',
+                label: (
+                  <DialogItem noPadding Dialog={SolarPanelArrayPsoWizard}>
+                    {i18n.t('optimizationMenu.ParticleSwarmOptimization', lang)} ...
+                  </DialogItem>
+                ),
+              },
+            ],
+          },
+        ],
+      });
     }
 
     items.push({

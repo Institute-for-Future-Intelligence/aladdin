@@ -93,26 +93,6 @@ export const createWallMenu = (selectedElement: ElementModel) => {
   });
 
   if (editable) {
-    if (counterAll.gotSome()) {
-      items.push({
-        key: 'lock-unlock-clear-on-wall',
-        label: <MenuItem>{i18n.t('word.Elements', lang)}</MenuItem>,
-        children: createWallElementCounterSubmenu(wall, counterAll, counterUnlocked),
-      });
-    }
-
-    items.push({
-      key: 'wall-parapet',
-      label: <MenuItem>{i18n.t('wallMenu.Parapet', lang)}</MenuItem>,
-      children: createParapetSubmenu(wall),
-    });
-
-    items.push({
-      key: 'wall-structure',
-      label: <MenuItem>{i18n.t('wallMenu.WallStructure', lang)}</MenuItem>,
-      children: createWallStructureSubmenu(wall),
-    });
-
     if (wall.wallStructure !== WallStructure.Default) {
       items.push({
         key: 'wall-opacity',
@@ -125,11 +105,6 @@ export const createWallMenu = (selectedElement: ElementModel) => {
     }
 
     items.push(
-      {
-        key: 'wall-fill',
-        label: <MenuItem>{i18n.t('wallMenu.Fill', lang)}</MenuItem>,
-        children: createWallFillSubmenu(wall),
-      },
       {
         key: 'add-polygon-on-wall',
         label: <AddPolygonOnWallItem wall={wall} />,
@@ -177,6 +152,31 @@ export const createWallMenu = (selectedElement: ElementModel) => {
         label: <DialogItem Dialog={WallColorSelection}>{i18n.t('wallMenu.Color', lang)} ...</DialogItem>,
       },
     );
+    items.push({
+      key: 'wall-fill',
+      label: <MenuItem>{i18n.t('wallMenu.Fill', lang)}</MenuItem>,
+      children: createWallFillSubmenu(wall),
+    });
+
+    items.push({
+      key: 'wall-parapet',
+      label: <MenuItem>{i18n.t('wallMenu.Parapet', lang)}</MenuItem>,
+      children: createParapetSubmenu(wall),
+    });
+
+    items.push({
+      key: 'wall-structure',
+      label: <MenuItem>{i18n.t('wallMenu.WallStructure', lang)}</MenuItem>,
+      children: createWallStructureSubmenu(wall),
+    });
+
+    if (counterAll.gotSome()) {
+      items.push({
+        key: 'lock-unlock-clear-on-wall',
+        label: <MenuItem>{i18n.t('word.Elements', lang)}</MenuItem>,
+        children: createWallElementCounterSubmenu(wall, counterAll, counterUnlocked),
+      });
+    }
   }
 
   return { items } as MenuProps;
