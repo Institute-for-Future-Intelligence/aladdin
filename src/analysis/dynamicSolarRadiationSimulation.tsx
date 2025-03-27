@@ -1866,7 +1866,7 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
       normal.copy(originalNormal.clone().applyEuler(normalEuler));
     } else {
       reflectorToReceiver = new Vector3(0, 0, 1);
-      normalEuler = new Euler();
+      normalEuler = new Euler(0, 0, zRot);
     }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(
