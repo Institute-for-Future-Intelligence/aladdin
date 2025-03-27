@@ -522,6 +522,7 @@ export const i18n_zh_tw = {
         InterRowSpacingOfSolarPanelArray: '光伏板陣列行間距對發電量的影響',
         EffectOfOrientationOfSolarPanels: '光伏板排列方向對發電量的影響',
         SolarPanelArrayAutomaticLayout: '光伏板自動排列',
+        SolarPanelArrayOnSlope: '斜坡上的光伏板陣列',
       },
 
       concentratedSolarPowerSubMenu: '光熱發電',

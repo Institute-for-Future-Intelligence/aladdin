@@ -527,6 +527,7 @@ export const i18n_ua = {
         InterRowSpacingOfSolarPanelArray: 'Вплив міжрядного простору в масиві сонячних панелей',
         EffectOfOrientationOfSolarPanels: 'Вплив орієнтації сонячних панелей',
         SolarPanelArrayAutomaticLayout: 'Автоматичне розміщення масиву сонячних панелей',
+        SolarPanelArrayOnSlope: 'Solar Panel Array on a Slope',
       },
 
       concentratedSolarPowerSubMenu: 'Концентрована сонячна енергія',

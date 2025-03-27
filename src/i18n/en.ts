@@ -524,6 +524,7 @@ export const i18n_en = {
         InterRowSpacingOfSolarPanelArray: 'Effect of Inter-Row Spacing in a Solar Panel Array',
         EffectOfOrientationOfSolarPanels: 'Effect of Orientation of Solar Panels',
         SolarPanelArrayAutomaticLayout: 'Solar Panel Array Automatic Layout',
+        SolarPanelArrayOnSlope: 'Solar Panel Array on a Slope',
       },
 
       concentratedSolarPowerSubMenu: 'Concentrated Solar Power',

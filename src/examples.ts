@@ -74,6 +74,7 @@ import effect_latus_rectum_parabolic_trough from './examples/effect_latus_rectum
 import effect_orientation_solar_panel from './examples/effect_orientation_solar_panel.json';
 import why_solar_array from './examples/why_solar_array.json';
 import solar_panel_array_auto_layout from './examples/solar_panel_array_auto_layout.json';
+import solar_panel_array_slope from './examples/solar_panel_array_slope.json';
 import solar_canopy_form_factors from './examples/solar_canopy_form_factors.json';
 import solar_canopy_over_bleachers from './examples/solar_canopy_over_bleachers.json';
 import solar_bus_stop from './examples/solar_bus_stop.json';
@@ -212,6 +213,9 @@ export const getExample = (name: string) => {
       break;
     case 'vegetative_buffer_01':
       input = vegetative_buffer_01;
+      break;
+    case 'solar_panel_array_slope':
+      input = solar_panel_array_slope;
       break;
     case 'solar_canopy_form_factors':
       input = solar_canopy_form_factors;

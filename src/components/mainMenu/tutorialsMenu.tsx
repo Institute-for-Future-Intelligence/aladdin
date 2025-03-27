@@ -241,6 +241,10 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
           label: 'menu.photovoltaicSolarPowerTutorials.SolarPanelArrayAutomaticLayout',
         },
         {
+          key: 'solar_panel_array_slope',
+          label: 'menu.photovoltaicSolarPowerTutorials.SolarPanelArrayOnSlope',
+        },
+        {
           key: 'rooftop_solar_panels',
           label: 'menu.solarEnergyExamples.RooftopSolarPanels',
         },

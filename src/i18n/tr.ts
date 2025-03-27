@@ -524,6 +524,7 @@ export const i18n_tr = {
         InterRowSpacingOfSolarPanelArray: 'Güneş Paneli Dizi Arası Boşluk Etkisi',
         EffectOfOrientationOfSolarPanels: 'Güneş Panelleri Yön Etkisi',
         SolarPanelArrayAutomaticLayout: 'Solar Panel Array Automatic Layout',
+        SolarPanelArrayOnSlope: 'Solar Panel Array on a Slope',
       },
 
       concentratedSolarPowerSubMenu: 'Yoğunlaştırılmış Güneş Enerjisi',
