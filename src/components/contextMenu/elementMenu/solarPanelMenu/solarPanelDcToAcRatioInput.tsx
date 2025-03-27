@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -14,6 +14,7 @@ import { UndoableChange } from '../../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
 import { Util } from '../../../../Util';
 import { ZERO_TOLERANCE } from '../../../../constants';
+import { useSelectedElement } from '../menuHooks';
 
 const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -28,9 +29,7 @@ const SolarPanelDcToAcRatioInput = ({ setDialogVisible }: { setDialogVisible: (b
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const solarPanel = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
-  ) as SolarPanelModel;
+  const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

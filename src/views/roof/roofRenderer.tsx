@@ -239,7 +239,6 @@ export const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: strin
       } else {
         for (const e of state.elements) {
           if (e.id === id) {
-            e.selected = true;
             state.selectedElement = e;
             if (state.multiSelectionsMode) {
               if (state.selectedElementIdSet.has(id)) {
@@ -256,8 +255,6 @@ export const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: strin
                 state.modelTreeExpandedKeys = [id];
               });
             }
-          } else {
-            e.selected = false;
           }
         }
       }
@@ -519,7 +516,6 @@ export const handleContextMenu = (e: ThreeEvent<MouseEvent>, id: string) => {
       state.pastePoint.copy(e.intersections[0].point);
       for (const e of state.elements) {
         if (e.id === id) {
-          e.selected = true;
           state.selectedElement = e;
 
           // right click on selected element
@@ -545,8 +541,6 @@ export const handleContextMenu = (e: ThreeEvent<MouseEvent>, id: string) => {
               state.selectedElementIdSet.add(id);
             }
           }
-        } else {
-          e.selected = false;
         }
       }
     });

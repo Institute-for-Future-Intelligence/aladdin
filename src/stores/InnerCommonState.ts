@@ -15,12 +15,9 @@ export class InnerCommonStoreState {
       if (intersectableObjects[0].object === e.eventObject) {
         for (const elem of state.elements) {
           if (elem.id === id) {
-            elem.selected = true;
             state.selectedElement = elem;
             // TODO: lz is now zero for roof. So this may need to be set from elsewhere for roofs.
             state.selectedElementHeight = elem.lz;
-          } else {
-            elem.selected = false;
           }
         }
 
@@ -93,9 +90,6 @@ export class InnerCommonStoreState {
 
   static selectNone(state: CommonStoreState) {
     state.selectedElementIdSet.clear();
-    for (const e of state.elements) {
-      e.selected = false;
-    }
     state.selectedElement = null;
     state.selectedElementIdSet.clear();
   }

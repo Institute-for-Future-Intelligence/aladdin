@@ -145,7 +145,6 @@ const Door = (doorModel: DoorModel) => {
       } else {
         for (const e of state.elements) {
           if (e.id === id) {
-            e.selected = true;
             state.selectedElement = e;
 
             if (isContextMenu) {
@@ -184,8 +183,6 @@ const Door = (doorModel: DoorModel) => {
                 state.selectedElementIdSet.add(id);
               }
             }
-          } else {
-            e.selected = false;
           }
         }
       }

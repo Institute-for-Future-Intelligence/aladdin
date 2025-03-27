@@ -164,7 +164,6 @@ const Window = (windowModel: WindowModel) => {
       } else {
         for (const e of state.elements) {
           if (e.id === id) {
-            e.selected = true;
             state.selectedElement = e;
 
             if (isContextMenu) {
@@ -203,8 +202,6 @@ const Window = (windowModel: WindowModel) => {
                 state.selectedElementIdSet.add(id);
               }
             }
-          } else {
-            e.selected = false;
           }
         }
       }

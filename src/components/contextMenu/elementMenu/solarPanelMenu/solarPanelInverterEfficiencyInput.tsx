@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -15,6 +15,7 @@ import { Util } from '../../../../Util';
 import { ZERO_TOLERANCE } from '../../../../constants';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
+import { useSelectedElement } from '../menuHooks';
 
 const SolarPanelInverterEfficiencyInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -27,9 +28,7 @@ const SolarPanelInverterEfficiencyInput = ({ setDialogVisible }: { setDialogVisi
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const solarPanel = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
-  ) as SolarPanelModel;
+  const solarPanel = useSelectedElement(ObjectType.SolarPanel) as SolarPanelModel;
 
   const [inputValue, setInputValue] = useState(solarPanel?.inverterEfficiency ?? 0.95);
 

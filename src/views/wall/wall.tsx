@@ -1729,9 +1729,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         addElementByClick(pointer, true);
       } else if (useStore.getState().groupActionMode) {
         setCommonStore((state) => {
-          for (const e of state.elements) {
-            e.selected = e.id === parentId;
-          }
           if (!state.multiSelectionsMode) {
             state.selectedElementIdSet.clear();
           }
@@ -2181,11 +2178,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       objectTypeToAdd === ObjectType.None
     ) {
       if (useStore.getState().groupActionMode) {
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            e.selected = e.id === parentId;
-          }
-        });
         e.stopPropagation();
       } else if (isAllowedToSelectMe()) {
         useStore.getState().selectMe(id, e, ActionType.Select);
@@ -2199,9 +2191,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     if (e.button === 2 || e.intersections.length === 0 || e.intersections[0].object !== e.eventObject) return;
     if (useStore.getState().groupActionMode) {
       setCommonStore((state) => {
-        for (const e of state.elements) {
-          e.selected = e.id === parentId;
-        }
         state.selectedElementIdSet.clear();
         state.selectedElementIdSet.add(parentId);
       });

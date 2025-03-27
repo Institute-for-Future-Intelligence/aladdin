@@ -1118,9 +1118,6 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           selectNone() {
             immerSet((state: CommonStoreState) => {
               state.selectedElementIdSet.clear();
-              for (const e of state.elements) {
-                e.selected = false;
-              }
               state.selectedElement = null;
               if (state.viewState.showModelTree) {
                 usePrimitiveStore.getState().set((s) => {
@@ -1176,7 +1173,6 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   }
                   for (const elem of state.elements) {
                     if (elem.id === id) {
-                      elem.selected = true;
                       state.selectedElement = elem;
                       // TODO: lz is now zero for roof. So this may need to be set from elsewhere for roofs.
                       state.selectedElementHeight = elem.lz;
@@ -1237,8 +1233,6 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                           }
                         }
                       }
-                    } else {
-                      elem.selected = false;
                     }
                     if (state.viewState.showModelTree) {
                       usePrimitiveStore.getState().set((s) => {
@@ -3031,7 +3025,6 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   } else if (!autoDeleted) {
                     state.deletedElements = [elem];
                   }
-                  elem.selected = false;
                   switch (elem.type) {
                     case ObjectType.Roof: {
                       const roof = elem as RoofModel;
