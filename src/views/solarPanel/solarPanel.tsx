@@ -54,6 +54,7 @@ const RotateHandleDist = 1;
 const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   const {
     id,
+    parentId,
     cx,
     cy,
     cz,
@@ -91,6 +92,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   const [hovered, setHovered] = useState(false);
   const [showXYIntersectionPlane, setShowXYIntersectionPlane] = useState(false);
   const [showPolarGrid, setShowPolarGrid] = useState(false);
+  const [polarGridRotation, setPolarGridRotation] = useState(0);
 
   // meshes ref
   const groupRef = useRef<Group>(null!);
@@ -116,6 +118,8 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   const newParentTypeRef = useRef<ObjectType | null>(null);
   const operationRef = useRef<Operation | null>(null);
   const parentGroupRef = useRef<Object3D | null>(null); // todo: improve performance
+  const onSlopeRef = useRef(false);
+  const slopedFoundationModelRef = useRef<FoundationModel | null>(null);
 
   const surfaceType = useMemo(
     () => SolarPanelUtil.getSurfaceType(parentType, new Vector3().fromArray(normal)),
@@ -371,11 +375,30 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
   };
 
   const getLimitedResizeDistance = (distance: number, operation: Operation) => {
+    if (onSlopeRef.current) return distance;
     if (operation === Operation.ResizeX) {
       return distance;
     } else {
       const max = Math.abs((2 * poleHeight) / Math.sin(tiltAngle));
       return Util.clamp(distance, -max, max);
+    }
+  };
+
+  const handleOnSlope = () => {
+    if (parentType === ObjectType.Foundation) {
+      const f = useStore
+        .getState()
+        .elements.find((e) => e.id === parentId && e.type === ObjectType.Foundation) as FoundationModel;
+      if (f && f.enableSlope && f.slope) {
+        onSlopeRef.current = true;
+        slopedFoundationModelRef.current = f;
+      } else {
+        onSlopeRef.current = false;
+        slopedFoundationModelRef.current = null;
+      }
+    } else {
+      onSlopeRef.current = false;
+      slopedFoundationModelRef.current = null;
     }
   };
 
@@ -469,6 +492,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
       topAzimuthGroupRef.current.localToWorld(anchorRef.current.set(-e.object.position.x, -e.object.position.y, 0));
       topAzimuthGroupRef.current.getWorldPosition(dirVectorRef.current).sub(anchorRef.current).normalize();
     }
+    handleOnSlope();
     setShowXYIntersectionPlane(true);
     parentGroupRef.current = SolarPanelUtil.findParentGroup(groupRef.current, [
       WALL_GROUP_NAME,
@@ -496,6 +520,18 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
     anchorRef.current.z = 0;
     setShowXYIntersectionPlane(true);
     setShowPolarGrid(true);
+    if (parentType === ObjectType.Foundation) {
+      const f = useStore
+        .getState()
+        .elements.find((e) => e.id === parentId && e.type === ObjectType.Foundation) as FoundationModel;
+      if (f && f.enableSlope && f.slope) {
+        setPolarGridRotation(-f.slope);
+      } else {
+        setPolarGridRotation(0);
+      }
+    } else {
+      setPolarGridRotation(0);
+    }
     parentGroupRef.current = SolarPanelUtil.findParentGroup(groupRef.current, [
       FOUNDATION_GROUP_NAME,
       CUBOID_WRAPPER_NAME,
@@ -512,6 +548,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
     } else {
       topAzimuthGroupRef.current.getWorldPosition(anchorRef.current);
     }
+    handleOnSlope();
   };
 
   const onTiltHandlePointerMove = (e: ThreeEvent<PointerEvent>) => {
@@ -528,8 +565,12 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
       updateAzimuthGroupZ(z);
       updateTilt(a, -z);
     } else {
-      const maxAngle = poleHeight >= hly ? HALF_PI : Math.asin(poleHeight / hly);
-      updateTilt(Util.clamp(angle, -maxAngle, maxAngle), 0);
+      if (onSlopeRef.current) {
+        updateTilt(Util.clamp(angle, -HALF_PI, HALF_PI), 0);
+      } else {
+        const maxAngle = poleHeight >= hly ? HALF_PI : Math.asin(poleHeight / hly);
+        updateTilt(Util.clamp(angle, -maxAngle, maxAngle), 0);
+      }
     }
   };
 
@@ -904,6 +945,11 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
           groupRef.current.position.x = center.x;
           groupRef.current.position.y = center.y;
           groupRef.current.position.z = center.z;
+
+          if (onSlopeRef.current && slopedFoundationModelRef.current) {
+            const f = slopedFoundationModelRef.current;
+            groupRef.current.position.z = f.cz + Util.getZOnSlope(f.lx, f.slope, center.x);
+          }
           setMaterialSize(operationRef.current, dist);
         }
 
@@ -956,8 +1002,6 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
     }
   }, [poleHeight, surfaceType, tiltAngle, trackerEnabled]);
 
-  // ==============================================
-  // ==============================================
   return (
     <group
       name={`Ref_Solar_Panel_Group ${id}`}
@@ -1095,7 +1139,11 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
       />
 
       {/* polar grid group */}
-      {showPolarGrid && <PolarGrid ref={polarGridRef} lx={lx} ly={ly} relativeAzimuth={relativeAzimuth} />}
+      {showPolarGrid && (
+        <group rotation={[0, polarGridRotation, 0]}>
+          <PolarGrid ref={polarGridRef} lx={lx} ly={ly} relativeAzimuth={relativeAzimuth} />
+        </group>
+      )}
     </group>
   );
 });
