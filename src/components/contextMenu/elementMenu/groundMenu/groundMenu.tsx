@@ -17,9 +17,10 @@ import {
   LeafShedDayInput,
   LockElementsItem,
   RemoveGroundElementsItem,
-  WaterSurfaceCheckbox,
+  SurfaceTypeRadioGroup,
 } from './groundMenuItems';
 import { MONTHS_ABBV } from 'src/constants';
+import { Surface } from 'recharts';
 
 type GroundCounterItem = { key: keyof ElementCounter; type: ObjectType; itemLabel: string; modalTitle: string };
 
@@ -170,8 +171,14 @@ export const createGroundMenu = () => {
   });
 
   items.push({
-    key: 'water-surface',
-    label: <WaterSurfaceCheckbox />,
+    key: 'surface-type-submenu',
+    label: <MenuItem>{i18n.t('groundMenu.SurfaceType', lang)}</MenuItem>,
+    children: [
+      {
+        key: 'surface-type',
+        label: <SurfaceTypeRadioGroup />,
+      },
+    ],
   });
 
   if (!useStore.getState().viewState.waterSurface) {

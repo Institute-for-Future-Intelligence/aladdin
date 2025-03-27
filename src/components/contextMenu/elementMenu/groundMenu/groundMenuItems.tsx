@@ -11,7 +11,7 @@ import { UndoableRemoveAll } from '../../../../undo/UndoableRemoveAll';
 import { UndoableCheck } from '../../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
-import { Checkbox, InputNumber, Modal, Space } from 'antd';
+import { Checkbox, InputNumber, Modal, Radio, type RadioChangeEvent, Space } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { ColorResult, CompactPicker } from 'react-color';
 import { MenuItem } from '../../menuItems';
@@ -73,7 +73,7 @@ export const GroundImageCheckbox = ({ forModelTree }: { forModelTree?: boolean }
   );
 };
 
-export const WaterSurfaceCheckbox = () => {
+export const SurfaceTypeRadioGroup = () => {
   const waterSurface = useStore(Selector.viewState.waterSurface);
   const lang = useLanguage();
 
@@ -83,28 +83,35 @@ export const WaterSurfaceCheckbox = () => {
     });
   };
 
-  const onChange = (e: CheckboxChangeEvent) => {
-    const checked = e.target.checked;
-    const undoableCheck = {
-      name: 'Water Surface',
+  const onChange = (e: RadioChangeEvent) => {
+    const oldValue = waterSurface;
+    const newValue = e.target.value;
+    const undoableChange = {
+      name: 'Select Surface Type',
       timestamp: Date.now(),
-      checked: checked,
+      oldValue,
+      newValue,
       undo: () => {
-        setWaterSurface(!undoableCheck.checked);
+        setWaterSurface(undoableChange.oldValue === 'Water');
       },
       redo: () => {
-        setWaterSurface(undoableCheck.checked);
+        setWaterSurface(undoableChange.newValue === 'Water');
       },
-    } as UndoableCheck;
-    useStore.getState().addUndoable(undoableCheck);
-    setWaterSurface(checked);
+    } as UndoableChange;
+    useStore.getState().addUndoable(undoableChange);
+    setWaterSurface(newValue === 'Water');
   };
 
   return (
     <MenuItem stayAfterClick noPadding update>
-      <Checkbox style={{ width: '100%' }} checked={waterSurface} onChange={onChange}>
-        {i18n.t('groundMenu.WaterSurface', lang)}
-      </Checkbox>
+      <Radio.Group value={waterSurface ? 'Water' : 'Land'} onChange={onChange}>
+        <Radio style={{ width: '100%', paddingBottom: '6px' }} key={'Land'} value={'Land'}>
+          {i18n.t('groundMenu.LandSurface', lang)}
+        </Radio>
+        <Radio style={{ width: '100%' }} key={'Water'} value={'Water'}>
+          {i18n.t('groundMenu.WaterSurface', lang)}
+        </Radio>
+      </Radio.Group>
     </MenuItem>
   );
 };

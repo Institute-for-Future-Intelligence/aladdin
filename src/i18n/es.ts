@@ -728,7 +728,9 @@ export const i18n_es = {
       LeafOffDay: 'Leaf-Off Day',
       Albedo: 'Albedo',
       ImageOnGround: 'Imagen en el suelo',
-      WaterSurface: 'Water Surface',
+      SurfaceType: 'Surface Type',
+      LandSurface: 'Land',
+      WaterSurface: 'Water',
       RemoveAllUnlockedTrees: 'Eliminar todos los árboles',
       RemoveAllUnlockedFlowers: 'Remove All Unlocked Flowers',
       RemoveAllUnlockedSolarPanels: 'Remove All Unlocked Solar Panels',
@@ -756,7 +758,7 @@ export const i18n_es = {
     },
 
     foundationMenu: {
-      EnableSlope: 'Enable Slope',
+      SlopeAngle: 'Slope Angle',
       Slope: 'Slope',
       RemoveAllUnlockedSolarPanels: 'Eliminar todos los paneles solares',
       RemoveAllUnlockedParabolicTroughs: 'Remove All Unlocked Parabolic Troughs',

@@ -122,7 +122,7 @@ export const SlopeCheckbox = ({ foundation }: FoundationItemProps) => {
   return (
     <MenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={foundation.enableSlope} onChange={onChange}>
-        {i18n.t('foundationMenu.EnableSlope', lang)}
+        {i18n.t('foundationMenu.Slope', lang)}
       </Checkbox>
     </MenuItem>
   );

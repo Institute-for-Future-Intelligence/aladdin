@@ -136,24 +136,16 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     (foundation.solarStructure === undefined || foundation.solarStructure === SolarStructure.None)
   ) {
     items.push({
-      key: 'enable-solpe',
+      key: 'enable-slope',
       label: <SlopeCheckbox foundation={foundation} />,
-    });
-  }
-
-  if (counterAll.gotSome()) {
-    items.push({
-      key: 'lock-unlock-clear-on-foundation',
-      label: <MenuItem>{i18n.t('word.Elements', lang)}</MenuItem>,
-      children: createFoundationElementCounterSubmenu(foundation, counterAll, counterUnlocked),
     });
   }
 
   if (editable) {
     if (foundation.enableSlope) {
       items.push({
-        key: 'foundation-slope-input',
-        label: <DialogItem Dialog={FoundationSlopeInput}>{i18n.t('foundationMenu.Slope', lang)} ...</DialogItem>,
+        key: 'foundation-slope-angle-input',
+        label: <DialogItem Dialog={FoundationSlopeInput}>{i18n.t('foundationMenu.SlopeAngle', lang)} ...</DialogItem>,
       });
     }
 
@@ -167,21 +159,6 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     items.push({
       key: 'foundation-texture',
       label: <DialogItem Dialog={FoundationTextureSelection}>{i18n.t('word.Texture', lang)} ...</DialogItem>,
-    });
-
-    items.push({
-      key: 'foundation-length',
-      label: <DialogItem Dialog={FoundationLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>,
-    });
-
-    items.push({
-      key: 'foundation-width',
-      label: <DialogItem Dialog={FoundationWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
-    });
-
-    items.push({
-      key: 'foundation-height',
-      label: <DialogItem Dialog={FoundationHeightInput}>{i18n.t('word.Height', lang)} ...</DialogItem>,
     });
 
     items.push({
@@ -210,6 +187,47 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
     items.push({
       key: 'building-programmable-hvac',
       label: <DialogItem Dialog={BuildingHVACSystem}>{i18n.t('HVACMenu.BuildingHVACSystem', lang)} ...</DialogItem>,
+    });
+  }
+
+  if (counterAll.gotSome()) {
+    items.push({
+      key: 'lock-unlock-clear-on-foundation',
+      label: <MenuItem>{i18n.t('word.Elements', lang)}</MenuItem>,
+      children: createFoundationElementCounterSubmenu(foundation, counterAll, counterUnlocked),
+    });
+  }
+
+  if (editable) {
+    items.push({
+      key: 'foundation-size-submenu',
+      label: <MenuItem>{i18n.t('word.Size', lang)}</MenuItem>,
+      children: [
+        {
+          key: 'foundation-length',
+          label: (
+            <DialogItem noPadding Dialog={FoundationLengthInput}>
+              {i18n.t('word.Length', lang)} ...
+            </DialogItem>
+          ),
+        },
+        {
+          key: 'foundation-width',
+          label: (
+            <DialogItem noPadding Dialog={FoundationWidthInput}>
+              {i18n.t('word.Width', lang)} ...
+            </DialogItem>
+          ),
+        },
+        {
+          key: 'foundation-height',
+          label: (
+            <DialogItem noPadding Dialog={FoundationHeightInput}>
+              {i18n.t('word.Height', lang)} ...
+            </DialogItem>
+          ),
+        },
+      ],
     });
   }
 

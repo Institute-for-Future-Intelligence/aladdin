@@ -726,6 +726,8 @@ export const i18n_zh_tw = {
       LeafOffDay: '樹葉脫落的日子',
       Albedo: '反照率',
       ImageOnGround: '地面顯示圖像',
+      SurfaceType: '表面類型',
+      LandSurface: '陸地',
       WaterSurface: '水面',
       RemoveAllUnlockedTrees: '刪除所有非固定的樹木',
       RemoveAllUnlockedFlowers: '删除所有非固定的花草',
@@ -754,8 +756,8 @@ export const i18n_zh_tw = {
     },
 
     foundationMenu: {
-      EnableSlope: '啓用斜坡',
-      Slope: '坡度',
+      SlopeAngle: '斜坡角度',
+      Slope: '斜坡',
       RemoveAllUnlockedSolarPanels: '刪除此地基上所有非固定的光伏板',
       RemoveAllUnlockedParabolicTroughs: '刪除此地基上所有非固定的拋物線槽',
       RemoveAllUnlockedParabolicDishes: '刪除此地基上所有非固定的拋物線碟',

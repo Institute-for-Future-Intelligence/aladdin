@@ -731,7 +731,9 @@ export const i18n_ua = {
       LeafOffDay: 'День опадання листя',
       Albedo: 'Альбедо',
       ImageOnGround: 'Зображення на поверхні',
-      WaterSurface: 'Поверхня води',
+      SurfaceType: 'Surface Type',
+      LandSurface: 'Land',
+      WaterSurface: 'Water',
       RemoveAllUnlockedTrees: 'Видалити всі розблоковані дерева',
       RemoveAllUnlockedFlowers: 'Видалити всі розблоковані квіти',
       RemoveAllUnlockedSolarPanels: 'Remove All Unlocked Solar Panels',
@@ -759,7 +761,7 @@ export const i18n_ua = {
     },
 
     foundationMenu: {
-      EnableSlope: 'Enable Slope',
+      SlopeAngle: 'Slope Angle',
       Slope: 'Slope',
       RemoveAllUnlockedSolarPanels: 'Видалити всі незаблоковані сонячні панелі',
       RemoveAllUnlockedParabolicTroughs: 'Видалити всі незаблоковані параболічні сонячні колектори',

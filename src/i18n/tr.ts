@@ -729,7 +729,9 @@ export const i18n_tr = {
       LeafOffDay: 'Leaf-Off Day',
       Albedo: 'Albedo',
       ImageOnGround: 'Yer Görüntüsü',
-      WaterSurface: 'Water Surface',
+      SurfaceType: 'Surface Type',
+      LandSurface: 'Land',
+      WaterSurface: 'Water',
       RemoveAllUnlockedTrees: 'Tüm Ağaçları Kaldır',
       RemoveAllUnlockedFlowers: 'Remove All Unlocked Flowers',
       RemoveAllUnlockedSolarPanels: 'Remove All Unlocked Solar Panels',
@@ -757,7 +759,7 @@ export const i18n_tr = {
     },
 
     foundationMenu: {
-      EnableSlope: 'Enable Slope',
+      SlopeAngle: 'Slope Angle',
       Slope: 'Slope',
       RemoveAllUnlockedSolarPanels: 'Tüm Kilitlenmemiş Güneş Panellerini Kaldır',
       RemoveAllUnlockedParabolicTroughs: 'Tüm Kilitlenmemiş Parabolik Olukları Kaldır',
