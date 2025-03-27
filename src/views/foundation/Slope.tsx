@@ -562,8 +562,7 @@ const Slope = ({
   }, [transparent]);
 
   const receiveShadow = enableShadow && !showHeatmap;
-  // pv limitation (tilt/resize)
-  // cube texture on building simulation
+
   return (
     // don't wrap a group here, element's movement need parent object.
     <>

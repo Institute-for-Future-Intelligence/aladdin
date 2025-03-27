@@ -1131,6 +1131,15 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     }
   }, [_transparent]);
 
+  const showHeatMap = Boolean(
+    showSolarRadiationHeatmap &&
+      heatmapTextureEast &&
+      heatmapTextureWest &&
+      heatmapTextureNorth &&
+      heatmapTextureSouth &&
+      heatmapTextureTop,
+  );
+
   const faces: number[] = [0, 1, 2, 3, 4, 5];
   const textures = [
     showSolarRadiationHeatmap && heatmapTextureEast ? heatmapTextureEast : textureEast,
@@ -1144,7 +1153,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
     cuboidModel && cuboidModel.faceColors ? (
       faces.map((i) => {
         if (textureTypes && textureTypes[i] !== CuboidTexture.NoTexture) {
-          return showSolarRadiationHeatmap ? (
+          return showHeatMap ? (
             <meshBasicMaterial
               key={i}
               side={FrontSide}
@@ -1166,7 +1175,7 @@ const Cuboid = (cuboidModel: CuboidModel) => {
             />
           );
         } else {
-          return showSolarRadiationHeatmap ? (
+          return showHeatMap ? (
             <meshBasicMaterial
               key={i}
               side={FrontSide}
