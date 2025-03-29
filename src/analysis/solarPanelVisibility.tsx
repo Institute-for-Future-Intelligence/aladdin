@@ -113,6 +113,7 @@ const SolarPanelVisibility = React.memo(() => {
     if (!parent) throw new Error('parent of solar panel does not exist');
     let rooftop = false;
     const walltop = panel.parentType === ObjectType.Wall;
+    const cubeside = parent.type === ObjectType.Cuboid && !Util.isEqual(panel.normal[2], 1);
     if (parent.type === ObjectType.Roof) {
       parent = getFoundation(parent);
       if (!parent) throw new Error('foundation of solar panel does not exist');
@@ -133,7 +134,8 @@ const SolarPanelVisibility = React.memo(() => {
     if (walltop) {
       normal.applyEuler(new Euler(0, 0, (parent as WallModel).relativeAngle));
     }
-    const zRot = parent.rotation[2] + panel.relativeAzimuth;
+    const rot = parent.type === ObjectType.Cuboid ? Util.getWorldDataById(parent.id).rot : parent.rotation[2];
+    let zRot = rot + (walltop || cubeside ? 0 : panel.relativeAzimuth);
     if (Math.abs(panel.tiltAngle) > 0.001) {
       normal.applyEuler(new Euler(panel.tiltAngle, 0, zRot, 'ZYX'));
     }

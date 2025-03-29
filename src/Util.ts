@@ -1605,6 +1605,14 @@ export class Util {
     } else {
       v.set(x * parent.lx, y * parent.ly, z * parent.lz);
     }
+    if (parent.type === ObjectType.Cuboid) {
+      const { rot, pos } = Util.getWorldDataById(parent.id);
+      v.applyEuler(new Euler(0, 0, rot));
+      v.x += pos.x;
+      v.y += pos.y;
+      v.z += pos.z;
+      return v;
+    }
     v.applyEuler(new Euler().fromArray(parent.rotation as XYZO));
     v.x += parent.cx;
     v.y += parent.cy;

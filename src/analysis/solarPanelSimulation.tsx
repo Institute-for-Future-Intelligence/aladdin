@@ -887,6 +887,7 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
     const rooftop = panel.parentType === ObjectType.Roof;
     const walltop = panel.parentType === ObjectType.Wall;
     const slopetop = parent.type === ObjectType.Foundation && (parent as FoundationModel).enableSlope;
+    const cubeside = parent.type === ObjectType.Cuboid && !Util.isEqual(panel.normal[2], 1);
     if (rooftop) {
       // x and y coordinates of a rooftop solar panel are relative to the foundation
       parent = getFoundation(parent);
@@ -899,9 +900,9 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
     const center = walltop
       ? Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, getFoundation(panel), panel.lz)
       : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, undefined, undefined, true);
-    const rot = parent.rotation[2];
+    const rot = parent.type === ObjectType.Cuboid ? Util.getWorldDataById(parent.id).rot : parent.rotation[2];
     let angle = panel.tiltAngle;
-    let zRot = rot + (walltop ? 0 : panel.relativeAzimuth);
+    let zRot = rot + (walltop || cubeside ? 0 : panel.relativeAzimuth);
     let flat = true;
     if (rooftop) {
       // z coordinate of a rooftop solar panel is absolute
