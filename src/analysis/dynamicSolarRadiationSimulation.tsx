@@ -1711,8 +1711,6 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
       const f = parent as FoundationModel;
       center.z = f.lz + Util.getZOnSlope(f.lx, f.slope, dish.cx * f.lx);
     }
-    const normal = new Vector3().fromArray(dish.normal);
-    const originalNormal = normal.clone();
     const lx = dish.lx;
     const ly = dish.ly;
     const depth = (lx * lx) / (4 * dish.latusRectum); // the distance from the bottom to the aperture circle
@@ -1734,10 +1732,10 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
         .map(() => Array(ny).fill(0));
       cellOutputsMapRef.current.set(dish.id, cellOutputs);
     }
-    const rotatedSunDirection = sunDirection.clone();
-    const qRot = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
+    // always facing the sun, so normal should euqal sun direction
+    const normal = sunDirection.clone().normalize();
+    const qRot = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, sunDirection);
     const normalEuler = new Euler().setFromQuaternion(qRot);
-    normal.copy(originalNormal.clone().applyEuler(normalEuler));
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(
       world.ground,
@@ -1745,7 +1743,7 @@ const DynamicSolarRadiationSimulation = React.memo(({ city }: DynamicSolarRadiat
       normal,
       peakRadiation,
     );
-    const dot = normal.dot(sunDirection);
+    const dot = 1;
     const v2d = new Vector2();
     const dv = new Vector3();
     let tmpX = 0;

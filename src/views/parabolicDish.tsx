@@ -124,27 +124,26 @@ const ParabolicDish = React.memo((dish: ParabolicDishModel) => {
     }
   });
 
-  if (parentId) {
-    if (parent) {
-      switch (parent.type) {
-        case ObjectType.Foundation:
-          rz = actualPoleHeight + hz + parent.lz;
-          const foundation = parent as FoundationModel;
-          if (foundation.enableSlope) {
-            rz = rz + Util.getZOnSlope(foundation.lx, foundation.slope, cx * foundation.lx);
-          }
-          if (Util.isZero(rotation[2])) {
-            rx = parent.cx + cx * parent.lx;
-            ry = parent.cy + cy * parent.ly;
-          } else {
-            // we must rotate the real length, not normalized length
-            const v = new Vector3(cx * parent.lx, cy * parent.ly, 0);
-            v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
-            rx = parent.cx + v.x;
-            ry = parent.cy + v.y;
-          }
-          break;
-      }
+  // set relative position
+  if (parent) {
+    switch (parent.type) {
+      case ObjectType.Foundation:
+        rz = actualPoleHeight + hz + parent.lz;
+        const foundation = parent as FoundationModel;
+        if (foundation.enableSlope) {
+          rz = rz + Util.getZOnSlope(foundation.lx, foundation.slope, cx * foundation.lx);
+        }
+        if (Util.isZero(rotation[2])) {
+          rx = parent.cx + cx * parent.lx;
+          ry = parent.cy + cy * parent.ly;
+        } else {
+          // we must rotate the real length, not normalized length
+          const v = new Vector3(cx * parent.lx, cy * parent.ly, 0);
+          v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
+          rx = parent.cx + v.x;
+          ry = parent.cy + v.y;
+        }
+        break;
     }
   }
 
@@ -229,21 +228,20 @@ const ParabolicDish = React.memo((dish: ParabolicDishModel) => {
   const sunDirection = useMemo(() => {
     return getSunDirection(new Date(date), latitude);
   }, [date, latitude]);
-  const rot = useMemo(() => getElementById(parentId)?.rotation[2], [parentId]);
-  const rotatedSunDirection = rot ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot) : sunDirection;
+  const rot = useMemo(() => parent?.rotation[2] ?? 0, [parent?.rotation[2]]);
 
   const relativeEuler = useMemo(() => {
     if (sunDirection.z > 0) {
-      const r = Math.hypot(rotatedSunDirection.x, rotatedSunDirection.y);
+      const r = Math.hypot(sunDirection.x, sunDirection.y);
       return new Euler(
-        Math.atan2(r, rotatedSunDirection.z),
+        Math.atan2(r, sunDirection.z),
         0,
-        Math.atan2(rotatedSunDirection.y, rotatedSunDirection.x) + HALF_PI,
+        Math.atan2(sunDirection.y, sunDirection.x) + HALF_PI - rot,
         'ZXY',
       );
     }
     return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
-  }, [sunDirection, tiltAngle, relativeAzimuth, rotatedSunDirection.x, rotatedSunDirection.y, rotatedSunDirection.z]);
+  }, [sunDirection, tiltAngle, relativeAzimuth, sunDirection.x, sunDirection.y, sunDirection.z, rot]);
 
   const poleZ = -(actualPoleHeight + lz) / 2;
   const detailed = elements.length < 50;
@@ -317,7 +315,8 @@ const ParabolicDish = React.memo((dish: ParabolicDishModel) => {
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
   const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 3;
   const sunPoint = sunDirection.clone().multiplyScalar(sunBeamLength);
-  const focalPoint = new Vector3(0, 0, focalLength).applyEuler(relativeEuler);
+  const focalEuler = useMemo(() => new Euler(relativeEuler.x, 0, relativeEuler.z + rot, 'ZXY'), [relativeEuler, rot]);
+  const focalPoint = useMemo(() => new Vector3(0, 0, focalLength).applyEuler(focalEuler), [focalLength, focalEuler]);
 
   return (
     <group name={'Parabolic Dish Group ' + id} rotation={euler} position={[rx, ry, rz + hz]}>
@@ -725,18 +724,18 @@ const ParabolicDish = React.memo((dish: ParabolicDishModel) => {
           userData={{ unintersectable: true }}
           points={[
             focalPoint,
-            new Vector3(-0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler),
+            new Vector3(-0.3 * hx, 0, 0.09 * depth).applyEuler(focalEuler),
             sunPoint,
-            new Vector3(-0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler),
+            new Vector3(-0.6 * hx, 0, 0.36 * depth).applyEuler(focalEuler),
             focalPoint,
-            new Vector3(-0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler),
+            new Vector3(-0.9 * hx, 0, 0.81 * depth).applyEuler(focalEuler),
             sunPoint,
             focalPoint,
-            new Vector3(0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler),
+            new Vector3(0.3 * hx, 0, 0.09 * depth).applyEuler(focalEuler),
             sunPoint,
-            new Vector3(0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler),
+            new Vector3(0.6 * hx, 0, 0.36 * depth).applyEuler(focalEuler),
             focalPoint,
-            new Vector3(0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler),
+            new Vector3(0.9 * hx, 0, 0.81 * depth).applyEuler(focalEuler),
             sunPoint,
           ]}
           name={'Sun Beams'}
