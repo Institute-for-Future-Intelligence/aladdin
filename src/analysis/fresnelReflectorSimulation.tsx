@@ -468,6 +468,10 @@ const FresnelReflectorSimulation = React.memo(({ city }: FresnelReflectorSimulat
     if (!absorberPipe) return;
     const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(reflector.cx, reflector.cy, reflector.cz, parent);
+    if (foundation.enableSlope) {
+      const f = parent as FoundationModel;
+      center.z = f.lz + Util.getZOnSlope(f.lx, f.slope, reflector.cx * f.lx);
+    }
     const normal = new Vector3().fromArray(reflector.normal);
     const originalNormal = normal.clone();
     const lx = reflector.lx;
@@ -480,7 +484,7 @@ const FresnelReflectorSimulation = React.memo(({ city }: FresnelReflectorSimulat
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = foundation.lz + actualPoleHeight + reflector.lz;
+    const z0 = (foundation.enableSlope ? center.z : parent.lz) + actualPoleHeight + reflector.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const rot = parent.rotation[2];

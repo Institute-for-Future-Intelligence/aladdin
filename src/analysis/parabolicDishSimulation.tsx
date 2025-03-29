@@ -19,6 +19,7 @@ import { SunMinutes } from './SunMinutes';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { useLanguage, useWeather } from '../hooks';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 export interface ParabolicDishSimulationProps {
   city: string | null;
@@ -464,8 +465,11 @@ const ParabolicDishSimulation = React.memo(({ city }: ParabolicDishSimulationPro
     if (parent.type !== ObjectType.Foundation) return;
     const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(dish.cx, dish.cy, dish.cz, parent);
-    const normal = new Vector3().fromArray(dish.normal);
-    const originalNormal = normal.clone();
+    const slopetop = parent.type === ObjectType.Foundation && (parent as FoundationModel).enableSlope;
+    if (slopetop) {
+      const f = parent as FoundationModel;
+      center.z = f.lz + Util.getZOnSlope(f.lx, f.slope, dish.cx * f.lx);
+    }
     const lx = dish.lx;
     const ly = dish.ly;
     const nx = Math.max(2, Math.round(dish.lx / cellSize));
@@ -478,20 +482,13 @@ const ParabolicDishSimulation = React.memo(({ city }: ParabolicDishSimulationPro
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = parent.lz + actualPoleHeight + dish.lz + depth;
+    const z0 = (slopetop ? center.z : parent.lz) + actualPoleHeight + dish.lz + depth;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
-    const rot = parent.rotation[2];
-    const zRot = rot + dish.relativeAzimuth;
-    const zRotZero = Util.isZero(zRot);
-    const rotatedSunDirection = rot
-      ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
-      : sunDirection.clone();
-    const qRot = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
+    const qRot = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, sunDirection);
     const normalEuler = new Euler().setFromQuaternion(qRot);
-    normal.copy(originalNormal.clone().applyEuler(normalEuler));
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-    const dot = normal.dot(sunDirection);
+    const dot = 1;
     const v2d = new Vector2();
     const dv = new Vector3();
     let sum = 0;
@@ -500,7 +497,6 @@ const ParabolicDishSimulation = React.memo(({ city }: ParabolicDishSimulationPro
         if (dot > 0) {
           // simplify the simulation by using the aperture surface instead of the parabolic surface
           v2d.set(x0 + kx * dx, y0 + ky * dy);
-          if (!zRotZero) v2d.rotateAround(center2d, zRot);
           dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
           dv.applyEuler(normalEuler);
           v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);

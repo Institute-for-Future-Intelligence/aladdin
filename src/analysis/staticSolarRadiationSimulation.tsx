@@ -357,13 +357,18 @@ const StaticSolarRadiationSimulation = React.memo(({ city }: StaticSolarRadiatio
     const lx = foundation.lx;
     const ly = foundation.ly;
     const lz = foundation.lz;
-    const nx = Math.max(2, Math.round(lx / cellSize));
+    const lengthX = foundation.enableSlope ? foundation.lx / Math.cos(foundation.slope ?? 0) : foundation.lx;
+    const nx = Math.max(2, Math.round(lengthX / cellSize));
     const ny = Math.max(2, Math.round(ly / cellSize));
     const dx = lx / nx;
     const dy = ly / ny;
     const x0 = foundation.cx - lx / 2;
     const y0 = foundation.cy - ly / 2;
     const center2d = new Vector2(foundation.cx, foundation.cy);
+    const normal = new Vector3(0, 0, 1);
+    if (foundation.enableSlope && foundation.slope) {
+      normal.applyEuler(new Euler(0, -foundation.slope, foundation.rotation[2], 'ZXY'));
+    }
     const v = new Vector3();
     const cellOutputTotals = Array(nx)
       .fill(0)
@@ -377,21 +382,21 @@ const StaticSolarRadiationSimulation = React.memo(({ city }: StaticSolarRadiatio
           // when the sun is out
           count++;
           const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-          const indirectRadiation = calculateDiffuseAndReflectedRadiation(
-            world.ground,
-            month,
-            UNIT_VECTOR_POS_Z,
-            peakRadiation,
-          );
-          const dot = UNIT_VECTOR_POS_Z.dot(sunDirection);
+          const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
+          const dot = normal.dot(sunDirection);
           const v2 = new Vector2();
           for (let kx = 0; kx < nx; kx++) {
             for (let ky = 0; ky < ny; ky++) {
               cellOutputTotals[kx][ky] += indirectRadiation;
               if (dot > 0) {
-                v2.set(x0 + (kx + 0.5) * dx, y0 + (ky + 0.5) * dy);
+                const vx = (kx + 0.5) * dx;
+                let vz = lz;
+                if (foundation.enableSlope) {
+                  vz = lz + Util.getZOnSlope(lx, foundation.slope, -lx / 2 + vx);
+                }
+                v2.set(x0 + vx, y0 + (ky + 0.5) * dy);
                 v2.rotateAround(center2d, foundation.rotation[2]);
-                v.set(v2.x, v2.y, lz);
+                v.set(v2.x, v2.y, vz);
                 if (!inShadow(foundation.id, v, sunDirection)) {
                   // direct radiation
                   cellOutputTotals[kx][ky] += dot * peakRadiation;

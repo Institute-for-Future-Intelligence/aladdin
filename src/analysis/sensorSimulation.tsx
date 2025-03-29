@@ -9,7 +9,7 @@ import {
   computeSunriseAndSunsetInMinutes,
   getSunDirection,
 } from './sunTools';
-import { Intersection, Object3D, Raycaster, Vector3 } from 'three';
+import { Euler, Intersection, Object3D, Raycaster, Vector3 } from 'three';
 import { useThree } from '@react-three/fiber';
 import { useStore } from '../stores/common';
 import { DatumEntry, ObjectType } from '../types';
@@ -542,8 +542,15 @@ const SensorSimulation = React.memo(({ city }: SensorSimulationProps) => {
       foundation ? (foundation as FoundationModel) : undefined,
     );
     const normal = new Vector3().fromArray(sensor.normal);
-    // TODO: right now we assume a parent rotation is always around the z-axis
-    normal.applyAxisAngle(UNIT_VECTOR_POS_Z, parent.rotation[2]);
+    if (parent.type === ObjectType.Foundation) {
+      const f = parent as FoundationModel;
+      if (f.enableSlope && f.slope) {
+        normal.applyEuler(new Euler(0, -f.slope, f.rotation[2], 'ZXY'));
+        position.z = f.lz + Util.getZOnSlope(f.lx, f.slope, sensor.lx * f.lx);
+      }
+    } else {
+      normal.applyAxisAngle(UNIT_VECTOR_POS_Z, parent.rotation[2]);
+    }
     const dayOfYear = Util.dayOfYear(now);
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const dot = normal.dot(sunDirection);
@@ -582,8 +589,15 @@ const SensorSimulation = React.memo(({ city }: SensorSimulationProps) => {
       foundation ? (foundation as FoundationModel) : undefined,
     );
     const normal = new Vector3().fromArray(sensor.normal);
-    // TODO: right now we assume a parent rotation is always around the z-axis
-    normal.applyAxisAngle(UNIT_VECTOR_POS_Z, parent.rotation[2]);
+    if (parent.type === ObjectType.Foundation) {
+      const f = parent as FoundationModel;
+      if (f.enableSlope && f.slope) {
+        normal.applyEuler(new Euler(0, -f.slope, f.rotation[2], 'ZXY'));
+        position.z = f.lz + Util.getZOnSlope(f.lx, f.slope, sensor.lx * f.lx);
+      }
+    } else {
+      normal.applyAxisAngle(UNIT_VECTOR_POS_Z, parent.rotation[2]);
+    }
     const year = now.getFullYear();
     const month = now.getMonth();
     const date = now.getDate();

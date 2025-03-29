@@ -19,6 +19,7 @@ import { SunMinutes } from './SunMinutes';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { useLanguage, useWeather } from '../hooks';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 export interface ParabolicTroughSimulationProps {
   city: string | null;
@@ -464,6 +465,11 @@ const ParabolicTroughSimulation = React.memo(({ city }: ParabolicTroughSimulatio
     if (parent.type !== ObjectType.Foundation) return;
     const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(trough.cx, trough.cy, trough.cz, parent);
+    const slopetop = parent.type === ObjectType.Foundation && (parent as FoundationModel).enableSlope;
+    if (slopetop) {
+      const f = parent as FoundationModel;
+      center.z = f.lz + Util.getZOnSlope(f.lx, f.slope, trough.cx * f.lx);
+    }
     const normal = new Vector3().fromArray(trough.normal);
     const originalNormal = normal.clone();
     const zRot = parent.rotation[2] + trough.relativeAzimuth;
@@ -480,7 +486,7 @@ const ParabolicTroughSimulation = React.memo(({ city }: ParabolicTroughSimulatio
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = parent.lz + actualPoleHeight + trough.lz + depth;
+    const z0 = (slopetop ? center.z : parent.lz) + actualPoleHeight + trough.lz + depth;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const rot = parent.rotation[2];

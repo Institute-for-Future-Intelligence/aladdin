@@ -18,6 +18,7 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { useLanguage } from '../hooks';
 import { WallModel } from 'src/models/WallModel';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 const SolarPanelVisibility = React.memo(() => {
   const world = useStore.getState().world;
@@ -117,11 +118,16 @@ const SolarPanelVisibility = React.memo(() => {
       if (!parent) throw new Error('foundation of solar panel does not exist');
       rooftop = true;
     }
+    const slopetop = parent.type === ObjectType.Foundation && (parent as FoundationModel).enableSlope;
     const center = walltop
       ? Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, getFoundation(panel), panel.lz)
       : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, undefined, undefined, true);
     if (rooftop) {
       center.z = panel.cz + parent.cz;
+    }
+    if (slopetop) {
+      const f = parent as FoundationModel;
+      center.z = f.lz + Util.getZOnSlope(f.lx, f.slope, panel.cx);
     }
     const normal = new Vector3().fromArray(panel.normal);
     if (walltop) {
@@ -141,7 +147,7 @@ const SolarPanelVisibility = React.memo(() => {
     const dz = lz / ny;
     const x0 = center.x - lx / 2;
     const y0 = center.y - ly / 2;
-    const z0 = (rooftop ? center.z : panel.poleHeight + center.z) - lz / 2;
+    const z0 = (rooftop || walltop ? center.z : panel.poleHeight + center.z) - lz / 2;
     const center2d = new Vector2(center.x, center.y);
     let integral = 0;
     const point = new Vector3();

@@ -27,6 +27,7 @@ import { WallModel } from '../models/WallModel';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { useLanguage, useWeather } from '../hooks';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 export interface SolarPanelSimulationProps {
   city: string | null;
@@ -885,6 +886,7 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
     if (!parent) throw new Error('parent of solar panel does not exist');
     const rooftop = panel.parentType === ObjectType.Roof;
     const walltop = panel.parentType === ObjectType.Wall;
+    const slopetop = parent.type === ObjectType.Foundation && (parent as FoundationModel).enableSlope;
     if (rooftop) {
       // x and y coordinates of a rooftop solar panel are relative to the foundation
       parent = getFoundation(parent);
@@ -923,6 +925,10 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
       center.x += dr * Math.cos(an); // panel.ly has been rotated based on the orientation
       center.y += dr * Math.sin(an);
     }
+    if (slopetop) {
+      const f = parent as FoundationModel;
+      center.z = f.lz + Util.getZOnSlope(f.lx, f.slope, panel.cx);
+    }
     const normal = new Vector3().fromArray(panel.normal);
     const month = now.getMonth();
     const dayOfYear = Util.dayOfYear(now);
@@ -958,7 +964,7 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - dCell) / 2;
     const y0 = center.y - (ly - dCell) / 2;
-    const z0 = rooftop || walltop ? center.z : parent.lz + panel.poleHeight + panel.lz;
+    const z0 = rooftop || walltop ? center.z : (slopetop ? center.z : parent.lz) + panel.poleHeight + panel.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
