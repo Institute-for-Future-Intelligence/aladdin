@@ -104,6 +104,18 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
   const electricitySellingPriceRef = useRef<number>(economicsParams.electricitySellingPrice);
   const operationalCostPerUnitRef = useRef<number>(economicsParams.operationalCostPerUnit);
 
+  const onSlope = useMemo(() => {
+    if (!foundation) return false;
+    return foundation && foundation.type === ObjectType.Foundation && (foundation as FoundationModel).enableSlope;
+  }, [foundation]);
+
+  useEffect(() => {
+    if (onSlope) {
+      rowAxisRef.current = RowAxis.upDown;
+      setUpdateFlag(!updateFlag);
+    }
+  }, [onSlope]);
+
   // make sure these ref values are updated
   useEffect(() => {
     electricitySellingPriceRef.current = economicsParams.electricitySellingPrice;
@@ -644,7 +656,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                   setUpdateFlag(!updateFlag);
                 }}
               >
-                <Option key={RowAxis.leftRight} value={RowAxis.leftRight}>
+                <Option key={RowAxis.leftRight} value={RowAxis.leftRight} disabled={onSlope}>
                   {t('polygonMenu.SolarPanelArrayLeftRightRowAxis', lang)}
                 </Option>
                 <Option key={RowAxis.upDown} value={RowAxis.upDown}>

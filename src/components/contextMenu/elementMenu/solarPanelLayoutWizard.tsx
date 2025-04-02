@@ -18,6 +18,7 @@ import { SolarPanelArrayLayoutParams } from '../../../stores/SolarPanelArrayLayo
 import { SolarPanelLayoutRelative } from '../../../pd/SolarPanelLayoutRelative';
 import { SolarPanelLayoutAbsolute } from '../../../pd/SolarPanelLayoutAbsolute';
 import { useLanguage } from '../../../hooks';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 const { Option } = Select;
 
@@ -65,6 +66,19 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const pvModules = useMemo(() => {
     return { ...customPvModules, ...supportedPvModules };
   }, [supportedPvModules, customPvModules]);
+
+  const onSlope = useMemo(() => {
+    if (!reference) return false;
+    const parent = getParent(reference);
+    return parent && parent.type === ObjectType.Foundation && (parent as FoundationModel).enableSlope;
+  }, [reference]);
+
+  useEffect(() => {
+    if (onSlope) {
+      rowAxisRef.current = RowAxis.upDown;
+      setUpdateFlag(!updateFlag);
+    }
+  }, [onSlope]);
 
   useEffect(() => {
     okButtonRef.current?.focus();
@@ -414,16 +428,16 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
                 setUpdateFlag(!updateFlag);
               }}
             >
-              <Option key={RowAxis.leftRight} value={RowAxis.leftRight}>
+              <Option key={RowAxis.leftRight} value={RowAxis.leftRight} disabled={onSlope}>
                 {i18n.t('polygonMenu.SolarPanelArrayLeftRightRowAxis', lang)}
               </Option>
               <Option key={RowAxis.upDown} value={RowAxis.upDown}>
                 {i18n.t('polygonMenu.SolarPanelArrayUpDownRowAxis', lang)}
               </Option>
-              <Option key={RowAxis.eastWest} value={RowAxis.eastWest}>
+              <Option key={RowAxis.eastWest} value={RowAxis.eastWest} disabled={onSlope}>
                 {i18n.t('polygonMenu.SolarPanelArrayEastWestRowAxis', lang)}
               </Option>
-              <Option key={RowAxis.northSouth} value={RowAxis.northSouth}>
+              <Option key={RowAxis.northSouth} value={RowAxis.northSouth} disabled={onSlope}>
                 {i18n.t('polygonMenu.SolarPanelArrayNorthSouthRowAxis', lang)}
               </Option>
             </Select>
