@@ -1482,7 +1482,7 @@ export const i18n_tr = {
       NumberOfSelectedHeliostats: 'Seçilen heliostat sayısı',
       NumberOfSelectedSolarPanels: 'Seçilen güneş paneli sayısı',
       ElectricityGeneratedDailyBySolarPanels: 'Güneş panellerinin günlük elektrik üretimi',
-      SceneDiameter: 'Scene diameter',
+      RefreshSceneDiameter: 'Refresh scene diameter',
       BuildingArea: 'Building area',
     },
 

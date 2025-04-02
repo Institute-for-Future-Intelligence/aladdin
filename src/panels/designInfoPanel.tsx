@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import SolarPanelImage from '../assets/solar-panel.png';
@@ -33,7 +33,7 @@ const Container = styled.div`
   padding: 0;
   opacity: 100%;
   user-select: none;
-  pointer-events: none;
+  //pointer-events: none;
   tab-index: -1; // set to be not focusable
   z-index: 7; // must be less than other panels
 `;
@@ -52,6 +52,7 @@ const ColumnWrapper = styled.div<ColumnWrapperProps>`
   align-items: center;
   margin: 0;
   width: 240px;
+  border-radius: 6px;
   display: flex;
   font-size: 12px;
   flex-direction: column;
@@ -59,6 +60,7 @@ const ColumnWrapper = styled.div<ColumnWrapperProps>`
 `;
 
 const DesignInfoPanel = React.memo(() => {
+  const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
   const countElementsByType = useStore(Selector.countElementsByType);
   const countSolarPanelsOnRack = useStore(Selector.countSolarPanelsOnRack);
@@ -180,7 +182,7 @@ const DesignInfoPanel = React.memo(() => {
           {!selectedElement && (
             <>
               <img
-                title={i18n.t('designInfoPanel.SceneDiameter', lang)}
+                title={i18n.t('designInfoPanel.RefreshSceneDiameter', lang)}
                 alt={'Diameter'}
                 src={DiameterImage}
                 height={20}
@@ -192,6 +194,11 @@ const DesignInfoPanel = React.memo(() => {
                   marginBottom: '4px',
                   cursor: 'pointer',
                   verticalAlign: 'middle',
+                }}
+                onClick={() => {
+                  setCommonStore((state) => {
+                    state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+                  });
                 }}
               />
               <span>{sceneRadius * 2 + ' ' + i18n.t('word.MeterAbbreviation', lang)}</span>

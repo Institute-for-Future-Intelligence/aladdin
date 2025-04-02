@@ -1481,7 +1481,7 @@ export const i18n_en = {
       NumberOfSelectedHeliostats: 'Number of selected heliostats',
       NumberOfSelectedSolarPanels: 'Number of selected solar panels',
       ElectricityGeneratedDailyBySolarPanels: 'Electricity generated daily by these solar panels',
-      SceneDiameter: 'Scene diameter',
+      RefreshSceneDiameter: 'Refresh scene diameter',
       BuildingArea: 'Building area',
     },
 

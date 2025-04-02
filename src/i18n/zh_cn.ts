@@ -1455,7 +1455,7 @@ export const i18n_zh_cn = {
       NumberOfSelectedHeliostats: '选中的定日镜总数',
       NumberOfSelectedSolarPanels: '选中的光伏板总数',
       ElectricityGeneratedDailyBySolarPanels: '这些光伏板的日发电量',
-      SceneDiameter: '场景直径',
+      RefreshSceneDiameter: '刷新场景直径',
       BuildingArea: '建筑面积',
     },
 

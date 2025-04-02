@@ -1483,7 +1483,7 @@ export const i18n_ua = {
       NumberOfSelectedHeliostats: 'Кількість вибраних геліостатів',
       NumberOfSelectedSolarPanels: 'Кількість вибраних сонячних панелей',
       ElectricityGeneratedDailyBySolarPanels: 'Електрика, що генерується щоденно цими сонячними панелями',
-      SceneDiameter: 'Діаметр сцени',
+      RefreshSceneDiameter: 'Refresh scene diameter',
       BuildingArea: 'Площа будівлі',
     },
 
