@@ -11,6 +11,7 @@ import { ElementModelFactory } from '../models/ElementModelFactory';
 import { HALF_PI, UNIT_VECTOR_POS_Z } from '../constants';
 import { PvModel } from '../models/PvModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 export class SolarPanelLayoutRelative {
   static create(
@@ -142,12 +143,20 @@ export class SolarPanelLayoutRelative {
     const y2 = shorter ? q1.y : q2.y;
     const lx = Math.abs(y1 - y2) - (2 * margin) / base.ly;
     if (lx > 0) {
+      const _cx = cx * base.lx;
+      let cz = base.cz;
+      if (base.type === ObjectType.Foundation) {
+        const f = base as FoundationModel;
+        if (f.enableSlope && f.slope) {
+          cz = base.cz + Util.getZOnSlope(base.lx, f.slope, _cx);
+        }
+      }
       return ElementModelFactory.makeSolarPanel(
         base,
         pvModel,
-        cx * base.lx,
+        _cx,
         ((y1 + y2) / 2) * base.ly,
-        base.cz,
+        cz,
         Orientation.portrait,
         poleHeight,
         poleSpacing,
@@ -186,12 +195,20 @@ export class SolarPanelLayoutRelative {
     const x2 = shorter ? q1.x : q2.x;
     const lx = Math.abs(x1 - x2) - (2 * margin) / base.lx;
     if (lx > 0) {
+      const cx = ((x1 + x2) / 2) * base.lx;
+      let cz = base.cz;
+      if (base.type === ObjectType.Foundation) {
+        const f = base as FoundationModel;
+        if (f.enableSlope && f.slope) {
+          cz = base.cz + Util.getZOnSlope(base.lx, f.slope, cx);
+        }
+      }
       return ElementModelFactory.makeSolarPanel(
         base,
         pvModel,
-        ((x1 + x2) / 2) * base.lx,
+        cx,
         cy * base.ly,
-        base.cz,
+        cz,
         Orientation.portrait,
         poleHeight,
         poleSpacing,

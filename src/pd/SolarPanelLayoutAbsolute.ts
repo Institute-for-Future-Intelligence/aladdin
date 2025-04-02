@@ -11,6 +11,7 @@ import { ElementModelFactory } from '../models/ElementModelFactory';
 import { HALF_PI, UNIT_VECTOR_POS_Z } from '../constants';
 import { PvModel } from '../models/PvModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 export class SolarPanelLayoutAbsolute {
   static create(
@@ -66,12 +67,17 @@ export class SolarPanelLayoutAbsolute {
             const lx = Math.hypot(x1 - x2, y1 - y2) - 2 * margin;
             if (lx > 0) {
               const cp = Util.relativeCoordinates((x1 + x2) / 2, cy, 0, base);
+              const cx = cp.x * base.lx;
+              let cz = base.cz;
+              if (base.type === ObjectType.Foundation && (base as FoundationModel).enableSlope) {
+                cz = base.cz + Util.getZOnSlope(base.lx, (base as FoundationModel).slope, cx);
+              }
               const panel = ElementModelFactory.makeSolarPanel(
                 base,
                 pvModel,
-                cp.x * base.lx,
+                cx,
                 cp.y * base.ly,
-                base.cz,
+                cz,
                 Orientation.portrait,
                 poleHeight,
                 poleSpacing,
@@ -118,12 +124,17 @@ export class SolarPanelLayoutAbsolute {
             const lx = Math.hypot(x1 - x2, y1 - y2) - 2 * margin;
             if (lx > 0) {
               const cp = Util.relativeCoordinates(cx, (y1 + y2) / 2, 0, base);
+              const cpx = cp.x * base.lx;
+              let cz = base.cz;
+              if (base.type === ObjectType.Foundation && (base as FoundationModel).enableSlope) {
+                cz = base.cz + Util.getZOnSlope(base.lx, (base as FoundationModel).slope, cpx);
+              }
               const panel = ElementModelFactory.makeSolarPanel(
                 base,
                 pvModel,
-                cp.x * base.lx,
+                cpx,
                 cp.y * base.ly,
-                base.cz,
+                cz,
                 Orientation.portrait,
                 poleHeight,
                 poleSpacing,
