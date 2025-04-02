@@ -368,6 +368,16 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
         if (arr) {
           setHourlySolarPanelOutputArray(e.id, [...arr]);
         }
+        useDataStore.setState((state) => {
+          state.heatmaps.delete(e.id);
+          return state;
+        });
+      }
+      if (e.type === ObjectType.Cuboid) {
+        useDataStore.setState((state) => {
+          state.heatmaps.delete(e.id);
+          return state;
+        });
       }
       if (e.type === ObjectType.SolarPanel) {
         const singlePaneloutputArray = hourlySingleSolarPanelOutputArrayMapRef.current.get(e.id);
