@@ -211,7 +211,7 @@ const FoundationSlopeInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   return (
-    <Dialog width={500} title={i18n.t('foundationMenu.Slope', lang)} onApply={apply} onClose={close}>
+    <Dialog width={500} title={i18n.t('foundationMenu.SlopeAngle', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col span={7}>
           <InputNumber
