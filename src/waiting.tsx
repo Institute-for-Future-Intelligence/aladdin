@@ -63,6 +63,12 @@ export const EndWaiting = () => {
 
   const End = () => {
     useEffect(() => {
+      // ensure that the scene radius is updated after the model is loaded and rendered
+      setTimeout(() => {
+        useStore.getState().set((state) => {
+          state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
+        });
+      }, 10);
       usePrimitiveStore.getState().set((state) => {
         state.waiting = false;
       });
