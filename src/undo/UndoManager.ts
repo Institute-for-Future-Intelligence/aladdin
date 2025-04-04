@@ -89,6 +89,14 @@ export class UndoManager {
     return command.name;
   }
 
+  getLastUndoCommand(): Undoable | undefined {
+    const command = this.commands[this.index];
+    if (!command) {
+      return undefined;
+    }
+    return command;
+  }
+
   setLimit(l: number): void {
     this.limit = l;
   }

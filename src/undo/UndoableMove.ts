@@ -3,7 +3,7 @@
  */
 
 import { Undoable } from './Undoable';
-import { Vector3 } from 'three';
+import { Vector2, Vector3 } from 'three';
 import { MoveDirection, ObjectType } from '../types';
 import { FlippedWallSide } from './UndoableAdd';
 import { ElementModel } from 'src/models/ElementModel';
@@ -69,11 +69,9 @@ export interface UndoableMoveSkylight extends Undoable {
 }
 
 export interface UndoableMoveSelectedByKey extends Undoable {
-  direction: MoveDirection;
-  movedElementsDisplacementMap: Map<string, number>;
+  movedElementsDisplacementMap: Map<string, Vector2>;
 }
 
 export interface UndoableMoveAllByKey extends Undoable {
-  direction: MoveDirection;
-  displacement: number;
+  displacement: Vector2;
 }

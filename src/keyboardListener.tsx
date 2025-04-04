@@ -26,7 +26,7 @@ import { usePrimitiveStore } from './stores/commonPrimitive';
 import { debounce } from 'lodash';
 import { SensorModel } from './models/SensorModel';
 import { LightModel } from './models/LightModel';
-import { Vector3 } from 'three';
+import { Vector2, Vector3 } from 'three';
 import { UndoableMoveAllByKey, UndoableMoveSelectedByKey } from './undo/UndoableMove';
 import { GroupableModel, isGroupable } from './models/Groupable';
 import { Point2 } from './models/Point2';
@@ -468,15 +468,16 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
     }
   };
 
-  const updateMoveInMap = (elementDisplacementMap: Map<string, number>, direction: MoveDirection) => {
+  const updateElementMoveByKey = (elementDisplacementMap: Map<string, Vector2>, undo = false) => {
     setCommonStore((state) => {
       let updateWallMapOnFoundationFlag = false;
 
       for (const e of state.elements) {
         if (elementDisplacementMap.has(e.id)) {
-          const dist = elementDisplacementMap.get(e.id);
-          if (dist !== undefined) {
-            const [newCx, newCy] = getElementNewPosition(e.cx, e.cy, dist, direction);
+          const distVector = elementDisplacementMap.get(e.id);
+          if (distVector !== undefined) {
+            const newCx = e.cx + (undo ? -distVector.x : distVector.x);
+            const newCy = e.cy + (undo ? -distVector.y : distVector.y);
             if (e.type === ObjectType.Wall) {
               const wall = e as WallModel;
               const dist = new Vector3(newCx - wall.cx, newCy - wall.cy);
@@ -511,23 +512,36 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
     });
   };
 
-  const updateMovementForAll = (displacement: number, direction: MoveDirection) => {
+  const updateMovementForAll = (displacement: Vector2, undo = false) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-          [e.cx, e.cy] = getElementNewPosition(e.cx, e.cy, displacement, direction);
+          e.cx = e.cx + (undo ? -displacement.x : displacement.x);
+          e.cy = e.cy + (undo ? -displacement.y : displacement.y);
         }
       }
     });
   };
 
-  const getOppositeDirection = (dir: MoveDirection) => {
-    if (dir === MoveDirection.Left) return MoveDirection.Right;
-    if (dir === MoveDirection.Right) return MoveDirection.Left;
-    if (dir === MoveDirection.Up) return MoveDirection.Down;
-    if (dir === MoveDirection.Down) return MoveDirection.Up;
-    console.error('Undo direction is possibly incorrect:', dir);
-    return dir;
+  const setDisplacementVector = (v: Vector2, dist: number, dir: MoveDirection) => {
+    if (dir === MoveDirection.Left) v.x -= dist;
+    if (dir === MoveDirection.Right) v.x += dist;
+    if (dir === MoveDirection.Up) v.y += dist;
+    if (dir === MoveDirection.Down) v.y -= dist;
+    return v;
+  };
+
+  const needUpdateUndo = (elementsToBeMoved: ElementModel[]) => {
+    const lastUndoCommand = useStore.getState().undoManager.getLastUndoCommand();
+    if (lastUndoCommand && lastUndoCommand.name === 'Move Selected Elements By Key') {
+      const map = (lastUndoCommand as UndoableMoveSelectedByKey).movedElementsDisplacementMap;
+      if (map.size !== elementsToBeMoved.length) return false;
+      for (const e of elementsToBeMoved) {
+        if (!map.has(e.id)) return false;
+      }
+      return true;
+    }
+    return false;
   };
 
   const moveByKey = (direction: MoveDirection, scale: number) => {
@@ -539,114 +553,208 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
     const displacement = scale * moveStepAbsolute;
 
     if (selectedElement && elementsToBeMoved.length > 0) {
-      const elementDisplacementMap = new Map<string, number>();
-
-      for (const e of elementsToBeMoved) {
-        switch (e.type) {
-          case ObjectType.Foundation:
-          case ObjectType.Cuboid:
-          case ObjectType.Wall:
-          case ObjectType.Tree:
-          case ObjectType.Flower:
-          case ObjectType.Human: {
-            elementDisplacementMap.set(e.id, displacement);
-            break;
-          }
-          case ObjectType.Light:
-          case ObjectType.Sensor: {
-            const parent = getParent(selectedElement);
-            if (parent) {
-              let displacementRel = displacement / parent.lx;
-              const [newCx, newCy] = getElementNewPosition(e.cx, e.cy, displacementRel, direction);
-              const halfLx = e.lx / (2 * parent.lx);
-              const halfLy = e.lx / (2 * parent.ly);
-              switch (direction) {
-                case MoveDirection.Left:
-                case MoveDirection.Right: {
-                  const x = Util.clamp(newCx, -0.5 + halfLx, 0.5 - halfLx);
-                  displacementRel = Math.abs(x - selectedElement.cx);
-                  break;
-                }
-                case MoveDirection.Up:
-                case MoveDirection.Down: {
-                  const y = Util.clamp(newCy, -0.5 + halfLy, 0.5 - halfLy);
-                  displacementRel = Math.abs(y - selectedElement.cy);
-                  break;
-                }
+      const currentDisplacementMap = new Map<string, Vector2>();
+      // need to update last undo command
+      if (needUpdateUndo(elementsToBeMoved)) {
+        const lastUndoCommand = useStore.getState().undoManager.getLastUndoCommand() as UndoableMoveSelectedByKey;
+        const map = lastUndoCommand.movedElementsDisplacementMap;
+        for (const e of elementsToBeMoved) {
+          switch (e.type) {
+            case ObjectType.Foundation:
+            case ObjectType.Cuboid:
+            case ObjectType.Wall:
+            case ObjectType.Tree:
+            case ObjectType.Flower:
+            case ObjectType.Human: {
+              const distVector = map.get(e.id);
+              if (distVector) {
+                setDisplacementVector(distVector, displacement, direction);
               }
-              elementDisplacementMap.set(e.id, displacementRel);
+              currentDisplacementMap.set(e.id, setDisplacementVector(new Vector2(), displacement, direction));
+              break;
             }
-            break;
-          }
-          case ObjectType.SolarPanel:
-          case ObjectType.BatteryStorage:
-          case ObjectType.ParabolicDish:
-          case ObjectType.ParabolicTrough:
-          case ObjectType.FresnelReflector:
-          case ObjectType.Heliostat: {
-            const parent = getParent(e);
-            if (parent) {
-              let accept = true;
-              let displacementRel = displacement;
-              switch (direction) {
-                case MoveDirection.Left:
-                case MoveDirection.Right: {
-                  displacementRel = displacement / parent.lx;
-                  break;
-                }
-                case MoveDirection.Up:
-                case MoveDirection.Down: {
-                  displacementRel = displacement / parent.ly;
-                  break;
-                }
-              }
-              if (e.type === ObjectType.SolarPanel) {
+            case ObjectType.Light:
+            case ObjectType.Sensor: {
+              const parent = getParent(selectedElement);
+              if (parent) {
+                let displacementRel = displacement / parent.lx;
                 const [newCx, newCy] = getElementNewPosition(e.cx, e.cy, displacementRel, direction);
-                accept = isNewPositionOk(e, newCx, newCy);
+                const halfLx = e.lx / (2 * parent.lx);
+                const halfLy = e.lx / (2 * parent.ly);
+                switch (direction) {
+                  case MoveDirection.Left:
+                  case MoveDirection.Right: {
+                    const x = Util.clamp(newCx, -0.5 + halfLx, 0.5 - halfLx);
+                    displacementRel = Math.abs(x - selectedElement.cx);
+                    break;
+                  }
+                  case MoveDirection.Up:
+                  case MoveDirection.Down: {
+                    const y = Util.clamp(newCy, -0.5 + halfLy, 0.5 - halfLy);
+                    displacementRel = Math.abs(y - selectedElement.cy);
+                    break;
+                  }
+                }
+                const distVector = map.get(e.id);
+                if (distVector) {
+                  setDisplacementVector(distVector, displacementRel, direction);
+                }
+                currentDisplacementMap.set(e.id, setDisplacementVector(new Vector2(), displacementRel, direction));
               }
-              if (accept) {
-                elementDisplacementMap.set(e.id, displacementRel);
-              } else {
-                return;
-              }
+              break;
             }
-            break;
+            case ObjectType.SolarPanel:
+            case ObjectType.BatteryStorage:
+            case ObjectType.ParabolicDish:
+            case ObjectType.ParabolicTrough:
+            case ObjectType.FresnelReflector:
+            case ObjectType.Heliostat: {
+              const parent = getParent(e);
+              if (parent) {
+                let accept = true;
+                let displacementRel = displacement;
+                switch (direction) {
+                  case MoveDirection.Left:
+                  case MoveDirection.Right: {
+                    displacementRel = displacement / parent.lx;
+                    break;
+                  }
+                  case MoveDirection.Up:
+                  case MoveDirection.Down: {
+                    displacementRel = displacement / parent.ly;
+                    break;
+                  }
+                }
+                if (e.type === ObjectType.SolarPanel) {
+                  const [newCx, newCy] = getElementNewPosition(e.cx, e.cy, displacementRel, direction);
+                  accept = isNewPositionOk(e, newCx, newCy);
+                }
+                if (accept) {
+                  const distVector = map.get(e.id);
+                  if (distVector) {
+                    setDisplacementVector(distVector, displacementRel, direction);
+                  }
+                  currentDisplacementMap.set(e.id, setDisplacementVector(new Vector2(), displacementRel, direction));
+                } else {
+                  return;
+                }
+              }
+              break;
+            }
           }
         }
+      } else {
+        for (const e of elementsToBeMoved) {
+          switch (e.type) {
+            case ObjectType.Foundation:
+            case ObjectType.Cuboid:
+            case ObjectType.Wall:
+            case ObjectType.Tree:
+            case ObjectType.Flower:
+            case ObjectType.Human: {
+              currentDisplacementMap.set(e.id, setDisplacementVector(new Vector2(), displacement, direction));
+              break;
+            }
+            case ObjectType.Light:
+            case ObjectType.Sensor: {
+              const parent = getParent(selectedElement);
+              if (parent) {
+                let displacementRel = displacement / parent.lx;
+                const [newCx, newCy] = getElementNewPosition(e.cx, e.cy, displacementRel, direction);
+                const halfLx = e.lx / (2 * parent.lx);
+                const halfLy = e.lx / (2 * parent.ly);
+                switch (direction) {
+                  case MoveDirection.Left:
+                  case MoveDirection.Right: {
+                    const x = Util.clamp(newCx, -0.5 + halfLx, 0.5 - halfLx);
+                    displacementRel = Math.abs(x - selectedElement.cx);
+                    break;
+                  }
+                  case MoveDirection.Up:
+                  case MoveDirection.Down: {
+                    const y = Util.clamp(newCy, -0.5 + halfLy, 0.5 - halfLy);
+                    displacementRel = Math.abs(y - selectedElement.cy);
+                    break;
+                  }
+                }
+                currentDisplacementMap.set(e.id, setDisplacementVector(new Vector2(), displacementRel, direction));
+              }
+              break;
+            }
+            case ObjectType.SolarPanel:
+            case ObjectType.BatteryStorage:
+            case ObjectType.ParabolicDish:
+            case ObjectType.ParabolicTrough:
+            case ObjectType.FresnelReflector:
+            case ObjectType.Heliostat: {
+              const parent = getParent(e);
+              if (parent) {
+                let accept = true;
+                let displacementRel = displacement;
+                switch (direction) {
+                  case MoveDirection.Left:
+                  case MoveDirection.Right: {
+                    displacementRel = displacement / parent.lx;
+                    break;
+                  }
+                  case MoveDirection.Up:
+                  case MoveDirection.Down: {
+                    displacementRel = displacement / parent.ly;
+                    break;
+                  }
+                }
+                if (e.type === ObjectType.SolarPanel) {
+                  const [newCx, newCy] = getElementNewPosition(e.cx, e.cy, displacementRel, direction);
+                  accept = isNewPositionOk(e, newCx, newCy);
+                }
+                if (accept) {
+                  currentDisplacementMap.set(e.id, setDisplacementVector(new Vector2(), displacementRel, direction));
+                } else {
+                  return;
+                }
+              }
+              break;
+            }
+          }
+        }
+
+        const undoableMoveSelected = {
+          name: `Move Selected Elements By Key`,
+          timestamp: Date.now(),
+          direction: direction,
+          movedElementsDisplacementMap: new Map(currentDisplacementMap),
+          undo: () => {
+            updateElementMoveByKey(undoableMoveSelected.movedElementsDisplacementMap, true);
+          },
+          redo: () => {
+            updateElementMoveByKey(undoableMoveSelected.movedElementsDisplacementMap);
+          },
+        } as UndoableMoveSelectedByKey;
+        addUndoable(undoableMoveSelected);
       }
-
-      updateMoveInMap(elementDisplacementMap, direction);
-
-      const undoableMoveSelected = {
-        name: `Move Selected Elements ${direction} By Key`,
-        timestamp: Date.now(),
-        direction: direction,
-        movedElementsDisplacementMap: new Map(elementDisplacementMap),
-        undo: () => {
-          const dir = getOppositeDirection(undoableMoveSelected.direction);
-          updateMoveInMap(undoableMoveSelected.movedElementsDisplacementMap, dir);
-        },
-        redo: () => {
-          updateMoveInMap(undoableMoveSelected.movedElementsDisplacementMap, undoableMoveSelected.direction);
-        },
-      } as UndoableMoveSelectedByKey;
-      addUndoable(undoableMoveSelected);
+      updateElementMoveByKey(currentDisplacementMap);
     } else {
-      updateMovementForAll(displacement, direction);
-      const undoableMoveAll = {
-        name: `Move All ${direction} By Key`,
-        timestamp: Date.now(),
-        direction: direction,
-        displacement: displacement,
-        undo: () => {
-          const dir = getOppositeDirection(undoableMoveAll.direction);
-          updateMovementForAll(undoableMoveAll.displacement, dir);
-        },
-        redo: () => {
-          updateMovementForAll(undoableMoveAll.displacement, undoableMoveAll.direction);
-        },
-      } as UndoableMoveAllByKey;
-      addUndoable(undoableMoveAll);
+      const currDistVector = setDisplacementVector(new Vector2(), displacement, direction);
+      const lastUndoCommand = useStore.getState().undoManager.getLastUndoCommand();
+      // need to update last undo command
+      if (lastUndoCommand && lastUndoCommand.name === 'Move All By Key') {
+        const distVector = (lastUndoCommand as UndoableMoveAllByKey).displacement;
+        setDisplacementVector(distVector, displacement, direction);
+      } else {
+        const undoableMoveAll = {
+          name: `Move All By Key`,
+          timestamp: Date.now(),
+          displacement: currDistVector,
+          undo: () => {
+            updateMovementForAll(undoableMoveAll.displacement, true);
+          },
+          redo: () => {
+            updateMovementForAll(undoableMoveAll.displacement, false);
+          },
+        } as UndoableMoveAllByKey;
+        addUndoable(undoableMoveAll);
+      }
+      updateMovementForAll(currDistVector);
     }
   };
 
