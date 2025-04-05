@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -559,10 +559,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
     // need to update last undo command
     if (lastUndoCommand && lastUndoCommand.name === 'Move All By Key') {
       const currTime = lastKeyMoveTimeRef.current;
-      if (lastTime && currTime - lastTime > 500) {
-        return false;
-      }
-      return true;
+      return !(lastTime && currTime - lastTime > 500);
     }
     return false;
   };

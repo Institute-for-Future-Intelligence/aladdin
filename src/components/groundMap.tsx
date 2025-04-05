@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useCallback, useState } from 'react';
@@ -22,7 +22,7 @@ const GroundMap = React.memo(({ width = 400, height = 400 }: { width: number; he
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
 
-  const waitTime = 100;
+  const waitTime = 1000;
 
   const onLoad = useCallback((map: google.maps.Map) => {
     setMap(map);
