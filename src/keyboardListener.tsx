@@ -237,6 +237,8 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
   const overlapWithSibling = useStore(Selector.overlapWithSibling);
   const logAction = useStore(Selector.logAction);
 
+  const lastKeyMoveTimeRef = useRef<number | null>(null);
+
   const moveStepAbsolute = 0.1;
 
   const lang = useMemo(() => {
@@ -531,13 +533,34 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
     return v;
   };
 
-  const needUpdateUndo = (elementsToBeMoved: ElementModel[]) => {
+  const needUpdateUndoSelected = (elementsToBeMoved: ElementModel[]) => {
+    const lastTime = lastKeyMoveTimeRef.current;
+    lastKeyMoveTimeRef.current = Date.now();
     const lastUndoCommand = useStore.getState().undoManager.getLastUndoCommand();
     if (lastUndoCommand && lastUndoCommand.name === 'Move Selected Elements By Key') {
+      const currTime = lastKeyMoveTimeRef.current;
+      if (lastTime && currTime - lastTime > 500) {
+        return false;
+      }
       const map = (lastUndoCommand as UndoableMoveSelectedByKey).movedElementsDisplacementMap;
       if (map.size !== elementsToBeMoved.length) return false;
       for (const e of elementsToBeMoved) {
         if (!map.has(e.id)) return false;
+      }
+      return true;
+    }
+    return false;
+  };
+
+  const needUpdateUndoAll = () => {
+    const lastTime = lastKeyMoveTimeRef.current;
+    lastKeyMoveTimeRef.current = Date.now();
+    const lastUndoCommand = useStore.getState().undoManager.getLastUndoCommand();
+    // need to update last undo command
+    if (lastUndoCommand && lastUndoCommand.name === 'Move All By Key') {
+      const currTime = lastKeyMoveTimeRef.current;
+      if (lastTime && currTime - lastTime > 500) {
+        return false;
       }
       return true;
     }
@@ -555,7 +578,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
     if (selectedElement && elementsToBeMoved.length > 0) {
       const currentDisplacementMap = new Map<string, Vector2>();
       // need to update last undo command
-      if (needUpdateUndo(elementsToBeMoved)) {
+      if (needUpdateUndoSelected(elementsToBeMoved)) {
         const lastUndoCommand = useStore.getState().undoManager.getLastUndoCommand() as UndoableMoveSelectedByKey;
         const map = lastUndoCommand.movedElementsDisplacementMap;
         for (const e of elementsToBeMoved) {
@@ -737,7 +760,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
       const currDistVector = setDisplacementVector(new Vector2(), displacement, direction);
       const lastUndoCommand = useStore.getState().undoManager.getLastUndoCommand();
       // need to update last undo command
-      if (lastUndoCommand && lastUndoCommand.name === 'Move All By Key') {
+      if (needUpdateUndoAll()) {
         const distVector = (lastUndoCommand as UndoableMoveAllByKey).displacement;
         setDisplacementVector(distVector, displacement, direction);
       } else {
