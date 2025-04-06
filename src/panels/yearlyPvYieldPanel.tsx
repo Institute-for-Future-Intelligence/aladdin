@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -10,9 +10,10 @@ import * as Selector from '../stores/selector';
 import { ChartType, GraphDataType, ObjectType } from '../types';
 import { FLOATING_WINDOW_OPACITY, MONTHS_ABBV, Z_INDEX_FRONT_PANEL } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
-import { Button, Space, Switch, Popover, Row, Col } from 'antd';
+import { Button, Space, Switch, Popover, Row, Col, Checkbox } from 'antd';
 import { saveCsv, screenshot, showInfo } from '../helpers';
 import {
+  BarChartOutlined,
   CameraOutlined,
   CaretRightOutlined,
   ReloadOutlined,
@@ -25,6 +26,7 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDataStore } from '../stores/commonData';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../hooks';
+import { ElectricityConsumptionInput } from './electricityConsumptionInput';
 
 const Container = styled.div`
   position: fixed;
@@ -89,6 +91,7 @@ const YearlyPvYieldPanel = React.memo(({ city }: YearlyPvYieldPanelProps) => {
   const economics = useStore.getState().economicsParams;
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
   const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
+  const applyElectricityConsumptions = useStore(Selector.world.applyElectricityConsumptions);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -416,6 +419,78 @@ const YearlyPvYieldPanel = React.memo(({ city }: YearlyPvYieldPanelProps) => {
                       }, 100);
                     }}
                   />
+                  <Popover
+                    title={t('solarPanelYieldPanel.CompareWithElectricityConsumption', lang)}
+                    content={
+                      <>
+                        <Row>
+                          <Col span={12}>
+                            <ElectricityConsumptionInput monthIndex={0} />
+                          </Col>
+                          <Col span={12}>
+                            <ElectricityConsumptionInput monthIndex={1} />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col span={12}>
+                            <ElectricityConsumptionInput monthIndex={2} />
+                          </Col>
+                          <Col span={12}>
+                            <ElectricityConsumptionInput monthIndex={3} />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col span={12}>
+                            <ElectricityConsumptionInput monthIndex={4} />
+                          </Col>
+                          <Col span={12}>
+                            <ElectricityConsumptionInput monthIndex={5} />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col span={12}>
+                            <ElectricityConsumptionInput monthIndex={6} />
+                          </Col>
+                          <Col span={12}>
+                            <ElectricityConsumptionInput monthIndex={7} />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col span={12}>
+                            <ElectricityConsumptionInput monthIndex={8} />
+                          </Col>
+                          <Col span={12}>
+                            <ElectricityConsumptionInput monthIndex={9} />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col span={12}>
+                            <ElectricityConsumptionInput monthIndex={10} />
+                          </Col>
+                          <Col span={12}>
+                            <ElectricityConsumptionInput monthIndex={11} />
+                          </Col>
+                        </Row>
+                        <Row style={{ paddingTop: '12px' }}>
+                          <Col span={12}>{t('word.Unit', lang) + ': ' + t('word.kWh', lang)}</Col>
+                          <Col span={12} style={{ display: 'flex', justifyContent: 'right' }}>
+                            <Checkbox
+                              checked={applyElectricityConsumptions}
+                              onChange={(e) => {
+                                setCommonStore((state) => {
+                                  state.world.applyElectricityConsumptions = e.target.checked;
+                                });
+                              }}
+                            >
+                              {t('word.Apply', lang)}
+                            </Checkbox>
+                          </Col>
+                        </Row>
+                      </>
+                    }
+                  >
+                    <Button type="default" icon={<BarChartOutlined />} />
+                  </Popover>
                   <Button
                     type="default"
                     icon={<CameraOutlined />}

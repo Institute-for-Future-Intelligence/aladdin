@@ -43,6 +43,8 @@ export interface WorldModel {
   pvGridCellSize: number;
   discretization: Discretization;
   solarPanelVisibilityGridCellSize: number;
+  applyElectricityConsumptions: boolean;
+  monthlyElectricityConsumptions: number[];
 
   cspTimesPerHour: number;
   cspDaysPerYear: number;

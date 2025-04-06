@@ -30,6 +30,10 @@ export const daysPerYear = (state: CommonStoreState) => state.world.daysPerYear;
 
 export const monthlyIrradianceLosses = (state: CommonStoreState) => state.world.monthlyIrradianceLosses;
 
+export const applyElectricityConsumptions = (state: CommonStoreState) => state.world.applyElectricityConsumptions;
+
+export const monthlyElectricityConsumptions = (state: CommonStoreState) => state.world.monthlyElectricityConsumptions;
+
 export const discretization = (state: CommonStoreState) => state.world.discretization;
 
 export const diurnalTemperatureModel = (state: CommonStoreState) => state.world.diurnalTemperatureModel;

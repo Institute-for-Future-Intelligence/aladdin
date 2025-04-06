@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { useStore } from '../../../../stores/common';
@@ -7,7 +7,7 @@ import { ObjectType } from '../../../../types';
 import { MenuItem, Paste } from '../../menuItems';
 import i18n from '../../../../i18n/i18n';
 import { ElementCounter } from '../../../../stores/ElementCounter';
-import { Flex, MenuProps, Space } from 'antd';
+import { Flex, MenuProps } from 'antd';
 import {
   AlbedoInput,
   GroundColorPicker,
@@ -20,7 +20,6 @@ import {
   SurfaceTypeRadioGroup,
 } from './groundMenuItems';
 import { MONTHS_ABBV } from 'src/constants';
-import { Surface } from 'recharts';
 
 type GroundCounterItem = { key: keyof ElementCounter; type: ObjectType; itemLabel: string; modalTitle: string };
 

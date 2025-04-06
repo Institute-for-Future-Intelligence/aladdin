@@ -8,7 +8,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
-import { throttle } from 'lodash';
+import { debounce } from 'lodash';
 import { turnOffVisualization } from '../panels/panelUtils';
 
 const GroundMap = React.memo(({ width = 400, height = 400 }: { width: number; height: number }) => {
@@ -22,7 +22,7 @@ const GroundMap = React.memo(({ width = 400, height = 400 }: { width: number; he
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
 
-  const waitTime = 1000;
+  const waitTime = 100;
 
   const onLoad = useCallback((map: google.maps.Map) => {
     setMap(map);
@@ -54,14 +54,16 @@ const GroundMap = React.memo(({ width = 400, height = 400 }: { width: number; he
   };
 
   // FIXME: Undo doesn't work unless the focus is returned to the main window
-  const onCenterChanged = throttle(
+  const onCenterChanged = debounce(
     () => {
       if (map) {
+        if (map.getZoom() !== mapZoom) return;
         const center = map.getCenter();
         if (center) {
           const lat = center.lat();
           const lng = center.lng();
-          if (lat !== latitude || lng !== longitude) {
+          // 0.0001 degree maps to 11.13 m
+          if (Math.abs(lat - latitude) > 0.0001 || Math.abs(lng - longitude) > 0.0001) {
             updateAddress();
             const undoableChangeLocation = {
               name: 'Set Location',
@@ -99,29 +101,12 @@ const GroundMap = React.memo(({ width = 400, height = 400 }: { width: number; he
     { leading: false, trailing: true },
   );
 
-  const onZoomChanged = throttle(
+  const onZoomChanged = debounce(
     () => {
       if (map) {
         const z = map.getZoom();
         if (z !== undefined && z !== mapZoom) {
           updateAddress();
-          const undoableChange = {
-            name: 'Zoom Map',
-            timestamp: Date.now(),
-            oldValue: mapZoom,
-            newValue: z,
-            undo: () => {
-              setCommonStore((state) => {
-                state.viewState.mapZoom = undoableChange.oldValue as number;
-              });
-            },
-            redo: () => {
-              setCommonStore((state) => {
-                state.viewState.mapZoom = undoableChange.newValue as number;
-              });
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
           setCommonStore((state) => {
             state.viewState.mapZoom = z;
           });

@@ -31,6 +31,7 @@ export const i18n_tr = {
     },
 
     word: {
+      Unit: 'Unit',
       Sky: 'Sky',
       Ground: 'Ground',
       Relative: 'Relative',
@@ -1553,6 +1554,7 @@ export const i18n_tr = {
     },
 
     solarPanelYieldPanel: {
+      CompareWithElectricityConsumption: 'Compare with Electricity Consumption',
       SolarPanelDailyYield: 'Güneş Paneli Günlük Üretim',
       SolarPanelYearlyYield: 'Güneş Paneli Yıllık Üretim',
       Yield: 'Üretim',

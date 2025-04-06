@@ -38,6 +38,8 @@ export class DefaultWorldModel implements WorldModel {
   discretization: Discretization;
   diurnalTemperatureModel: DiurnalTemperatureModel;
   highestTemperatureTimeInMinutes: number;
+  applyElectricityConsumptions: boolean;
+  monthlyElectricityConsumptions: number[];
 
   solarPanelVisibilityGridCellSize: number;
   solarRadiationHeatmapGridCellSize: number;
@@ -84,6 +86,8 @@ export class DefaultWorldModel implements WorldModel {
     this.discretization = Discretization.APPROXIMATE;
     this.diurnalTemperatureModel = DiurnalTemperatureModel.Sinusoidal;
     this.highestTemperatureTimeInMinutes = 900; // assume it is 3pm (at 15*60 minutes)
+    this.applyElectricityConsumptions = false;
+    this.monthlyElectricityConsumptions = new Array(12).fill(600);
 
     this.solarPanelVisibilityGridCellSize = 0.2;
     this.solarRadiationHeatmapGridCellSize = 0.5;

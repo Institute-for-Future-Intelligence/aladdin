@@ -32,6 +32,7 @@ export const i18n_ua = {
     },
 
     word: {
+      Unit: 'Одиниця',
       Sky: 'Небо',
       Ground: 'Земля',
       Relative: 'Відносно',
@@ -1556,6 +1557,7 @@ export const i18n_ua = {
     },
 
     solarPanelYieldPanel: {
+      CompareWithElectricityConsumption: 'Compare with Electricity Consumption',
       SolarPanelDailyYield: 'Щоденний виробіток сонячних панелей',
       SolarPanelYearlyYield: 'Річний виробіток сонячних панелей',
       Yield: 'виробіток',

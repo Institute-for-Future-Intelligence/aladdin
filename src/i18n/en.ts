@@ -31,6 +31,7 @@ export const i18n_en = {
     },
 
     word: {
+      Unit: 'Unit',
       Sky: 'Sky',
       Ground: 'Ground',
       Relative: 'Relative',
@@ -1552,6 +1553,7 @@ export const i18n_en = {
     },
 
     solarPanelYieldPanel: {
+      CompareWithElectricityConsumption: 'Compare with Electricity Consumption',
       SolarPanelDailyYield: 'Solar Panel Daily Yield',
       SolarPanelYearlyYield: 'Solar Panel Yearly Yield',
       Yield: 'Yield',

@@ -31,6 +31,7 @@ export const i18n_zh_cn = {
     },
 
     word: {
+      Unit: '单位',
       Sky: '天空',
       Ground: '地面',
       Relative: '相对',
@@ -1526,6 +1527,7 @@ export const i18n_zh_cn = {
     },
 
     solarPanelYieldPanel: {
+      CompareWithElectricityConsumption: '对比耗电量',
       SolarPanelDailyYield: '光伏日发电量',
       SolarPanelYearlyYield: '光伏年发电量',
       Yield: '发电量',
