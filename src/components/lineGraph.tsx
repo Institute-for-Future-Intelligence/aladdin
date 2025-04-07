@@ -1,12 +1,14 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Area,
   AreaChart,
+  Bar,
   CartesianGrid,
+  ComposedChart,
   Label,
   Legend,
   Line,
@@ -23,6 +25,8 @@ import { ChartType, DatumEntry, GraphDataType } from '../types';
 import { CurveType } from 'recharts/types/shape/Curve';
 import LineGraphMenu from './lineGraphMenu';
 import { SYMBOLS } from './symbolConstants';
+import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 
 export interface LineGraphProps {
   type: GraphDataType;
@@ -63,6 +67,8 @@ const LineGraph = ({
   fractionDigits = 2,
   symbolCount = 12,
 }: LineGraphProps) => {
+  const applyElectricityConsumptions = useStore(Selector.world.applyElectricityConsumptions);
+
   const [lineCount, setLineCount] = useState<number>(0);
   const [horizontalGridLines, setHorizontalGridLines] = useState<boolean>(true);
   const [verticalGridLines, setVerticalGridLines] = useState<boolean>(true);
@@ -223,6 +229,20 @@ const LineGraph = ({
     setLegendDataKey(null);
   };
 
+  const lines = useMemo(() => {
+    const a = [];
+    for (let i = 1; i < lineCount; i++) {
+      a.push('Panel' + i);
+    }
+    return (
+      <>
+        {a.map((x) => (
+          <Line key={x} dataKey={x} />
+        ))}
+      </>
+    );
+  }, [lineCount]);
+
   return (
     <>
       {dataSource && (
@@ -242,7 +262,49 @@ const LineGraph = ({
             }}
           >
             <ResponsiveContainer width="100%" height={`100%`}>
-              {chartType === ChartType.Area ? (
+              {applyElectricityConsumptions ? (
+                <ComposedChart
+                  data={dataSource}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 30,
+                  }}
+                >
+                  <Bar dataKey="Utility" fill="#FF6347" barSize={20} />
+                  {chartType === ChartType.Area ? <Area dataKey="Total" /> : lines}
+                  <Tooltip formatter={(value: number) => value.toFixed(fractionDigits) + ' ' + unitY} />
+                  <CartesianGrid
+                    vertical={verticalGridLines}
+                    horizontal={horizontalGridLines}
+                    stroke={'rgba(128, 128, 128, 0.3)'}
+                  />
+                  <ReferenceLine x={referenceX} stroke="orange" strokeWidth={2} />
+                  <XAxis dataKey={dataKeyAxisX ?? labelX} fontSize={'10px'}>
+                    <Label value={labelX + (unitX ? ' (' + unitX + ')' : '')} offset={0} position="bottom" />
+                  </XAxis>
+                  <YAxis domain={[yMin, yMax]} fontSize={'10px'}>
+                    <Label
+                      dx={-15}
+                      value={labelY + (unitY ? ' (' + unitY + ')' : '')}
+                      offset={0}
+                      angle={-90}
+                      position="center"
+                    />
+                  </YAxis>
+                  {getRepresentations}
+                  {lineCount > 1 && (
+                    <Legend
+                      iconType="plainline"
+                      verticalAlign="top"
+                      height={36}
+                      onMouseLeave={onMouseLeaveLegend}
+                      onMouseEnter={onMouseEnterLegend}
+                    />
+                  )}
+                </ComposedChart>
+              ) : chartType === ChartType.Area ? (
                 <AreaChart
                   data={dataSource}
                   onMouseDown={onMouseDown}

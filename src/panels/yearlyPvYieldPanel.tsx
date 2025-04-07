@@ -7,7 +7,7 @@ import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { ChartType, GraphDataType, ObjectType } from '../types';
+import { ChartType, DatumEntry, GraphDataType, ObjectType } from '../types';
 import { FLOATING_WINDOW_OPACITY, MONTHS_ABBV, Z_INDEX_FRONT_PANEL } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch, Popover, Row, Col, Checkbox } from 'antd';
@@ -92,6 +92,7 @@ const YearlyPvYieldPanel = React.memo(({ city }: YearlyPvYieldPanelProps) => {
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
   const selectedFloatingWindow = useStore(Selector.selectedFloatingWindow);
   const applyElectricityConsumptions = useStore(Selector.world.applyElectricityConsumptions);
+  const monthlyElectricityConsumptions = useStore(Selector.world.monthlyElectricityConsumptions);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -108,6 +109,7 @@ const YearlyPvYieldPanel = React.memo(({ city }: YearlyPvYieldPanelProps) => {
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const panelSumRef = useRef(new Map<string, number>());
   const resizeObserverRef = useRef<ResizeObserver>();
+  const dataRef = useRef<DatumEntry[]>([]);
 
   const referenceX = MONTHS_ABBV[now.getMonth()];
   const lang = useLanguage();
@@ -129,7 +131,20 @@ const YearlyPvYieldPanel = React.memo(({ city }: YearlyPvYieldPanelProps) => {
     setSum(s);
     // sum does not change when we run a breakdown simulation; so we use updateFlag to trigger re-rendering
     setUpdateFlag(!updateFlag);
-  }, [yearlyYield]);
+    if (applyElectricityConsumptions) {
+      if (yearlyYield.length > 0) {
+        for (let i = 0; i < yearlyYield.length; i++) {
+          dataRef.current[i] = { ...yearlyYield[i], Utility: monthlyElectricityConsumptions[i] };
+        }
+      } else {
+        for (let i = 0; i < 12; i++) {
+          dataRef.current[i] = { Month: MONTHS_ABBV[i], Utility: monthlyElectricityConsumptions[i] };
+        }
+      }
+    } else {
+      dataRef.current = [...yearlyYield];
+    }
+  }, [yearlyYield, monthlyElectricityConsumptions, applyElectricityConsumptions]);
 
   useEffect(() => {
     setCurPosition({
@@ -273,7 +288,7 @@ const YearlyPvYieldPanel = React.memo(({ city }: YearlyPvYieldPanelProps) => {
           <LineGraph
             type={GraphDataType.YearlyPvYield}
             chartType={individualOutputs ? ChartType.Line : ChartType.Area}
-            dataSource={yearlyYield.map(({ Daylight, Clearness, ...item }) => item)}
+            dataSource={dataRef.current}
             labels={solarPanelLabels}
             height={100}
             dataKeyAxisX={'Month'}
