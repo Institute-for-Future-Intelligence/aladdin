@@ -109,7 +109,7 @@ const YearlyPvYieldPanel = React.memo(({ city }: YearlyPvYieldPanelProps) => {
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const panelSumRef = useRef(new Map<string, number>());
   const resizeObserverRef = useRef<ResizeObserver>();
-  const dataRef = useRef<DatumEntry[]>([]);
+  const dataRef = useRef<DatumEntry[]>(new Array<DatumEntry>(12));
 
   const referenceX = MONTHS_ABBV[now.getMonth()];
   const lang = useLanguage();
@@ -132,13 +132,18 @@ const YearlyPvYieldPanel = React.memo(({ city }: YearlyPvYieldPanelProps) => {
     // sum does not change when we run a breakdown simulation; so we use updateFlag to trigger re-rendering
     setUpdateFlag(!updateFlag);
     if (applyElectricityConsumptions) {
+      dataRef.current = new Array<DatumEntry>(12 / daysPerYear);
       if (yearlyYield.length > 0) {
         for (let i = 0; i < yearlyYield.length; i++) {
-          dataRef.current[i] = { ...yearlyYield[i], Utility: monthlyElectricityConsumptions[i] };
+          const utility = monthlyElectricityConsumptions
+            ? monthlyElectricityConsumptions[i * yearScaleFactor] ?? 600
+            : 600;
+          dataRef.current[i] = { ...yearlyYield[i], Utility: utility };
         }
       } else {
-        for (let i = 0; i < 12; i++) {
-          dataRef.current[i] = { Month: MONTHS_ABBV[i], Utility: monthlyElectricityConsumptions[i] };
+        for (let i = 0; i < 12; i += yearScaleFactor) {
+          const utility = monthlyElectricityConsumptions ? monthlyElectricityConsumptions[i] ?? 600 : 600;
+          dataRef.current[i / yearScaleFactor] = { Month: MONTHS_ABBV[i], Utility: utility };
         }
       }
     } else {

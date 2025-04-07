@@ -78,7 +78,7 @@ const LineGraph = ({
 
   //init
   useEffect(() => {
-    if (!dataSource || dataSource.length === 0) {
+    if (!dataSource || dataSource.length === 0 || !dataSource[0]) {
       setLineCount(0);
       return;
     }
@@ -229,24 +229,28 @@ const LineGraph = ({
     setLegendDataKey(null);
   };
 
-  const lines = useMemo(() => {
+  const composedChartLines = useMemo(() => {
+    const d = dataSource[0];
+    if (!d) return null;
     const a = [];
-    for (let i = 1; i < lineCount; i++) {
-      a.push('Panel' + i);
+    for (const p in d) {
+      if (p === 'Month' || p === 'Utility') continue;
+      a.push(p);
     }
     return (
       <>
-        {a.map((x) => (
-          <Line key={x} dataKey={x} />
+        {a.map((k) => (
+          <Line key={k} dataKey={k} />
         ))}
       </>
     );
-  }, [lineCount]);
+  }, [dataSource]);
 
   return (
     <>
       {dataSource && (
         // need two div wrappers to disable the responsiveness of ResponsiveContainer
+        // however, this doesn't work for ComposedChart
         <div
           id={'line-graph-' + labelX + '-' + labelY}
           style={{ width: '100%', height: `${height}%`, position: 'relative', direction: 'ltr' }}
@@ -261,7 +265,7 @@ const LineGraph = ({
               left: 0,
             }}
           >
-            <ResponsiveContainer width="100%" height={`100%`}>
+            <ResponsiveContainer width={'100%'} height={`100%`}>
               {applyElectricityConsumptions ? (
                 <ComposedChart
                   data={dataSource}
@@ -273,7 +277,7 @@ const LineGraph = ({
                   }}
                 >
                   <Bar dataKey="Utility" fill="#FF6347" barSize={20} />
-                  {chartType === ChartType.Area ? <Area dataKey="Total" /> : lines}
+                  {chartType === ChartType.Area ? <Area dataKey="Total" /> : composedChartLines}
                   <Tooltip formatter={(value: number) => value.toFixed(fractionDigits) + ' ' + unitY} />
                   <CartesianGrid
                     vertical={verticalGridLines}
@@ -293,7 +297,6 @@ const LineGraph = ({
                       position="center"
                     />
                   </YAxis>
-                  {getRepresentations}
                   {lineCount > 1 && (
                     <Legend
                       iconType="plainline"
