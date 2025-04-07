@@ -249,6 +249,10 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
           label: 'menu.solarEnergyExamples.RooftopSolarPanels',
         },
         {
+          key: 'compare_generation_consumption',
+          label: 'menu.solarEnergyExamples.CompareGenerationConsumption',
+        },
+        {
           key: 'home_solar_energy_storage',
           label: 'menu.solarEnergyExamples.HomeSolarEnergyStorage',
         },

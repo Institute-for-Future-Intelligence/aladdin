@@ -582,6 +582,7 @@ export const i18n_ua = {
       solarEnergyExamples: {
         SunBeamAndHeliodon: 'Промінь сонця та геліодон',
         RooftopSolarPanels: 'Сонячні панелі на даху',
+        CompareGenerationConsumption: 'Compare Generation and Consumption',
         HomeSolarEnergyStorage: 'Домашнє зберігання сонячної енергії',
         NevadaSolarOneParabolicTroughArray: 'Масив параболічних сонячних колекторів Nevada Solar One',
         TooeleParabolicDishArray: 'Масив параболічних тарілок Tooele',

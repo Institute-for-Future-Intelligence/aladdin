@@ -575,6 +575,7 @@ export const i18n_zh_cn = {
       solarEnergyExamples: {
         SunBeamAndHeliodon: '太阳光束和日影仪',
         RooftopSolarPanels: '屋顶光伏板',
+        CompareGenerationConsumption: '对比发电量和耗电量',
         HomeSolarEnergyStorage: '家用太阳能储能系统',
         NevadaSolarOneParabolicTroughArray: '内华达州太阳能一号的抛物线槽阵列',
         TooeleParabolicDishArray: '犹他州图埃勒的抛物线碟阵列',

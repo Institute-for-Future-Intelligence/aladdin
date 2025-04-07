@@ -578,6 +578,7 @@ export const i18n_tr = {
       solarEnergyExamples: {
         SunBeamAndHeliodon: 'Güneş Işını ve Heliodon',
         RooftopSolarPanels: 'Çatı Üstü Güneş Panelleri',
+        CompareGenerationConsumption: 'Compare Generation and Consumption',
         HomeSolarEnergyStorage: 'Home Solar Energy Storage',
         NevadaSolarOneParabolicTroughArray: 'Nevada Eyaletinde Parabolik Oluk Dizisi',
         TooeleParabolicDishArray: 'Tooele Şehrinde Parabolik Çanak Dizisi',
