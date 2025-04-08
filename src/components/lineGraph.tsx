@@ -240,7 +240,7 @@ const LineGraph = ({
     return (
       <>
         {a.map((k) => (
-          <Line key={k} dataKey={k} />
+          <Line key={k} dataKey={k} isAnimationActive={false} />
         ))}
       </>
     );
@@ -250,7 +250,6 @@ const LineGraph = ({
     <>
       {dataSource && (
         // need two div wrappers to disable the responsiveness of ResponsiveContainer
-        // however, this doesn't work for ComposedChart
         <div
           id={'line-graph-' + labelX + '-' + labelY}
           style={{ width: '100%', height: `${height}%`, position: 'relative', direction: 'ltr' }}
@@ -276,8 +275,12 @@ const LineGraph = ({
                     bottom: 30,
                   }}
                 >
-                  <Bar dataKey="Utility" fill="#FF6347" barSize={20} />
-                  {chartType === ChartType.Area ? <Area dataKey="Total" /> : composedChartLines}
+                  <Bar dataKey="Utility" fill="#FF6347" barSize={20} isAnimationActive={false} />
+                  {chartType === ChartType.Area ? (
+                    <Area dataKey="Total" isAnimationActive={false} />
+                  ) : (
+                    composedChartLines
+                  )}
                   <Tooltip formatter={(value: number) => value.toFixed(fractionDigits) + ' ' + unitY} />
                   <CartesianGrid
                     vertical={verticalGridLines}
