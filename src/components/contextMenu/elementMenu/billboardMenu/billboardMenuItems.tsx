@@ -2,7 +2,7 @@
  * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
-import { Checkbox, Space, InputNumber } from 'antd';
+import { Checkbox, Space, InputNumber, Switch } from 'antd';
 import { MenuItem } from '../../menuItems';
 import { useLanguage } from 'src/hooks';
 import i18n from 'src/i18n/i18n';
@@ -12,7 +12,6 @@ import { HumanModel } from 'src/models/HumanModel';
 import { TreeModel } from 'src/models/TreeModel';
 import { FlowerModel } from 'src/models/FlowerModel';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import React, { useEffect, useRef, useState } from 'react';
 import { Easing, Tween, update } from '@tweenjs/tween.js';
 import { Util } from 'src/Util';
@@ -40,8 +39,7 @@ export const BillboardFlipCheckbox = React.memo(
       });
     };
 
-    const handleChange = (e: CheckboxChangeEvent) => {
-      const checked = e.target.checked;
+    const handleChange = (checked: boolean) => {
       const undoableCheck = {
         name: `Flip ${billboardModel.type}`,
         timestamp: Date.now(),
@@ -62,11 +60,15 @@ export const BillboardFlipCheckbox = React.memo(
     return forModelTree ? (
       <Space>
         <span>{i18n.t('peopleMenu.Flip', lang)}</span>
-        <Checkbox style={{ width: '100%' }} checked={billboardModel.flip} onChange={handleChange} />
+        <Switch size={'small'} checked={billboardModel.flip} onChange={handleChange} />
       </Space>
     ) : (
       <MenuItem stayAfterClick noPadding>
-        <Checkbox style={{ width: '100%' }} checked={billboardModel.flip} onChange={handleChange}>
+        <Checkbox
+          style={{ width: '100%' }}
+          checked={billboardModel.flip}
+          onChange={(e) => handleChange(e.target.checked)}
+        >
           {i18n.t('peopleMenu.Flip', lang)}
         </Checkbox>
       </MenuItem>
@@ -89,8 +91,7 @@ export const HumanObserverCheckbox = React.memo(
       });
     };
 
-    const handleChange = (e: CheckboxChangeEvent) => {
-      const checked = e.target.checked;
+    const handleChange = (checked: boolean) => {
       const undoableCheck = {
         name: 'Set Observer',
         timestamp: Date.now(),
@@ -111,11 +112,11 @@ export const HumanObserverCheckbox = React.memo(
     return forModelTree ? (
       <Space>
         <span>{i18n.t('peopleMenu.Observer', lang)}</span>
-        <Checkbox style={{ width: '100%' }} checked={human.observer} onChange={handleChange} />
+        <Switch size={'small'} checked={human.observer} onChange={handleChange} />
       </Space>
     ) : (
       <MenuItem stayAfterClick noPadding>
-        <Checkbox style={{ width: '100%' }} checked={human.observer} onChange={handleChange}>
+        <Checkbox style={{ width: '100%' }} checked={human.observer} onChange={(e) => handleChange(e.target.checked)}>
           {i18n.t('peopleMenu.Observer', lang)}
         </Checkbox>
       </MenuItem>
@@ -241,11 +242,7 @@ export const TreeShowModelCheckbox = React.memo(
     return forModelTree ? (
       <Space>
         <span>{i18n.t('treeMenu.ShowModel', lang)}</span>
-        <Checkbox
-          style={{ width: '100%' }}
-          checked={tree?.showModel && tree?.type === ObjectType.Tree}
-          onChange={(e) => showTreeModel(e.target.checked)}
-        />
+        <Switch size={'small'} checked={tree?.showModel && tree?.type === ObjectType.Tree} onChange={showTreeModel} />
       </Space>
     ) : (
       <MenuItem stayAfterClick noPadding>

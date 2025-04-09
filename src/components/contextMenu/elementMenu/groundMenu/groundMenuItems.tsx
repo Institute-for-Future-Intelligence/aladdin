@@ -5,13 +5,12 @@
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { useLanguage } from 'src/hooks';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import * as Selector from '../../../../stores/selector';
 import { UndoableRemoveAll } from '../../../../undo/UndoableRemoveAll';
 import { UndoableCheck } from '../../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
-import { Checkbox, InputNumber, Modal, Radio, type RadioChangeEvent, Space } from 'antd';
+import { Checkbox, InputNumber, Modal, Radio, type RadioChangeEvent, Space, Switch } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { ColorResult, CompactPicker } from 'react-color';
 import { MenuItem } from '../../menuItems';
@@ -42,8 +41,7 @@ export const GroundImageCheckbox = ({ forModelTree }: { forModelTree?: boolean }
     });
   };
 
-  const onChange = (e: CheckboxChangeEvent) => {
-    const checked = e.target.checked;
+  const handleChange = (checked: boolean) => {
     const undoableCheck = {
       name: 'Show Ground Image',
       timestamp: Date.now(),
@@ -62,11 +60,11 @@ export const GroundImageCheckbox = ({ forModelTree }: { forModelTree?: boolean }
   return forModelTree ? (
     <Space>
       <span> {i18n.t('groundMenu.ImageOnGround', lang)} :</span>
-      <Checkbox style={{ width: '100%' }} checked={groundImage} onChange={onChange} />
+      <Switch size={'small'} checked={groundImage} onChange={handleChange} />
     </Space>
   ) : (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox style={{ width: '100%' }} checked={groundImage} onChange={onChange}>
+      <Checkbox style={{ width: '100%' }} checked={groundImage} onChange={(e) => handleChange(e.target.checked)}>
         {i18n.t('groundMenu.ImageOnGround', lang)}
       </Checkbox>
     </MenuItem>

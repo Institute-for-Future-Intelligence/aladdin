@@ -100,7 +100,7 @@ import {
   ShowElevationAngleCheckbox,
   ShowZenithAngleCheckbox,
 } from '../components/contextMenu/elementMenu/skyMenu/skyMenuItems';
-import HeliodonCheckbox from './heliodonCheckbox';
+import HeliodonSwitch from './heliodonSwitch';
 import GroundColorInput from './groundColorInput';
 import { AlbedoInput, GroundImageCheckbox } from '../components/contextMenu/elementMenu/groundMenu/groundMenuItems';
 
@@ -1107,7 +1107,7 @@ export const createSkyNode = () => {
   });
   node.push({
     checkable: false,
-    title: <HeliodonCheckbox />,
+    title: <HeliodonSwitch />,
     key: 'Heliodon Switch',
   });
   if (useStore.getState().viewState.heliodon && useStore.getState().viewState.showSunAngles) {

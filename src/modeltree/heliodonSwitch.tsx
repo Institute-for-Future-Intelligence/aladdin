@@ -2,7 +2,7 @@
  * @Copyright 2025. Institute for Future Intelligence, Inc.
  */
 
-import { Checkbox, Space } from 'antd';
+import { Space, Switch } from 'antd';
 import { useStore } from '../stores/common';
 import React from 'react';
 import { useLanguage } from '../hooks';
@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import * as Selector from '../stores/selector';
 import { UndoableCheck } from '../undo/UndoableCheck';
 
-const HeliodonCheckbox = () => {
+const HeliodonSwitch = () => {
   const heliodon = useStore(Selector.viewState.heliodon);
   const addUndoable = useStore(Selector.addUndoable);
 
@@ -26,7 +26,7 @@ const HeliodonCheckbox = () => {
     });
   };
 
-  const setHeliodon = (b: boolean) => {
+  const onChange = (b: boolean) => {
     const undoableCheck = {
       name: 'Show Heliodon',
       timestamp: Date.now(),
@@ -41,9 +41,9 @@ const HeliodonCheckbox = () => {
   return (
     <Space>
       <span>{t('menu.settings.Heliodon', lang)} :</span>
-      <Checkbox checked={heliodon} onChange={(e) => setHeliodon(e.target.checked)} />
+      <Switch size={'small'} checked={heliodon} onChange={onChange} />
     </Space>
   );
 };
 
-export default HeliodonCheckbox;
+export default HeliodonSwitch;

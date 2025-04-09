@@ -4,7 +4,7 @@
 
 import { useStore } from 'src/stores/common';
 import { MenuItem } from '../../menuItems';
-import { Checkbox, InputNumber, Radio, Space } from 'antd';
+import { Checkbox, InputNumber, Radio, Space, Switch } from 'antd';
 import * as Selector from '../../../../stores/selector';
 import i18n from 'src/i18n/i18n';
 import { useLanguage } from 'src/hooks';
@@ -26,8 +26,7 @@ export const AxesCheckbox = ({ forModelTree }: { forModelTree?: boolean }) => {
     });
   };
 
-  const onChange = (e: CheckboxChangeEvent) => {
-    const checked = e.target.checked;
+  const handleChange = (checked: boolean) => {
     const undoableCheck = {
       name: 'Show Axes',
       timestamp: Date.now(),
@@ -46,11 +45,11 @@ export const AxesCheckbox = ({ forModelTree }: { forModelTree?: boolean }) => {
   return forModelTree ? (
     <Space>
       <span> {i18n.t('skyMenu.Axes', lang)} :</span>
-      <Checkbox style={{ width: '100%' }} checked={axes} onChange={onChange} />
+      <Switch size={'small'} checked={axes} onChange={handleChange} />
     </Space>
   ) : (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox style={{ width: '100%' }} checked={axes} onChange={onChange}>
+      <Checkbox style={{ width: '100%' }} checked={axes} onChange={(e) => handleChange(e.target.checked)}>
         {i18n.t('skyMenu.Axes', lang)}
       </Checkbox>
     </MenuItem>

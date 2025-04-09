@@ -4,7 +4,7 @@
 
 import { PolygonModel } from 'src/models/PolygonModel';
 import { MenuItem } from '../../menuItems';
-import { Checkbox, Input, InputNumber, Space } from 'antd';
+import { Checkbox, Input, InputNumber, Space, Switch } from 'antd';
 import { useLanguage } from 'src/hooks';
 import i18n from 'src/i18n/i18n';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
@@ -34,7 +34,7 @@ export const PolygonFillCheckbox = ({ polygon, forModelTree }: PolygonMenuItemPr
     });
   };
 
-  const toggleFilled = (e: CheckboxChangeEvent) => {
+  const toggleFilled = () => {
     const undoableCheck = {
       name: 'Fill Polygon',
       timestamp: Date.now(),
@@ -49,13 +49,13 @@ export const PolygonFillCheckbox = ({ polygon, forModelTree }: PolygonMenuItemPr
       },
     } as UndoableCheck;
     useStore.getState().addUndoable(undoableCheck);
-    updateFilledById(polygon.id, e.target.checked);
+    updateFilledById(polygon.id, !polygon.filled);
   };
 
   return forModelTree ? (
     <Space>
       <span>{i18n.t('polygonMenu.Filled', lang)}</span>:
-      <Checkbox style={{ width: '100%' }} checked={polygon.filled} onChange={toggleFilled} />
+      <Switch size={'small'} checked={polygon.filled} onChange={toggleFilled} />
     </Space>
   ) : (
     <MenuItem stayAfterClick noPadding>
@@ -122,7 +122,7 @@ export const PolygonOutlineCheckbox = ({ polygon, forModelTree }: PolygonMenuIte
     });
   };
 
-  const toggleOutline = (e: CheckboxChangeEvent) => {
+  const toggleOutline = () => {
     const undoableCheck = {
       name: 'Toggle Outline for Polygon',
       timestamp: Date.now(),
@@ -137,13 +137,13 @@ export const PolygonOutlineCheckbox = ({ polygon, forModelTree }: PolygonMenuIte
       },
     } as UndoableCheck;
     useStore.getState().addUndoable(undoableCheck);
-    updateOutlineById(polygon.id, e.target.checked);
+    updateOutlineById(polygon.id, polygon.noOutline);
   };
 
   return forModelTree ? (
     <Space>
       <span>{i18n.t('polygonMenu.Outline', lang)}</span>:
-      <Checkbox style={{ width: '100%' }} checked={!polygon.noOutline} onChange={toggleOutline} />
+      <Switch size={'small'} checked={!polygon.noOutline} onChange={toggleOutline} />
     </Space>
   ) : (
     <MenuItem stayAfterClick noPadding>

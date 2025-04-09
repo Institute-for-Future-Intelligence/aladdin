@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Checkbox, Input, Slider, Space } from 'antd';
+import { Checkbox, Input, Slider, Space, Switch } from 'antd';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
 import i18n from '../../i18n/i18n';
@@ -419,11 +419,7 @@ export const SolarCollectorSunBeamCheckbox = ({ solarCollector, forModelTree }: 
   return forModelTree ? (
     <Space>
       <span>{i18n.t('solarCollectorMenu.SunBeam', lang)}</span>
-      <Checkbox
-        style={{ width: '100%' }}
-        checked={solarCollector.drawSunBeam}
-        onChange={(e) => drawSunBeam(e.target.checked)}
-      />
+      <Switch size={'small'} checked={solarCollector.drawSunBeam} onChange={drawSunBeam} />
     </Space>
   ) : (
     <MenuItem stayAfterClick noPadding>

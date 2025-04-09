@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import { Checkbox, Input, InputNumber, Space } from 'antd';
+import { Checkbox, Input, InputNumber, Space, Switch } from 'antd';
 import {
   useLabel,
   useLabelColor,
@@ -17,6 +17,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { useLanguage } from 'src/hooks';
 import { MenuItem } from './menuItems';
 import i18n from 'src/i18n/i18n';
+import React from 'react';
 
 interface LabelSubmenuItemProps {
   element: ElementModel;
@@ -38,8 +39,8 @@ export const ShowLabelCheckbox = ({ element, forModelTree }: LabelSubmenuItemPro
 
   return forModelTree ? (
     <Space>
-      <span>{i18n.t('labelSubMenu.KeepShowingLabel', lang)}</span>
-      <Checkbox style={{ width: '100%' }} checked={!!element?.showLabel} onChange={showLabel} />
+      <span>{i18n.t('labelSubMenu.KeepShowingLabel', lang)}</span>:
+      <Switch size={'small'} checked={!!element?.showLabel} onChange={showLabel} />
     </Space>
   ) : (
     <MenuItem stayAfterClick noPadding>
