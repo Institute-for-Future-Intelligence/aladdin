@@ -555,6 +555,11 @@ export const i18n_zh_cn = {
         OffshoreWindFarm: '海上风电场',
       },
 
+      storageSubMenu: '能量储存',
+      storageTutorials: {
+        HomeSolarEnergyStorage: '家用太阳能储能系统',
+      },
+
       colocationSubMenu: '共用空间项目',
       colocationTutorials: {
         AgricultureSolarWindColocation: '农业光伏风力共用空间',
@@ -576,7 +581,6 @@ export const i18n_zh_cn = {
         SunBeamAndHeliodon: '太阳光束和日影仪',
         RooftopSolarPanels: '屋顶光伏板',
         CompareGenerationConsumption: '对比发电量和耗电量',
-        HomeSolarEnergyStorage: '家用太阳能储能系统',
         NevadaSolarOneParabolicTroughArray: '内华达州太阳能一号的抛物线槽阵列',
         TooeleParabolicDishArray: '犹他州图埃勒的抛物线碟阵列',
         PS10SolarPowerTower: '西班牙塞维利亚的PS10太阳能发电塔',

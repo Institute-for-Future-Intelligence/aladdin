@@ -562,6 +562,11 @@ export const i18n_ua = {
         OffshoreWindFarm: 'Морська вітрова електростанція',
       },
 
+      storageSubMenu: 'Energy Storage',
+      storageTutorials: {
+        HomeSolarEnergyStorage: 'Домашнє зберігання сонячної енергії',
+      },
+
       colocationSubMenu: 'Спільне розміщення',
       colocationTutorials: {
         AgricultureSolarWindColocation: 'Спільне використання землі для сільського господарства, сонця та вітру',
@@ -583,7 +588,6 @@ export const i18n_ua = {
         SunBeamAndHeliodon: 'Промінь сонця та геліодон',
         RooftopSolarPanels: 'Сонячні панелі на даху',
         CompareGenerationConsumption: 'Порівняти виробіток і споживання',
-        HomeSolarEnergyStorage: 'Домашнє зберігання сонячної енергії',
         NevadaSolarOneParabolicTroughArray: 'Масив параболічних сонячних колекторів Nevada Solar One',
         TooeleParabolicDishArray: 'Масив параболічних тарілок Tooele',
         PS10SolarPowerTower: 'Сонячна енергетична вежа PS10',

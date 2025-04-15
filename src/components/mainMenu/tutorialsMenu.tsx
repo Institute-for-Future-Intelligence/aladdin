@@ -253,10 +253,6 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
           label: 'menu.solarEnergyExamples.CompareGenerationConsumption',
         },
         {
-          key: 'home_solar_energy_storage',
-          label: 'menu.solarEnergyExamples.HomeSolarEnergyStorage',
-        },
-        {
           key: 'solar_canopy_form_factors',
           label: 'menu.solarEnergyExamples.SolarCanopyFormFactors',
         },
@@ -349,6 +345,16 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
         {
           key: 'offshore_wind_farm',
           label: 'menu.windPowerTutorials.OffshoreWindFarm',
+        },
+      ].map(mapFunction),
+    },
+    {
+      key: 'storage',
+      label: <MenuItem noPadding>{i18n.t('menu.storageSubMenu', lang)}</MenuItem>,
+      children: [
+        {
+          key: 'home_solar_energy_storage',
+          label: 'menu.storageTutorials.HomeSolarEnergyStorage',
         },
       ].map(mapFunction),
     },

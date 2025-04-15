@@ -558,6 +558,11 @@ export const i18n_es = {
         OffshoreWindFarm: 'Offshore Wind Farm',
       },
 
+      storageSubMenu: 'Energy Storage',
+      storageTutorials: {
+        HomeSolarEnergyStorage: 'Home Solar Energy Storage',
+      },
+
       colocationSubMenu: 'Colocation',
       colocationTutorials: {
         AgricultureSolarWindColocation: 'Agriculture-Solar-Wind Colocation',
@@ -579,7 +584,6 @@ export const i18n_es = {
         SunBeamAndHeliodon: 'Rayo de sol y heliodon',
         RooftopSolarPanels: 'Rooftop Solar Panels',
         CompareGenerationConsumption: 'Compare Generation and Consumption',
-        HomeSolarEnergyStorage: 'Home Solar Energy Storage',
         NevadaSolarOneParabolicTroughArray: 'Nevada Solar One Parabolic Trough Array',
         TooeleParabolicDishArray: 'Tooele Parabolic Dish Array',
         PS10SolarPowerTower: 'PS10 Solar Power Tower',
