@@ -265,7 +265,7 @@ const LineGraph = ({
             }}
           >
             <ResponsiveContainer width={'100%'} height={`100%`}>
-              {applyElectricityConsumptions ? (
+              {type === GraphDataType.YearlyPvYield && applyElectricityConsumptions ? (
                 <ComposedChart
                   data={dataSource}
                   margin={{
