@@ -182,6 +182,7 @@ export const i18n_zh_tw = {
     shared: {
       NoTexture: '無材質',
       FoundationElement: '地基',
+      RulerElement: '尺子',
       DoorElement: '門',
       WindowElement: '窗户',
       WallElement: '墻體',
@@ -1734,6 +1735,7 @@ export const i18n_zh_tw = {
       CloudFile: '雲文檔',
       Select: '選擇',
       AddFoundation: '添加地基',
+      AddRuler: '添加尺子',
       AddWall: '添加牆體',
       AddWindow: '添加窗戶',
       AddDoor: '添加門',

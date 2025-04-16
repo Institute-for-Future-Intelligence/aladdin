@@ -41,6 +41,7 @@ import {
   createParabolicTroughNode,
   createPolygonNode,
   createRoofNode,
+  createRulerNode,
   createSensorNode,
   createSkyNode,
   createSolarPanelNode,
@@ -54,6 +55,7 @@ import { SensorModel } from '../models/SensorModel';
 import FoundationTextureInput from './foundationTextureInput';
 import TransparencyInput from './transparencyInput';
 import { CuboidModel } from '../models/CuboidModel';
+import { RulerModel } from 'src/models/RulerModel';
 
 const ModelTree = React.memo(() => {
   const modelTreeExpandedKeys = usePrimitiveStore(Selector.modelTreeExpandedKeys);
@@ -253,6 +255,9 @@ const ModelTree = React.memo(() => {
             break;
           case ObjectType.Human:
             children.push(...createHumanNode(e as HumanModel));
+            break;
+          case ObjectType.Ruler:
+            children.push(...createRulerNode(e as RulerModel));
             break;
         }
         array.push({

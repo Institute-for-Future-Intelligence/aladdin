@@ -8,7 +8,9 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 
 export class BatteryStorageUtil {
   static addUndoable(oldElem: BatteryStorageModel, operation: Operation) {
-    const newElem = useStore.getState().elements.find((e) => e.id === oldElem.id);
+    const newElem = useStore
+      .getState()
+      .elements.find((e) => e.id === oldElem.id && e.type === ObjectType.BatteryStorage) as BatteryStorageModel;
     if (!newElem) return;
 
     switch (operation) {

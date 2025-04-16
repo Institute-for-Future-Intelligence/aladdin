@@ -14,6 +14,7 @@ import {
 } from '../types';
 import { Point2 } from '../models/Point2';
 import { Vector3 } from 'three';
+import { RulerSnappedHandle } from 'src/models/RulerModel';
 
 export interface UndoableChange extends Undoable {
   oldValue:
@@ -49,4 +50,16 @@ export interface UndoableChange extends Undoable {
   newChildrenParentIdMap?: Map<string, string>;
   oldChildrenPositionsMap?: Map<string, Vector3>;
   newChildrenPositionsMap?: Map<string, Vector3>;
+}
+
+export interface UndoableChangeRuler extends Undoable {
+  elementId: string;
+  oldLeftPointPosition: number[];
+  oldRightPointPosition: number[];
+  oldLeftSnappedHandle?: RulerSnappedHandle;
+  oldRightSnappedHandle?: RulerSnappedHandle;
+  newLeftPointPosition: number[];
+  newRightPointPosition: number[];
+  newLeftSnappedHandle?: RulerSnappedHandle;
+  newRightSnappedHandle?: RulerSnappedHandle;
 }

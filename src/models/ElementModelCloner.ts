@@ -16,7 +16,7 @@ import { WindowModel } from './WindowModel';
 import { GableRoofModel, GambrelRoofModel, HipRoofModel, MansardRoofModel, RoofModel, RoofType } from './RoofModel';
 import { PolygonModel } from './PolygonModel';
 import { Util } from '../Util';
-import { Vector3 } from 'three';
+import { Euler, Vector3 } from 'three';
 import {
   DEFAULT_CEILING_R_VALUE,
   DEFAULT_GROUND_FLOOR_R_VALUE,
@@ -38,6 +38,8 @@ import { FlowerModel } from './FlowerModel';
 import { LightModel } from './LightModel';
 import { SolarWaterHeaterModel } from './SolarWaterHeaterModel';
 import { BatteryStorageModel } from './BatteryStorageModel';
+import { RulerModel } from './RulerModel';
+import { RulerUtil } from 'src/views/ruler/RulerUtil';
 
 export class ElementModelCloner {
   static clone(
@@ -52,6 +54,9 @@ export class ElementModelCloner {
   ) {
     let clone = null;
     switch (e.type) {
+      case ObjectType.Ruler:
+        clone = ElementModelCloner.cloneRuler(e as RulerModel, x, y);
+        break;
       case ObjectType.Polygon:
         if (parent) {
           // must have a parent
@@ -218,6 +223,33 @@ export class ElementModelCloner {
       parentId: parent?.id ?? flower.parentId,
       id: short.generate() as string,
     } as FlowerModel;
+  }
+
+  private static cloneRuler(ruler: RulerModel, x: number, y: number) {
+    const leftPoint = new Vector3().fromArray(ruler.leftEndPoint.position);
+    const rightPoint = new Vector3().fromArray(ruler.rightEndPoint.position);
+    const length = leftPoint.distanceTo(rightPoint);
+    const rotationZ = RulerUtil.getRotation(leftPoint, rightPoint);
+    const euler = new Euler(0, 0, rotationZ);
+    const center = new Vector3(x, y);
+    if (x === undefined || y === undefined) {
+      center.addVectors(leftPoint, rightPoint).divideScalar(2);
+      center.x += 2;
+      center.y -= 2;
+    }
+    const newLeftPoint = new Vector3(-length / 2, 0, 0).applyEuler(euler).add(center);
+    const newRightPoint = new Vector3(length / 2, 0, 0).applyEuler(euler).add(center);
+    return {
+      ly: ruler.ly,
+      lz: ruler.lz,
+      type: ObjectType.Ruler,
+      parentId: 'Ground',
+      rotation: [0, 0, 0],
+      color: ruler.color,
+      leftEndPoint: { position: [...newLeftPoint.toArray()] },
+      rightEndPoint: { position: [...newRightPoint.toArray()] },
+      id: short.generate() as string,
+    } as RulerModel;
   }
 
   private static clonePolygon(

@@ -36,6 +36,8 @@ import { GROUND_ID } from './constants';
 import { EndWaiting } from './waiting';
 import WindTurbine from './views/windTurbine';
 import { WindTurbineModel } from './models/WindTurbineModel';
+import Ruler from './views/ruler/ruler';
+import { RulerModel } from './models/RulerModel';
 
 const ElementsRenderer: React.FC = React.memo(() => {
   const elements = useStore(Selector.elements);
@@ -58,6 +60,8 @@ const ElementsRenderer: React.FC = React.memo(() => {
     <group ref={groupRef} name={'Content'}>
       {elements.map((e) => {
         switch (e.type) {
+          case ObjectType.Ruler:
+            return <Ruler key={e.id} {...(e as RulerModel)} />;
           case ObjectType.Foundation:
             return <Foundation key={e.id} {...(e as FoundationModel)} />;
           case ObjectType.Sensor: {

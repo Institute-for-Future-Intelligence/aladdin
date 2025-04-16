@@ -36,6 +36,10 @@ export interface ActionState {
   foundationSlope: number;
   groundFloorRValue: number;
 
+  rulerWidth: number;
+  rulerHeight: number;
+  rulerColor: string;
+
   cuboidHeight: number;
   cuboidFaceColors: string[];
   cuboidFaceTextures: CuboidTexture[];

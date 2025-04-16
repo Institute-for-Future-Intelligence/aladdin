@@ -50,6 +50,8 @@ import { throttle } from 'lodash';
 import { useLanguage } from '../hooks';
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 import { FoundationModel } from 'src/models/FoundationModel';
+import { RulerModel, RulerSnapPoint } from 'src/models/RulerModel';
+import { RulerUtil } from './ruler/RulerUtil';
 
 const Ground = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -79,6 +81,7 @@ const Ground = React.memo(() => {
   const groundModel = useStore((state) => state.world.ground);
   const deletedFoundationId = useStore(Selector.deletedFoundationId);
   const deletedCuboidId = useStore(Selector.deletedCuboidId);
+  const deletedRulerId = useStore(Selector.deletedRulerId);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const selectButtonClicked = usePrimitiveStore(Selector.selectButtonClicked);
 
@@ -109,6 +112,8 @@ const Ground = React.memo(() => {
   const isSettingFoundationEndPointRef = useRef(false);
   const isSettingCuboidStartPointRef = useRef(false);
   const isSettingCuboidEndPointRef = useRef(false);
+  const isSettingRulerStartPointRef = useRef(false);
+  const isSettingRulerEndPointRef = useRef(false);
   const isHumanOrPlantMovedRef = useRef(false);
   const baseGroupRelPosMapRef = useRef<Map<string, Vector3>>(new Map());
   const baseGroupOldPosMapRef = useRef<Map<string, number[]>>(new Map());
@@ -150,6 +155,26 @@ const Ground = React.memo(() => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deletedCuboidId]);
+
+  useEffect(() => {
+    if (deletedRulerId) {
+      setCommonStore((state) => {
+        state.addedRulerId = null;
+        state.deletedRulerId = null;
+      });
+      isSettingRulerStartPointRef.current = false;
+      isSettingRulerEndPointRef.current = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deletedRulerId]);
+
+  const rulerSnapPointsArrayRef = useRef<RulerSnapPoint[]>([]);
+  const rulerSnappedPointRef = useRef<RulerSnapPoint | null>(null);
+  useEffect(() => {
+    if (objectTypeToAdd === ObjectType.Ruler) {
+      rulerSnapPointsArrayRef.current = RulerUtil.getSnapPointsArray();
+    }
+  }, [objectTypeToAdd]);
 
   const { camera } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
@@ -198,6 +223,29 @@ const Ground = React.memo(() => {
       intersectionPlaneAngle.set(-HALF_PI, 0, rotation, 'ZXY');
     }
   }
+
+  const setRulerStartingPoint = (id: string, p: Vector3) => {
+    const { pointer, snappedPoint } = RulerUtil.getSnappedPoint(p, rulerSnapPointsArrayRef.current);
+    rulerSnappedPointRef.current = snappedPoint;
+    setCommonStore((state) => {
+      const ruler = state.elements.find((e) => e.id === id && e.type === ObjectType.Ruler) as RulerModel;
+      if (ruler) {
+        ruler.leftEndPoint.position = [pointer.x, pointer.y, pointer.z];
+        ruler.rightEndPoint.position = [pointer.x, pointer.y, pointer.z];
+      }
+    });
+  };
+
+  const setRulerEndingPoint = (id: string, p: Vector3) => {
+    const { pointer, snappedPoint } = RulerUtil.getSnappedPoint(p, rulerSnapPointsArrayRef.current);
+    rulerSnappedPointRef.current = snappedPoint;
+    setCommonStore((state) => {
+      const ruler = state.elements.find((e) => e.id === id && e.type === ObjectType.Ruler) as RulerModel;
+      if (ruler) {
+        ruler.rightEndPoint.position = [pointer.x, pointer.y, pointer.z];
+      }
+    });
+  };
 
   const setRayCast = (e: ThreeEvent<PointerEvent>) => {
     mouse.x = (e.offsetX / getThree().gl.domElement.clientWidth) * 2 - 1;
@@ -962,9 +1010,9 @@ const Ground = React.memo(() => {
               redo: () => {
                 setCommonStore((state) => {
                   state.elements.push(undoableAdd.addedElement);
-                  state.selectedElement = undoableAdd.addedElement;
                   state.updateSceneRadius();
                 });
+                useStore.getState().selectElement(undoableAdd.addedElement.id);
               },
             } as UndoableAdd;
             addUndoable(undoableAdd);
@@ -992,12 +1040,61 @@ const Ground = React.memo(() => {
               redo: () => {
                 setCommonStore((state) => {
                   state.elements.push(undoableAdd.addedElement);
-                  state.selectedElement = undoableAdd.addedElement;
                   state.updateSceneRadius();
                 });
+                useStore.getState().selectElement(undoableAdd.addedElement.id);
               },
             } as UndoableAdd;
             addUndoable(undoableAdd);
+          }
+        }
+        // adding ruler end point
+        else if (isSettingRulerEndPointRef.current) {
+          isSettingRulerStartPointRef.current = false;
+          isSettingRulerEndPointRef.current = false;
+          if (elem.type === ObjectType.Ruler) {
+            const r = elem as RulerModel;
+            const length = new Vector3()
+              .fromArray(r.leftEndPoint.position)
+              .distanceTo(new Vector3().fromArray(r.rightEndPoint.position));
+            if (length > 0.1) {
+              setCommonStore((state) => {
+                if (rulerSnappedPointRef.current) {
+                  const ruler = state.elements.find(
+                    (e) => e.id === elem.id && e.type === ObjectType.Ruler,
+                  ) as RulerModel;
+                  if (ruler) {
+                    const { elementId, direction } = rulerSnappedPointRef.current;
+                    ruler.rightEndPoint.snappedHandle = { elementId, direction: direction.toArray() };
+                  }
+                }
+                state.addedRulerId = null;
+                state.updateSceneRadius();
+              });
+              // add undo
+              const ruler = useStore.getState().elements.find((e) => e.id === r.id);
+              if (ruler) {
+                const undoableAdd = {
+                  name: 'Add',
+                  timestamp: Date.now(),
+                  addedElement: ruler,
+                  undo: () => {
+                    removeElementById(undoableAdd.addedElement.id, false);
+                    updateSceneRadius();
+                  },
+                  redo: () => {
+                    setCommonStore((state) => {
+                      state.elements.push(undoableAdd.addedElement);
+                      state.updateSceneRadius();
+                    });
+                    useStore.getState().selectElement(undoableAdd.addedElement.id);
+                  },
+                } as UndoableAdd;
+                addUndoable(undoableAdd);
+              }
+            } else {
+              removeElementById(elem.id, false);
+            }
           }
         }
         // handling editing events
@@ -1134,6 +1231,30 @@ const Ground = React.memo(() => {
         });
         isSettingCuboidStartPointRef.current = false;
         isSettingCuboidEndPointRef.current = true;
+      }
+      return;
+    }
+    // adding ruler start point
+    if (isSettingRulerStartPointRef.current) {
+      setRayCast(e);
+      const intersects = ray.intersectObjects([groundPlaneRef.current]);
+      if (intersects.length > 0) {
+        useRefStore.getState().setEnableOrbitController(false);
+        setCommonStore((state) => {
+          state.moveHandleType = null;
+          state.resizeHandleType = ResizeHandleType.Right;
+          if (rulerSnappedPointRef.current) {
+            const ruler = state.elements.find(
+              (e) => e.id === grabRef.current?.id && e.type === ObjectType.Ruler,
+            ) as RulerModel;
+            if (ruler) {
+              const { elementId, direction } = rulerSnappedPointRef.current;
+              ruler.leftEndPoint.snappedHandle = { elementId, direction: direction.toArray() };
+            }
+          }
+        });
+        isSettingRulerStartPointRef.current = false;
+        isSettingRulerEndPointRef.current = true;
       }
       return;
     }
@@ -1512,6 +1633,16 @@ const Ground = React.memo(() => {
         usePrimitiveStore.getState().setSelectButtonClicked(false);
         removeElementById(grabRef.current.id, false);
         grabRef.current = null;
+      } else if (isSettingRulerStartPointRef.current && objectTypeToAdd !== ObjectType.Ruler) {
+        isSettingRulerStartPointRef.current = false;
+        isSettingRulerEndPointRef.current = false;
+        setCommonStore((state) => {
+          state.addedRulerId = null;
+          state.updateSceneRadius();
+        });
+        usePrimitiveStore.getState().setSelectButtonClicked(false);
+        removeElementById(grabRef.current.id, false);
+        grabRef.current = null;
       }
     }
   }, [objectTypeToAdd, selectButtonClicked]);
@@ -1600,6 +1731,12 @@ const Ground = React.memo(() => {
             }
           }
           break;
+        case ObjectType.Ruler: {
+          if (isSettingRulerEndPointRef.current) {
+            setRulerEndingPoint(grabRef.current.id, e.point);
+          }
+          break;
+        }
       }
     }
 
@@ -1636,12 +1773,29 @@ const Ground = React.memo(() => {
               }
               break;
             }
+            case ObjectType.Ruler: {
+              const ruler = addElement(groundModel, p);
+              if (ruler) {
+                setCommonStore((state) => {
+                  state.addedRulerId = ruler.id;
+                  state.objectTypeToAdd = ObjectType.None;
+                });
+                grabRef.current = ruler;
+                isSettingRulerStartPointRef.current = true;
+              }
+              break;
+            }
           }
         }
       }
 
       // setting start point
-      if (grabRef.current && (isSettingFoundationStartPointRef.current || isSettingCuboidStartPointRef.current)) {
+      if (
+        grabRef.current &&
+        (isSettingFoundationStartPointRef.current ||
+          isSettingCuboidStartPointRef.current ||
+          isSettingRulerStartPointRef.current)
+      ) {
         setRayCast(e);
         let intersects = ray.intersectObjects([groundPlaneRef.current]);
         if (intersects.length === 0) return;
@@ -1678,6 +1832,8 @@ const Ground = React.memo(() => {
             });
             setElementPosition(grabRef.current.id, p.x, p.y);
           }
+        } else if (grabRef.current.type === ObjectType.Ruler) {
+          setRulerStartingPoint(grabRef.current.id, p);
         }
       }
     }
@@ -2399,6 +2555,7 @@ const Ground = React.memo(() => {
     const beforeUnload = () => {
       const addedFoundationID = useStore.getState().addedFoundationId;
       const addedCuboidID = useStore.getState().addedCuboidId;
+      const addedRulerId = useStore.getState().addedRulerId;
       if (addedFoundationID) {
         removeElementById(addedFoundationID, false);
         setCommonStore((state) => {
@@ -2420,6 +2577,17 @@ const Ground = React.memo(() => {
         grabRef.current = null;
         isSettingCuboidStartPointRef.current = false;
         isSettingCuboidEndPointRef.current = false;
+      }
+      if (addedRulerId) {
+        removeElementById(addedRulerId, false);
+        setCommonStore((state) => {
+          state.objectTypeToAdd = ObjectType.Ruler;
+          state.addedRulerId = null;
+        });
+        useRefStore.getState().setEnableOrbitController(true);
+        grabRef.current = null;
+        isSettingRulerStartPointRef.current = false;
+        isSettingRulerEndPointRef.current = false;
       }
     };
     window.addEventListener('beforeunload', beforeUnload);

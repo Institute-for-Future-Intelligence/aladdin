@@ -358,6 +358,10 @@ export const batteryStorageActionScope = (state: CommonStoreState) => state.batt
 
 export const setBatteryStorageActionScope = (state: CommonStoreState) => state.setBatteryStorageActionScope;
 
+export const rulerActionScope = (state: CommonStoreState) => state.rulerActionScope;
+
+export const setRulerActionScope = (state: CommonStoreState) => state.setRulerActionScope;
+
 export const solarPanelActionScope = (state: CommonStoreState) => state.solarPanelActionScope;
 
 export const setSolarPanelActionScope = (state: CommonStoreState) => state.setSolarPanelActionScope;
@@ -915,7 +919,11 @@ export const deletedFoundationId = (state: CommonStoreState) => state.deletedFou
 
 export const addedCuboidId = (state: CommonStoreState) => state.addedCuboidId;
 
+export const addedRulerId = (state: CommonStoreState) => state.addedRulerId;
+
 export const deletedCuboidId = (state: CommonStoreState) => state.deletedCuboidId;
+
+export const deletedRulerId = (state: CommonStoreState) => state.deletedRulerId;
 
 export const addedWallId = (state: CommonStoreState) => state.addedWallId;
 

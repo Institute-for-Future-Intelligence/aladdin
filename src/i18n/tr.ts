@@ -181,6 +181,7 @@ export const i18n_tr = {
 
     shared: {
       NoTexture: 'Doku Yok',
+      RulerElement: 'Ruler',
       FoundationElement: 'Temel',
       DoorElement: 'Door',
       WindowElement: 'Window',
@@ -1761,6 +1762,7 @@ export const i18n_tr = {
     toolbar: {
       CloudFile: 'Bulut Dosyası',
       Select: 'Seç',
+      AddRuler: 'Add Ruler',
       AddFoundation: 'Temel Ekle',
       AddWall: 'Duvar Ekle',
       AddWindow: 'Pencere Ekle',

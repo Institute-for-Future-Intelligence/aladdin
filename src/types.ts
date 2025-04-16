@@ -324,6 +324,7 @@ export enum ObjectType {
   PolygonVertex = 'Polygon Vertex',
   Light = 'Light',
   BatteryStorage = 'Battery Storage',
+  Ruler = 'Ruler',
   None = 'None',
 }
 

@@ -182,6 +182,7 @@ export const i18n_ua = {
 
     shared: {
       NoTexture: 'Без текстури',
+      RulerElement: 'Ruler',
       FoundationElement: 'Фундамент',
       DoorElement: 'Двері',
       WindowElement: 'Вікно',
@@ -1765,6 +1766,7 @@ export const i18n_ua = {
       CloudFile: 'Хмарний файл',
       Select: 'Вибрати',
       AddFoundation: 'Додати фундамент',
+      AddRuler: 'Add Ruler',
       AddWall: 'Додати стіну',
       AddWindow: 'Додати вікно',
       AddDoor: 'Додати двері',

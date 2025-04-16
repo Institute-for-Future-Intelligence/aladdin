@@ -54,6 +54,10 @@ export class DefaultActionState implements ActionState {
   foundationSlope: number;
   groundFloorRValue: number;
 
+  rulerHeight: number;
+  rulerWidth: number;
+  rulerColor: string;
+
   cuboidHeight: number;
   cuboidFaceColors: string[];
   cuboidFaceTextures: CuboidTexture[];
@@ -208,6 +212,10 @@ export class DefaultActionState implements ActionState {
     this.foundationEnableSlope = false;
     this.foundationSlope = 0.2;
     this.groundFloorRValue = DEFAULT_GROUND_FLOOR_R_VALUE;
+
+    this.rulerHeight = 0.1;
+    this.rulerWidth = 1;
+    this.rulerColor = '#D3D3D3';
 
     this.cuboidHeight = 4;
     this.cuboidFaceColors = ['#808080', '#808080', '#808080', '#808080', '#808080', '#808080'];

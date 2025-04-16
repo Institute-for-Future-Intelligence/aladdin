@@ -181,6 +181,7 @@ export const i18n_es = {
 
     shared: {
       NoTexture: 'Sin textura',
+      RulerElement: 'Ruler',
       FoundationElement: 'Bases',
       DoorElement: 'Door',
       WindowElement: 'Window',
@@ -1759,6 +1760,7 @@ export const i18n_es = {
     toolbar: {
       CloudFile: 'Archivo en la nube',
       Select: 'Seleccionar',
+      AddRuler: 'Add Ruler',
       AddFoundation: 'Añadir base',
       AddWall: 'Añadir pared',
       AddWindow: 'Añadir ventana',

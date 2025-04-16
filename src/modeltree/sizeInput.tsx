@@ -72,7 +72,7 @@ const SizeInput = ({ element, variable, title, min, max, step, relative }: LxLyL
   };
 
   const modularizeLength = (value: number) => {
-    if (element.type !== ObjectType.FresnelReflector && element.type !== ObjectType.ParabolicTrough) return 1;
+    if (element.type !== ObjectType.FresnelReflector && element.type !== ObjectType.ParabolicTrough) return value;
     const e = element as FresnelReflectorModel | ParabolicTroughModel;
     const length = value ?? 1;
     const n = Math.max(1, Math.ceil((length - e.moduleLength / 2) / e.moduleLength));
@@ -92,9 +92,12 @@ const SizeInput = ({ element, variable, title, min, max, step, relative }: LxLyL
         onChange={(value) => {
           if (value !== null) {
             if (variable === 'ly') {
-              setValue(modularizeLength(value));
+              const v = modularizeLength(value);
+              setValue(v);
+              update(v);
             } else {
               setValue(value);
+              update(value);
             }
           }
         }}

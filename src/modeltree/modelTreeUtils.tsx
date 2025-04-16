@@ -289,6 +289,9 @@ export const i18nType = (e: ElementModel) => {
     case ObjectType.BatteryStorage: {
       return i18n.t('shared.BatteryStorageElement', lang);
     }
+    case ObjectType.Ruler: {
+      return i18n.t('shared.RulerElement', lang);
+    }
   }
   return 'Unknown';
 };

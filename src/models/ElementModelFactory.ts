@@ -58,6 +58,7 @@ import { useStore } from 'src/stores/common';
 import { RoofUtil } from '../views/roof/RoofUtil';
 import { BatteryStorageModel } from './BatteryStorageModel';
 import { SolarWaterHeaterModel } from './SolarWaterHeaterModel';
+import { RulerModel } from './RulerModel';
 
 export class ElementModelFactory {
   static makeHuman(name: HumanName, parentId: string, x: number, y: number, z?: number) {
@@ -273,6 +274,20 @@ export class ElementModelFactory {
       hvacSystem: { ...DEFAULT_HVAC_SYSTEM },
       id: short.generate() as string,
     } as FoundationModel;
+  }
+
+  static makeRuler(point: Vector3) {
+    return {
+      ly: useStore.getState().actionState.rulerWidth ?? 1,
+      lz: useStore.getState().actionState.rulerHeight ?? 0.1,
+      type: ObjectType.Ruler,
+      parentId: GROUND_ID,
+      rotation: [0, 0, 0],
+      color: useStore.getState().actionState.rulerColor ?? '#d3d3d3',
+      leftEndPoint: { position: [point.x, point.y, point.z] },
+      rightEndPoint: { position: [point.x, point.y, point.z] },
+      id: short.generate() as string,
+    } as RulerModel;
   }
 
   static makeParabolicTrough(

@@ -205,6 +205,7 @@ export const i18n_en = {
       ModelType: 'Model Type',
       OutputBreakdown: 'Breakdown',
       MoreResults: 'More Results',
+      RulerElement: 'Ruler',
     },
 
     message: {
@@ -886,6 +887,12 @@ export const i18n_en = {
       SolarUpdraftTowerCollectorEmissivity: 'Solar Updraft Tower Collector Emissivity',
       SolarUpdraftTowerDischargeCoefficient: 'Solar Updraft Tower Discharge Coefficient',
       SolarUpdraftTowerTurbineEfficiency: 'Solar Updraft Tower Turbine Efficiency',
+    },
+
+    rulerMenu: {
+      OnlyThisRuler: 'Only This Ruler',
+      AllSelectedRulers: 'All Selected Rulers',
+      AllRulers: 'All Rulers',
     },
 
     batteryStorageMenu: {
@@ -1760,6 +1767,7 @@ export const i18n_en = {
     toolbar: {
       CloudFile: 'Cloud file',
       Select: 'Select',
+      AddRuler: 'Add Ruler',
       AddFoundation: 'Add Foundation',
       AddWall: 'Add Wall',
       AddWindow: 'Add Window',

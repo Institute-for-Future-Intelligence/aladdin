@@ -103,6 +103,7 @@ import {
 import HeliodonSwitch from './heliodonSwitch';
 import GroundColorInput from './groundColorInput';
 import { AlbedoInput, GroundImageCheckbox } from '../components/contextMenu/elementMenu/groundMenu/groundMenuItems';
+import { RulerModel } from 'src/models/RulerModel';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -645,6 +646,31 @@ export const createPolygonNode = (polygon: PolygonModel) => {
     checkable: false,
     title: <LineStyleInput polygon={polygon} />,
     key: polygon.id + ' Line style',
+  });
+  return node;
+};
+
+export const createRulerNode = (ruler: RulerModel) => {
+  const lang = { lng: useStore.getState().language };
+  const node: TreeDataNode[] = [];
+  node.push({
+    checkable: false,
+    title: <ColorInput element={ruler} />,
+    key: ruler.id + ' Color',
+  });
+  node.push({
+    checkable: false,
+    title: (
+      <SizeInput element={ruler} variable={'ly'} title={i18n.t('word.Width', lang)} min={0.5} max={2} step={0.1} />
+    ),
+    key: ruler.id + ' Width',
+  });
+  node.push({
+    checkable: false,
+    title: (
+      <SizeInput element={ruler} variable={'lz'} title={i18n.t('word.Height', lang)} min={0.1} max={1} step={0.1} />
+    ),
+    key: ruler.id + ' Height',
   });
   return node;
 };

@@ -108,6 +108,7 @@ import { StoreUtil } from './StoreUtil';
 import { isGroupable } from 'src/models/Groupable';
 import { Filter } from '../Filter';
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
+import { RulerModel } from 'src/models/RulerModel';
 
 enableMapSet();
 
@@ -377,6 +378,10 @@ export interface CommonStoreState {
   batteryStorageActionScope: Scope;
   setBatteryStorageActionScope: (scope: Scope) => void;
 
+  // for ruler
+  rulerActionScope: Scope;
+  setRulerActionScope: (scope: Scope) => void;
+
   // for polygons
   polygonActionScope: Scope;
   setPolygonActionScope: (scope: Scope) => void;
@@ -517,6 +522,9 @@ export interface CommonStoreState {
 
   addedCuboidId: string | null;
   deletedCuboidId: string | null;
+
+  addedRulerId: string | null;
+  deletedRulerId: string | null;
 
   addedWallId: string | null;
   deletedWallId: string | null;
@@ -2145,6 +2153,14 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             });
           },
 
+          // for ruler
+          rulerActionScope: Scope.OnlyThisObject,
+          setRulerActionScope(scope) {
+            immerSet((state: CommonStoreState) => {
+              state.rulerActionScope = scope;
+            });
+          },
+
           // for polygons
           polygonActionScope: Scope.OnlyThisObject,
           setPolygonActionScope(scope) {
@@ -2887,6 +2903,11 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   model = batteryStorage;
                   break;
                 }
+                case ObjectType.Ruler: {
+                  const ruler = ElementModelFactory.makeRuler(p);
+                  model = ruler;
+                  state.elements.push(ruler);
+                }
               }
               if (model) {
                 state.selectedElementIdSet.clear();
@@ -3073,6 +3094,9 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                     case ObjectType.Cuboid: {
                       state.deletedCuboidId = elem.id;
                       break;
+                    }
+                    case ObjectType.Ruler: {
+                      state.deletedRulerId = elem.id;
                     }
                   }
                   break;
@@ -3698,6 +3722,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   state.pasteNormal,
                   oldParent,
                 );
+                console.log('paste', e);
                 if (e) {
                   if (state.pasteNormal && newParent?.type === ObjectType.Cuboid) {
                     e.normal = state.pasteNormal.toArray();
@@ -4970,6 +4995,15 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       state.elements.push(e);
                       state.elementsToPaste = [e];
                       approved = true;
+                      break;
+                    }
+                    case ObjectType.Ruler: {
+                      // const ruler = e as RulerModel;
+                      // ruler.leftEndPoint.position[0] += 1;
+                      // ruler.rightEndPoint.position[0] += 1;
+                      state.elements.push(e);
+                      state.elementsToPaste = [e];
+                      approved = true;
                     }
                   }
                   if (state.elementsToPaste.length === 1 && approved) {
@@ -5212,7 +5246,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               get().addedFoundationId ||
               get().addedWallId ||
               get().addedWindowId ||
-              get().addedDoorId
+              get().addedDoorId ||
+              get().addedRulerId
             );
           },
 
@@ -5221,6 +5256,9 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
 
           addedCuboidId: null,
           deletedCuboidId: null,
+
+          addedRulerId: null,
+          deletedRulerId: null,
 
           addedWallId: null,
           deletedWallId: null,

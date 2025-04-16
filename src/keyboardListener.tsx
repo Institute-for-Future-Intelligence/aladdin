@@ -1203,6 +1203,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
       case 'esc': {
         const addedFoundationID = useStore.getState().addedFoundationId;
         const addedCuboidId = useStore.getState().addedCuboidId;
+        const addedRulerId = useStore.getState().addedRulerId;
         const addedWallId = useStore.getState().addedWallId;
         const addedWindowId = useStore.getState().addedWindowId;
         const addedDoorId = useStore.getState().addedDoorId;
@@ -1210,6 +1211,8 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
           removeElementById(addedFoundationID, false);
         } else if (addedCuboidId) {
           removeElementById(addedCuboidId, false);
+        } else if (addedRulerId) {
+          removeElementById(addedRulerId, false);
         } else if (addedWallId) {
           removeElementById(addedWallId, false);
         } else if (addedWindowId) {

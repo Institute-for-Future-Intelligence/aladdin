@@ -36,6 +36,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import './style.css';
 import { createSolarWaterHeaterMenu } from './elementMenu/solarWaterHeaterMenu/solarWaterHeaterMenu';
 import { createBatteryStorageMenu } from './elementMenu/batteryStorageMenu/batteryStorageMenu';
+import { createRulerMenu } from './elementMenu/rulerMenu/rulerMenu';
 export interface ContextMenuProps {
   [key: string]: any;
 }
@@ -73,6 +74,8 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
       return { items: [] };
     }
     switch (contextMenuObjectType) {
+      case ObjectType.Ruler:
+        return createRulerMenu(selectedElement);
       case ObjectType.Foundation:
         return createFoundationMenu(selectedElement);
       case ObjectType.Cuboid:
