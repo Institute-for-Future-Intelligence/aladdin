@@ -1833,6 +1833,7 @@ export class Util {
 
   // get the relative 2D vertices of a wall (can be a quad, pentagon, or heptagon)
   static getWallVertices(wall: WallModel, margin: number): Point2[] {
+    if (wall.fill === WallFill.Partial) return Util.getPartialWallVertices(wall, margin);
     const hx = wall.lx / 2;
     const hz = wall.lz / 2;
     const lowerLeft = { x: -hx - margin, y: -hz - margin } as Point2;

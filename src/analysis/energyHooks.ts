@@ -184,8 +184,8 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
             const f = e.type === ObjectType.Foundation ? (e as FoundationModel) : getFoundation(e);
             if (
               f &&
-              !f.notBuilding &&
-              Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE
+              !f.notBuilding
+              // Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE
             ) {
               let energyUsage = energy.get(f.id);
               if (!energyUsage) {
@@ -256,8 +256,8 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
             if (elem && elem.type === ObjectType.Foundation) {
               const f = elem as FoundationModel;
               if (
-                !f.notBuilding &&
-                Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE
+                !f.notBuilding
+                // Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE
               ) {
                 const heatingSetpoint = Util.getHeatingSetpoint(now, f.hvacSystem);
                 const coolingSetpoint = Util.getCoolingSetpoint(now, f.hvacSystem);
@@ -372,8 +372,8 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
             if (elem && elem.type === ObjectType.Foundation) {
               const f = elem as FoundationModel;
               if (
-                !f.notBuilding &&
-                Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE
+                !f.notBuilding
+                // Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE
               ) {
                 const hvacId = f.hvacSystem?.id ?? (value.label && value.label !== '' ? value.label : '1');
                 hvacIdSetRef.current.add(hvacId);
