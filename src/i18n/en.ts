@@ -505,6 +505,7 @@ export const i18n_en = {
         GambrelRoofVsMansardRoof: 'Gambrel Roof vs. Mansard Roof',
         CombinationRoofVsBonnetRoof: 'Combination Roof vs. Bonnet Roof',
         DutchGableRoof: 'Dutch Gable Roof',
+        CantileverFloor: 'Cantilever Floor',
         GableAndValleyRoof: 'Gable and Valley Roof',
         ClerestoryRoof: 'Clerestory Roof',
         MonitorRoof: 'Monitor Roof',

@@ -38,6 +38,7 @@ import cathedral_02 from './examples/cathedral_02.json';
 import colonial_house from './examples/colonial_house.json';
 import dutch_colonial_house from './examples/dutch_colonial_house.json';
 import dutch_gable_roof from './examples/dutch_gable_roof.json';
+import cantilever_floor from './examples/cantilever_floor.json';
 import a_frame_house from './examples/a_frame_house.json';
 import half_timbered_house from './examples/half_timbered_house.json';
 import combination_roof_vs_bonnet_roof from './examples/combination_roof_vs_bonnet_roof.json';
@@ -385,6 +386,9 @@ export const getExample = (name: string) => {
       break;
     case 'dutch_gable_roof':
       input = dutch_gable_roof;
+      break;
+    case 'cantilever_floor':
+      input = cantilever_floor;
       break;
     case 'combination_roof_vs_bonnet_roof':
       input = combination_roof_vs_bonnet_roof;
