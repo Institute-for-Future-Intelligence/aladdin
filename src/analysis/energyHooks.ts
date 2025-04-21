@@ -31,6 +31,7 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
   const sumAcMapRef = useRef<Map<string, number>>(new Map<string, number>());
   const sumSolarPanelMapRef = useRef<Map<string, number>>(new Map<string, number>());
   const summaryMapRef = useRef<Map<string, number>>(new Map());
+  const completeBuildingHvacIdSetRef = useRef<Set<string>>(new Set());
 
   const batteryStorageDataArrayRef = useRef<DatumEntry[]>([]);
   const batterySurplusEnergyMapRef = useRef<Map<string, number>>(new Map());
@@ -141,6 +142,7 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
     sumSolarPanelMapRef.current.clear();
     summaryMapRef.current.clear();
     batteryLevelMapRef.current.clear();
+    completeBuildingHvacIdSetRef.current.clear();
 
     const hasConnectedBattery = elements.find((e) => e.type === ObjectType.BatteryStorage);
     if (hasConnectedBattery) {
@@ -173,6 +175,19 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
       }
     }
 
+    for (const e of useStore.getState().elements) {
+      if (e.type === ObjectType.Foundation) {
+        const f = e as FoundationModel;
+        if (
+          !f.notBuilding &&
+          f.hvacSystem.id &&
+          Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE
+        ) {
+          completeBuildingHvacIdSetRef.current.add(f.hvacSystem.id);
+        }
+      }
+    }
+
     for (let i = 0; i < 24; i++) {
       const datum: DatumEntry = {};
       const energy = new Map<string, EnergyUsage>();
@@ -184,8 +199,9 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
             const f = e.type === ObjectType.Foundation ? (e as FoundationModel) : getFoundation(e);
             if (
               f &&
-              !f.notBuilding
-              // Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE
+              !f.notBuilding &&
+              ((f.hvacSystem.id && completeBuildingHvacIdSetRef.current.has(f.hvacSystem.id)) ||
+                Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE)
             ) {
               let energyUsage = energy.get(f.id);
               if (!energyUsage) {
@@ -220,7 +236,11 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
       for (const e of elements) {
         if (e.type === ObjectType.Foundation) {
           const f = e as FoundationModel;
-          if (!f.notBuilding && Util.getBuildingCompletionStatus(f, elements) !== BuildingCompletionStatus.COMPLETE)
+          if (
+            !f.notBuilding &&
+            !(f.hvacSystem.id && completeBuildingHvacIdSetRef.current.has(f.id)) &&
+            Util.getBuildingCompletionStatus(f, elements) !== BuildingCompletionStatus.COMPLETE
+          )
             continue;
           const energyUsage = energy.get(e.id);
           if (energyUsage) {
@@ -256,8 +276,9 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
             if (elem && elem.type === ObjectType.Foundation) {
               const f = elem as FoundationModel;
               if (
-                !f.notBuilding
-                // Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE
+                !f.notBuilding &&
+                ((f.hvacSystem.id && completeBuildingHvacIdSetRef.current.has(f.hvacSystem.id)) ||
+                  Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE)
               ) {
                 const heatingSetpoint = Util.getHeatingSetpoint(now, f.hvacSystem);
                 const coolingSetpoint = Util.getCoolingSetpoint(now, f.hvacSystem);
@@ -372,8 +393,9 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
             if (elem && elem.type === ObjectType.Foundation) {
               const f = elem as FoundationModel;
               if (
-                !f.notBuilding
-                // Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE
+                !f.notBuilding &&
+                ((f.hvacSystem.id && completeBuildingHvacIdSetRef.current.has(f.hvacSystem.id)) ||
+                  Util.getBuildingCompletionStatus(f, elements) === BuildingCompletionStatus.COMPLETE)
               ) {
                 const hvacId = f.hvacSystem?.id ?? (value.label && value.label !== '' ? value.label : '1');
                 hvacIdSetRef.current.add(hvacId);
