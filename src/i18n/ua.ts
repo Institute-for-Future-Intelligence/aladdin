@@ -509,7 +509,7 @@ export const i18n_ua = {
         GambrelRoofVsMansardRoof: 'Півшаровий дах проти мансардного даху',
         CombinationRoofVsBonnetRoof: 'Комбінований дах проти капотного даху',
         DutchGableRoof: 'Голландський дах з рикетом',
-        CantileverFloor: 'Cantilever Floor',
+        RaisedRanch: 'Raised Ranch',
         GableAndValleyRoof: 'Схиловий та долинний дах',
         ClerestoryRoof: 'Клересторний дах',
         MonitorRoof: 'Моніторний дах',

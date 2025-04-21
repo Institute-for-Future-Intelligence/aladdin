@@ -503,7 +503,7 @@ export const i18n_zh_cn = {
         GambrelRoofVsMansardRoof: '复斜屋顶和折线屋顶的对比',
         CombinationRoofVsBonnetRoof: '组合屋顶和帽檐屋顶的对比',
         DutchGableRoof: '荷兰双坡屋顶',
-        CantileverFloor: '悬臂楼板',
+        RaisedRanch: '高架牧場式住宅',
         GableAndValleyRoof: '坡谷屋顶',
         ClerestoryRoof: '天窗屋顶',
         MonitorRoof: '采光屋顶',

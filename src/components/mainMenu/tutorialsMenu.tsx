@@ -167,8 +167,8 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
           label: 'menu.buildingDesignTutorials.DutchGableRoof',
         },
         {
-          key: 'cantilever_floor',
-          label: 'menu.buildingDesignTutorials.CantileverFloor',
+          key: 'raised_ranch',
+          label: 'menu.buildingDesignTutorials.RaisedRanch',
         },
         {
           key: 'gable_and_valley_roof',
