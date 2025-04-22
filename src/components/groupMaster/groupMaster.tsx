@@ -38,6 +38,8 @@ interface HandleProps {
 
 enum Operation {
   Move = 'Move',
+  ResizeX = 'Resize X',
+  ResizeY = 'Resize Y',
   ResizeXY = 'Resize XY',
   ResizeZ = 'Resize Z',
   RotateUpper = 'Rotate Upper',
@@ -416,6 +418,147 @@ const GroupMaster = React.memo(
       });
     };
 
+    const updateResizeBottom = (cx: number, cy: number, lx: number, ly: number) => {
+      setPosition(new Vector3(cx, cy));
+      setDimension(lx, ly);
+      setCommonStore((state) => {
+        for (const elem of state.elements) {
+          // foundationGroupSet only has one element here
+          if (groupedElementsIdSet.has(elem.id)) {
+            elem.lx = lx;
+            elem.ly = ly;
+            elem.cx = cx;
+            elem.cy = cy;
+          }
+          // child elements
+          else if (elem.foundationId && groupedElementsIdSet.has(elem.foundationId)) {
+            switch (elem.type) {
+              case ObjectType.Wall: {
+                const wall = elem as WallModel;
+                const relativePosition = wallRelPointsMapRef.current.get(wall.id);
+                if (!relativePosition) continue;
+                const [leftRelPoint, rightRelPoint] = relativePosition;
+                const leftPoint = [leftRelPoint.x * lx, leftRelPoint.y * ly, 0];
+                const rightPoint = [rightRelPoint.x * lx, rightRelPoint.y * ly, 0];
+                wall.cx = (leftPoint[0] + rightPoint[0]) / 2;
+                wall.cy = (leftPoint[1] + rightPoint[1]) / 2;
+                wall.lx = Math.hypot(leftPoint[0] - rightPoint[0], leftPoint[1] - rightPoint[1]);
+                wall.relativeAngle = Math.atan2(rightPoint[1] - leftPoint[1], rightPoint[0] - leftPoint[0]);
+                wall.leftPoint = [...leftPoint];
+                wall.rightPoint = [...rightPoint];
+                break;
+              }
+              case ObjectType.SolarPanel: {
+                const solarPanel = elem as SolarPanelModel;
+                const relativePosition = childRelPosMapRef.current.get(solarPanel.id);
+                if (!relativePosition) continue;
+
+                const parentType = solarPanel.parentType;
+                const [x, y, z] = solarPanel.normal;
+                if (
+                  parentType === ObjectType.Foundation ||
+                  parentType === ObjectType.Roof ||
+                  (parentType === ObjectType.Cuboid && Util.isEqual(z, 1))
+                ) {
+                  solarPanel.cx = relativePosition[0] * lx;
+                  solarPanel.cy = relativePosition[1] * ly;
+                  if (parentType === ObjectType.Foundation) {
+                    const foundation = state.elements.find(
+                      (e) => e.id === elem.parentId && e.type === ObjectType.Foundation,
+                    ) as FoundationModel;
+                    if (foundation && foundation.enableSlope) {
+                      solarPanel.cz = foundation.lz + Util.getZOnSlope(lx, foundation.slope, solarPanel.cx);
+                    }
+                  }
+                } else if (parentType === ObjectType.Cuboid) {
+                  // north face
+                  if (Util.isEqual(x, 0) && Util.isEqual(y, 1)) {
+                    solarPanel.cx = relativePosition[0] * lx;
+                    solarPanel.cy = ly / 2;
+                  }
+                  // south face
+                  else if (Util.isEqual(x, 0) && Util.isEqual(y, -1)) {
+                    solarPanel.cx = relativePosition[0] * lx;
+                    solarPanel.cy = -ly / 2;
+                  }
+                  // west face
+                  else if (Util.isEqual(x, -1) && Util.isEqual(y, 0)) {
+                    solarPanel.cx = -lx / 2;
+                    solarPanel.cy = relativePosition[1] * ly;
+                  }
+                  // east face
+                  else if (Util.isEqual(x, 1) && Util.isEqual(y, 0)) {
+                    solarPanel.cx = lx / 2;
+                    solarPanel.cy = relativePosition[1] * ly;
+                  }
+                }
+                break;
+              }
+              case ObjectType.BatteryStorage: {
+                const relativePosition = childRelPosMapRef.current.get(elem.id);
+                if (!relativePosition) continue;
+                elem.cx = relativePosition[0] * lx;
+                elem.cy = relativePosition[1] * ly;
+                const foundation = state.elements.find(
+                  (e) => e.id === elem.parentId && e.type === ObjectType.Foundation,
+                ) as FoundationModel;
+                if (foundation && foundation.enableSlope) {
+                  elem.cz = foundation.lz + Util.getZOnSlope(lx, foundation.slope, elem.cx);
+                }
+                break;
+              }
+              case ObjectType.Window: {
+                const skylight = elem as WindowModel;
+                if (skylight.parentType !== ObjectType.Roof) continue;
+                const relativePosition = childRelPosMapRef.current.get(skylight.id);
+                if (!relativePosition) continue;
+                skylight.cx = relativePosition[0] * lx;
+                skylight.cy = relativePosition[1] * ly;
+              }
+            }
+          }
+        }
+      });
+    };
+
+    const resizeX = (p: Vector3) => {
+      const pointer2D = new Vector2(p.x, p.y);
+      const anchor = resizeAnchorRef.current.clone();
+
+      const anchorToPointer = new Vector3(pointer2D.x - anchor.x, pointer2D.y - anchor.y);
+      const nx = new Vector3(1, 0, 0).applyEuler(new Euler(0, 0, rotation));
+      const angle = anchorToPointer.angleTo(nx);
+      const lx = Math.abs(anchorToPointer.length() * Math.cos(angle));
+
+      if (angle > HALF_PI) {
+        nx.multiplyScalar(-lx / 2);
+      } else {
+        nx.multiplyScalar(lx / 2);
+      }
+      const center = new Vector3().addVectors(new Vector3(anchor.x, anchor.y), nx);
+      updateResizeBottom(center.x, center.y, lx, ly);
+      useStore.getState().updateElementOnRoofFn();
+    };
+
+    const resizeY = (p: Vector3) => {
+      const pointer2D = new Vector2(p.x, p.y);
+      const anchor = resizeAnchorRef.current.clone();
+
+      const anchorToPointer = new Vector3(pointer2D.x - anchor.x, pointer2D.y - anchor.y);
+      const ny = new Vector3(0, 1, 0).applyEuler(new Euler(0, 0, rotation));
+      const angle = anchorToPointer.angleTo(ny);
+      const ly = Math.abs(anchorToPointer.length() * Math.cos(angle));
+
+      if (angle > HALF_PI) {
+        ny.multiplyScalar(-ly / 2);
+      } else {
+        ny.multiplyScalar(ly / 2);
+      }
+      const center = new Vector3().addVectors(new Vector3(anchor.x, anchor.y), ny);
+      updateResizeBottom(center.x, center.y, lx, ly);
+      useStore.getState().updateElementOnRoofFn();
+    };
+
     const resizeXY = (p: Vector3) => {
       const pointer2D = new Vector2(p.x, p.y);
       const anchor = resizeAnchorRef.current.clone();
@@ -576,108 +719,8 @@ const GroupMaster = React.memo(
         const lx = Math.abs(diagonal * Math.sin(angle));
         const ly = Math.abs(diagonal * Math.cos(angle));
         const center = new Vector2().addVectors(pointer2D, anchor).multiplyScalar(0.5);
-        setPosition(new Vector3(center.x, center.y));
-        setDimension(lx, ly);
-        setCommonStore((state) => {
-          for (const elem of state.elements) {
-            // foundationGroupSet only has one element here
-            if (groupedElementsIdSet.has(elem.id)) {
-              elem.lx = lx;
-              elem.ly = ly;
-              elem.cx = center.x;
-              elem.cy = center.y;
-            }
-            // child elements
-            else if (elem.foundationId && groupedElementsIdSet.has(elem.foundationId)) {
-              switch (elem.type) {
-                case ObjectType.Wall: {
-                  const wall = elem as WallModel;
-                  const relativePosition = wallRelPointsMapRef.current.get(wall.id);
-                  if (!relativePosition) continue;
-                  const [leftRelPoint, rightRelPoint] = relativePosition;
-                  const leftPoint = [leftRelPoint.x * lx, leftRelPoint.y * ly, 0];
-                  const rightPoint = [rightRelPoint.x * lx, rightRelPoint.y * ly, 0];
-                  wall.cx = (leftPoint[0] + rightPoint[0]) / 2;
-                  wall.cy = (leftPoint[1] + rightPoint[1]) / 2;
-                  wall.lx = Math.hypot(leftPoint[0] - rightPoint[0], leftPoint[1] - rightPoint[1]);
-                  wall.relativeAngle = Math.atan2(rightPoint[1] - leftPoint[1], rightPoint[0] - leftPoint[0]);
-                  wall.leftPoint = [...leftPoint];
-                  wall.rightPoint = [...rightPoint];
-                  break;
-                }
-                case ObjectType.SolarPanel: {
-                  const solarPanel = elem as SolarPanelModel;
-                  const relativePosition = childRelPosMapRef.current.get(solarPanel.id);
-                  if (!relativePosition) continue;
-
-                  const parentType = solarPanel.parentType;
-                  const [x, y, z] = solarPanel.normal;
-                  if (
-                    parentType === ObjectType.Foundation ||
-                    parentType === ObjectType.Roof ||
-                    (parentType === ObjectType.Cuboid && Util.isEqual(z, 1))
-                  ) {
-                    solarPanel.cx = relativePosition[0] * lx;
-                    solarPanel.cy = relativePosition[1] * ly;
-                    if (parentType === ObjectType.Foundation) {
-                      const foundation = state.elements.find(
-                        (e) => e.id === elem.parentId && e.type === ObjectType.Foundation,
-                      ) as FoundationModel;
-                      if (foundation && foundation.enableSlope) {
-                        solarPanel.cz = foundation.lz + Util.getZOnSlope(lx, foundation.slope, solarPanel.cx);
-                      }
-                    }
-                  } else if (parentType === ObjectType.Cuboid) {
-                    // north face
-                    if (Util.isEqual(x, 0) && Util.isEqual(y, 1)) {
-                      solarPanel.cx = relativePosition[0] * lx;
-                      solarPanel.cy = ly / 2;
-                    }
-                    // south face
-                    else if (Util.isEqual(x, 0) && Util.isEqual(y, -1)) {
-                      solarPanel.cx = relativePosition[0] * lx;
-                      solarPanel.cy = -ly / 2;
-                    }
-                    // west face
-                    else if (Util.isEqual(x, -1) && Util.isEqual(y, 0)) {
-                      solarPanel.cx = -lx / 2;
-                      solarPanel.cy = relativePosition[1] * ly;
-                    }
-                    // east face
-                    else if (Util.isEqual(x, 1) && Util.isEqual(y, 0)) {
-                      solarPanel.cx = lx / 2;
-                      solarPanel.cy = relativePosition[1] * ly;
-                    }
-                  }
-                  break;
-                }
-                case ObjectType.BatteryStorage: {
-                  const relativePosition = childRelPosMapRef.current.get(elem.id);
-                  if (!relativePosition) continue;
-                  elem.cx = relativePosition[0] * lx;
-                  elem.cy = relativePosition[1] * ly;
-                  const foundation = state.elements.find(
-                    (e) => e.id === elem.parentId && e.type === ObjectType.Foundation,
-                  ) as FoundationModel;
-                  if (foundation && foundation.enableSlope) {
-                    elem.cz = foundation.lz + Util.getZOnSlope(lx, foundation.slope, elem.cx);
-                  }
-                  break;
-                }
-                case ObjectType.Window: {
-                  const skylight = elem as WindowModel;
-                  if (skylight.parentType !== ObjectType.Roof) continue;
-                  const relativePosition = childRelPosMapRef.current.get(skylight.id);
-                  if (!relativePosition) continue;
-                  skylight.cx = relativePosition[0] * lx;
-                  skylight.cy = relativePosition[1] * ly;
-                }
-              }
-            }
-          }
-        });
+        updateResizeBottom(center.x, center.y, lx, ly);
       }
-
       useStore.getState().updateElementOnRoofFn();
     };
 
@@ -767,10 +810,10 @@ const GroupMaster = React.memo(
       setRotation(rotateAngle);
     };
 
-    const pointerDownBottomResizeHandle = (x: number, y: number) => {
+    const pointerDownBottomResizeHandle = (x: number, y: number, operation: Operation) => {
       const positionV2 = new Vector2(position.x, position.y);
       resizeAnchorRef.current.set(x, y).rotateAround(zeroVector2, rotation).add(positionV2);
-      setOperation(Operation.ResizeXY);
+      setOperation(operation);
 
       basePosRatioMapRef.current.clear();
       baseDmsRatioMapRef.current.clear();
@@ -879,19 +922,35 @@ const GroupMaster = React.memo(
       initPointerDown(event);
       switch (event.object.name) {
         case ResizeHandleType.UpperLeft: {
-          pointerDownBottomResizeHandle(hx, -hy);
+          pointerDownBottomResizeHandle(hx, -hy, Operation.ResizeXY);
           break;
         }
         case ResizeHandleType.UpperRight: {
-          pointerDownBottomResizeHandle(-hx, -hy);
+          pointerDownBottomResizeHandle(-hx, -hy, Operation.ResizeXY);
           break;
         }
         case ResizeHandleType.LowerLeft: {
-          pointerDownBottomResizeHandle(hx, hy);
+          pointerDownBottomResizeHandle(hx, hy, Operation.ResizeXY);
           break;
         }
         case ResizeHandleType.LowerRight: {
-          pointerDownBottomResizeHandle(-hx, hy);
+          pointerDownBottomResizeHandle(-hx, hy, Operation.ResizeXY);
+          break;
+        }
+        case ResizeHandleType.Upper: {
+          pointerDownBottomResizeHandle(0, -hy, Operation.ResizeY);
+          break;
+        }
+        case ResizeHandleType.Lower: {
+          pointerDownBottomResizeHandle(0, hy, Operation.ResizeY);
+          break;
+        }
+        case ResizeHandleType.Left: {
+          pointerDownBottomResizeHandle(hx, 0, Operation.ResizeX);
+          break;
+        }
+        case ResizeHandleType.Right: {
+          pointerDownBottomResizeHandle(-hx, 0, Operation.ResizeX);
           break;
         }
         case ResizeHandleType.UpperLeftTop: {
@@ -987,6 +1046,12 @@ const GroupMaster = React.memo(
       if (intersects.length > 0) {
         const p = intersects[0].point;
         switch (operation) {
+          case Operation.ResizeX:
+            resizeX(p);
+            break;
+          case Operation.ResizeY:
+            resizeY(p);
+            break;
           case Operation.ResizeXY:
             resizeXY(p);
             break;
@@ -1018,9 +1083,9 @@ const GroupMaster = React.memo(
     const handleSize = useHandleSize();
     const bottomHandleZ = handleSize / 2;
     const topHandleZ = height + bottomHandleZ - handleSize / 2;
-    const moveHandleX = hx + handleSize;
-    const moveHandleY = hy + handleSize;
-    const resizeHandleY = hy + handleSize * 4;
+    const moveHandleX = hx + handleSize * 2;
+    const moveHandleY = hy + handleSize * 2;
+    const resizeHandleY = hy + handleSize * 5;
 
     return (
       <group name={'Group Master'} position={position} rotation={[0, 0, rotation]}>
@@ -1029,6 +1094,15 @@ const GroupMaster = React.memo(
           <ResizeHandle args={[-hx, hy, bottomHandleZ, handleSize]} handleType={ResizeHandleType.UpperLeft} />
           <ResizeHandle args={[hx, -hy, bottomHandleZ, handleSize]} handleType={ResizeHandleType.LowerRight} />
           <ResizeHandle args={[-hx, -hy, bottomHandleZ, handleSize]} handleType={ResizeHandleType.LowerLeft} />
+          {!lockAspectRatio && (
+            <>
+              <ResizeHandle args={[-hx, 0, bottomHandleZ, handleSize]} handleType={ResizeHandleType.Left} />
+              <ResizeHandle args={[hx, 0, bottomHandleZ, handleSize]} handleType={ResizeHandleType.Right} />
+              <ResizeHandle args={[0, -hy, bottomHandleZ, handleSize]} handleType={ResizeHandleType.Lower} />
+              <ResizeHandle args={[0, hy, bottomHandleZ, handleSize]} handleType={ResizeHandleType.Upper} />
+            </>
+          )}
+
           {!orthographic && (
             <>
               <ResizeHandle args={[hx, hy, topHandleZ, handleSize]} handleType={ResizeHandleType.UpperRightTop} />
