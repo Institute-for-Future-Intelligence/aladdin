@@ -30,6 +30,7 @@ export interface PrimitiveStoreState {
 
   showSolarPanelCustomizationPanel: boolean;
   showEconomicsPanel: boolean;
+  showEditorPanel: boolean;
   showNavigationPanel: boolean;
   showShadowSettings: boolean;
 
@@ -232,6 +233,7 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
 
     showSolarPanelCustomizationPanel: false,
     showEconomicsPanel: false,
+    showEditorPanel: false,
     showNavigationPanel: false,
     showShadowSettings: false,
 

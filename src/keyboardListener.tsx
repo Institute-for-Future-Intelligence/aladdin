@@ -236,10 +236,9 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
   const setEnableFineGrid = useStore(Selector.setEnableFineGrid);
   const overlapWithSibling = useStore(Selector.overlapWithSibling);
   const logAction = useStore(Selector.logAction);
+  const moveStep = useStore(Selector.moveStep);
 
   const lastKeyMoveTimeRef = useRef<number | null>(null);
-
-  const moveStepAbsolute = 0.1;
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -565,12 +564,12 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
   };
 
   const moveByKey = (direction: MoveDirection, scale: number) => {
-    if (!orthographic) return;
+    // if (!orthographic) return;
 
     // foundation and cuboid can be moved together, child elements on same parent can be moved together.
     const elementsToBeMoved = getElementsToBeMoved();
     const selectedElement = getSelectedElement();
-    const displacement = scale * moveStepAbsolute;
+    const displacement = scale * moveStep;
 
     if (selectedElement && elementsToBeMoved.length > 0) {
       const currentDisplacementMap = new Map<string, Vector2>();
@@ -754,6 +753,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
       }
       updateElementMoveByKey(currentDisplacementMap);
     } else {
+      if (!orthographic) return; // disable this in 3D mode
       const currDistVector = setDisplacementVector(new Vector2(), displacement, direction);
       const lastUndoCommand = useStore.getState().undoManager.getLastUndoCommand();
       // need to update last undo command
@@ -786,47 +786,46 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
 
   const handleKeyDown = (key: string) => {
     const selectedElement = getSelectedElement();
-    const step = 5;
     switch (key) {
       case 'left':
-        moveByKey(MoveDirection.Left, step);
+        moveByKey(MoveDirection.Left, 1);
         break;
       case 'shift+left':
-        moveByKey(MoveDirection.Left, step / GRID_RATIO);
+        moveByKey(MoveDirection.Left, 1 / GRID_RATIO);
         break;
       case 'ctrl+shift+left':
       case 'meta+shift+left':
-        moveByKey(MoveDirection.Left, step * GRID_RATIO);
+        moveByKey(MoveDirection.Left, GRID_RATIO);
         break;
       case 'right':
-        moveByKey(MoveDirection.Right, step);
+        moveByKey(MoveDirection.Right, 1);
         break;
       case 'shift+right':
-        moveByKey(MoveDirection.Right, step / GRID_RATIO);
+        moveByKey(MoveDirection.Right, 1 / GRID_RATIO);
         break;
       case 'ctrl+shift+right':
       case 'meta+shift+right':
-        moveByKey(MoveDirection.Right, step * GRID_RATIO);
+        moveByKey(MoveDirection.Right, GRID_RATIO);
         break;
       case 'down':
-        moveByKey(MoveDirection.Down, step);
+        moveByKey(MoveDirection.Down, 1);
         break;
       case 'shift+down':
-        moveByKey(MoveDirection.Down, step / GRID_RATIO);
+        moveByKey(MoveDirection.Down, 1 / GRID_RATIO);
         break;
       case 'ctrl+shift+down':
       case 'meta+shift+down':
-        moveByKey(MoveDirection.Down, step * GRID_RATIO);
+        moveByKey(MoveDirection.Down, GRID_RATIO);
         break;
       case 'up':
-        moveByKey(MoveDirection.Up, step);
+        moveByKey(MoveDirection.Up, 1);
         break;
       case 'shift+up':
-        moveByKey(MoveDirection.Up, step / GRID_RATIO);
+        moveByKey(MoveDirection.Up, 1 / GRID_RATIO);
         break;
       case 'ctrl+shift+up':
       case 'meta+shift+up':
-        moveByKey(MoveDirection.Up, step * GRID_RATIO);
+        moveByKey(MoveDirection.Up, GRID_RATIO);
         break;
       case 'ctrl+[':
       case 'meta+[': // for Mac

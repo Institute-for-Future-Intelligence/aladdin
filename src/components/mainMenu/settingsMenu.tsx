@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { MenuProps } from 'antd';
@@ -20,6 +20,7 @@ export const createSettingsMenu = () => {
   const showDiurnalTemperaturePanel = useStore.getState().viewState.showDiurnalTemperaturePanel;
   const showSolarPanelCustomizationPanel = usePrimitiveStore.getState().showSolarPanelCustomizationPanel;
   const showEconomicsPanel = usePrimitiveStore.getState().showEconomicsPanel;
+  const showEditorPanel = usePrimitiveStore.getState().showEditorPanel;
   const showNavigationPanel = usePrimitiveStore.getState().showNavigationPanel;
   const showShadowSettings = usePrimitiveStore.getState().showShadowSettings;
   const loggable = useStore.getState().loggable;
@@ -140,6 +141,20 @@ export const createSettingsMenu = () => {
     }
   };
 
+  const openEditorPanel = () => {
+    usePrimitiveStore.getState().set((state) => {
+      state.showEditorPanel = true;
+    });
+    if (loggable) {
+      setCommonStore((state) => {
+        state.actionInfo = {
+          name: 'Open Editor Panel',
+          timestamp: new Date().getTime(),
+        };
+      });
+    }
+  };
+
   const openNavigationPanel = () => {
     usePrimitiveStore.getState().set((state) => {
       state.showNavigationPanel = true;
@@ -237,6 +252,18 @@ export const createSettingsMenu = () => {
       label: (
         <MenuItem noPadding onClick={openEconomicsPanel}>
           {i18n.t('economicsPanel.EconomicsParameters', lang)}...
+        </MenuItem>
+      ),
+    });
+  }
+
+  // editor-panel
+  if (!showEditorPanel) {
+    items.push({
+      key: 'editor-panel',
+      label: (
+        <MenuItem noPadding onClick={openEditorPanel}>
+          {i18n.t('editorPanel.EditorParameters', lang)}...
         </MenuItem>
       ),
     });

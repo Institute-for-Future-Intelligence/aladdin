@@ -155,6 +155,7 @@ export interface CommonStoreState {
   showModelsFromDate: string;
   showModelsToDate: string;
 
+  moveStep: number;
   minimumNavigationMoveSpeed: number;
   minimumNavigationTurnSpeed: number;
 
@@ -707,6 +708,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           showModelsFromDate: '2021-01-01',
           showModelsToDate: '2025-12-31',
 
+          moveStep: 0.5,
           minimumNavigationMoveSpeed: 3,
           minimumNavigationTurnSpeed: 3,
 
@@ -782,6 +784,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.evolutionaryAlgorithmState =
                 content.evolutionaryAlgorithmState ?? new DefaultEvolutionaryAlgorithmState();
               state.economicsParams = content.economicsParams ?? new DefaultEconomicsParams();
+              state.moveStep = content.moveStep ?? 0.5;
               state.minimumNavigationMoveSpeed = content.minimumNavigationMoveSpeed ?? 3;
               state.minimumNavigationTurnSpeed = content.minimumNavigationTurnSpeed ?? 3;
               // clear existing data, if any
@@ -848,6 +851,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               modelDescription: state.modelDescription,
               designProjectType: state.designProjectType,
               notes: state.notes,
+              moveStep: state.moveStep,
               minimumNavigationMoveSpeed: state.minimumNavigationMoveSpeed,
               minimumNavigationTurnSpeed: state.minimumNavigationTurnSpeed,
               customPvModules: JSON.parse(JSON.stringify(state.customPvModules)),
@@ -881,6 +885,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.modelLabel = null;
               state.modelDescription = null;
               state.designProjectType = null;
+              state.moveStep = 0.5;
               state.minimumNavigationMoveSpeed = 3;
               state.minimumNavigationTurnSpeed = 3;
               state.multiSelectionsMode = false;
@@ -5387,6 +5392,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           evolutionaryAlgorithmState: state.evolutionaryAlgorithmState,
           geneticAlgorithmWizardSelectedTab: state.geneticAlgorithmWizardSelectedTab,
           particleSwarmOptimizationWizardSelectedTab: state.particleSwarmOptimizationWizardSelectedTab,
+          moveStep: state.moveStep,
           minimumNavigationMoveSpeed: state.minimumNavigationMoveSpeed,
           minimumNavigationTurnSpeed: state.minimumNavigationTurnSpeed,
           customPvModules: state.customPvModules,

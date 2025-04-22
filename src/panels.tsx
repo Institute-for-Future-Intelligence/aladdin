@@ -41,6 +41,7 @@ import ShadowSettingsPanel from './panels/shadowSettingsPanel';
 import SolarPanelCustomizationPanel from './panels/solarPanelCustomizationPanel';
 import DailyBatteryStoragePanel from './panels/dailyBatteryStoragePanel';
 import YearlyBatteryStoragePanel from './panels/yearlyBatteryStoragePanel';
+import EditorPanel from './panels/editorPanel';
 
 const Panels = React.memo(() => {
   const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
@@ -53,6 +54,7 @@ const Panels = React.memo(() => {
   const showDiurnalTemperaturePanel = useStore(Selector.viewState.showDiurnalTemperaturePanel);
   const showSolarPanelCustomizationPanel = usePrimitiveStore(Selector.showSolarPanelCustomizationPanel);
   const showEconomicsPanel = usePrimitiveStore(Selector.showEconomicsPanel);
+  const showEditorPanel = usePrimitiveStore(Selector.showEditorPanel);
   const showNavigationPanel = usePrimitiveStore(Selector.showNavigationPanel);
   const showShadowSettings = usePrimitiveStore(Selector.showShadowSettings);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
@@ -120,6 +122,15 @@ const Panels = React.memo(() => {
           setDialogVisible={(visible) => {
             usePrimitiveStore.getState().set((state) => {
               state.showEconomicsPanel = visible;
+            });
+          }}
+        />
+      )}
+      {showEditorPanel && (
+        <EditorPanel
+          setDialogVisible={(visible) => {
+            usePrimitiveStore.getState().set((state) => {
+              state.showEditorPanel = visible;
             });
           }}
         />

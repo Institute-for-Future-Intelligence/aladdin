@@ -1724,6 +1724,11 @@ export const i18n_tr = {
       UnitCost: 'Unit Cost',
     },
 
+    editorPanel: {
+      EditorParameters: 'Editor Parameters',
+      ArrowKeyMoveStep: 'Arrow Key Move Step',
+    },
+
     navigationPanel: {
       NavigationParameters: 'Navigation Parameters',
       MinimumMoveSpeed: 'Minimum Move Speed',

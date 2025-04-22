@@ -20,9 +20,13 @@ export const showSolarPanelCustomizationPanel = (state: PrimitiveStoreState) => 
 
 export const showEconomicsPanel = (state: PrimitiveStoreState) => state.showEconomicsPanel;
 
+export const showEditorPanel = (state: PrimitiveStoreState) => state.showEditorPanel;
+
 export const showNavigationPanel = (state: PrimitiveStoreState) => state.showNavigationPanel;
 
 export const showShadowSettings = (state: PrimitiveStoreState) => state.showShadowSettings;
+
+export const moveStep = (state: CommonStoreState) => state.moveStep;
 
 export const minimumNavigationMoveSpeed = (state: CommonStoreState) => state.minimumNavigationMoveSpeed;
 

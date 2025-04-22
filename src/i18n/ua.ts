@@ -1727,6 +1727,11 @@ export const i18n_ua = {
       UnitCost: 'Собівартість одиниці',
     },
 
+    editorPanel: {
+      EditorParameters: 'Editor Parameters',
+      ArrowKeyMoveStep: 'Arrow Key Move Step',
+    },
+
     navigationPanel: {
       NavigationParameters: 'Параметри навігації',
       MinimumMoveSpeed: 'Мінімальна швидкість руху',

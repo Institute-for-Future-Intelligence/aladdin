@@ -1696,6 +1696,11 @@ export const i18n_zh_tw = {
       UnitCost: '單位成本',
     },
 
+    editorPanel: {
+      EditorParameters: '編輯器參數',
+      ArrowKeyMoveStep: '箭頭鍵移動步長',
+    },
+
     navigationPanel: {
       NavigationParameters: '導航模式參數',
       MinimumMoveSpeed: '最小移動速度',
