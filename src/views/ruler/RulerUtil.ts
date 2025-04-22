@@ -80,6 +80,8 @@ export class RulerUtil {
     if (snappedPoint) {
       return { pointer: snappedPoint.position, snappedPoint };
     } else {
+      p.setX(Math.round(p.x * 2) / 2);
+      p.setY(Math.round(p.y * 2) / 2);
       return { pointer: p, snappedPoint };
     }
   }

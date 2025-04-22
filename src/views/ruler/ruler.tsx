@@ -353,7 +353,11 @@ const Ruler = (ruler: RulerModel) => {
       const euler = tempEuler.set(0, 0, rotationZ);
       const hx = length / 2;
       const leftPoint = tempVector3_1.set(-hx, 0, 0).applyEuler(euler).add(center);
-      const rightPoint = tempVector3_2.set(hx, 0, 0).applyEuler(euler).add(center);
+
+      // set left point on grid
+      leftPoint.setX(Math.round(leftPoint.x * 2) / 2);
+      leftPoint.setY(Math.round(leftPoint.y * 2) / 2);
+      const rightPoint = tempVector3_2.set(length, 0, 0).applyEuler(euler).add(leftPoint);
 
       handleSnappingPointsByMove(center, leftPoint, rightPoint, snapPointsRef.current);
       if (boxRef.current && boxRef.current.parent) {
