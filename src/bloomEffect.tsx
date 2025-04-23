@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2025. Institute for Future Intelligence, Inc.
+ */
+
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 
 const BloomEffect = () => {
