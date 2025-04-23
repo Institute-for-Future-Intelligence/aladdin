@@ -212,6 +212,7 @@ export const i18n_ua = {
     },
 
     message: {
+      LabelIsAlreadyTaken: 'This label is already taken, please use another one.',
       IdIsAlreadyTaken: 'Ця ID вже зайнята, будь ласка, виберіть іншу.',
       DoNotShowAgain: 'Більше не показувати',
       NewVersionAvailable: 'Доступна нова версія',

@@ -75,14 +75,6 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
           </DialogItem>
         ),
       },
-      {
-        key: 'solar-panel-length',
-        label: <DialogItem Dialog={SolarPanelLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>,
-      },
-      {
-        key: 'solar-panel-width',
-        label: <DialogItem Dialog={SolarPanelWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
-      },
     );
 
     if (solarPanel.parentType === ObjectType.Wall) {
@@ -134,6 +126,31 @@ export const createSolarPanelMenu = (selectedElement: ElementModel) => {
       key: 'solar-panel-draw-sun-beam',
       label: <SolarCollectorSunBeamCheckbox solarCollector={solarPanel} />,
     });
+
+    if (editable) {
+      items.push({
+        key: 'solar-panel-size-submenu',
+        label: <MenuItem>{i18n.t('word.Size', lang)}</MenuItem>,
+        children: [
+          {
+            key: 'solar-panel-length',
+            label: (
+              <DialogItem noPadding={true} Dialog={SolarPanelLengthInput}>
+                {i18n.t('word.Length', lang)} ...
+              </DialogItem>
+            ),
+          },
+          {
+            key: 'solar-panel-width',
+            label: (
+              <DialogItem noPadding={true} Dialog={SolarPanelWidthInput}>
+                {i18n.t('word.Width', lang)} ...
+              </DialogItem>
+            ),
+          },
+        ],
+      });
+    }
 
     items.push({
       key: 'solar-panel-coordinates-submenu',

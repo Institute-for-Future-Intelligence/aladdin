@@ -211,7 +211,8 @@ export const i18n_zh_cn = {
     },
 
     message: {
-      IdIsAlreadyTaken: '此ID已被占用，请更换',
+      LabelIsAlreadyTaken: '此标签已被占用，请更换。',
+      IdIsAlreadyTaken: '此ID已被占用，请更换。',
       DoNotShowAgain: '别再显示',
       NewVersionAvailable: '有新版本',
       CalculationMayBeSlowDoYouWantToContinue: '计算可能会很慢。您想继续吗？',

@@ -108,7 +108,6 @@ import { StoreUtil } from './StoreUtil';
 import { isGroupable } from 'src/models/Groupable';
 import { Filter } from '../Filter';
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
-import { RulerModel } from 'src/models/RulerModel';
 
 enableMapSet();
 

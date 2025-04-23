@@ -18,6 +18,9 @@ import { useLanguage } from 'src/hooks';
 import { MenuItem } from './menuItems';
 import i18n from 'src/i18n/i18n';
 import React from 'react';
+import { useStore } from '../../stores/common';
+import * as Selector from '../../stores/selector';
+import { showError } from '../../helpers';
 
 interface LabelSubmenuItemProps {
   element: ElementModel;
@@ -52,18 +55,36 @@ export const ShowLabelCheckbox = ({ element, forModelTree }: LabelSubmenuItemPro
 };
 
 export const LabelTextInput = ({ element }: LabelSubmenuItemProps) => {
+  const elements = useStore(Selector.elements);
   const { labelText, setLabelText } = useLabel(element);
   const updateLabelText = useLabelText(element, labelText);
 
   const lang = useLanguage();
+
+  const update = () => {
+    let used = false;
+    for (const e of elements) {
+      if (e.id !== element.id && e.label === labelText && labelText.trim() !== '') {
+        used = true;
+        break;
+      }
+    }
+    if (used) {
+      showError(i18n.t('message.LabelIsAlreadyTaken', lang));
+      setLabelText('');
+    } else {
+      updateLabelText();
+    }
+  };
+
   return (
     <MenuItem stayAfterClick noPadding>
       <Input
         addonBefore={<LabelAddonBefore>{i18n.t('labelSubMenu.LabelText', lang) + ':'}</LabelAddonBefore>}
         value={labelText}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
-        onPressEnter={updateLabelText}
-        onBlur={updateLabelText}
+        onPressEnter={update}
+        onBlur={update}
       />
     </MenuItem>
   );

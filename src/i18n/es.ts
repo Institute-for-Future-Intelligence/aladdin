@@ -211,6 +211,7 @@ export const i18n_es = {
     },
 
     message: {
+      LabelIsAlreadyTaken: 'This label is already taken, please use another one.',
       IdIsAlreadyTaken: 'This ID is already taken, please use another one.',
       DoNotShowAgain: "Don't show again",
       NewVersionAvailable: 'A new version is available',
