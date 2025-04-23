@@ -139,14 +139,6 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
       label: <MenuItem noPadding>{i18n.t('menu.buildingDesignSubMenu', lang)}</MenuItem>,
       children: [
         {
-          key: 'cape_cod_with_shed_dormer',
-          label: 'menu.buildingDesignTutorials.CapeCodStyleHouseWithShedDormer',
-        },
-        {
-          key: 'mansard_roof_with_dormers',
-          label: 'menu.buildingDesignTutorials.MansardRoofWithDormers',
-        },
-        {
           key: 'gable_roof_vs_hip_roof',
           label: 'menu.buildingDesignTutorials.GableRoofVsHipRoof',
         },
@@ -201,70 +193,86 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
       label: <MenuItem noPadding>{i18n.t('menu.photovoltaicSolarPowerSubMenu', lang)}</MenuItem>,
       children: [
         {
-          key: 'effect_tilt_angle_solar_panel',
-          label: 'menu.photovoltaicSolarPowerTutorials.EffectOfTiltAngleOfSolarPanel',
+          key: 'photovoltaic-solar-power-basic',
+          label: <MenuItem noPadding>{i18n.t('word.BasicTopics', lang)}</MenuItem>,
+          children: [
+            {
+              key: 'effect_tilt_angle_solar_panel',
+              label: 'menu.photovoltaicSolarPowerTutorials.EffectOfTiltAngleOfSolarPanel',
+            },
+            {
+              key: 'effect_azimuth_solar_panel',
+              label: 'menu.photovoltaicSolarPowerTutorials.EffectOfAzimuthOfSolarPanel',
+            },
+            {
+              key: 'why_solar_array',
+              label: 'menu.photovoltaicSolarPowerTutorials.CoveringGroundWithSolarPanels',
+            },
+            {
+              key: 'inter_row_spacing_2',
+              label: 'menu.photovoltaicSolarPowerTutorials.InterRowSpacingOfSolarPanelArray',
+            },
+            {
+              key: 'effect_orientation_solar_panel',
+              label: 'menu.photovoltaicSolarPowerTutorials.EffectOfOrientationOfSolarPanels',
+            },
+            {
+              key: 'solar_panel_types',
+              label: 'menu.photovoltaicSolarPowerTutorials.SolarPanelTypes',
+            },
+            {
+              key: 'solar_panel_array_auto_layout',
+              label: 'menu.photovoltaicSolarPowerTutorials.SolarPanelArrayAutomaticLayout',
+            },
+          ].map(mapFunction),
         },
         {
-          key: 'effect_azimuth_solar_panel',
-          label: 'menu.photovoltaicSolarPowerTutorials.EffectOfAzimuthOfSolarPanel',
+          key: 'photovoltaic-solar-power-advanced',
+          label: <MenuItem noPadding>{i18n.t('word.AdvancedTopics', lang)}</MenuItem>,
+          children: [
+            {
+              key: 'custom_solar_panels',
+              label: 'menu.photovoltaicSolarPowerTutorials.DefineYourOwnSolarPanels',
+            },
+            {
+              key: 'vertical_bifacial_solar_panels',
+              label: 'menu.photovoltaicSolarPowerTutorials.VerticalBifacialSolarPanels',
+            },
+            {
+              key: 'compare_monofacial_bifacial_solar_panels',
+              label: 'menu.photovoltaicSolarPowerTutorials.CompareMonofacialAndBifacialSolarPanels',
+            },
+            {
+              key: 'solar_trackers',
+              label: 'menu.photovoltaicSolarPowerTutorials.SolarTrackers',
+            },
+            {
+              key: 'solar_panel_array_slope',
+              label: 'menu.photovoltaicSolarPowerTutorials.SolarPanelArrayOnSlope',
+            },
+            {
+              key: 'rooftop_solar_panels',
+              label: 'menu.solarEnergyExamples.RooftopSolarPanels',
+            },
+            {
+              key: 'compare_generation_consumption',
+              label: 'menu.solarEnergyExamples.CompareGenerationConsumption',
+            },
+            {
+              key: 'solar_canopy_form_factors',
+              label: 'menu.solarEnergyExamples.SolarCanopyFormFactors',
+            },
+            {
+              key: 'bipv_01',
+              label: 'menu.solarEnergyExamples.BuildingIntegratedPhotovoltaics',
+            },
+            {
+              key: 'vegetative_buffer_01',
+              label: 'menu.solarEnergyExamples.VegetativeBuffer',
+            },
+          ].map(mapFunction),
         },
-        {
-          key: 'solar_panel_types',
-          label: 'menu.photovoltaicSolarPowerTutorials.SolarPanelTypes',
-        },
-        {
-          key: 'custom_solar_panels',
-          label: 'menu.photovoltaicSolarPowerTutorials.DefineYourOwnSolarPanels',
-        },
-        {
-          key: 'vertical_bifacial_solar_panels',
-          label: 'menu.photovoltaicSolarPowerTutorials.VerticalBifacialSolarPanels',
-        },
-        {
-          key: 'compare_monofacial_bifacial_solar_panels',
-          label: 'menu.photovoltaicSolarPowerTutorials.CompareMonofacialAndBifacialSolarPanels',
-        },
-        {
-          key: 'solar_trackers',
-          label: 'menu.photovoltaicSolarPowerTutorials.SolarTrackers',
-        },
-        {
-          key: 'why_solar_array',
-          label: 'menu.photovoltaicSolarPowerTutorials.CoveringGroundWithSolarPanels',
-        },
-        {
-          key: 'inter_row_spacing_2',
-          label: 'menu.photovoltaicSolarPowerTutorials.InterRowSpacingOfSolarPanelArray',
-        },
-        {
-          key: 'effect_orientation_solar_panel',
-          label: 'menu.photovoltaicSolarPowerTutorials.EffectOfOrientationOfSolarPanels',
-        },
-        {
-          key: 'solar_panel_array_auto_layout',
-          label: 'menu.photovoltaicSolarPowerTutorials.SolarPanelArrayAutomaticLayout',
-        },
-        {
-          key: 'solar_panel_array_slope',
-          label: 'menu.photovoltaicSolarPowerTutorials.SolarPanelArrayOnSlope',
-        },
-        {
-          key: 'rooftop_solar_panels',
-          label: 'menu.solarEnergyExamples.RooftopSolarPanels',
-        },
-        {
-          key: 'compare_generation_consumption',
-          label: 'menu.solarEnergyExamples.CompareGenerationConsumption',
-        },
-        {
-          key: 'solar_canopy_form_factors',
-          label: 'menu.solarEnergyExamples.SolarCanopyFormFactors',
-        },
-        {
-          key: 'bipv_01',
-          label: 'menu.solarEnergyExamples.BuildingIntegratedPhotovoltaics',
-        },
-      ].map(mapFunction),
+      ],
     },
     {
       key: 'concentrated-solar-power',

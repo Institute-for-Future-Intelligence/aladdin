@@ -32,6 +32,8 @@ export const i18n_ua = {
     },
 
     word: {
+      BasicTopics: 'Basic Topics',
+      AdvancedTopics: 'Advanced Topics',
       Unit: 'Одиниця',
       Sky: 'Небо',
       Ground: 'Земля',

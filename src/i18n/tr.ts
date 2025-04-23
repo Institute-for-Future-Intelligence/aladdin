@@ -31,6 +31,8 @@ export const i18n_tr = {
     },
 
     word: {
+      BasicTopics: 'Basic Topics',
+      AdvancedTopics: 'Advanced Topics',
       Unit: 'Unit',
       Sky: 'Sky',
       Ground: 'Ground',

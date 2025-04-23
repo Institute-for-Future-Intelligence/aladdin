@@ -23,7 +23,6 @@ export const createExamplesMenu = () => {
           key: 'photovoltaic-solar-power-examples',
           label: <MenuItem noPadding>{i18n.t('menu.photovoltaicSolarPowerSubMenu', lang)}</MenuItem>,
           children: [
-            { key: 'vegetative_buffer_01', label: 'menu.solarEnergyExamples.VegetativeBuffer' },
             { key: 'solar_canopy_over_bleachers', label: 'menu.solarEnergyExamples.SolarCanopyOverBleachers' },
             { key: 'solar_canopy_over_garage', label: 'menu.solarEnergyExamples.SolarCanopyOverGarage' },
             { key: 'solar_bus_stop', label: 'menu.solarEnergyExamples.SolarBusStop' },
@@ -79,10 +78,18 @@ export const createExamplesMenu = () => {
           key: 'residential_buildings',
           label: <MenuItem noPadding>{i18n.t('menu.residentialBuildingsSubMenu', lang)}</MenuItem>,
           children: [
+            {
+              key: 'cape_cod_with_shed_dormer',
+              label: 'menu.buildingDesignTutorials.CapeCodStyleHouseWithShedDormer',
+            },
+            { key: 'cape_cod_with_garage', label: 'menu.residentialBuildingExamples.CapeCodHouseWithGarage' },
             { key: 'colonial_house', label: 'menu.residentialBuildingExamples.ColonialHouse' },
             { key: 'dutch_colonial_house', label: 'menu.residentialBuildingExamples.DutchColonialHouse' },
+            {
+              key: 'mansard_roof_with_dormers',
+              label: 'menu.buildingDesignTutorials.MansardRoofWithDormers',
+            },
             { key: 't_shaped_house', label: 'menu.residentialBuildingExamples.TShapedHouse' },
-            { key: 'cape_cod_with_garage', label: 'menu.residentialBuildingExamples.CapeCodHouseWithGarage' },
             { key: 'solarium', label: 'menu.residentialBuildingExamples.Solarium' },
             { key: 'butterfly_roof_house', label: 'menu.residentialBuildingExamples.ButterflyRoofHouse' },
             { key: 'adobe_taos_house', label: 'menu.residentialBuildingExamples.AdobeTaosHouse' },

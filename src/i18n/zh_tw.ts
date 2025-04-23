@@ -31,6 +31,8 @@ export const i18n_zh_tw = {
     },
 
     word: {
+      BasicTopics: '初級問題',
+      AdvancedTopics: '高級問題',
       Unit: '單位',
       Sky: '天空',
       Ground: '地面',
