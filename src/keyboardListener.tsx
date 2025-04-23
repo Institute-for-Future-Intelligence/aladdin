@@ -33,6 +33,7 @@ import { Point2 } from './models/Point2';
 import { resetView, zoomView } from './components/mainMenu/viewMenu';
 import { message } from 'antd';
 import { FoundationModel } from './models/FoundationModel';
+import { RulerModel } from './models/RulerModel';
 
 export interface KeyboardListenerProps {
   canvas?: HTMLCanvasElement | null;
@@ -488,8 +489,18 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
               wall.rightPoint = newRightPoint.toArray();
               updateWallMapOnFoundationFlag = true;
             }
-            e.cx = newCx;
-            e.cy = newCy;
+            if (e.type === ObjectType.Ruler) {
+              const ruler = e as RulerModel;
+              ruler.leftEndPoint.position[0] += undo ? -distVector.x : distVector.x;
+              ruler.leftEndPoint.position[1] += undo ? -distVector.y : distVector.y;
+              ruler.rightEndPoint.position[0] += undo ? -distVector.x : distVector.x;
+              ruler.rightEndPoint.position[1] += undo ? -distVector.y : distVector.y;
+              delete ruler.leftEndPoint.snappedHandle;
+              delete ruler.rightEndPoint.snappedHandle;
+            } else {
+              e.cx = newCx;
+              e.cy = newCy;
+            }
 
             if (e.type === ObjectType.BatteryStorage || e.type === ObjectType.SolarPanel) {
               const foundation = state.elements.find(
@@ -519,6 +530,12 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
         if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
           e.cx = e.cx + (undo ? -displacement.x : displacement.x);
           e.cy = e.cy + (undo ? -displacement.y : displacement.y);
+        } else if (e.type === ObjectType.Ruler) {
+          const ruler = e as RulerModel;
+          ruler.leftEndPoint.position[0] += undo ? -displacement.x : displacement.x;
+          ruler.leftEndPoint.position[1] += undo ? -displacement.y : displacement.y;
+          ruler.rightEndPoint.position[0] += undo ? -displacement.x : displacement.x;
+          ruler.rightEndPoint.position[1] += undo ? -displacement.y : displacement.y;
         }
       }
     });
@@ -579,6 +596,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
         const map = lastUndoCommand.movedElementsDisplacementMap;
         for (const e of elementsToBeMoved) {
           switch (e.type) {
+            case ObjectType.Ruler:
             case ObjectType.Foundation:
             case ObjectType.Cuboid:
             case ObjectType.Wall:
@@ -665,6 +683,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
       } else {
         for (const e of elementsToBeMoved) {
           switch (e.type) {
+            case ObjectType.Ruler:
             case ObjectType.Foundation:
             case ObjectType.Cuboid:
             case ObjectType.Wall:
@@ -737,13 +756,29 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
           }
         }
 
+        const needDetachRuler =
+          selectedElement.type === ObjectType.Ruler &&
+          ((selectedElement as RulerModel).leftEndPoint.snappedHandle ||
+            (selectedElement as RulerModel).rightEndPoint.snappedHandle);
         const undoableMoveSelected = {
           name: `Move Selected Elements By Key`,
           timestamp: Date.now(),
           direction: direction,
           movedElementsDisplacementMap: new Map(currentDisplacementMap),
+          oldRuler: needDetachRuler ? selectedElement : null,
           undo: () => {
             updateElementMoveByKey(undoableMoveSelected.movedElementsDisplacementMap, true);
+            if (undoableMoveSelected.oldRuler) {
+              setCommonStore((state) => {
+                const ruler = state.elements.find(
+                  (e) => e.id === undoableMoveSelected.oldRuler?.id && e.type === ObjectType.Ruler,
+                ) as RulerModel;
+                if (ruler) {
+                  ruler.leftEndPoint.snappedHandle = undoableMoveSelected.oldRuler?.leftEndPoint.snappedHandle;
+                  ruler.rightEndPoint.snappedHandle = undoableMoveSelected.oldRuler?.rightEndPoint.snappedHandle;
+                }
+              });
+            }
           },
           redo: () => {
             updateElementMoveByKey(undoableMoveSelected.movedElementsDisplacementMap);

@@ -4,9 +4,10 @@
 
 import { Undoable } from './Undoable';
 import { Vector2, Vector3 } from 'three';
-import { MoveDirection, ObjectType } from '../types';
+import { ObjectType } from '../types';
 import { FlippedWallSide } from './UndoableAdd';
 import { ElementModel } from 'src/models/ElementModel';
+import { RulerModel } from 'src/models/RulerModel';
 
 export interface UndoableMove extends Undoable {
   oldCx: number;
@@ -70,6 +71,7 @@ export interface UndoableMoveSkylight extends Undoable {
 
 export interface UndoableMoveSelectedByKey extends Undoable {
   movedElementsDisplacementMap: Map<string, Vector2>;
+  oldRuler?: RulerModel | null;
 }
 
 export interface UndoableMoveAllByKey extends Undoable {
