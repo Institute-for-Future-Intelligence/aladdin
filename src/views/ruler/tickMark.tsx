@@ -107,9 +107,9 @@ const TickMark = forwardRef<TickMarkRef, Props>(({ length }: Props, ref) => {
       <textSprite
         userData={{ unintersectable: true }}
         backgroundColor={'darkorchid'}
-        fontSize={30}
+        fontSize={Math.max(30, length)}
         fontFace={'Times Roman'}
-        textHeight={0.5}
+        textHeight={Math.max(0.5, length / 60)}
         text={l.toFixed(1) + i18n.t('word.MeterAbbreviation', lang)}
         position={[0, -1, 0.25]}
       />
