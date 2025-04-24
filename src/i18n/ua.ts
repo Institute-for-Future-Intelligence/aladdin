@@ -214,6 +214,7 @@ export const i18n_ua = {
     },
 
     message: {
+      ListenToPodcastAboutThis: 'Listen to a podcast about this',
       LabelIsAlreadyTaken: 'This label is already taken, please use another one.',
       IdIsAlreadyTaken: 'Ця ID вже зайнята, будь ласка, виберіть іншу.',
       DoNotShowAgain: 'Більше не показувати',

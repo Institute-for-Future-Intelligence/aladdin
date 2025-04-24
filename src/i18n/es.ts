@@ -213,6 +213,7 @@ export const i18n_es = {
     },
 
     message: {
+      ListenToPodcastAboutThis: 'Listen to a podcast about this',
       LabelIsAlreadyTaken: 'This label is already taken, please use another one.',
       IdIsAlreadyTaken: 'This ID is already taken, please use another one.',
       DoNotShowAgain: "Don't show again",

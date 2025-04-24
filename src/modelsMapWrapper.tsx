@@ -22,6 +22,7 @@ import ModelsGallery from './modelsGallery';
 import { useLanguage } from './hooks';
 import dayjs from 'dayjs';
 import { RangePickerProps } from 'antd/lib/date-picker';
+import ReactAudioPlayer from 'react-audio-player';
 
 const libraries = ['places'] as Libraries;
 
@@ -507,20 +508,29 @@ const ModelsMapWrapper = React.memo(
               </div>
             </Space>
           )}
-          <Space>
-            <div
-              style={{
-                position: 'absolute',
-                fontSize: '12px',
-                color: modelsMapType === 'roadmap' ? 'black' : 'white',
-                top: '6px',
-                height: '25x',
-                padding: '6px 6px 2px 6px',
-              }}
-            >
-              {modelSites.size + ' ' + i18n.t('modelsMap.SitesFound', lang)}
-            </div>
+          <Space
+            style={{
+              position: 'absolute',
+              top: '6px',
+              fontSize: '12px',
+              color: modelsMapType === 'roadmap' ? 'black' : 'white',
+              height: '25x',
+              padding: '6px 6px 2px 6px',
+            }}
+          >
+            {modelSites.size + ' ' + i18n.t('modelsMap.SitesFound', lang)}
           </Space>
+          <ReactAudioPlayer
+            title={i18n.t('message.ListenToPodcastAboutThis', lang)}
+            style={{
+              position: 'absolute',
+              top: '10px',
+              left: '190px',
+              height: '40px',
+            }}
+            src={'https://intofuture.org/podcast/gis-cad.mp3'}
+            controls
+          />
           <Space>
             <div
               style={{

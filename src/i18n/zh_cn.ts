@@ -213,6 +213,7 @@ export const i18n_zh_cn = {
     },
 
     message: {
+      ListenToPodcastAboutThis: '听一下播客',
       LabelIsAlreadyTaken: '此标签已被占用，请更换。',
       IdIsAlreadyTaken: '此ID已被占用，请更换。',
       DoNotShowAgain: '别再显示',
