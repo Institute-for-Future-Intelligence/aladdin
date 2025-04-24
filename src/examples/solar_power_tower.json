@@ -1,10 +1,11 @@
 {
-  "docid": "nAyY3ZutnSxurzmrfiodKh",
-  "time": "02/02/2023 02:25 pm",
-  "timestamp": 1675365924087,
+  "docid": "3u7yt21KdCUzJXmMXdfMe3",
+  "time": "04/24/2025 02:07 PM",
+  "timestamp": 1745518033722,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
+  "version": "1.7.9",
   "world": {
     "latitude": 33.4483771,
     "solarPanelGridCellSize": 0.5,
@@ -60,6 +61,11 @@
       "locked": true,
       "solarPowerTower": {
         "towerHeight": 40
+      },
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
       }
     },
     {
@@ -1750,6 +1756,11 @@
       "locked": true,
       "solarPowerTower": {
         "towerHeight": 40
+      },
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
       }
     },
     {
@@ -1776,6 +1787,7 @@
       "ly": 0.6
     }
   ],
+  "sceneRadius": 106,
   "view": {
     "yearlyPvYieldPanelX": -25,
     "autoRotate": false,
@@ -1854,8 +1866,17 @@
       "y": 0,
       "width": 364,
       "height": 67
+    },
+    "showAudioPlayerPanel": true,
+    "audioPlayerPanelRect": {
+      "x": 1,
+      "y": 75,
+      "width": 363,
+      "height": 132
     }
   },
+  "canvasPercentWidth": 100,
+  "animate24Hours": false,
   "graphState": {
     "dailyParabolicDishIndividualOutputs": false,
     "yearlyParabolicDishIndividualOutputs": false,
@@ -1923,7 +1944,18 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
+  "designProjectType": null,
   "notes": [
     "Solar power tower surrounded by heliostats"
-  ]
+  ],
+  "audioTitle": "Listen to a podcast about this",
+  "audioUrl": "https://intofuture.org/podcast/modeling-solar-power-towers.mp3",
+  "moveStep": 0.5,
+  "minimumNavigationMoveSpeed": 3,
+  "minimumNavigationTurnSpeed": 3,
+  "customPvModules": {}
 }

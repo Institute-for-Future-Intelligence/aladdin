@@ -7,7 +7,7 @@ import platform from 'platform';
 import { HvacSystem } from './models/HvacSystem';
 import { Theme } from './types';
 
-export const VERSION = '1.7.8';
+export const VERSION = '1.7.9';
 
 // used for check old file that need to update light intensity.
 export const LIGHT_INTENSITY_CHANGED_VERSION = '1.5.0';

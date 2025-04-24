@@ -1,10 +1,11 @@
 {
-  "docid": "j9Q8R8iNXqFBaujVRfHNC2",
-  "time": "05/18/2022 02:05 pm",
-  "timestamp": 1652897143355,
+  "docid": "8YSZLNkjBAQz49vaqCboTR",
+  "time": "04/24/2025 01:51 PM",
+  "timestamp": 1745517095803,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
+  "version": "1.7.8",
   "world": {
     "latitude": 35.81284404374666,
     "pvGridCellSize": 0.5,
@@ -28,14 +29,15 @@
         0
       ]
     },
-    "address": "2401 Trenton Rd, Raleigh, NC 27607, USA",
+    "address": "2401 Tryon Towne Cir, Cary, NC 27518, USA",
     "date": "4/15/2022 10:15:00 AM",
     "name": "default",
     "orthographic": false,
     "cameraZoom": 35.16173831821251,
     "solarRadiationHeatmapGridCellSize": 1,
     "noAnimationForSolarPanelSimulation": true,
-    "noAnimationForHeatmapSimulation": true
+    "noAnimationForHeatmapSimulation": true,
+    "countryCode": "US"
   },
   "elements": [
     {
@@ -59,7 +61,12 @@
       "lx": 75.61279135922823,
       "selected": false,
       "parentId": "Ground",
-      "locked": true
+      "locked": true,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "poleRadius": 0.05,
@@ -80,11 +87,11 @@
         1
       ],
       "poleSpacing": 3,
-      "cx": 0.08211037572567748,
+      "cx": 6.2085947081734885,
       "trackerType": "HSAT",
-      "cy": 0.2234368441602269,
+      "cy": 11.616652837715703,
       "label": "Row3",
-      "cz": 0.5000000074506161,
+      "cz": 0.05000000074506161,
       "orientation": "Portrait",
       "showLabel": false,
       "selected": false,
@@ -93,14 +100,16 @@
       "id": "mAv2C19w4RJA4u6knYxU3u",
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
-      "pvModelName": "CS6X-355P-FG"
+      "pvModelName": "CS6X-355P-FG",
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": 0.16248436170569222,
-      "cy": 0.2234368441602269,
-      "cz": 0.5000000074505806,
+      "cx": 12.285896140789879,
+      "cy": 11.616652837715703,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -125,14 +134,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "bLn1japfJEgTKBPWbNzur1",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": 0.23879905546449415,
-      "cy": 0.2246175890711455,
-      "cz": 0.5000000074505806,
+      "cx": 18.056263157617565,
+      "cy": 11.678040670915697,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -157,14 +168,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "xrAXVLJvJZKmHgq57E2MQB",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": 0.31836118300026617,
-      "cy": 0.2233645095937837,
-      "cz": 0.5000000074505806,
+      "cx": 24.0721777070762,
+      "cy": 11.612892108147152,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -189,14 +202,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "tRW2bpMcmbgt4enWCcDP51",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": 0.39629959364755313,
-      "cy": 0.22343686243351435,
-      "cz": 0.5000000074505806,
+      "cx": 29.965318490219364,
+      "cy": 11.616653787757928,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -221,14 +236,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "tJsi7hiees32d12b6mBMhW",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": 0.47586172118332537,
-      "cy": 0.22461757079785805,
-      "cz": 0.5000000074505806,
+      "cx": 35.98123303967802,
+      "cy": 11.678039720873471,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -253,14 +270,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "5KhMg2uodxoo1Z4XL87XGA",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": 0.0025482481899054073,
-      "cy": 0.22225611752259564,
-      "cz": 0.5000000074505806,
+      "cx": 0.19268015871484856,
+      "cy": 11.555265954557928,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -286,14 +305,16 @@
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "26aZGW371fb7o1PfURQ3zg",
       "selected": false,
-      "drawSunBeam": true
+      "drawSunBeam": true,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": -0.07457830401313895,
-      "cy": 0.2246175890711455,
-      "cz": 0.5000000074505806,
+      "cx": -5.639073741270568,
+      "cy": 11.678040670915697,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -319,14 +340,16 @@
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "wUt5FR6ocPi4PpiJnSm7dt",
       "selected": false,
-      "drawSunBeam": false
+      "drawSunBeam": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": -0.15495228999315366,
-      "cy": 0.2210754091582519,
-      "cz": 0.5000000074506517,
+      "cx": -11.716375173886956,
+      "cy": 11.493880021442383,
+      "cz": 0.050000000745065165,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -352,14 +375,16 @@
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "9KjddEKBMzvacaiu1qXZ6p",
       "selected": false,
-      "drawSunBeam": false
+      "drawSunBeam": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": -0.23532627597316833,
-      "cy": 0.22107540915833737,
-      "cz": 0.5000000074505806,
+      "cx": -17.79367660650334,
+      "cy": 11.493880021446827,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -385,7 +410,9 @@
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "v1S992hiHrrXWRFsDpx8ie",
       "selected": false,
-      "drawSunBeam": false
+      "drawSunBeam": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Cuboid",
@@ -453,9 +480,9 @@
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": -0.46971942316836673,
-      "cy": -0.2583893879929419,
-      "cz": 0.5000000074505806,
+      "cx": -35.51679674140674,
+      "cy": -13.433862389818604,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -480,14 +507,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "5MXRMjMkweGaqcjbtGi5WU",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": -0.3904301692588086,
-      "cy": -0.2623054559086292,
-      "cz": 0.5000000074505806,
+      "cx": -29.521514928514456,
+      "cy": -13.637461763218425,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -512,14 +541,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "9xkDVHA2779LgaH8YdZCmx",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": -0.3131409153492504,
-      "cy": -0.26022152382431646,
-      "cz": 0.5000000074505806,
+      "cx": -23.67745869834062,
+      "cy": -13.529116536396844,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -544,14 +575,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "mN37zmeNfQecDk9remsomw",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": -0.23385166143969227,
-      "cy": -0.26413759174000373,
-      "cz": 0.5000000074505806,
+      "cx": -17.682176885448328,
+      "cy": -13.732715909796665,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -576,14 +609,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "e3Pif4TuZ9DpVbtnBEVtva",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": -0.15456240753013412,
-      "cy": -0.260053659655691,
-      "cz": 0.5000000074505806,
+      "cx": -11.686895072556036,
+      "cy": -13.520389149567949,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -608,14 +643,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "g39HnTg7UwuA8CBPjuTqTF",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": -0.07527315362057596,
-      "cy": -0.25996972757137826,
-      "cz": 0.5000000074505806,
+      "cx": -5.691613259663745,
+      "cy": -13.516025456153502,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -640,14 +677,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "oFMzredZvfguD3UXAtxX6K",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": 0.004016100288982194,
-      "cy": -0.25988579548706553,
-      "cz": 0.5000000074505806,
+      "cx": 0.3036685532285468,
+      "cy": -13.511661762739054,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -672,14 +711,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "2ABmv4sfkBHxsAyYodagum",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": 0.08330535419854035,
-      "cy": -0.2618018634027528,
-      "cz": 0.5000000074505806,
+      "cx": 6.298950366120838,
+      "cy": -13.611279602731742,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -704,14 +745,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "k577u5kHuxBEHJLmRQtnAz",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": 0.1625946081080985,
-      "cy": -0.26371793131844007,
-      "cz": 0.5000000074505806,
+      "cx": 12.29423217901313,
+      "cy": -13.710897442724429,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -736,14 +779,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "w4he3pd3YzeFnd3X45S2gw",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": 0.24188386201765666,
-      "cy": -0.26163399923412733,
-      "cz": 0.5000000074505806,
+      "cx": 18.289513991905423,
+      "cy": -13.602552215902847,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -768,14 +813,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "pyLs3bLikRTcZrrF7e1TcH",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": 0.3167669019313885,
-      "cy": -0.25817391579286053,
-      "cz": 0.5000000074505806,
+      "cx": 23.95162966524719,
+      "cy": -13.422659824933067,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -800,14 +847,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "6wAigPY54YvU4hpiRBKYf4",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": 0.39751068943275564,
-      "cy": -0.26121089229567773,
-      "cz": 0.5000000074505806,
+      "cx": 30.05689282314192,
+      "cy": -13.580554561775253,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -832,14 +881,16 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "iTsCanVgttoMHWKMPD8d5z",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": 0.4775584098004903,
-      "cy": -0.2553834493088245,
-      "cz": 0.5000000074505806,
+      "cx": 36.109524402089285,
+      "cy": -13.277581332967427,
+      "cz": 0.05000000074505806,
       "lx": 1.984,
       "ly": 21.648,
       "lz": 0.046,
@@ -864,9 +915,12 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "o5ef4DVoUQeG4ovcxCKPpK",
-      "selected": false
+      "selected": false,
+      "version": 1,
+      "parentType": "Foundation"
     }
   ],
+  "sceneRadius": 47,
   "view": {
     "yearlyPvYieldPanelX": -25,
     "autoRotate": false,
@@ -896,7 +950,7 @@
     "dailyLightSensorPanelX": -240,
     "weatherPanelX": 0,
     "heliodonPanelY": -33,
-    "groundColor": "forestgreen",
+    "groundColor": "#68ccca",
     "groundPanelY": 0,
     "groundImage": true,
     "showDailyPvYieldPanel": false,
@@ -904,19 +958,19 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "hybrid",
     "cameraPosition": [
-      31.151690262644525,
-      60.08959522074622,
-      31.574651861408782
+      12.39067610161238,
+      61.56190296104714,
+      9.870953466518356
     ],
     "panCenter": [
-      5.074127461000436,
-      15.829331204955876,
-      0
+      10.589226872226552,
+      14.381248844094042,
+      0.6101846007296516
     ],
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 19,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "showMapPanel": false,
     "cameraPosition2D": [
       8.577303319163851,
@@ -933,7 +987,32 @@
       "y": 0,
       "width": 600,
       "height": 400
+    },
+    "showAudioPlayerPanel": true,
+    "audioPlayerPanelRect": {
+      "x": -1,
+      "y": 0,
+      "width": 378,
+      "height": 134
     }
+  },
+  "canvasPercentWidth": 100,
+  "animate24Hours": false,
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false,
+    "dailyBatteryStorageIndividualOutputs": true,
+    "yearlyBatteryStorageIndividualOutputs": true
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -992,5 +1071,16 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
+  "designProjectType": null,
+  "notes": [],
+  "audioTitle": "Listen to a podcast about this",
+  "audioUrl": "https://intofuture.org/podcast/solar-array-surprise.mp3",
+  "moveStep": 0.5,
+  "minimumNavigationMoveSpeed": 3,
+  "minimumNavigationTurnSpeed": 3,
+  "customPvModules": {}
 }

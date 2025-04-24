@@ -1,10 +1,11 @@
 {
-  "docid": "7ug2PMzZs8KHaJfo9T19XG",
-  "time": "11/13/2022 05:52 pm",
-  "timestamp": 1668379966922,
+  "docid": "rbMD1UfWVPLgDANDjtwAvC",
+  "time": "04/24/2025 02:14 PM",
+  "timestamp": 1745518473168,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
+  "version": "1.7.9",
   "world": {
     "name": "default",
     "date": "5/22/2022 11:30:00 AM",
@@ -59,7 +60,12 @@
       "parentId": "Ground",
       "textureType": "No Foundation Texture",
       "id": "cZGzTuNW8Aam7msowwUroB",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Dish",
@@ -2861,7 +2867,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "p7X7PWYKqawwVRyKWEqpsP",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Dish",
@@ -4039,7 +4050,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "gEQRhWXA3HL6aJzGgTrAzv",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Dish",
@@ -5217,7 +5233,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "4cePh2t5mTkfEKXcWmB48u",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Dish",
@@ -6395,7 +6416,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "6ufo5pBdzXZ7dduj1GnnjN",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Dish",
@@ -7573,7 +7599,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "dzMWxWAUm13nPZAnV26ojB",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Dish",
@@ -8751,7 +8782,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "bpYaYqzqY3rwTa3pPHPzsL",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Dish",
@@ -9929,7 +9965,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "6669FrAcRV3S1zPTB9p18F",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Dish",
@@ -11107,7 +11148,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "vDDupUZXQLcUBaqR8LHXzz",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Dish",
@@ -12286,7 +12332,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "mfej18wHzwCMqBLG9Vysw1",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Dish",
@@ -13464,7 +13515,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "4r9eq18jPmAo6KNP48KE97",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Dish",
@@ -14642,7 +14698,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "kduQAydye3uLbFTr64JfDC",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Dish",
@@ -15820,9 +15881,15 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "jQu4gCDNGHwChoQvBCFcvf",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     }
   ],
+  "sceneRadius": 190,
   "view": {
     "weatherPanelX": 0,
     "heliodonPanelY": 0,
@@ -15887,7 +15954,7 @@
     "showSunAngles": false,
     "showMapPanel": false,
     "showDesignInfoPanel": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "mapPanelX": 0,
     "mapPanelY": 0,
     "yearlyPvYieldPanelX": 0,
@@ -15906,7 +15973,32 @@
       "y": 0,
       "width": 600,
       "height": 400
+    },
+    "showAudioPlayerPanel": true,
+    "audioPlayerPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 373,
+      "height": 128
     }
+  },
+  "canvasPercentWidth": 100,
+  "animate24Hours": false,
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false,
+    "dailyBatteryStorageIndividualOutputs": true,
+    "yearlyBatteryStorageIndividualOutputs": true
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -15965,5 +16057,16 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
+  "designProjectType": null,
+  "notes": [],
+  "audioTitle": "Listen to a podcast about this",
+  "audioUrl": "https://intofuture.org/podcast/parabolic-dishes.mp3",
+  "moveStep": 0.5,
+  "minimumNavigationMoveSpeed": 3,
+  "minimumNavigationTurnSpeed": 3,
+  "customPvModules": {}
 }

@@ -1,10 +1,11 @@
 {
-  "docid": "njsXMFnx8AbzYmZZZSFsP4",
-  "time": "02/08/2023 12:40 pm",
-  "timestamp": 1675878006595,
+  "docid": "4mmJ3Ps9zX5SD4WfTbCVik",
+  "time": "04/24/2025 01:43 PM",
+  "timestamp": 1745516616768,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
+  "version": "1.7.8",
   "world": {
     "latitude": 42.58194950125034,
     "pvGridCellSize": 1.5,
@@ -58,7 +59,12 @@
       ],
       "lx": 132.51400330167655,
       "selected": false,
-      "parentId": "Ground"
+      "parentId": "Ground",
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Polygon",
@@ -230,6 +236,7 @@
       "id": "55Wp5i8LU9QiCSoSTSkhSV"
     }
   ],
+  "sceneRadius": 171,
   "view": {
     "yearlyPvYieldPanelX": -1249,
     "autoRotate": false,
@@ -279,7 +286,7 @@
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 9.75349958231059,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "cameraPosition2D": [
       2.68477267877577,
       -0.19810500302601344,
@@ -300,8 +307,17 @@
       "y": 0,
       "width": 640,
       "height": 400
+    },
+    "showAudioPlayerPanel": true,
+    "audioPlayerPanelRect": {
+      "x": -3,
+      "y": 3,
+      "width": 348,
+      "height": 134
     }
   },
+  "canvasPercentWidth": 100,
+  "animate24Hours": false,
   "graphState": {
     "dailyPvIndividualOutputs": false,
     "yearlyPvIndividualOutputs": false,
@@ -368,5 +384,16 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.3
   },
-  "notes": []
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
+  "designProjectType": null,
+  "notes": [],
+  "audioTitle": "Listen to a podcast about this",
+  "audioUrl": "https://intofuture.org/podcast/ai-design-solar-farm.mp3",
+  "moveStep": 0.5,
+  "minimumNavigationMoveSpeed": 3,
+  "minimumNavigationTurnSpeed": 3,
+  "customPvModules": {}
 }

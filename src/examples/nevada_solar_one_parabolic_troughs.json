@@ -1,10 +1,11 @@
 {
-  "docid": "vL1ZUsNydJJmwct15vHcrF",
-  "time": "05/19/2022 06:27 pm",
-  "timestamp": 1652999233628,
+  "docid": "gTK7bg9L6H2EgbSvMbYMzK",
+  "time": "04/24/2025 02:16 PM",
+  "timestamp": 1745518588186,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
+  "version": "1.7.9",
   "world": {
     "name": "default",
     "date": "9/22/2022 10:15:00 AM",
@@ -494,7 +495,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "fjnWik4gwK6dVzpp4PS9CN",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Trough",
@@ -952,7 +958,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "h3DXKV7Y684i3thRma6wLu",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Trough",
@@ -1410,7 +1421,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "fiH8AWThFS5EVx7AwfngqL",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Trough",
@@ -1868,7 +1884,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "v1v8XPTexYoFXFrbQfvcXN",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Trough",
@@ -2398,7 +2419,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "er6dYYMfRpcyAunmGzAVCk",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Trough",
@@ -2856,7 +2882,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "7yEBa2PPK1oKGZhA24cAWz",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Trough",
@@ -3315,7 +3346,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "k36HZDupiVkAR6X1Ux85J2",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Trough",
@@ -3773,7 +3809,12 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "tnLBLu28SYP7t6wfKCqrkm",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Parabolic Trough",
@@ -3848,6 +3889,7 @@
       "dailyYield": 2207.323568286619
     }
   ],
+  "sceneRadius": 509,
   "view": {
     "weatherPanelX": 0,
     "heliodonPanelY": 0,
@@ -3912,7 +3954,7 @@
     "showSunAngles": true,
     "showMapPanel": false,
     "showDesignInfoPanel": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "mapPanelX": 0,
     "mapPanelY": 0,
     "yearlyPvYieldPanelX": 0,
@@ -3928,7 +3970,32 @@
       "y": 0,
       "width": 600,
       "height": 400
+    },
+    "showAudioPlayerPanel": true,
+    "audioPlayerPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 391,
+      "height": 129
     }
+  },
+  "canvasPercentWidth": 100,
+  "animate24Hours": false,
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false,
+    "dailyBatteryStorageIndividualOutputs": true,
+    "yearlyBatteryStorageIndividualOutputs": true
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -3987,5 +4054,16 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
+  "designProjectType": null,
+  "notes": [],
+  "audioTitle": "Listen to a podcast about this",
+  "audioUrl": "https://intofuture.org/podcast/parabolic-troughs.mp3",
+  "moveStep": 0.5,
+  "minimumNavigationMoveSpeed": 3,
+  "minimumNavigationTurnSpeed": 3,
+  "customPvModules": {}
 }

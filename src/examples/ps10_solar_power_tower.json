@@ -1,10 +1,11 @@
 {
-  "docid": "69tJrD9Uz8P8feZdzUtyXN",
-  "time": "05/20/2022 12:16 pm",
-  "timestamp": 1653063377435,
+  "docid": "tc3w6KV2hkYbq7e1NSg7K7",
+  "time": "04/24/2025 02:10 PM",
+  "timestamp": 1745518212482,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
+  "version": "1.7.9",
   "world": {
     "latitude": 37.44574069680563,
     "solarPanelGridCellSize": 0.5,
@@ -63,6 +64,11 @@
       "solarPowerTower": {
         "towerHeight": 40,
         "towerRadious": 4
+      },
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
       }
     },
     {
@@ -9149,7 +9155,12 @@
         "towerRadius": 4
       },
       "id": "nHq7VyAiKvgNuPDrDMejYk",
-      "selected": false
+      "selected": false,
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "type": "Heliostat",
@@ -18844,6 +18855,7 @@
       "selected": false
     }
   ],
+  "sceneRadius": 571,
   "view": {
     "yearlyPvYieldPanelX": -25,
     "autoRotate": false,
@@ -18893,7 +18905,7 @@
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 1.5388995055342627,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "showMapPanel": false,
     "cameraPosition2D": [
       16.412888127805086,
@@ -18909,7 +18921,32 @@
     "showDailyHeliostatYieldPanel": false,
     "dailyHeliostatYieldPanelX": null,
     "dailyHeliostatYieldPanelY": null,
-    "showYearlyHeliostatYieldPanel": false
+    "showYearlyHeliostatYieldPanel": false,
+    "showAudioPlayerPanel": true,
+    "audioPlayerPanelRect": {
+      "x": -1,
+      "y": 1,
+      "width": 354,
+      "height": 127
+    }
+  },
+  "canvasPercentWidth": 100,
+  "animate24Hours": false,
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false,
+    "dailyBatteryStorageIndividualOutputs": true,
+    "yearlyBatteryStorageIndividualOutputs": true
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -18968,5 +19005,16 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
+  "designProjectType": null,
+  "notes": [],
+  "audioTitle": "Listen to a podcast about this",
+  "audioUrl": "https://intofuture.org/podcast/modeling-solar-power-towers.mp3",
+  "moveStep": 0.5,
+  "minimumNavigationMoveSpeed": 3,
+  "minimumNavigationTurnSpeed": 3,
+  "customPvModules": {}
 }

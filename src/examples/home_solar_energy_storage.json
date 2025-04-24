@@ -1,11 +1,11 @@
 {
-  "docid": "eUWFSr3siqjanjMzosWRiG",
-  "time": "03/14/2025 10:27 AM",
-  "timestamp": 1741962430782,
+  "docid": "5qzsVQEonWqW6GJykuYhXM",
+  "time": "04/24/2025 02:01 PM",
+  "timestamp": 1745517662347,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
-  "version": "1.7.4",
+  "version": "1.7.9",
   "world": {
     "solarRadiationHeatmapGridCellSize": 0.5,
     "date": "4/1/2022, 12:00:00 PM",
@@ -986,7 +986,14 @@
     "shadowCameraFar": 10000,
     "heatFluxScaleFactor": 5,
     "navigationView": false,
-    "showModelTree": false
+    "showModelTree": false,
+    "showAudioPlayerPanel": true,
+    "audioPlayerPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 361,
+      "height": 120
+    }
   },
   "canvasPercentWidth": 100,
   "animate24Hours": false,
@@ -1071,6 +1078,9 @@
   "notes": [
     "Effect of thermostat setpoint"
   ],
+  "audioTitle": "Listen to a podcast about this",
+  "audioUrl": "https://intofuture.org/podcast/battery-storage.mp3",
+  "moveStep": 0.5,
   "minimumNavigationMoveSpeed": 3,
   "minimumNavigationTurnSpeed": 3,
   "customPvModules": {}
