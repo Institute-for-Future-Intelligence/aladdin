@@ -901,6 +901,7 @@ export const i18n_en = {
     },
 
     rulerMenu: {
+      TickColor: 'Tick Color',
       OnlyThisRuler: 'Only This Ruler',
       AllSelectedRulers: 'All Selected Rulers',
       AllRulers: 'All Rulers',

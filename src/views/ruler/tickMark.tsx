@@ -10,13 +10,14 @@ import { Vector3 } from 'three';
 
 interface Props {
   length: number;
+  color: string;
 }
 
 export interface TickMarkRef {
   update: (l: number) => void;
 }
 
-const TickMark = forwardRef<TickMarkRef, Props>(({ length }: Props, ref) => {
+const TickMark = forwardRef<TickMarkRef, Props>(({ length, color }: Props, ref) => {
   const [_length, setLength] = useState(length);
   const lengthMemoRef = useRef(length);
   const _lengthMemoRef = useRef(length);
@@ -68,7 +69,7 @@ const TickMark = forwardRef<TickMarkRef, Props>(({ length }: Props, ref) => {
             [l / 2, 0, 0],
           ]}
           lineWidth={1}
-          color={'Black'}
+          color={color}
         />
         {tickMarks.map((x, i) => {
           const textGeometry = <textGeometry args={[`${i}`, textGeometryParamsTickLabel]} />;
@@ -81,11 +82,11 @@ const TickMark = forwardRef<TickMarkRef, Props>(({ length }: Props, ref) => {
                   [x, 0, 0],
                 ]}
                 lineWidth={1}
-                color={'Black'}
+                color={color}
               />
               <mesh position={[x - 0.1, -0.5, 0]} userData={{ unintersectable: true }}>
                 {textGeometry}
-                <meshBasicMaterial color={'Black'} />
+                <meshBasicMaterial color={color} />
               </mesh>
 
               {x + 0.5 < _length / 2 && (
@@ -96,7 +97,7 @@ const TickMark = forwardRef<TickMarkRef, Props>(({ length }: Props, ref) => {
                     [x + 0.5, 0, 0],
                   ]}
                   lineWidth={0.5}
-                  color={'Black'}
+                  color={color}
                 />
               )}
             </group>

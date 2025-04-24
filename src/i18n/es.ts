@@ -899,6 +899,13 @@ export const i18n_es = {
       SolarUpdraftTowerTurbineEfficiency: 'Solar Updraft Tower Turbine Efficiency',
     },
 
+    rulerMenu: {
+      TickColor: 'Tick Color',
+      OnlyThisRuler: 'Only This Ruler',
+      AllSelectedRulers: 'All Selected Rulers',
+      AllRulers: 'All Rulers',
+    },
+
     batteryStorageMenu: {
       BatteryStorage: 'Battery Storage',
       ChargingEfficiency: 'Charging Efficiency',

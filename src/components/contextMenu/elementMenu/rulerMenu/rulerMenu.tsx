@@ -8,6 +8,7 @@ import { Copy, Cut, DialogItem, Lock } from '../../menuItems';
 import RulerColorSelection from './rulerColorSelection';
 import RulerHeightInput from './rulerHeightInput';
 import RulerWidthInput from './rulerWidthInput';
+import RulerTickColorSelection from './rulerTickColorSelection';
 
 export const createRulerMenu = (selectedElement: ElementModel) => {
   const items: MenuProps['items'] = [];
@@ -41,6 +42,10 @@ export const createRulerMenu = (selectedElement: ElementModel) => {
     items.push({
       key: 'ruler-color',
       label: <DialogItem Dialog={RulerColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>,
+    });
+    items.push({
+      key: 'ruler-tick-color',
+      label: <DialogItem Dialog={RulerTickColorSelection}>{i18n.t('rulerMenu.TickColor', lang)} ...</DialogItem>,
     });
     items.push({
       key: 'ruler-width',

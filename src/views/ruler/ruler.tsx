@@ -22,7 +22,7 @@ import Wireframe from 'src/components/wireframe';
 import { LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 
 const Ruler = (ruler: RulerModel) => {
-  const { id, ly, lz, leftEndPoint, rightEndPoint, locked, color = '#D3D3D3' } = ruler;
+  const { id, ly, lz, leftEndPoint, rightEndPoint, locked, color = '#D3D3D3', tickColor = '#000000' } = ruler;
 
   const leftEndPointPosition = useRulerEndPointPosition(leftEndPoint);
   const rightEndPointPosition = useRulerEndPointPosition(rightEndPoint);
@@ -374,6 +374,7 @@ const Ruler = (ruler: RulerModel) => {
   const hy = ly / 2;
   const hz = lz / 2;
 
+  // tick color
   return (
     <group name={'Ruler Group'} onPointerDown={onGroupPointerDown}>
       {/* body group */}
@@ -388,7 +389,7 @@ const Ruler = (ruler: RulerModel) => {
           <meshStandardMaterial color={color} transparent={transparent} opacity={opacity} />
         </Box>
         <group position={[0, 0, lz]}>
-          <TickMark ref={tickMarkRef} length={length} />
+          <TickMark ref={tickMarkRef} length={length} color={tickColor} />
         </group>
 
         {selected && locked && (

@@ -881,6 +881,13 @@ export const i18n_zh_cn = {
       SolarUpdraftTowerTurbineEfficiency: '太阳能上升气流塔的涡轮机效率',
     },
 
+    rulerMenu: {
+      TickColor: '刻度颜色',
+      OnlyThisRuler: '只这个尺子',
+      AllSelectedRulers: '所有选中的尺子',
+      AllRulers: '所有尺子',
+    },
+
     batteryStorageMenu: {
       BatteryStorage: '蓄电池',
       ChargingEfficiency: '充电效率',

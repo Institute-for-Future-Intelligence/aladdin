@@ -4,6 +4,7 @@ import { ElementModel } from './ElementModel';
 export interface RulerModel extends ElementModel {
   leftEndPoint: RulerEndPoint;
   rightEndPoint: RulerEndPoint;
+  tickColor: string;
   isVertical?: boolean;
 }
 

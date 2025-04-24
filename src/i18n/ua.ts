@@ -903,6 +903,13 @@ export const i18n_ua = {
       SolarUpdraftTowerTurbineEfficiency: 'Ефективність турбіни сонячної вежі з тяговим потоком',
     },
 
+    rulerMenu: {
+      TickColor: 'Tick Color',
+      OnlyThisRuler: 'Only This Ruler',
+      AllSelectedRulers: 'All Selected Rulers',
+      AllRulers: 'All Rulers',
+    },
+
     batteryStorageMenu: {
       BatteryStorage: 'Акумуляторна система зберігання енергії',
       ChargingEfficiency: 'Коефіцієнт ефективності заряджання',
