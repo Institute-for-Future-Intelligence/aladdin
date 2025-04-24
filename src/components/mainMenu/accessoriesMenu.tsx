@@ -91,7 +91,7 @@ export const createAccessoriesMenu = () => {
     const undoableCheck = {
       name: 'Show Sticky Note',
       timestamp: Date.now(),
-      checked: e.target.value,
+      checked: e.target.checked,
       undo: () => {
         setCommonStore((state) => {
           state.viewState.showStickyNotePanel = !undoableCheck.checked;
@@ -113,7 +113,7 @@ export const createAccessoriesMenu = () => {
     const undoableCheck = {
       name: 'Show Audio Player',
       timestamp: Date.now(),
-      checked: e.target.value,
+      checked: e.target.checked,
       undo: () => {
         setCommonStore((state) => {
           state.viewState.showAudioPlayerPanel = !undoableCheck.checked;
@@ -135,7 +135,7 @@ export const createAccessoriesMenu = () => {
     const undoableCheck = {
       name: 'Show Share Links',
       timestamp: Date.now(),
-      checked: !e.target.value,
+      checked: !e.target.checked,
       undo: () => {
         setCommonStore((state) => {
           state.viewState.hideShareLinks = !undoableCheck.checked;
