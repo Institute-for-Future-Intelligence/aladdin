@@ -42,6 +42,7 @@ import SolarPanelCustomizationPanel from './panels/solarPanelCustomizationPanel'
 import DailyBatteryStoragePanel from './panels/dailyBatteryStoragePanel';
 import YearlyBatteryStoragePanel from './panels/yearlyBatteryStoragePanel';
 import EditorPanel from './panels/editorPanel';
+import AudioPlayerPanel from './panels/audioPlayerPanel';
 
 const Panels = React.memo(() => {
   const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
@@ -50,6 +51,7 @@ const Panels = React.memo(() => {
   const showMapPanel = useStore(Selector.viewState.showMapPanel);
   const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
   const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
+  const showAudioPlayerPanel = useStore(Selector.viewState.showAudioPlayerPanel);
   const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
   const showDiurnalTemperaturePanel = useStore(Selector.viewState.showDiurnalTemperaturePanel);
   const showSolarPanelCustomizationPanel = usePrimitiveStore(Selector.showSolarPanelCustomizationPanel);
@@ -101,6 +103,7 @@ const Panels = React.memo(() => {
       {showMapPanel && <MapPanel />}
       {showHeliodonPanel && <HeliodonPanel />}
       {showStickyNotePanel && <StickyNotePanel />}
+      {showAudioPlayerPanel && <AudioPlayerPanel />}
       {showSiteInfoPanel && <SiteInfoPanel />}
       {showDesignInfoPanel && <DesignInfoPanel />}
       {(showInstructionPanel || navigation) && !projectView && <InstructionPanel />}

@@ -31,6 +31,8 @@ export const i18n_en = {
     },
 
     word: {
+      Settings: 'Settings',
+      Source: 'Source',
       BasicTopics: 'Basic Topics',
       AdvancedTopics: 'Advanced Topics',
       Unit: 'Unit',
@@ -378,6 +380,7 @@ export const i18n_en = {
           Instruction: 'Instruction',
           StickyNote: 'Sticky Note',
           Note: 'Note',
+          AudioPlayer: 'Audio Player',
           ShareLinks: 'Share Links',
         },
       },

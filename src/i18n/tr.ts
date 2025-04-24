@@ -31,6 +31,8 @@ export const i18n_tr = {
     },
 
     word: {
+      Settings: 'Settings',
+      Source: 'Source',
       BasicTopics: 'Basic Topics',
       AdvancedTopics: 'Advanced Topics',
       Unit: 'Unit',
@@ -377,6 +379,7 @@ export const i18n_tr = {
           Instruction: 'Yardım',
           StickyNote: 'Notlar',
           Note: 'Notlar',
+          AudioPlayer: 'Audio Player',
           ShareLinks: 'Share Links',
         },
       },

@@ -109,6 +109,28 @@ export const createAccessoriesMenu = () => {
     });
   };
 
+  const toggleAudioPlayer = (e: CheckboxChangeEvent) => {
+    const undoableCheck = {
+      name: 'Show Audio Player',
+      timestamp: Date.now(),
+      checked: e.target.value,
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.showAudioPlayerPanel = !undoableCheck.checked;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.showAudioPlayerPanel = undoableCheck.checked;
+        });
+      },
+    } as UndoableCheck;
+    addUndoable(undoableCheck);
+    setCommonStore((state) => {
+      state.viewState.showAudioPlayerPanel = !state.viewState.showAudioPlayerPanel;
+    });
+  };
+
   const toggleShareLinks = (e: CheckboxChangeEvent) => {
     const undoableCheck = {
       name: 'Show Share Links',
@@ -165,6 +187,15 @@ export const createAccessoriesMenu = () => {
       label: (
         <MainMenuCheckbox selector={Selector.viewState.showStickyNotePanel} onChange={toggleStickyNote}>
           {i18n.t('menu.view.accessories.StickyNote', lang)}
+        </MainMenuCheckbox>
+      ),
+    },
+    // audio-player-panel-check-box
+    {
+      key: 'audio-player-panel-check-box',
+      label: (
+        <MainMenuCheckbox selector={Selector.viewState.showAudioPlayerPanel} onChange={toggleAudioPlayer}>
+          {i18n.t('menu.view.accessories.AudioPlayer', lang)}
         </MainMenuCheckbox>
       ),
     },

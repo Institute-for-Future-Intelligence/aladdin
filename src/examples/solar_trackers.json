@@ -1,10 +1,11 @@
 {
-  "docid": "vhboPhKYLs7YFW4GNHvu35",
-  "time": "02/02/2023 05:12 pm",
-  "timestamp": 1675375965968,
+  "docid": "ntqLDUWKHtEZJs4jfvPQGS",
+  "time": "04/24/2025 10:26 AM",
+  "timestamp": 1745504803195,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
+  "version": "1.7.8",
   "world": {
     "timesPerHour": 4,
     "address": "Natick, MA",
@@ -54,15 +55,20 @@
       "selected": false,
       "cz": 0.05,
       "lx": 16.616755394628733,
-      "parentId": "Ground"
+      "parentId": "Ground",
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "lz": 0.046,
       "selected": false,
-      "cz": 0.5000000074505984,
+      "cz": 0.050000000745059836,
       "relativeAzimuth": 1.5707963267948966,
-      "cy": -0.10449299890247031,
-      "cx": -0.4024621157154061,
+      "cy": -1.0879903822471597,
+      "cx": -6.687614532447667,
       "poleRadius": 0.05,
       "showLabel": true,
       "lx": 1.046,
@@ -89,7 +95,9 @@
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
       "pvModelName": "SPR-X21-335-BLK",
-      "dailyYield": 1.9974383842410144
+      "dailyYield": 1.9974383842410144,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "ly": 1.558,
@@ -114,17 +122,19 @@
       "trackerType": "HSAT",
       "lx": 1.046,
       "label": "HSAT",
-      "cz": 0.5000000074505762,
+      "cz": 0.050000000745057616,
       "showLabel": true,
-      "cx": 0.13515302447733513,
+      "cx": 2.2458047485841477,
       "poleSpacing": 3,
       "relativeAzimuth": 0,
-      "cy": -0.10573019166804135,
+      "cy": -1.1008721431695676,
       "orientation": "Portrait",
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
       "pvModelName": "SPR-X21-335-BLK",
-      "dailyYield": 2.073422461213974
+      "dailyYield": 2.073422461213974,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "lx": 1.046,
@@ -149,17 +159,19 @@
       "drawSunBeam": true,
       "id": "r18XcJKcSLBW2tCEW6s74k",
       "relativeAzimuth": 0,
-      "cy": -0.09709770433882582,
+      "cy": -1.0109899186406004,
       "type": "Solar Panel",
       "trackerType": "AADAT",
       "poleRadius": 0.05,
-      "cx": -0.13700106436587867,
+      "cx": -2.2765131753715924,
       "ly": 1.558,
-      "cz": 0.5000000074505806,
+      "cz": 0.05000000074505806,
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
       "pvModelName": "SPR-X21-335-BLK",
-      "dailyYield": 2.215778465205723
+      "dailyYield": 2.215778465205723,
+      "version": 1,
+      "parentType": "Foundation"
     },
     {
       "tiltAngle": 0.5235987755982988,
@@ -176,30 +188,33 @@
       "lz": 0.046,
       "poleSpacing": 3,
       "selected": false,
-      "cy": -0.11542091451120043,
+      "cy": -1.2017728098278262,
       "drawSunBeam": true,
       "poleHeight": 1,
       "lx": 1.046,
       "relativeAzimuth": 0,
       "trackerType": "None",
-      "cx": 0.4032836323996918,
+      "cx": 6.7012654742430495,
       "showLabel": true,
       "id": "u4LjNU3fd3PVZ6QAX6aug1",
       "ly": 1.558,
       "poleRadius": 0.05,
       "label": "Fixed",
       "orientation": "Portrait",
-      "cz": 0.5000000074506161,
+      "cz": 0.05000000074506161,
       "type": "Solar Panel",
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
       "pvModelName": "SPR-X21-335-BLK",
-      "dailyYield": 1.590603475645371
+      "dailyYield": 1.590603475645371,
+      "version": 1,
+      "parentType": "Foundation"
     }
   ],
+  "sceneRadius": 10,
   "view": {
     "weatherPanelX": 0,
-    "heliodonPanelY": 314,
+    "heliodonPanelY": 453,
     "showStickyNotePanel": true,
     "dailyPvYieldPanelX": 4,
     "weatherPanelY": 0,
@@ -266,8 +281,17 @@
       "y": 0,
       "width": 600,
       "height": 400
+    },
+    "showAudioPlayerPanel": true,
+    "audioPlayerPanelRect": {
+      "x": 1,
+      "y": 311,
+      "width": 361,
+      "height": 132
     }
   },
+  "canvasPercentWidth": 100,
+  "animate24Hours": false,
   "graphState": {
     "dailyPvIndividualOutputs": true,
     "yearlyPvIndividualOutputs": false,
@@ -339,7 +363,18 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
+  "modelType": "Unknown",
+  "modelAuthor": null,
+  "modelLabel": null,
+  "modelDescription": null,
+  "designProjectType": null,
   "notes": [
     "Solar trackers\n\nAs the sun moves across the sky, solar panels do not always face the sun. Solar trackers allow them to follow the sun like sunflowers to maximize their outputs. This model compares the outputs of solar panels driven by the horizontal single-axis tracker (HSAT), the vertical single-axis tracker (VSAT), and the altazimuth dual-axis trackers (AADAT), as well as that of a fixed solar panel. You can also animate the movement of the sun to see how the solar panels follow it."
-  ]
+  ],
+  "audioTitle": "Listen to a podcast about this",
+  "audioUrl": "https://intofuture.org/podcast/solar-trackers.mp3",
+  "moveStep": 0.5,
+  "minimumNavigationMoveSpeed": 3,
+  "minimumNavigationTurnSpeed": 3,
+  "customPvModules": {}
 }

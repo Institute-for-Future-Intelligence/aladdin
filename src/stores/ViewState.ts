@@ -48,6 +48,7 @@ export interface ViewState {
   showWeatherPanel: boolean;
   showDiurnalTemperaturePanel: boolean;
   showStickyNotePanel: boolean;
+  showAudioPlayerPanel: boolean;
   showSiteInfoPanel: boolean;
   showDesignInfoPanel: boolean;
   showInstructionPanel: boolean;
@@ -79,6 +80,7 @@ export interface ViewState {
   weatherPanelRect: Rectangle;
   diurnalTemperaturePanelRect: Rectangle;
   stickyNotePanelRect: Rectangle;
+  audioPlayerPanelRect: Rectangle;
   dailyLightSensorPanelRect: Rectangle;
   yearlyLightSensorPanelRect: Rectangle;
   yearlyLightSensorPanelShowDaylight: boolean;

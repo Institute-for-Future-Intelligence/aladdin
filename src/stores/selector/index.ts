@@ -91,6 +91,10 @@ export const elements = (state: CommonStoreState) => state.elements;
 
 export const notes = (state: CommonStoreState) => state.notes;
 
+export const audioUrl = (state: CommonStoreState) => state.audioUrl;
+
+export const audioTitle = (state: CommonStoreState) => state.audioTitle;
+
 export const supportedPvModules = (state: CommonStoreState) => state.supportedPvModules;
 
 export const customPvModules = (state: CommonStoreState) => state.customPvModules;

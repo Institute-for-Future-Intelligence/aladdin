@@ -31,6 +31,8 @@ export const i18n_zh_cn = {
     },
 
     word: {
+      Settings: '设置',
+      Source: '来源',
       BasicTopics: '初级问题',
       AdvancedTopics: '高级问题',
       Unit: '单位',
@@ -376,6 +378,7 @@ export const i18n_zh_cn = {
           Instruction: '操作说明',
           StickyNote: '便签',
           Note: '便签',
+          AudioPlayer: '音频播放器',
           ShareLinks: '分享链接',
         },
       },

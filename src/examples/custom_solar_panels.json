@@ -1,11 +1,11 @@
 {
-  "docid": "4KNtWDeZAxGTYk4TQr8kaN",
-  "time": "11/27/2024 08:25 PM",
-  "timestamp": 1732757117208,
+  "docid": "awB4atw75RcUqVVsnq8pYD",
+  "time": "04/24/2025 10:23 AM",
+  "timestamp": 1745504615748,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
-  "version": "1.6.9",
+  "version": "1.7.8",
   "world": {
     "latitude": 42.2775281,
     "pvGridCellSize": 0.5,
@@ -59,7 +59,12 @@
       "lx": 17.72902884309173,
       "selected": false,
       "parentId": "Ground",
-      "color": "#999999"
+      "color": "#999999",
+      "hvacSystem": {
+        "heatingSetpoint": 20,
+        "coolingSetpoint": 20,
+        "temperatureThreshold": 3
+      }
     },
     {
       "rotation": [
@@ -199,9 +204,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      14.092960162730732,
-      -4.9419134316141795,
-      3.0628182159198305
+      14.21568975695293,
+      -4.6658849222717835,
+      2.9622902278594747
     ],
     "panCenter": [
       1.5940644020050898,
@@ -240,13 +245,21 @@
     },
     "showStickyNotePanel": true,
     "stickyNotePanelRect": {
-      "x": -2,
-      "y": 0,
-      "width": 405,
+      "x": -6,
+      "y": 165,
+      "width": 410,
       "height": 231
     },
-    "navigationView": false
+    "navigationView": false,
+    "showAudioPlayerPanel": true,
+    "audioPlayerPanelRect": {
+      "x": -5,
+      "y": -1,
+      "width": 407,
+      "height": 158
+    }
   },
+  "canvasPercentWidth": 100,
   "animate24Hours": false,
   "graphState": {
     "dailyPvIndividualOutputs": true,
@@ -327,6 +340,9 @@
   "notes": [
     "Define your own solar panels\n\nGo to Main Menu > Settings > Custom Solar Panels ...\n\nThis example shows a user-defined Canadian Solar product (CS7N-690TB-AG) and a system-provided one (CS6X-355P-FG). The former is the bifacial solar panel and the latter is a monofacial one."
   ],
+  "audioTitle": "Listen to a podcast about this",
+  "audioUrl": "https://intofuture.org/podcast/custom-solar-panels.mp3",
+  "moveStep": 0.5,
   "minimumNavigationMoveSpeed": 3,
   "minimumNavigationTurnSpeed": 3,
   "customPvModules": {

@@ -32,6 +32,8 @@ export const i18n_ua = {
     },
 
     word: {
+      Settings: 'Settings',
+      Source: 'Source',
       BasicTopics: 'Basic Topics',
       AdvancedTopics: 'Advanced Topics',
       Unit: 'Одиниця',
@@ -382,6 +384,7 @@ export const i18n_ua = {
           Instruction: 'Інструкція',
           StickyNote: 'Примітка',
           Note: 'Примітка',
+          AudioPlayer: 'Audio Player',
           ShareLinks: 'Поширити посилання',
         },
       },

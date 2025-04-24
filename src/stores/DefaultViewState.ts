@@ -60,6 +60,7 @@ export class DefaultViewState implements ViewState {
   showWeatherPanel: boolean;
   showDiurnalTemperaturePanel: boolean;
   showStickyNotePanel: boolean;
+  showAudioPlayerPanel: boolean;
   showSiteInfoPanel: boolean;
   showDesignInfoPanel: boolean;
   showInstructionPanel: boolean;
@@ -92,6 +93,7 @@ export class DefaultViewState implements ViewState {
   weatherPanelRect: Rectangle;
   diurnalTemperaturePanelRect: Rectangle;
   stickyNotePanelRect: Rectangle;
+  audioPlayerPanelRect: Rectangle;
   dailyLightSensorPanelRect: Rectangle;
   yearlyLightSensorPanelRect: Rectangle;
   yearlyLightSensorPanelShowDaylight: boolean;
@@ -162,6 +164,7 @@ export class DefaultViewState implements ViewState {
     this.showWeatherPanel = false;
     this.showDiurnalTemperaturePanel = false;
     this.showStickyNotePanel = false;
+    this.showAudioPlayerPanel = false;
     this.showSiteInfoPanel = true;
     this.showDesignInfoPanel = false;
     this.showInstructionPanel = true;
@@ -194,6 +197,7 @@ export class DefaultViewState implements ViewState {
     this.weatherPanelRect = new Rectangle(0, 0, 500, 500);
     this.diurnalTemperaturePanelRect = new Rectangle(0, 0, 600, 400);
     this.stickyNotePanelRect = new Rectangle(0, 0, 400, 300);
+    this.audioPlayerPanelRect = new Rectangle(0, 0, 360, 120);
     this.dailyLightSensorPanelRect = new Rectangle(0, 0, 600, 360);
     this.yearlyLightSensorPanelRect = new Rectangle(0, 0, 600, 500);
     this.yearlyLightSensorPanelShowDaylight = false;
@@ -265,6 +269,7 @@ export class DefaultViewState implements ViewState {
     viewState.showWeatherPanel = false;
     viewState.showDiurnalTemperaturePanel = false;
     viewState.showStickyNotePanel = false;
+    viewState.showAudioPlayerPanel = false;
     viewState.showSiteInfoPanel = true;
     viewState.showDesignInfoPanel = true;
     viewState.showInstructionPanel = true;
@@ -297,6 +302,7 @@ export class DefaultViewState implements ViewState {
     viewState.weatherPanelRect = new Rectangle(0, 0, 500, 500);
     viewState.diurnalTemperaturePanelRect = new Rectangle(0, 0, 600, 400);
     viewState.stickyNotePanelRect = new Rectangle(0, 0, 400, 300);
+    viewState.audioPlayerPanelRect = new Rectangle(0, 0, 360, 120);
     viewState.dailyLightSensorPanelRect = new Rectangle(0, 0, 600, 360);
     viewState.yearlyLightSensorPanelRect = new Rectangle(0, 0, 600, 500);
     viewState.yearlyLightSensorPanelShowDaylight = false;

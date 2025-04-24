@@ -133,6 +133,8 @@ export interface CommonStoreState {
   cloudFileBelongToProject: () => boolean;
   closeProject: () => void;
   notes: string[];
+  audioUrl: string;
+  audioTitle: string;
   user: User;
   language: string;
   floatingWindowOpacity: number;
@@ -687,6 +689,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           },
 
           notes: [],
+          audioUrl: 'https://intofuture.org/podcast/aladdin.mp3',
+          audioTitle: 'Instruction',
           language: 'en',
           floatingWindowOpacity: FLOATING_WINDOW_OPACITY,
           selectedFloatingWindow: null,
@@ -761,6 +765,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.graphState = content.graphState ?? new DefaultGraphState();
               state.elements = content.elements;
               state.notes = content.notes ?? [];
+              state.audioTitle = content.audioTitle ?? 'Instruction';
+              state.audioUrl = content.audioUrl ?? 'https://intofuture.org/podcast/aladdin.mp3';
               state.animate24Hours = !!content.animate24Hours;
               state.canvasPercentWidth = content.canvasPercentWidth ?? (state.viewState.showModelTree ? 75 : 100);
               state.modelType = content.modelType ?? ModelType.UNKNOWN;
@@ -850,6 +856,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               modelDescription: state.modelDescription,
               designProjectType: state.designProjectType,
               notes: state.notes,
+              audioTitle: state.audioTitle,
+              audioUrl: state.audioUrl,
               moveStep: state.moveStep,
               minimumNavigationMoveSpeed: state.minimumNavigationMoveSpeed,
               minimumNavigationTurnSpeed: state.minimumNavigationTurnSpeed,
@@ -876,7 +884,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.cloudFile = undefined;
               state.localContentToImportAfterCloudFileUpdate = undefined;
               state.notes = [];
-              state.fileChanged = !state.fileChanged;
+              state.audioTitle = 'Instruction';
+              (state.audioUrl = 'https://intofuture.org/podcast/aladdin.mp3'), (state.fileChanged = !state.fileChanged);
               state.currentUndoable = undefined;
               state.actionInfo = undefined;
               state.undoManager.clear();
@@ -5381,6 +5390,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           projectState: state.projectState,
           designProjectType: state.designProjectType,
           notes: state.notes,
+          audioTitle: state.audioTitle,
+          audioUrl: state.audioUrl,
           user: state.user,
           sceneRadius: state.sceneRadius,
           weatherModel: state.weatherModel,
