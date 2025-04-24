@@ -25,6 +25,8 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
       state.projectState = { ...projectState };
       state.projectImages.clear();
       state.projectView = true;
+      state.canvasPercentWidth = 50;
+      state.viewState.showModelTree = false;
     });
     usePrimitiveStore.getState().set((state) => {
       state.projectImagesUpdateFlag = !state.projectImagesUpdateFlag;

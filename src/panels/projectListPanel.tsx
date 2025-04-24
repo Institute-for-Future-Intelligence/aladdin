@@ -194,7 +194,8 @@ const ProjectListPanel = React.memo(
       setProjectState(projectState);
       undoManager.clear();
       setCommonStore((state) => {
-        if (state.canvasPercentWidth === 100) state.canvasPercentWidth = 50;
+        // if (state.canvasPercentWidth === 100) state.canvasPercentWidth = 50;
+        state.canvasPercentWidth = 50;
         state.viewState.showModelTree = false;
       });
       if (loggable) {
