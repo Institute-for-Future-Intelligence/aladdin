@@ -4,7 +4,7 @@
 
 import { Box } from '@react-three/drei';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
-import { RulerModel, RulerSnapPoint } from 'src/models/RulerModel';
+import { RulerModel, RulerSnapPoint, RulerType } from 'src/models/RulerModel';
 import { useStore } from 'src/stores/common';
 import { useCallback, useEffect, useRef } from 'react';
 import { MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from 'src/types';
@@ -22,7 +22,17 @@ import Wireframe from 'src/components/wireframe';
 import { LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 
 const Ruler = (ruler: RulerModel) => {
-  const { id, ly, lz, leftEndPoint, rightEndPoint, locked, color = '#D3D3D3', tickColor = '#000000' } = ruler;
+  const {
+    id,
+    ly,
+    lz,
+    leftEndPoint,
+    rightEndPoint,
+    locked,
+    color = '#D3D3D3',
+    tickColor = '#000000',
+    rulerType = RulerType.Vertical,
+  } = ruler;
 
   const leftEndPointPosition = useRulerEndPointPosition(leftEndPoint);
   const rightEndPointPosition = useRulerEndPointPosition(rightEndPoint);
@@ -374,7 +384,6 @@ const Ruler = (ruler: RulerModel) => {
   const hy = ly / 2;
   const hz = lz / 2;
 
-  // tick color
   return (
     <group name={'Ruler Group'} onPointerDown={onGroupPointerDown}>
       {/* body group */}

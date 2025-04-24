@@ -900,6 +900,10 @@ export const i18n_es = {
     },
 
     rulerMenu: {
+      RulerType: 'Ruler Type',
+      Horizontal: 'Horizonal',
+      Vertical: 'Vertical',
+      Arbitrary: 'Arbitrary',
       TickColor: 'Tick Color',
       OnlyThisRuler: 'Only This Ruler',
       AllSelectedRulers: 'All Selected Rulers',

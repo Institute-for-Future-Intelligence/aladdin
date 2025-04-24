@@ -1,16 +1,22 @@
-import { Vec2, Vector3 } from 'three';
+import { Vector3 } from 'three';
 import { ElementModel } from './ElementModel';
 
 export interface RulerModel extends ElementModel {
   leftEndPoint: RulerEndPoint;
   rightEndPoint: RulerEndPoint;
   tickColor: string;
-  isVertical?: boolean;
+  rulerType: RulerType;
 }
 
 export interface RulerEndPoint {
   position: number[];
   snappedHandle?: RulerSnappedHandle;
+}
+
+export enum RulerType {
+  Horizontal = 'Horizontal',
+  Vertical = 'Vertical',
+  Arbitrary = 'Arbitrary',
 }
 
 export type RulerSnappedHandle = { elementId: string; direction: number[] };
