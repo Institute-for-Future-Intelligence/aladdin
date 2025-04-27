@@ -74,6 +74,43 @@ export const BuildingCheckbox = ({ foundation }: FoundationItemProps) => {
   );
 };
 
+export const VisibilityCheckbox = ({ foundation }: FoundationItemProps) => {
+  const lang = useLanguage();
+
+  const toggle = () => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.id === foundation.id) {
+          (e as FoundationModel).invisible = !(e as FoundationModel).invisible;
+          break;
+        }
+      }
+    });
+  };
+
+  const onChange = (e: CheckboxChangeEvent) => {
+    const undoableCheck = {
+      name: 'Visible',
+      timestamp: Date.now(),
+      checked: e.target.checked,
+      selectedElementId: foundation.id,
+      selectedElementType: foundation.type,
+      undo: () => toggle(),
+      redo: () => toggle(),
+    } as UndoableCheck;
+    useStore.getState().addUndoable(undoableCheck);
+    toggle();
+  };
+
+  return (
+    <MenuItem stayAfterClick noPadding>
+      <Checkbox style={{ width: '100%' }} checked={!foundation.invisible} onChange={onChange}>
+        {i18n.t('word.Visible', lang)}
+      </Checkbox>
+    </MenuItem>
+  );
+};
+
 export const SlopeCheckbox = ({ foundation }: FoundationItemProps) => {
   const lang = useLanguage();
 

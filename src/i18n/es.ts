@@ -31,6 +31,7 @@ export const i18n_es = {
     },
 
     word: {
+      Visible: 'Visible',
       Settings: 'Settings',
       Source: 'Source',
       BasicTopics: 'Basic Topics',

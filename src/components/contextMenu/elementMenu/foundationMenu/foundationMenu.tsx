@@ -8,7 +8,13 @@ import { BuildingCompletionStatus, FoundationTexture, ObjectType, SolarStructure
 import { Copy, Cut, DialogItem, GroupMasterCheckbox, Lock, MenuItem, Paste } from '../../menuItems';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ElementModel } from 'src/models/ElementModel';
-import { AddPolygonItem, BuildingCheckbox, SlopeCheckbox, SolarStructureRadioGroup } from './foundationMenuItems';
+import {
+  AddPolygonItem,
+  BuildingCheckbox,
+  SlopeCheckbox,
+  SolarStructureRadioGroup,
+  VisibilityCheckbox,
+} from './foundationMenuItems';
 import i18n from 'src/i18n/i18n';
 import FoundationTextureSelection from './foundationTextureSelection';
 import FoundationColorSelection from './foundationColorSelection';
@@ -117,6 +123,11 @@ export const createFoundationMenu = (selectedElement: ElementModel) => {
   });
 
   if (editable) {
+    items.push({
+      key: 'foundation-visible',
+      label: <VisibilityCheckbox foundation={foundation} />,
+    });
+
     items.push({
       key: 'foundation-group-master',
       label: <GroupMasterCheckbox groupableElement={foundation} />,

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import FoundationTexture00 from '../../resources/tiny_white_square.png';
@@ -80,7 +80,7 @@ import WallAuxiliaryLine, { WallAuxiliaryType } from './wallAuxiliaryLine';
 import SolarPanelWrapper from '../solarPanel/solarPanelWrapper';
 import { useTransparent } from '../roof/hooks';
 import BatteryStorageWrapper from '../batteryStorage/batteryStorageWrapper';
-import Slope from './slope';
+import Slope from './Slope';
 import Wireframe from './wireframe';
 import SolarWaterHeaterWrapper from '../solarWaterHeater/solarWaterHeaterWrapper';
 
@@ -137,7 +137,6 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
   const removeElementById = useStore(Selector.removeElementById);
   const selectMe = useStore(Selector.selectMe);
   const addElement = useStore(Selector.addElement);
-  const getPvModule = useStore(Selector.getPvModule);
   const deletedWallID = useStore(Selector.deletedWallId);
   const updateWallMapOnFoundationFlag = useStore(Selector.updateWallMapOnFoundationFlag);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -3064,45 +3063,47 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
             setHovered={setHovered}
           />
         ) : (
-          <Box
-            castShadow={shadowEnabled}
-            receiveShadow={shadowEnabled}
-            uuid={id}
-            userData={{ simulation: true, stand: true, id: id, aabb: true }}
-            ref={baseRef}
-            name={FOUNDATION_NAME}
-            args={[lx, ly, lz]}
-            onContextMenu={handleContextMenu}
-            onPointerOver={handlePointerOver}
-            onPointerDown={handlePointerDown}
-            onPointerUp={handlePointerUp}
-            onPointerMove={throttle(handlePointerMove, THROTTLE_WAIT, { trailing: false })}
-            onPointerOut={handlePointerOut}
-            onPointerEnter={handlePointerEnter}
-          >
-            <meshStandardMaterial attach="material-0" color={color} />
-            <meshStandardMaterial attach="material-1" color={color} />
-            <meshStandardMaterial attach="material-2" color={color} />
-            <meshStandardMaterial attach="material-3" color={color} />
-            {showSolarRadiationHeatmap && heatmapTexture ? (
-              <meshBasicMaterial
-                attach="material-4"
-                color={'white'}
-                map={heatmapTexture}
-                transparent={transparent}
-                opacity={opacity}
-              />
-            ) : (
-              <meshStandardMaterial
-                attach="material-4"
-                color={textureType === FoundationTexture.NoTexture ? color : 'white'}
-                map={_texture}
-                transparent={transparent}
-                opacity={opacity}
-              />
-            )}
-            <meshStandardMaterial attach="material-5" color={color} />
-          </Box>
+          !foundationModel.invisible && (
+            <Box
+              castShadow={shadowEnabled}
+              receiveShadow={shadowEnabled}
+              uuid={id}
+              userData={{ simulation: true, stand: true, id: id, aabb: true }}
+              ref={baseRef}
+              name={FOUNDATION_NAME}
+              args={[lx, ly, lz]}
+              onContextMenu={handleContextMenu}
+              onPointerOver={handlePointerOver}
+              onPointerDown={handlePointerDown}
+              onPointerUp={handlePointerUp}
+              onPointerMove={throttle(handlePointerMove, THROTTLE_WAIT, { trailing: false })}
+              onPointerOut={handlePointerOut}
+              onPointerEnter={handlePointerEnter}
+            >
+              <meshStandardMaterial attach="material-0" color={color} />
+              <meshStandardMaterial attach="material-1" color={color} />
+              <meshStandardMaterial attach="material-2" color={color} />
+              <meshStandardMaterial attach="material-3" color={color} />
+              {showSolarRadiationHeatmap && heatmapTexture ? (
+                <meshBasicMaterial
+                  attach="material-4"
+                  color={'white'}
+                  map={heatmapTexture}
+                  transparent={transparent}
+                  opacity={opacity}
+                />
+              ) : (
+                <meshStandardMaterial
+                  attach="material-4"
+                  color={textureType === FoundationTexture.NoTexture ? color : 'white'}
+                  map={_texture}
+                  transparent={transparent}
+                  opacity={opacity}
+                />
+              )}
+              <meshStandardMaterial attach="material-5" color={color} />
+            </Box>
+          )
         )}
 
         {/* intersection plane */}
@@ -3133,7 +3134,7 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
         {selected && <HorizontalRuler element={foundationModel} verticalLift={moveHandleRadius} />}
 
         {/* wireFrame */}
-        {(!selected || groundImage) && (
+        {(!selected || groundImage) && !foundationModel.invisible && (
           <Wireframe
             lx={lx}
             ly={ly}

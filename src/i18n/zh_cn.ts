@@ -31,6 +31,7 @@ export const i18n_zh_cn = {
     },
 
     word: {
+      Visible: '可见',
       Settings: '设置',
       Source: '来源',
       BasicTopics: '初级问题',
