@@ -581,8 +581,6 @@ export const evolutionPaused = (state: PrimitiveStoreState) => state.evolutionPa
 
 export const contextMenuObjectType = (state: CommonStoreState) => state.contextMenuObjectType;
 
-export const localFileDialogRequested = (state: CommonStoreState) => state.localFileDialogRequested;
-
 export const enableFineGrid = (state: CommonStoreState) => state.enableFineGrid;
 
 export const setEnableFineGrid = (state: CommonStoreState) => state.setEnableFineGrid;

@@ -56,6 +56,7 @@ import FoundationTextureInput from './foundationTextureInput';
 import TransparencyInput from './transparencyInput';
 import { CuboidModel } from '../models/CuboidModel';
 import { RulerModel } from 'src/models/RulerModel';
+import { ShowLabelCheckbox } from '../components/contextMenu/labelSubmenuItems';
 
 const ModelTree = React.memo(() => {
   const modelTreeExpandedKeys = usePrimitiveStore(Selector.modelTreeExpandedKeys);
@@ -177,6 +178,11 @@ const ModelTree = React.memo(() => {
           checkable: false,
           title: <LabelInput element={f} />,
           key: f.id + ' Label',
+        });
+        children.push({
+          checkable: false,
+          title: <ShowLabelCheckbox element={f} forModelTree />,
+          key: f.id + ' Show Label',
         });
         children.push(...getDimension(f));
         children.push(...getCoordinates(f));

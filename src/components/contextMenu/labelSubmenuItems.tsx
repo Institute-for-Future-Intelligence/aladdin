@@ -46,7 +46,8 @@ export const ShowLabelCheckbox = ({ element, forModelTree }: LabelSubmenuItemPro
       <Switch size={'small'} checked={!!element?.showLabel} onChange={showLabel} />
     </Space>
   ) : (
-    <MenuItem stayAfterClick noPadding>
+    // Menu item does not update when clicked. I have to set stayAfterClick to false to fix this
+    <MenuItem stayAfterClick={false} noPadding>
       <Checkbox style={{ width: '100%' }} checked={!!element?.showLabel} onChange={showLabel}>
         {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
       </Checkbox>
