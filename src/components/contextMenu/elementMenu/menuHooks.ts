@@ -27,12 +27,12 @@ export const useLabelShow = (element: ElementModel | undefined) => {
   const addUndoable = useStore(Selector.addUndoable);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
 
-  return () => {
+  return (show: boolean) => {
     if (element) {
       const undoableCheck = {
         name: 'Show Label for ' + element.type,
         timestamp: Date.now(),
-        checked: !element.showLabel,
+        checked: show,
         selectedElementId: element.id,
         selectedElementType: element.type,
         undo: () => {
@@ -43,7 +43,7 @@ export const useLabelShow = (element: ElementModel | undefined) => {
         },
       } as UndoableCheck;
       addUndoable(undoableCheck);
-      updateElementShowLabelById(element.id, !element.showLabel);
+      updateElementShowLabelById(element.id, show);
     }
   };
 };

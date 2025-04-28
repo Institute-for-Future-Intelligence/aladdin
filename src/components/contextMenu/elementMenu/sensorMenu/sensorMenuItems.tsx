@@ -8,7 +8,7 @@ import { useLabel, useLabelShow, useLabelText } from '../menuHooks';
 import { MenuItem } from '../../menuItems';
 import { Checkbox, Input, Space } from 'antd';
 import i18n from 'src/i18n/i18n';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface SensorMenuItemProps {
   sensor: SensorModel;
@@ -19,9 +19,21 @@ export const SensorShowLabelCheckbox = ({ sensor }: SensorMenuItemProps) => {
   const lang = useLanguage();
   const showLabel = useLabelShow(sensor);
 
+  // Menu item does not update when clicked. I have to set an internal state to fix this
+  const [show, setShow] = useState(sensor.showLabel);
+  const onChange = () => {
+    showLabel(!show);
+    setShow(!show);
+  };
+
+  // for sync model tree and context menu
+  useEffect(() => {
+    setShow(sensor.showLabel);
+  }, [sensor.showLabel]);
+
   return (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox style={{ width: '100%' }} checked={!!sensor.showLabel} onChange={showLabel}>
+      <Checkbox style={{ width: '100%' }} checked={show} onChange={onChange}>
         {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
       </Checkbox>
     </MenuItem>

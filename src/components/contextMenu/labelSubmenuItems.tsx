@@ -17,7 +17,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { useLanguage } from 'src/hooks';
 import { MenuItem } from './menuItems';
 import i18n from 'src/i18n/i18n';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
 import { showError } from '../../helpers';
@@ -43,9 +43,14 @@ export const ShowLabelCheckbox = ({ element, forModelTree }: LabelSubmenuItemPro
   // Menu item does not update when clicked. I have to set an internal state to fix this
   const [show, setShow] = useState(element.showLabel);
   const onChange = () => {
-    showLabel();
-    setShow((b) => !b);
+    showLabel(!show);
+    setShow(!show);
   };
+
+  // for sync model tree and context menu
+  useEffect(() => {
+    setShow(element.showLabel);
+  }, [element.showLabel]);
 
   return forModelTree ? (
     <Space>
