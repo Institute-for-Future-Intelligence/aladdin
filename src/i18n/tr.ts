@@ -1485,6 +1485,7 @@ export const i18n_tr = {
       Default: 'Default',
       Arched: 'Arched',
       Filled: 'Filled',
+      Framed: 'Framed',
       FrameColor: 'Frame Color',
       Interior: 'Interior',
     },

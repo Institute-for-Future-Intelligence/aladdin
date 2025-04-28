@@ -1483,6 +1483,7 @@ export const i18n_es = {
       Default: 'Default',
       Arched: 'Arched',
       Filled: 'Filled',
+      Framed: 'Framed',
       FrameColor: 'Frame Color',
       Interior: 'Interior',
     },

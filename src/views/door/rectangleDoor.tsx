@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo, useRef } from 'react';
@@ -25,6 +25,7 @@ interface RectangleDoorProps {
   id: string;
   dimension: number[];
   color: string;
+  frameless: boolean;
   frameColor: string;
   selected: boolean;
   locked: boolean;
@@ -100,6 +101,7 @@ const RectangleDoor = React.memo(
     dimension,
     color,
     frameColor,
+    frameless,
     selected,
     locked,
     material,
@@ -231,7 +233,7 @@ const RectangleDoor = React.memo(
           lineWidth={selected && locked ? 2 : 0.2}
         />
 
-        <DoorFrame dimension={dimension} color={frameColor} />
+        {!frameless && <DoorFrame dimension={dimension} color={frameColor} />}
 
         {heatFluxes &&
           heatFluxes.map((v, index) => {

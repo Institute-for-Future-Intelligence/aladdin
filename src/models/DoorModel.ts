@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { DoorTexture } from 'src/types';
@@ -13,6 +13,7 @@ export interface DoorModel extends ElementModel {
 
   archHeight: number;
   filled: boolean;
+  frameless?: boolean;
   opacity?: number;
   frameColor?: string;
 

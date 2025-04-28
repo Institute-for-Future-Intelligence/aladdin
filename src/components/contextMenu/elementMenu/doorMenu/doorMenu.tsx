@@ -1,14 +1,14 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import type { MenuProps } from 'antd';
-import { DoorModel } from 'src/models/DoorModel';
+import { DoorModel, DoorType } from 'src/models/DoorModel';
 import { ElementModel } from 'src/models/ElementModel';
 import { useStore } from 'src/stores/common';
 import { DoorTexture, ObjectType } from 'src/types';
 import { Copy, Cut, DialogItem, Lock, MenuItem } from '../../menuItems';
-import { DoorFilledCheckbox, DoorInteriorCheckbox, DoorTypeRadioGroup } from './doorMenuItems';
+import { DoorFilledCheckbox, DoorFramedCheckbox, DoorInteriorCheckbox, DoorTypeRadioGroup } from './doorMenuItems';
 import i18n from 'src/i18n/i18n';
 import DoorWidthInput from './doorWidthInput';
 import DoorHeightInput from './doorHeightInput';
@@ -57,6 +57,13 @@ export const createDoorMenu = (selectedElement: ElementModel) => {
         label: <DoorInteriorCheckbox door={door} />,
       },
     );
+
+    if (door.doorType === DoorType.Default) {
+      items.push({
+        key: 'door-framed',
+        label: <DoorFramedCheckbox door={door} />,
+      });
+    }
 
     items.push(
       {

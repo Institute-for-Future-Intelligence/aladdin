@@ -1488,6 +1488,7 @@ export const i18n_ua = {
       Default: 'За замовчуванням',
       Arched: 'Аркові',
       Filled: 'Заповнені',
+      Framed: 'Framed',
       FrameColor: 'Колір рамки',
       Interior: "Інтер'єр",
     },

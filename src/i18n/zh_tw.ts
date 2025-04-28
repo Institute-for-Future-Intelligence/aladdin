@@ -1459,6 +1459,7 @@ export const i18n_zh_tw = {
       Default: '默認',
       Arched: '拱形',
       Filled: '填充',
+      Framed: '門框',
       FrameColor: '門框顏色',
       Interior: '內門',
     },

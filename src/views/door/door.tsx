@@ -103,6 +103,7 @@ const Door = (doorModel: DoorModel) => {
     filled = true,
     opacity = 1,
     frameColor = 'white',
+    frameless = false,
   } = doorModel;
 
   const GROUP_NAME = `Door Group ${id}`;
@@ -276,6 +277,7 @@ const Door = (doorModel: DoorModel) => {
             dimension={dimensionData}
             color={color}
             frameColor={frameColor}
+            frameless={frameless}
             selected={selected}
             locked={locked}
             material={doorMaterial}

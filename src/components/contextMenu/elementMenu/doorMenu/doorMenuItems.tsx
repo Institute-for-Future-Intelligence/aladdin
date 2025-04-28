@@ -64,6 +64,48 @@ export const DoorFilledCheckbox = React.memo(({ door }: DoorMenuItemProps) => {
   );
 });
 
+export const DoorFramedCheckbox = React.memo(({ door }: DoorMenuItemProps) => {
+  const lang = useLanguage();
+
+  const updateById = (id: string, framed: boolean) => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.id === id && e.type === ObjectType.Door) {
+          (e as DoorModel).frameless = !framed;
+          break;
+        }
+      }
+    });
+  };
+
+  const handleChange = (e: CheckboxChangeEvent) => {
+    const checked = e.target.checked;
+    const undoableCheck = {
+      name: 'Framed Door',
+      timestamp: Date.now(),
+      checked,
+      selectedElementId: door.id,
+      selectedElementType: door.type,
+      undo: () => {
+        updateById(door.id, !undoableCheck.checked);
+      },
+      redo: () => {
+        updateById(door.id, undoableCheck.checked);
+      },
+    } as UndoableCheck;
+    useStore.getState().addUndoable(undoableCheck);
+    updateById(door.id, checked);
+  };
+
+  return (
+    <MenuItem stayAfterClick noPadding>
+      <Checkbox style={{ width: '100%' }} checked={!door.frameless} onChange={handleChange}>
+        {i18n.t('doorMenu.Framed', lang)}
+      </Checkbox>
+    </MenuItem>
+  );
+});
+
 export const DoorInteriorCheckbox = React.memo(({ door }: DoorMenuItemProps) => {
   const lang = useLanguage();
 
