@@ -313,6 +313,10 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
           label: 'menu.concentratedSolarPowerTutorials.LinearFresnelReflectorsWithTwoAbsorbers',
         },
         {
+          key: 'building_integrated_fresnel_reflectors',
+          label: 'menu.concentratedSolarPowerTutorials.BuildingIntegratedFresnelReflectors',
+        },
+        {
           key: 'solar_power_tower',
           label: 'menu.concentratedSolarPowerTutorials.SolarPowerTower',
         },

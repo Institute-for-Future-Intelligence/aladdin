@@ -553,6 +553,7 @@ export const i18n_ua = {
           'Вплив висоти поглинаючої трубки на лінійні відбивачі Френеля',
         EffectOfAzimuthOfLinearFresnelReflectors: 'Вплив азимуту на лінійні відбивачі Френеля',
         LinearFresnelReflectorsWithTwoAbsorbers: 'Лінійні відбивачі Френеля з двома поглинаючими елементами',
+        BuildingIntegratedFresnelReflectors: 'Building-Integrated Fresnel Reflectors',
         CosineEfficiencyOfHeliostats: 'Косинусна ефективність геліостатів',
         ShadowingAndBlockingOfHeliostats: 'Затінення та блокування геліостатів',
         EffectSolarPowerTowerHeight: 'Вплив висоти сонячної вежі з використаним повітрям',

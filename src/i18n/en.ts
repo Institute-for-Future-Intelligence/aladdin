@@ -549,6 +549,7 @@ export const i18n_en = {
           'Effect of Absorber Pipe Height for Linear Fresnel Reflectors',
         EffectOfAzimuthOfLinearFresnelReflectors: 'Effect of Azimuth of Linear Fresnel Reflectors',
         LinearFresnelReflectorsWithTwoAbsorbers: 'Linear Fresnel Reflectors with Two Absorbers',
+        BuildingIntegratedFresnelReflectors: 'Building-Integrated Fresnel Reflectors',
         CosineEfficiencyOfHeliostats: 'Cosine Efficiency of Heliostats',
         ShadowingAndBlockingOfHeliostats: 'Shadowing and Blocking of Heliostats',
         EffectSolarPowerTowerHeight: 'Effect of Solar Power Tower Height',

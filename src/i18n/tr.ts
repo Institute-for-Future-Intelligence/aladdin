@@ -549,6 +549,7 @@ export const i18n_tr = {
           'Doğrusal Fresnel Reflektörlerde Soğurucu Boru Yükseklik Etkisi',
         EffectOfAzimuthOfLinearFresnelReflectors: 'Doğrusal Fresnel Reflektörlerde Azimut Açısı Etkisi',
         LinearFresnelReflectorsWithTwoAbsorbers: 'İki Soğuruculu Doğrusal Fresnel Reflektörler',
+        BuildingIntegratedFresnelReflectors: 'Building-Integrated Fresnel Reflectors',
         CosineEfficiencyOfHeliostats: 'Heliostatların Kosinüs Verimliliği',
         ShadowingAndBlockingOfHeliostats: 'Heliostatlarda Gölgeleme ve Engellenme',
         EffectSolarPowerTowerHeight: 'Güneş Güç Kulesi Yükseklik Etkisi',

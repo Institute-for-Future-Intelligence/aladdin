@@ -546,6 +546,7 @@ export const i18n_zh_cn = {
         EffectOfAbsorberPipeHeightForLinearFresnelReflectors: '吸热管的安装高度对直线式菲涅尔反射镜发电量的影响',
         EffectOfAzimuthOfLinearFresnelReflectors: '直线式菲涅尔反射镜方位角对发电量的影响',
         LinearFresnelReflectorsWithTwoAbsorbers: '配备两个吸收管的直线式菲涅尔反射镜阵列',
+        BuildingIntegratedFresnelReflectors: '建筑一体化的菲涅耳反射镜',
         CosineEfficiencyOfHeliostats: '定日镜的余弦效率',
         ShadowingAndBlockingOfHeliostats: '定日镜的阴影和遮挡',
         EffectSolarPowerTowerHeight: '吸收塔高度对发电量的影响',
