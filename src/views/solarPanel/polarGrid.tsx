@@ -5,6 +5,7 @@
 import { useLoader } from '@react-three/fiber';
 import { HALF_PI } from 'src/constants';
 import { FontLoader, TextGeometryParameters } from 'three/examples/jsm/Addons';
+//@ts-expect-error ignore
 import helvetikerFont from 'src/assets/helvetiker_regular.typeface.fnt';
 import { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { Ring } from '@react-three/drei';

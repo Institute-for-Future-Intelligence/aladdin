@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -144,7 +144,7 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
 
   useEffect(() => {
     const hasBattery = sum[0] !== undefined && Object.keys(sum[0]).findIndex((key) => key.includes('Battery')) !== -1;
-    const showNet = !Boolean(summaryMap.keys().find((key) => key.slice(0, 4) === 'Grid'));
+    const showNet = ![...summaryMap.keys()].find((key: string) => key.slice(0, 4) === 'Grid');
     setHasBattery(hasBattery);
     setShowNet(showNet);
     setData(sum);
