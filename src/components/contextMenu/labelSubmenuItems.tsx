@@ -17,7 +17,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { useLanguage } from 'src/hooks';
 import { MenuItem } from './menuItems';
 import i18n from 'src/i18n/i18n';
-import React from 'react';
+import React, { useState } from 'react';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
 import { showError } from '../../helpers';
@@ -40,15 +40,21 @@ export const ShowLabelCheckbox = ({ element, forModelTree }: LabelSubmenuItemPro
   const showLabel = useLabelShow(element);
   const lang = useLanguage();
 
+  // Menu item does not update when clicked. I have to set an internal state to fix this
+  const [show, setShow] = useState(element.showLabel);
+  const onChange = () => {
+    showLabel();
+    setShow((b) => !b);
+  };
+
   return forModelTree ? (
     <Space>
       <span>{i18n.t('labelSubMenu.KeepShowingLabel', lang)}</span>:
-      <Switch size={'small'} checked={!!element?.showLabel} onChange={showLabel} />
+      <Switch size={'small'} checked={show} onChange={onChange} />
     </Space>
   ) : (
-    // Menu item does not update when clicked. I have to set stayAfterClick to false to fix this
-    <MenuItem stayAfterClick={false} noPadding>
-      <Checkbox style={{ width: '100%' }} checked={!!element?.showLabel} onChange={showLabel}>
+    <MenuItem stayAfterClick noPadding>
+      <Checkbox style={{ width: '100%' }} checked={show} onChange={onChange}>
         {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
       </Checkbox>
     </MenuItem>
