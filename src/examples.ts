@@ -39,6 +39,7 @@ import colonial_house from './examples/colonial_house.json';
 import dutch_colonial_house from './examples/dutch_colonial_house.json';
 import dutch_gable_roof from './examples/dutch_gable_roof.json';
 import raised_ranch from './examples/raised_ranch.json';
+import overhang_floor from './examples/overhang_floor.json';
 import a_frame_house from './examples/a_frame_house.json';
 import half_timbered_house from './examples/half_timbered_house.json';
 import combination_roof_vs_bonnet_roof from './examples/combination_roof_vs_bonnet_roof.json';
@@ -389,6 +390,9 @@ export const getExample = (name: string) => {
       break;
     case 'raised_ranch':
       input = raised_ranch;
+      break;
+    case 'overhang_floor':
+      input = overhang_floor;
       break;
     case 'combination_roof_vs_bonnet_roof':
       input = combination_roof_vs_bonnet_roof;

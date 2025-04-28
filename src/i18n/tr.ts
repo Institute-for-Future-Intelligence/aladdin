@@ -513,6 +513,7 @@ export const i18n_tr = {
         CombinationRoofVsBonnetRoof: 'Combination Roof vs. Bonnet Roof',
         DutchGableRoof: 'Dutch Gable Roof',
         RaisedRanch: 'Raised Ranch',
+        OverhangFloor: 'Overhang Floor',
         GableAndValleyRoof: 'Gable and Valley Roof',
         ClerestoryRoof: 'Clerestory Roof',
         MonitorRoof: 'Monitor Roof',

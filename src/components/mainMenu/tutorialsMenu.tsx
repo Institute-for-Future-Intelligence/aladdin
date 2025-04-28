@@ -165,6 +165,10 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
           label: 'menu.buildingDesignTutorials.RaisedRanch',
         },
         {
+          key: 'overhang_floor',
+          label: 'menu.buildingDesignTutorials.OverhangFloor',
+        },
+        {
           key: 'gable_and_valley_roof',
           label: 'menu.buildingDesignTutorials.GableAndValleyRoof',
         },

@@ -512,6 +512,7 @@ export const i18n_zh_cn = {
         CombinationRoofVsBonnetRoof: '组合屋顶和帽檐屋顶的对比',
         DutchGableRoof: '荷兰双坡屋顶',
         RaisedRanch: '高架牧場式住宅',
+        OverhangFloor: '悬挑地板',
         GableAndValleyRoof: '坡谷屋顶',
         ClerestoryRoof: '天窗屋顶',
         MonitorRoof: '采光屋顶',

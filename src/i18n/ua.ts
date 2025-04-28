@@ -518,6 +518,7 @@ export const i18n_ua = {
         CombinationRoofVsBonnetRoof: 'Комбінований дах проти капотного даху',
         DutchGableRoof: 'Голландський дах з рикетом',
         RaisedRanch: 'Raised Ranch',
+        OverhangFloor: 'Overhang Floor',
         GableAndValleyRoof: 'Схиловий та долинний дах',
         ClerestoryRoof: 'Клересторний дах',
         MonitorRoof: 'Моніторний дах',
