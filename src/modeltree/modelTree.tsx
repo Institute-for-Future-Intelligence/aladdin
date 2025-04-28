@@ -57,6 +57,7 @@ import TransparencyInput from './transparencyInput';
 import { CuboidModel } from '../models/CuboidModel';
 import { RulerModel } from 'src/models/RulerModel';
 import { ShowLabelCheckbox } from '../components/contextMenu/labelSubmenuItems';
+import { VisibilityCheckbox } from '../components/contextMenu/elementMenu/foundationMenu/foundationMenuItems';
 
 const ModelTree = React.memo(() => {
   const modelTreeExpandedKeys = usePrimitiveStore(Selector.modelTreeExpandedKeys);
@@ -173,6 +174,11 @@ const ModelTree = React.memo(() => {
           checkable: false,
           title: <FoundationTextureInput foundation={f} />,
           key: f.id + ' Texture',
+        });
+        children.push({
+          checkable: false,
+          title: <VisibilityCheckbox foundation={f} forModelTree />,
+          key: f.id + ' Visibility',
         });
         children.push({
           checkable: false,

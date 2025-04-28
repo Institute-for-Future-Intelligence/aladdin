@@ -2,7 +2,7 @@
  * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
-import { Checkbox, Modal, Radio, RadioChangeEvent, Space } from 'antd';
+import { Checkbox, Modal, Radio, RadioChangeEvent, Space, Switch } from 'antd';
 import { MenuItem } from '../../menuItems';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { useStore } from 'src/stores/common';
@@ -23,6 +23,7 @@ import { Util } from 'src/Util';
 
 interface FoundationItemProps {
   foundation: FoundationModel;
+  forModelTree?: boolean;
 }
 
 interface LockOffspringsItemProps extends FoundationItemProps {
@@ -74,7 +75,7 @@ export const BuildingCheckbox = ({ foundation }: FoundationItemProps) => {
   );
 };
 
-export const VisibilityCheckbox = ({ foundation }: FoundationItemProps) => {
+export const VisibilityCheckbox = ({ foundation, forModelTree }: FoundationItemProps) => {
   const lang = useLanguage();
 
   const toggle = () => {
@@ -88,11 +89,11 @@ export const VisibilityCheckbox = ({ foundation }: FoundationItemProps) => {
     });
   };
 
-  const onChange = (e: CheckboxChangeEvent) => {
+  const toggleVisibility = () => {
     const undoableCheck = {
       name: 'Visible',
       timestamp: Date.now(),
-      checked: e.target.checked,
+      checked: !foundation.invisible,
       selectedElementId: foundation.id,
       selectedElementType: foundation.type,
       undo: () => toggle(),
@@ -102,9 +103,14 @@ export const VisibilityCheckbox = ({ foundation }: FoundationItemProps) => {
     toggle();
   };
 
-  return (
+  return forModelTree ? (
+    <Space>
+      <span>{i18n.t('word.Visible', lang)}</span>:
+      <Switch size={'small'} checked={!foundation.invisible} onChange={toggleVisibility} />
+    </Space>
+  ) : (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox style={{ width: '100%' }} checked={!foundation.invisible} onChange={onChange}>
+      <Checkbox style={{ width: '100%' }} checked={!foundation.invisible} onChange={toggleVisibility}>
         {i18n.t('word.Visible', lang)}
       </Checkbox>
     </MenuItem>
