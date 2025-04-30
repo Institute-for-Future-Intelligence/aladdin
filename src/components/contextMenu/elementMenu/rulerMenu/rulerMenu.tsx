@@ -1,12 +1,12 @@
 import { MenuProps } from 'antd';
 import i18n from 'src/i18n/i18n';
 import { ElementModel } from 'src/models/ElementModel';
-import { RulerModel, RulerType } from 'src/models/RulerModel';
+import { RulerModel } from 'src/models/RulerModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { Copy, Cut, DialogItem, Lock, MenuItem } from '../../menuItems';
 import RulerColorSelection from './rulerColorSelection';
-import RulerHeightInput from './rulerHeightInput';
+import RulerThicknessInput from './rulerThicknessInput';
 import RulerWidthInput from './rulerWidthInput';
 import RulerTickColorSelection from './rulerTickColorSelection';
 import { RulerTypeRadioGroup } from './rulerTypeSubmenu';
@@ -46,7 +46,7 @@ export const createRulerMenu = (selectedElement: ElementModel) => {
       children: [
         {
           key: 'ruler-type-radio-group',
-          label: <RulerTypeRadioGroup id={ruler.id} type={ruler.rulerType ?? RulerType.Horizontal} />,
+          label: <RulerTypeRadioGroup ruler={ruler} />,
           style: { backgroundColor: 'white' },
         },
       ],
@@ -64,8 +64,8 @@ export const createRulerMenu = (selectedElement: ElementModel) => {
       label: <DialogItem Dialog={RulerWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
     });
     items.push({
-      key: 'ruler-height',
-      label: <DialogItem Dialog={RulerHeightInput}>{i18n.t('word.Height', lang)} ...</DialogItem>,
+      key: 'ruler-thickness',
+      label: <DialogItem Dialog={RulerThicknessInput}>{i18n.t('word.Thickness', lang)} ...</DialogItem>,
     });
   }
 

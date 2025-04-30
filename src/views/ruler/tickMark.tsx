@@ -1,23 +1,23 @@
 import { Line } from '@react-three/drei';
 import { useLoader } from '@react-three/fiber';
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { FontLoader, Line2, LineGeometry, LineSegments2, TextGeometryParameters } from 'three/examples/jsm/Addons';
+import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { FontLoader, TextGeometryParameters } from 'three/examples/jsm/Addons';
 //@ts-expect-error ignore
 import helvetikerFont from '../../assets/helvetiker_regular.typeface.fnt';
 import i18n from 'src/i18n/i18n';
 import { useLanguage } from 'src/hooks';
-import { Vector3 } from 'three';
 
 interface Props {
   length: number;
   color: string;
+  mirror?: boolean;
 }
 
 export interface TickMarkRef {
   update: (l: number) => void;
 }
 
-const TickMark = forwardRef<TickMarkRef, Props>(({ length, color }: Props, ref) => {
+const TickMark = forwardRef<TickMarkRef, Props>(({ length, color, mirror }: Props, ref) => {
   const [_length, setLength] = useState(length);
   const lengthMemoRef = useRef(length);
   const _lengthMemoRef = useRef(length);
@@ -73,18 +73,19 @@ const TickMark = forwardRef<TickMarkRef, Props>(({ length, color }: Props, ref) 
         />
         {tickMarks.map((x, i) => {
           const textGeometry = <textGeometry args={[`${i}`, textGeometryParamsTickLabel]} />;
+          const isFirst = i === 0;
           return (
             <group key={i}>
               <Line
                 userData={{ unintersectable: true }}
                 points={[
-                  [x, -0.2, 0],
+                  [x, isFirst ? -0.5 : -0.2, 0],
                   [x, 0, 0],
                 ]}
-                lineWidth={1}
+                lineWidth={isFirst ? 2 : 1}
                 color={color}
               />
-              <mesh position={[x - 0.1, -0.5, 0]} userData={{ unintersectable: true }}>
+              <mesh position={[x - 0.1, isFirst ? -0.8 : -0.5, 0]} userData={{ unintersectable: true }}>
                 {textGeometry}
                 <meshBasicMaterial color={color} />
               </mesh>
@@ -105,15 +106,17 @@ const TickMark = forwardRef<TickMarkRef, Props>(({ length, color }: Props, ref) 
         })}
       </group>
 
-      <textSprite
-        userData={{ unintersectable: true }}
-        backgroundColor={'darkorchid'}
-        fontSize={Math.max(30, length)}
-        fontFace={'Times Roman'}
-        textHeight={Math.max(0.5, length / 60)}
-        text={l.toFixed(1) + i18n.t('word.MeterAbbreviation', lang)}
-        position={[0, -1, 0.25]}
-      />
+      {!mirror && (
+        <textSprite
+          userData={{ unintersectable: true }}
+          backgroundColor={'darkorchid'}
+          fontSize={Math.max(30, length)}
+          fontFace={'Times Roman'}
+          textHeight={Math.max(0.5, length / 60)}
+          text={l.toFixed(1) + i18n.t('word.MeterAbbreviation', lang)}
+          position={[0, -1, 0.25]}
+        />
+      )}
     </>
   );
 });

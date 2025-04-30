@@ -50,7 +50,7 @@ import { throttle } from 'lodash';
 import { useLanguage } from '../hooks';
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 import { FoundationModel } from 'src/models/FoundationModel';
-import { RulerModel, RulerSnapPoint } from 'src/models/RulerModel';
+import { RulerModel, RulerGroundSnapPoint } from 'src/models/RulerModel';
 import { RulerUtil } from './ruler/RulerUtil';
 
 const Ground = React.memo(() => {
@@ -168,11 +168,11 @@ const Ground = React.memo(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deletedRulerId]);
 
-  const rulerSnapPointsArrayRef = useRef<RulerSnapPoint[]>([]);
-  const rulerSnappedPointRef = useRef<RulerSnapPoint | null>(null);
+  const rulerSnapPointsArrayRef = useRef<RulerGroundSnapPoint[]>([]);
+  const rulerSnappedPointRef = useRef<RulerGroundSnapPoint | null>(null);
   useEffect(() => {
     if (objectTypeToAdd === ObjectType.Ruler) {
-      rulerSnapPointsArrayRef.current = RulerUtil.getSnapPointsArray();
+      rulerSnapPointsArrayRef.current = RulerUtil.getGroundSnapPointsArray();
     }
   }, [objectTypeToAdd]);
 
@@ -225,7 +225,7 @@ const Ground = React.memo(() => {
   }
 
   const setRulerStartingPoint = (id: string, p: Vector3) => {
-    const { pointer, snappedPoint } = RulerUtil.getSnappedPoint(p, rulerSnapPointsArrayRef.current);
+    const { pointer, snappedPoint } = RulerUtil.getGroundSnappedPoint(p, rulerSnapPointsArrayRef.current);
     rulerSnappedPointRef.current = snappedPoint;
     setCommonStore((state) => {
       const ruler = state.elements.find((e) => e.id === id && e.type === ObjectType.Ruler) as RulerModel;
@@ -237,7 +237,7 @@ const Ground = React.memo(() => {
   };
 
   const setRulerEndingPoint = (id: string, p: Vector3) => {
-    const { pointer, snappedPoint } = RulerUtil.getSnappedPoint(p, rulerSnapPointsArrayRef.current);
+    const { pointer, snappedPoint } = RulerUtil.getGroundSnappedPoint(p, rulerSnapPointsArrayRef.current);
     rulerSnappedPointRef.current = snappedPoint;
     setCommonStore((state) => {
       const ruler = state.elements.find((e) => e.id === id && e.type === ObjectType.Ruler) as RulerModel;

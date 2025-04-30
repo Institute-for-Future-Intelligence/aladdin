@@ -6,6 +6,7 @@ export interface RulerModel extends ElementModel {
   rightEndPoint: RulerEndPoint;
   tickColor: string;
   rulerType: RulerType;
+  verticalOffset: number;
 }
 
 export interface RulerEndPoint {
@@ -21,8 +22,13 @@ export enum RulerType {
 
 export type RulerSnappedHandle = { elementId: string; direction: number[] };
 
-export type RulerSnapPoint = {
+export type RulerGroundSnapPoint = {
   elementId: string;
   position: Vector3;
   direction: Vector3;
+};
+
+export type RulerVerticalSnapPoint = {
+  elementId: string;
+  z: number;
 };

@@ -16,7 +16,7 @@ import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
-const RulerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const RulerThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.rulerActionScope);
   const setActionScope = useStore(Selector.setRulerActionScope);
@@ -182,7 +182,7 @@ const RulerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   };
 
   return (
-    <Dialog width={550} title={i18n.t('word.Height', lang)} onApply={apply} onClose={close}>
+    <Dialog width={550} title={i18n.t('word.Thickness', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col span={6}>
           <InputNumber
@@ -227,4 +227,4 @@ const RulerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   );
 };
 
-export default RulerHeightInput;
+export default RulerThicknessInput;

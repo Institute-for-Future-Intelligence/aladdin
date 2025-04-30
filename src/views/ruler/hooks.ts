@@ -7,7 +7,7 @@ import { ObjectType } from 'src/types';
 import { Euler, Vector3 } from 'three';
 import { shallow } from 'zustand/shallow';
 
-export const useRulerEndPointPosition = (endPoint: RulerEndPoint) => {
+export const useRulerGroundEndPointPosition = (endPoint: RulerEndPoint) => {
   const endPointPosition = useStore((state) => {
     if (!endPoint.snappedHandle) return endPoint.position;
 
@@ -42,6 +42,38 @@ export const useRulerEndPointPosition = (endPoint: RulerEndPoint) => {
     }
 
     return endPoint.position;
+  }, shallow);
+
+  const posRef = useRef(endPointPosition);
+  posRef.current = endPointPosition;
+
+  return posRef;
+};
+
+export const useRulerVerticalPosition = (endPoint: RulerEndPoint, verticalOffset: number) => {
+  const endPointPosition = useStore((state) => {
+    if (!endPoint.snappedHandle) return Math.max(verticalOffset, endPoint.position[2]);
+
+    const { elementId } = endPoint.snappedHandle;
+    const element = state.elements.find((e) => e.id === elementId);
+    if (element) {
+      switch (element.type) {
+        case ObjectType.Foundation: {
+          return Math.max(verticalOffset, element.lz);
+        }
+        case ObjectType.Wall: {
+          const wall = element as WallModel;
+          const foundation = state.elements.find(
+            (e) => e.id === wall.parentId && e.type === ObjectType.Foundation,
+          ) as FoundationModel;
+          if (foundation) {
+            return Math.max(verticalOffset, foundation.lz + wall.lz);
+          }
+        }
+      }
+    }
+
+    return Math.max(verticalOffset, endPoint.position[2]);
   }, shallow);
 
   const posRef = useRef(endPointPosition);

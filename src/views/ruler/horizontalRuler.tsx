@@ -4,41 +4,31 @@
 
 import { Box } from '@react-three/drei';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
-import { RulerModel, RulerSnapPoint, RulerType } from 'src/models/RulerModel';
+import { RulerModel, RulerGroundSnapPoint } from 'src/models/RulerModel';
 import { useStore } from 'src/stores/common';
 import { useCallback, useEffect, useRef } from 'react';
 import { MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from 'src/types';
 import { useRefStore } from 'src/stores/commonRef';
-import { Camera, Group, Mesh, Raycaster, Scene, Vector3 } from 'three';
+import { Group, Mesh, Vector3 } from 'three';
 import { useSelected } from 'src/hooks';
 import MoveHandle from 'src/components/moveHandle';
 import { RulerUtil } from './RulerUtil';
 import { useIsFirstRender, useTransparent } from '../roof/hooks';
 import TickMark, { TickMarkRef } from './tickMark';
-import { useRulerEndPointPosition } from './hooks';
+import { useRulerGroundEndPointPosition } from './hooks';
 import { tempEuler, tempVector3_0, tempVector3_1, tempVector3_2 } from 'src/helpers';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import Wireframe from 'src/components/wireframe';
 import { LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 
-const Ruler = (ruler: RulerModel) => {
-  const {
-    id,
-    ly,
-    lz,
-    leftEndPoint,
-    rightEndPoint,
-    locked,
-    color = '#D3D3D3',
-    tickColor = '#000000',
-    rulerType = RulerType.Vertical,
-  } = ruler;
+const HorizontalRuler = (ruler: RulerModel) => {
+  const { id, ly, lz, leftEndPoint, rightEndPoint, locked, color = '#D3D3D3', tickColor = '#000000' } = ruler;
 
-  const leftEndPointPosition = useRulerEndPointPosition(leftEndPoint);
-  const rightEndPointPosition = useRulerEndPointPosition(rightEndPoint);
+  const leftEndPointPosition = useRulerGroundEndPointPosition(leftEndPoint);
+  const rightEndPointPosition = useRulerGroundEndPointPosition(rightEndPoint);
 
-  const [leftPointX, leftPointY, leftPointZ] = leftEndPointPosition.current;
-  const [rightPointX, rightPointY, rightPointZ] = rightEndPointPosition.current;
+  const [leftPointX, leftPointY] = leftEndPointPosition.current;
+  const [rightPointX, rightPointY] = rightEndPointPosition.current;
 
   const [cx, cy] = [(rightPointX + leftPointX) / 2, (rightPointY + leftPointY) / 2];
   const [dx, dy] = [rightPointX - leftPointX, rightPointY - leftPointY];
@@ -46,8 +36,8 @@ const Ruler = (ruler: RulerModel) => {
   const length = Math.hypot(dx, dy);
 
   const operationRef = useRef<string | null>(null);
-  const snapPointsRef = useRef<RulerSnapPoint[]>([]);
-  const snappedPointsRef = useRef<{ left: RulerSnapPoint | null; right: RulerSnapPoint | null }>({
+  const snapPointsRef = useRef<RulerGroundSnapPoint[]>([]);
+  const snappedPointsRef = useRef<{ left: RulerGroundSnapPoint | null; right: RulerGroundSnapPoint | null }>({
     left: null,
     right: null,
   });
@@ -73,18 +63,6 @@ const Ruler = (ruler: RulerModel) => {
     if (isFirst) return;
     changedRef.current = true;
   }, [leftPointX, leftPointY, rightPointX, rightPointY, isFirst]);
-
-  const getGroudPoint = (raycaster: Raycaster, scene: Scene, camera: Camera) => {
-    const pointer = useRefStore.getState().pointer;
-    raycaster.setFromCamera(pointer, camera);
-    const intersections = raycaster.intersectObjects(scene.children);
-    for (const intersection of intersections) {
-      if (intersection.object.name === 'Ground') {
-        return intersection.point;
-      }
-    }
-    return null;
-  };
 
   const updateTickMark = (length: number) => {
     if (tickMarkRef.current) {
@@ -145,7 +123,7 @@ const Ruler = (ruler: RulerModel) => {
     center: Vector3,
     leftPoint: Vector3,
     rightPoint: Vector3,
-    points: RulerSnapPoint[],
+    points: RulerGroundSnapPoint[],
   ) => {
     let leftMin = Infinity;
     let rightMin = Infinity;
@@ -158,7 +136,7 @@ const Ruler = (ruler: RulerModel) => {
     for (const point of points) {
       const leftDist = leftPoint.distanceTo(point.position);
       const rightDist = rightPoint.distanceTo(point.position);
-      if (leftDist < RulerUtil.SnapDistance && leftDist < leftMin) {
+      if (leftDist < RulerUtil.GroundSnapDistance && leftDist < leftMin) {
         leftMin = leftDist;
         snappedPointsRef.current.left = {
           elementId: point.elementId,
@@ -166,7 +144,7 @@ const Ruler = (ruler: RulerModel) => {
           direction: point.direction.clone(),
         };
       }
-      if (rightDist < RulerUtil.SnapDistance && rightDist < rightMin) {
+      if (rightDist < RulerUtil.GroundSnapDistance && rightDist < rightMin) {
         rightMin = rightDist;
         snappedPointsRef.current.right = {
           elementId: point.elementId,
@@ -236,7 +214,7 @@ const Ruler = (ruler: RulerModel) => {
       set({ frameloop: 'always' });
       useRefStore.getState().setEnableOrbitController(false);
       // prepare for snap
-      snapPointsRef.current = RulerUtil.getSnapPointsArray();
+      snapPointsRef.current = RulerUtil.getGroundSnapPointsArray();
     }
     useStore.getState().selectElement(id);
     // right click
@@ -259,27 +237,30 @@ const Ruler = (ruler: RulerModel) => {
     operationRef.current = event.object.name;
 
     // prepare for snap
-    snapPointsRef.current = RulerUtil.getSnapPointsArray();
+    snapPointsRef.current = RulerUtil.getGroundSnapPointsArray();
   };
 
   const onPointerUp = () => {
-    // change caused by snapped elements
-    if (changedRef.current) {
-      useStore.getState().set((state) => {
-        if (changedRef.current) {
-          const ruler = state.elements.find((e) => e.id === id && e.type === ObjectType.Ruler) as RulerModel;
-          if (!ruler) return;
+    /**
+     * change caused by snapped elements, this update is not affecting the model,
+     * it only updates the number in the element array
+     */
+    // if (changedRef.current) {
+    //   useStore.getState().set((state) => {
+    //     if (changedRef.current) {
+    //       const ruler = state.elements.find((e) => e.id === id && e.type === ObjectType.Ruler) as RulerModel;
+    //       if (!ruler) return;
 
-          if (changedRef.current) {
-            const [leftPointX, leftPointY, leftPointZ] = leftEndPointPosition.current;
-            const [rightPointX, rightPointY, rightPointZ] = rightEndPointPosition.current;
-            ruler.leftEndPoint.position = [leftPointX, leftPointY, leftPointZ];
-            ruler.rightEndPoint.position = [rightPointX, rightPointY, rightPointZ];
-            changedRef.current = false;
-          }
-        }
-      });
-    }
+    //       if (changedRef.current) {
+    //         const [leftPointX, leftPointY, leftPointZ] = leftEndPointPosition.current;
+    //         const [rightPointX, rightPointY, rightPointZ] = rightEndPointPosition.current;
+    //         ruler.leftEndPoint.position = [leftPointX, leftPointY, leftPointZ];
+    //         ruler.rightEndPoint.position = [rightPointX, rightPointY, rightPointZ];
+    //         changedRef.current = false;
+    //       }
+    //     }
+    //   });
+    // }
 
     if (operationRef.current) {
       const oldRuler = useStore
@@ -291,30 +272,28 @@ const Ruler = (ruler: RulerModel) => {
           const ruler = state.elements.find((e) => e.id === id && e.type === ObjectType.Ruler) as RulerModel;
           if (!ruler) return;
 
-          if (handlesGroupRef.current) {
-            const leftPosition = handlesGroupRef.current.children[0].position;
-            const rightPosition = handlesGroupRef.current.children[1].position;
-            ruler.leftEndPoint.position = leftPosition.toArray();
-            ruler.rightEndPoint.position = rightPosition.toArray();
+          const leftPosition = handlesGroupRef.current.children[0].position;
+          const rightPosition = handlesGroupRef.current.children[1].position;
+          ruler.leftEndPoint.position = leftPosition.toArray();
+          ruler.rightEndPoint.position = rightPosition.toArray();
 
-            if (snappedPointsRef.current) {
-              const { left, right } = snappedPointsRef.current;
-              if (operationRef.current === MoveHandleType.Left || operationRef.current === MoveHandleType.Mid) {
-                if (left) {
-                  ruler.leftEndPoint.snappedHandle = { elementId: left.elementId, direction: left.direction.toArray() };
-                } else {
-                  delete ruler.leftEndPoint.snappedHandle;
-                }
+          if (snappedPointsRef.current) {
+            const { left, right } = snappedPointsRef.current;
+            if (operationRef.current === MoveHandleType.Left || operationRef.current === MoveHandleType.Mid) {
+              if (left) {
+                ruler.leftEndPoint.snappedHandle = { elementId: left.elementId, direction: left.direction.toArray() };
+              } else {
+                delete ruler.leftEndPoint.snappedHandle;
               }
-              if (operationRef.current === MoveHandleType.Right || operationRef.current === MoveHandleType.Mid) {
-                if (right) {
-                  ruler.rightEndPoint.snappedHandle = {
-                    elementId: right.elementId,
-                    direction: right.direction.toArray(),
-                  };
-                } else {
-                  delete ruler.rightEndPoint.snappedHandle;
-                }
+            }
+            if (operationRef.current === MoveHandleType.Right || operationRef.current === MoveHandleType.Mid) {
+              if (right) {
+                ruler.rightEndPoint.snappedHandle = {
+                  elementId: right.elementId,
+                  direction: right.direction.toArray(),
+                };
+              } else {
+                delete ruler.rightEndPoint.snappedHandle;
               }
             }
           }
@@ -345,11 +324,11 @@ const Ruler = (ruler: RulerModel) => {
   useFrame(({ camera, scene, raycaster }) => {
     if (operationRef.current === null) return;
 
-    const point = getGroudPoint(raycaster, scene, camera);
+    const point = RulerUtil.getGroudPointer(raycaster, scene, camera);
     if (!point) return;
 
     if (operationRef.current === MoveHandleType.Left || operationRef.current === MoveHandleType.Right) {
-      const { pointer, snappedPoint } = RulerUtil.getSnappedPoint(point, snapPointsRef.current);
+      const { pointer, snappedPoint } = RulerUtil.getGroundSnappedPoint(point, snapPointsRef.current);
       snappedPointsRef.current = { left: null, right: null };
       if (operationRef.current === MoveHandleType.Left) {
         snappedPointsRef.current.left = snappedPoint;
@@ -431,4 +410,4 @@ const Ruler = (ruler: RulerModel) => {
   );
 };
 
-export default Ruler;
+export default HorizontalRuler;

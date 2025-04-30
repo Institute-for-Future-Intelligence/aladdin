@@ -15,13 +15,14 @@ interface MoveHandleProps {
   position: number[];
   size: number;
   handleType: MoveHandleType;
+  full?: boolean;
   onPointerDown?: (e: ThreeEvent<PointerEvent>) => void;
   onPointerOver: (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => void;
   onPointerOut: () => void;
 }
 
 const MoveHandle = React.memo(
-  ({ handleType, position, size, onPointerDown, onPointerOver, onPointerOut }: MoveHandleProps) => {
+  ({ handleType, position, size, full, onPointerDown, onPointerOver, onPointerOut }: MoveHandleProps) => {
     const moveHandleType = useStore(Selector.moveHandleType);
     const hoveredHandle = useStore(Selector.hoveredHandle);
 
@@ -44,7 +45,7 @@ const MoveHandle = React.memo(
       <Sphere
         ref={handleRef}
         name={handleType}
-        args={[size / 2, 6, 6, 0, Math.PI]}
+        args={[size / 2, 6, 6, 0, full ? Math.PI * 2 : Math.PI]}
         position={[cx, cy, cz]}
         onPointerDown={onPointerDown}
         onPointerOver={(e) => {

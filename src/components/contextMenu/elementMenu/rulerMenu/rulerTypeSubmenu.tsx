@@ -5,24 +5,27 @@ import { MenuItem } from '../../menuItems';
 import i18n from 'src/i18n/i18n';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { UndoableChange } from 'src/undo/UndoableChange';
+import { UndoableChangeRulerType } from 'src/undo/UndoableChange';
 import { useState } from 'react';
 
 interface Props {
-  id: string;
-  type: RulerType;
+  ruler: RulerModel;
 }
 
-export const RulerTypeRadioGroup = ({ id, type }: Props) => {
-  const [_type, setType] = useState(type);
+export const RulerTypeRadioGroup = ({ ruler }: Props) => {
+  const [_type, setType] = useState(ruler.rulerType ?? RulerType.Horizontal);
 
   const lang = useLanguage();
 
-  const updateRulerType = (id: string, type: RulerType) => {
+  const update = (id: string, type: RulerType, rightPoint: number[]) => {
     useStore.getState().set((state) => {
       for (const e of state.elements) {
         if (e.id === id && e.type === ObjectType.Ruler) {
-          (e as RulerModel).rulerType = type;
+          const ruler = e as RulerModel;
+          ruler.rulerType = type;
+          ruler.rightEndPoint.position[0] = rightPoint[0];
+          ruler.rightEndPoint.position[1] = rightPoint[1];
+          ruler.rightEndPoint.position[2] = rightPoint[2];
           break;
         }
       }
@@ -31,22 +34,31 @@ export const RulerTypeRadioGroup = ({ id, type }: Props) => {
 
   const handleChange = (e: RadioChangeEvent) => {
     const newType = e.target.value;
+    const newRightPoint = [...ruler.leftEndPoint.position];
+    if (newType === RulerType.Horizontal) {
+      newRightPoint[0] += 5;
+      newRightPoint[2] = 0;
+    } else if (newType === RulerType.Vertical) {
+      newRightPoint[2] = 5;
+    }
     const undoableChange = {
       name: 'Select Ruler Type',
       timestamp: Date.now(),
-      oldValue: _type,
-      newValue: newType,
-      changedElementId: id,
+      oldType: ruler.rulerType,
+      newType: newType,
+      oldRightPoint: [...ruler.rightEndPoint.position],
+      newRightPoint: newRightPoint,
+      id: ruler.id,
       changedElementType: ObjectType.Ruler,
       undo: () => {
-        updateRulerType(undoableChange.changedElementId, undoableChange.oldValue as RulerType);
+        update(undoableChange.id, undoableChange.oldType as RulerType, undoableChange.oldRightPoint);
       },
       redo: () => {
-        updateRulerType(undoableChange.changedElementId, undoableChange.newValue as RulerType);
+        update(undoableChange.id, undoableChange.newType as RulerType, undoableChange.newRightPoint);
       },
-    } as UndoableChange;
+    } as UndoableChangeRulerType;
     useStore.getState().addUndoable(undoableChange);
-    updateRulerType(id, newType);
+    update(ruler.id, newType, newRightPoint);
     setType(newType);
   };
 
