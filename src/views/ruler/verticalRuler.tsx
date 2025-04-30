@@ -191,7 +191,8 @@ const VerticalRuler = (ruler: RulerModel) => {
         .elements.find((e) => e.id === id && e.type === ObjectType.Ruler) as RulerModel;
 
       if (oldRuler && newRuler) {
-        RulerUtil.addUndoChanged(oldRuler, newRuler);
+        const operation = operationRef.current === 'move' ? 'Move' : 'Resize';
+        RulerUtil.addUndoChanged(oldRuler, newRuler, operation);
       }
     }
 

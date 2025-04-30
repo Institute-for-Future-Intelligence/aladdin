@@ -148,7 +148,7 @@ export class RulerUtil {
     }
   }
 
-  static addUndoChanged(oldRuler: RulerModel, newRuler: RulerModel) {
+  static addUndoChanged(oldRuler: RulerModel, newRuler: RulerModel, operation: string) {
     if (
       Util.isIdentical(oldRuler.leftEndPoint.position, newRuler.leftEndPoint.position) &&
       Util.isIdentical(oldRuler.rightEndPoint.position, newRuler.rightEndPoint.position) &&
@@ -191,7 +191,7 @@ export class RulerUtil {
     };
 
     const undoable = {
-      name: 'Resize Ruler',
+      name: `${operation} Ruler`,
       timestamp: Date.now(),
       elementId: oldRuler.id,
       oldLeftPointPosition: [...oldRuler.leftEndPoint.position],
