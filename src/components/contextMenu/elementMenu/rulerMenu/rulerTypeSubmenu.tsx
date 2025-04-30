@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2025. Institute for Future Intelligence, Inc.
+ */
+
 import { Radio, RadioChangeEvent, Space } from 'antd';
 import { useLanguage } from 'src/hooks';
 import { RulerModel, RulerType } from 'src/models/RulerModel';

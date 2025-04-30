@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2025. Institute for Future Intelligence, Inc.
+ */
+
 import { MenuProps } from 'antd';
 import i18n from 'src/i18n/i18n';
 import { ElementModel } from 'src/models/ElementModel';
@@ -41,17 +45,6 @@ export const createRulerMenu = (selectedElement: ElementModel) => {
 
   if (editable) {
     items.push({
-      key: 'ruler-type',
-      label: <MenuItem>{i18n.t('rulerMenu.RulerType', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'ruler-type-radio-group',
-          label: <RulerTypeRadioGroup ruler={ruler} />,
-          style: { backgroundColor: 'white' },
-        },
-      ],
-    });
-    items.push({
       key: 'ruler-color',
       label: <DialogItem Dialog={RulerColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>,
     });
@@ -66,6 +59,17 @@ export const createRulerMenu = (selectedElement: ElementModel) => {
     items.push({
       key: 'ruler-thickness',
       label: <DialogItem Dialog={RulerThicknessInput}>{i18n.t('word.Thickness', lang)} ...</DialogItem>,
+    });
+    items.push({
+      key: 'ruler-type',
+      label: <MenuItem>{i18n.t('rulerMenu.RulerType', lang)}</MenuItem>,
+      children: [
+        {
+          key: 'ruler-type-radio-group',
+          label: <RulerTypeRadioGroup ruler={ruler} />,
+          style: { backgroundColor: 'white' },
+        },
+      ],
     });
   }
 

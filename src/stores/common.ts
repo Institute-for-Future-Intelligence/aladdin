@@ -885,7 +885,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.localContentToImportAfterCloudFileUpdate = undefined;
               state.notes = [];
               state.audioTitle = 'Instruction';
-              (state.audioUrl = 'https://intofuture.org/podcast/aladdin.mp3'), (state.fileChanged = !state.fileChanged);
+              state.audioUrl = 'https://intofuture.org/podcast/aladdin.mp3';
+              state.fileChanged = !state.fileChanged;
               state.currentUndoable = undefined;
               state.actionInfo = undefined;
               state.undoManager.clear();
