@@ -111,6 +111,7 @@ export class DefaultActionState implements ActionState {
   windowTint: string;
   windowOpacity: number;
   windowUValue: number;
+  windowAirPermeability: number;
   windowHorizontalMullion: boolean;
   windowVerticalMullion: boolean;
   windowMullionWidth: number;
@@ -277,6 +278,7 @@ export class DefaultActionState implements ActionState {
     this.windowTint = '#73D8FF';
     this.windowOpacity = 0.5;
     this.windowUValue = DEFAULT_WINDOW_U_VALUE;
+    this.windowAirPermeability = 0;
     this.windowHorizontalMullion = true;
     this.windowVerticalMullion = true;
     this.windowMullionWidth = 0.06;

@@ -31,6 +31,7 @@ export const i18n_zh_cn = {
     },
 
     word: {
+      AirPermeability: '透气度',
       Visible: '可见',
       Settings: '设置',
       Source: '来源',

@@ -32,6 +32,7 @@ export const i18n_ua = {
     },
 
     word: {
+      AirPermeability: 'Air Permeability',
       Visible: 'Visible',
       Settings: 'Settings',
       Source: 'Source',

@@ -104,6 +104,7 @@ import HeliodonSwitch from './heliodonSwitch';
 import GroundColorInput from './groundColorInput';
 import { AlbedoInput, GroundImageCheckbox } from '../components/contextMenu/elementMenu/groundMenu/groundMenuItems';
 import { RulerModel } from 'src/models/RulerModel';
+import PermeabilityInput from './permeabilityInput';
 
 export const createRoofNode = (roof: RoofModel) => {
   const lang = { lng: useStore.getState().language };
@@ -497,6 +498,11 @@ export const createWindowNode = (window: WindowModel, skylight?: boolean) => {
     checkable: false,
     title: <UValueInput element={window} />,
     key: window.id + ' U-value',
+  });
+  node.push({
+    checkable: false,
+    title: <PermeabilityInput window={window} />,
+    key: window.id + ' air permeability',
   });
   node.push({
     checkable: false,

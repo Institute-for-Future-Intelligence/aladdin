@@ -92,6 +92,7 @@ export interface ActionState {
   windowTint: string;
   windowOpacity: number;
   windowUValue: number;
+  windowAirPermeability: number;
   windowHorizontalMullion: boolean;
   windowVerticalMullion: boolean;
   windowMullionWidth: number;

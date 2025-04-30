@@ -7,43 +7,42 @@ import { useStore } from '../stores/common';
 import React, { useEffect, useState } from 'react';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
+import { WindowModel } from '../models/WindowModel';
 import { ZERO_TOLERANCE } from '../constants';
 import { useLanguage } from '../hooks';
 import { useTranslation } from 'react-i18next';
-import { WindowModel } from '../models/WindowModel';
-import { DoorModel } from '../models/DoorModel';
 
-const UValueInput = ({ element }: { element: WindowModel | DoorModel }) => {
+const PermeabilityInput = ({ window }: { window: WindowModel }) => {
   const addUndoable = useStore(Selector.addUndoable);
-  const [value, setValue] = useState<number>(element.uValue ?? 2);
-
-  useEffect(() => {
-    setValue(element.uValue ?? 2);
-  }, [element.uValue]);
+  const [value, setValue] = useState<number>(window.airPermeability ?? 0);
 
   const lang = useLanguage();
   const { t } = useTranslation();
 
-  const update = (value: number) => {
+  useEffect(() => {
+    setValue(window.airPermeability ?? 0);
+  }, [window.airPermeability]);
+
+  const update = (permeability: number) => {
     useStore.getState().set((state) => {
-      const a = state.elements.find((e) => e.id === element.id);
+      const a = state.elements.find((e) => e.id === window.id);
       if (a) {
-        (a as WindowModel | DoorModel).uValue = value;
+        (a as WindowModel).airPermeability = permeability;
       }
     });
   };
 
   const confirm = () => {
-    const oldValue = element.uValue;
+    const oldValue = window.airPermeability ?? 0;
     const newValue = value;
     if (Math.abs(oldValue - newValue) < ZERO_TOLERANCE) return;
     const undoableChange = {
-      name: 'Set U-Value for ' + element.type,
+      name: 'Set Air Permeability for Window',
       timestamp: Date.now(),
       oldValue,
       newValue,
-      changedElementId: element.id,
-      changedElementType: element.type,
+      changedElementId: window.id,
+      changedElementType: window.type,
       undo: () => {
         const a = undoableChange.oldValue as number;
         setValue(a);
@@ -61,23 +60,23 @@ const UValueInput = ({ element }: { element: WindowModel | DoorModel }) => {
 
   return (
     <Space>
-      <span>{t('word.UValue', lang)} : </span>
+      <span>{t('word.AirPermeability', lang)} : </span>
       <InputNumber
-        value={parseFloat(value.toFixed(2))}
-        precision={2}
-        min={0.01}
+        value={parseFloat(value.toFixed(1))}
+        precision={1}
+        min={0}
         max={100}
-        step={0.05}
-        disabled={element.locked}
-        onChange={(value) => {
-          if (value !== null) setValue(value);
+        step={0.1}
+        disabled={window.locked}
+        onChange={(v) => {
+          if (v !== null) setValue(v);
         }}
-        onBlur={confirm}
         onPressEnter={confirm}
+        onBlur={confirm}
       />
-      W/(m²·℃)
+      m³/(h·m²)
     </Space>
   );
 };
 
-export default UValueInput;
+export default PermeabilityInput;

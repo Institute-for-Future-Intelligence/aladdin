@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import type { MenuProps } from 'antd';
@@ -21,6 +21,7 @@ import { createWindowFrameSubmenu } from './windowFrameSubmenu';
 import { createWindowMullionSubmenu } from './windowMullionSubmenu';
 import { createWindowShutterSubmenu } from './windowShutterSubmenu';
 import { WindowColorData, WindowNumberData, WindowOptionData } from './WindowPropertyTypes';
+import WindowPermeabilityInput from './windowPermeabilityInput';
 
 // TODO: This needs to be merged with WindowPropertyType
 export enum WindowDataType {
@@ -200,6 +201,11 @@ export const createWindowMenu = (selectedElement: ElementModel) => {
       {
         key: 'window-u-value',
         label: <DialogItem Dialog={WindowUValueInput}>{i18n.t('word.UValue', lang)} ...</DialogItem>,
+      },
+      // window-air-permeability
+      {
+        key: 'window-air-permeability',
+        label: <DialogItem Dialog={WindowPermeabilityInput}>{i18n.t('word.AirPermeability', lang)} ...</DialogItem>,
       },
       // window-mullion-submenu
       {
