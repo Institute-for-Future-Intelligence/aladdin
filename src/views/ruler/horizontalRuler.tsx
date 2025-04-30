@@ -305,7 +305,11 @@ const HorizontalRuler = (ruler: RulerModel) => {
         .elements.find((e) => e.id === id && e.type === ObjectType.Ruler) as RulerModel;
 
       if (oldRuler && newRuler) {
-        RulerUtil.addUndoChanged(oldRuler, newRuler);
+        const operation =
+          operationRef.current === MoveHandleType.Left || operationRef.current === MoveHandleType.Right
+            ? 'Resize'
+            : 'Move';
+        RulerUtil.addUndoChanged(oldRuler, newRuler, operation);
       }
     }
     set({ frameloop: 'demand' });
