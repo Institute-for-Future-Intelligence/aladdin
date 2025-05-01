@@ -187,6 +187,7 @@ export const i18n_ua = {
     },
 
     shared: {
+      Class: 'Class',
       NoTexture: 'Без текстури',
       RulerElement: 'Ruler',
       FoundationElement: 'Фундамент',

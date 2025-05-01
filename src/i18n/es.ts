@@ -186,6 +186,7 @@ export const i18n_es = {
     },
 
     shared: {
+      Class: 'Class',
       NoTexture: 'Sin textura',
       RulerElement: 'Ruler',
       FoundationElement: 'Bases',

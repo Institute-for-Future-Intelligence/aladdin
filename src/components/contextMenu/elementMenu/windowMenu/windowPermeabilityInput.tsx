@@ -283,9 +283,18 @@ const WindowPermeabilityInput = ({ setDialogVisible }: { setDialogVisible: (b: b
             }}
           />
           <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [0.01, 100]
+            {i18n.t('word.Range', lang)}: [0, 100]
             <br />
             {i18n.t('word.Unit', lang)}: m³/(h·m²)
+            <br />
+            <br />
+            {i18n.t('shared.Class', lang)} 1: 50 m³/(h·m²)
+            <br />
+            {i18n.t('shared.Class', lang)} 2: 27 m³/(h·m²)
+            <br />
+            {i18n.t('shared.Class', lang)} 3: 9 m³/(h·m²)
+            <br />
+            {i18n.t('shared.Class', lang)} 4: 3 m³/(h·m²)
           </div>
         </Col>
         <Col

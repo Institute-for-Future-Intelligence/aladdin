@@ -186,6 +186,7 @@ export const i18n_zh_cn = {
     },
 
     shared: {
+      Class: '等级',
       NoTexture: '无材质',
       FoundationElement: '地基',
       RulerElement: '尺子',

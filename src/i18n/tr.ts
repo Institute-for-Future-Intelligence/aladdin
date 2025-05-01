@@ -186,6 +186,7 @@ export const i18n_tr = {
     },
 
     shared: {
+      Class: 'Class',
       NoTexture: 'Doku Yok',
       RulerElement: 'Ruler',
       FoundationElement: 'Temel',

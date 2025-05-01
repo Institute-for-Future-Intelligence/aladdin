@@ -11,7 +11,7 @@ import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { DiurnalTemperatureModel, ObjectType } from '../types';
 import { Util } from '../Util';
-import { MINUTES_OF_DAY } from './analysisConstants';
+import { AIR_DENSITY, AIR_ISOBARIC_SPECIFIC_HEAT, JOULE_TO_KWH, MINUTES_OF_DAY } from './analysisConstants';
 import { WallFill, WallModel, WallStructure } from '../models/WallModel';
 import {
   computeOutsideTemperature,
@@ -748,10 +748,11 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
             // use a large U-value for an open door (not meant to be accurate, but as an indicator of something wrong)
             updateHeatExchangeNow(window.id, (deltaT * area * U_VALUE_OPENING * 0.001) / timesPerHour);
           } else {
-            updateHeatExchangeNow(
-              window.id,
-              (deltaT * area * (window.uValue ?? DEFAULT_WINDOW_U_VALUE) * 0.001) / timesPerHour,
-            );
+            let h = deltaT * area * (window.uValue ?? DEFAULT_WINDOW_U_VALUE) * 0.001;
+            if (window.airPermeability) {
+              h += deltaT * area * AIR_ISOBARIC_SPECIFIC_HEAT * AIR_DENSITY * window.airPermeability * JOULE_TO_KWH;
+            }
+            updateHeatExchangeNow(window.id, h / timesPerHour);
           }
         }
       }

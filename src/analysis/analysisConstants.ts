@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 // in kW/m^2, see http://en.wikipedia.org/wiki/Solar_constant
@@ -13,6 +13,10 @@ export const AIR_ISOBARIC_SPECIFIC_HEAT = 1012;
 
 // in kg/m^3 (at 101.325 kPa and 15 °C)
 export const AIR_DENSITY = 1.225;
+
+export const KWH_TO_JOULE = 3600000;
+
+export const JOULE_TO_KWH = 1 / KWH_TO_JOULE;
 
 // 0 °C in K
 export const KELVIN_AT_ZERO_CELSIUS = 273.15;
