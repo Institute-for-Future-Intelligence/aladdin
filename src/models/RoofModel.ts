@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { RoofTexture } from 'src/types';
@@ -19,6 +19,7 @@ export interface RoofModel extends ElementModel {
   opacity?: number;
   rValue: number;
   volumetricHeatCapacity: number;
+  airPermeability?: number;
   rise: number;
   ceiling: boolean;
   ceilingRValue?: number;

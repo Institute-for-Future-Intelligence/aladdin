@@ -56,6 +56,7 @@ export interface ActionState {
   wallStructureWidth: number;
   wallStructureColor: string;
   wallRValue: number;
+  wallAirPermeability: number;
   wallVolumetricHeatCapacity: number;
   wallEavesLength: number;
   wallParapet: ParapetArgs;
@@ -71,6 +72,7 @@ export interface ActionState {
   roofRafterSpacing: number;
   roofRafterColor: string;
   roofRValue: number;
+  roofAirPermeability: number;
   roofVolumetricHeatCapacity: number;
   roofRise: number;
   roofCeiling: boolean;
@@ -84,6 +86,7 @@ export interface ActionState {
   doorFilled: boolean;
   doorInterior: boolean;
   doorUValue: number;
+  doorAirPermeability: number;
   doorOpacity: number;
   doorVolumetricHeatCapacity: number;
 

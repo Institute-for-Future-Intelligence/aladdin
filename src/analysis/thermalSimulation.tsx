@@ -879,11 +879,12 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
                 : (totalSolarHeat * absorption) /
                   ((door.volumetricHeatCapacity ?? 0.5) * area * Math.max(door.ly, 0.1));
             const deltaT = currentOutsideTemperatureRef.current + extraT - setpoint;
+            let h = deltaT * area * (door.uValue ?? DEFAULT_DOOR_U_VALUE) * 0.001;
+            if (door.airPermeability) {
+              h += deltaT * area * AIR_ISOBARIC_SPECIFIC_HEAT * AIR_DENSITY * door.airPermeability * JOULE_TO_KWH;
+            }
             // convert heat exchange to kWh
-            updateHeatExchangeNow(
-              door.id,
-              (deltaT * area * (door.uValue ?? DEFAULT_DOOR_U_VALUE) * 0.001) / timesPerHour,
-            );
+            updateHeatExchangeNow(door.id, h / timesPerHour);
           } else {
             const deltaT = currentOutsideTemperatureRef.current - setpoint;
             // use a large U-value for an open door (not meant to be accurate, but as an indicator of something wrong)
@@ -973,6 +974,10 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
           const deltaT = currentOutsideTemperatureRef.current + extraT - setpoint;
           // U is the inverse of R with SI units of W/(m^2⋅K), we convert the energy unit to kWh here
           let heatExchange = (((deltaT * filledArea) / (wall.rValue ?? DEFAULT_WALL_R_VALUE)) * 0.001) / timesPerHour;
+          if (wall.airPermeability) {
+            heatExchange +=
+              deltaT * filledArea * AIR_ISOBARIC_SPECIFIC_HEAT * AIR_DENSITY * wall.airPermeability * JOULE_TO_KWH;
+          }
           if (partial && wall.openToOutside) {
             // use a large U-value for the open area (not meant to be accurate, but as an indicator of something wrong)
             heatExchange +=
@@ -1058,8 +1063,17 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
             segmentResult.surfaceTemperature -
             (roof.ceiling ? calculateAtticTemperature(roof, segmentResult.surfaceTemperature, setpoint) : setpoint);
           // convert heat exchange to kWh
-          const segmentHeatExchange =
+          let segmentHeatExchange =
             (((deltaT * segmentResult.totalArea) / (roof.rValue ?? DEFAULT_ROOF_R_VALUE)) * 0.001) / timesPerHour;
+          if (roof.airPermeability) {
+            segmentHeatExchange +=
+              deltaT *
+              segmentResult.totalArea *
+              AIR_ISOBARIC_SPECIFIC_HEAT *
+              AIR_DENSITY *
+              roof.airPermeability *
+              JOULE_TO_KWH;
+          }
           updateHeatExchangeNow(roof.id + '-' + i, segmentHeatExchange);
           heatExchange += segmentHeatExchange;
         }

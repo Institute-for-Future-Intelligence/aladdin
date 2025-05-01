@@ -165,12 +165,17 @@ export const createRoofNode = (roof: RoofModel) => {
   }
   node.push({
     checkable: false,
-    title: <RValueInput element={roof as RoofModel} title={i18n.t('word.RValue', lang)} />,
+    title: <RValueInput element={roof} title={i18n.t('word.RValue', lang)} />,
     key: roof.id + ' R-value',
   });
   node.push({
     checkable: false,
-    title: <HeatCapacityInput element={roof as RoofModel} />,
+    title: <PermeabilityInput element={roof} />,
+    key: roof.id + ' Air Permeability',
+  });
+  node.push({
+    checkable: false,
+    title: <HeatCapacityInput element={roof} />,
     key: roof.id + ' Heat Capacity',
   });
   node.push({
@@ -179,7 +184,7 @@ export const createRoofNode = (roof: RoofModel) => {
       <Space>
         <span>{i18n.t('word.Thickness', lang)} : </span>
         <InputNumber
-          value={(roof as RoofModel).thickness}
+          value={roof.thickness}
           precision={2}
           min={0.05}
           max={1}
@@ -207,7 +212,7 @@ export const createRoofNode = (roof: RoofModel) => {
       <Space>
         <span>{i18n.t('roofMenu.Rise', lang)} : </span>
         <InputNumber
-          value={(roof as RoofModel).rise}
+          value={roof.rise}
           precision={2}
           min={0}
           step={0.1}
@@ -316,6 +321,11 @@ export const createWallNode = (wall: WallModel) => {
     checkable: false,
     title: <RValueInput element={wall} title={i18n.t('word.RValue', lang)} />,
     key: wall.id + ' R-value',
+  });
+  node.push({
+    checkable: false,
+    title: <PermeabilityInput element={wall} />,
+    key: wall.id + ' Air Permeability',
   });
   node.push({
     checkable: false,
@@ -464,6 +474,11 @@ export const createDoorNode = (door: DoorModel) => {
   });
   node.push({
     checkable: false,
+    title: <PermeabilityInput element={door} />,
+    key: door.id + ' Air Permeability',
+  });
+  node.push({
+    checkable: false,
     title: <HeatCapacityInput element={door} />,
     key: door.id + ' Heat Capacity',
   });
@@ -501,8 +516,8 @@ export const createWindowNode = (window: WindowModel, skylight?: boolean) => {
   });
   node.push({
     checkable: false,
-    title: <PermeabilityInput window={window} />,
-    key: window.id + ' air permeability',
+    title: <PermeabilityInput element={window} />,
+    key: window.id + ' Air Permeability',
   });
   node.push({
     checkable: false,

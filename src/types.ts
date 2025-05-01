@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { extend, Object3DNode } from '@react-three/fiber';
@@ -17,6 +17,10 @@ import { ParabolicDishModel } from './models/ParabolicDishModel';
 import { ParabolicTroughModel } from './models/ParabolicTroughModel';
 import { Filter } from './Filter';
 import { SolarWaterHeaterModel } from './models/SolarWaterHeaterModel';
+import { WindowModel } from './models/WindowModel';
+import { DoorModel } from './models/DoorModel';
+import { RoofModel } from './models/RoofModel';
+import { WallModel } from './models/WallModel';
 
 // Extend makes these JSX elements (with the first character lower-cased)
 extend({ TextSprite });
@@ -684,3 +688,5 @@ export enum EnergyModelingType {
   SUT = 'SUT',
   WIND = 'Wind',
 }
+
+export type PermeableElement = WindowModel | DoorModel | RoofModel | WallModel;

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import type { MenuProps } from 'antd';
@@ -22,6 +22,7 @@ import WallHeatCapacityInput from './wallHeatCapacityInput';
 import WallTextureSelection from './wallTextureSelection';
 import WallColorSelection from './wallColorSelection';
 import { WallNumberDataType } from './WallNumberDataType';
+import WallPermeabilityInput from './wallPermeabilityInput';
 
 export type WallNumberDialogSettingType = {
   attributeKey: keyof WallModel;
@@ -136,6 +137,10 @@ export const createWallMenu = (selectedElement: ElementModel) => {
       {
         key: 'wall-r-value',
         label: <DialogItem Dialog={WallRValueInput}>{i18n.t('word.RValue', lang)} ...</DialogItem>,
+      },
+      {
+        key: 'wall-air-permeability',
+        label: <DialogItem Dialog={WallPermeabilityInput}>{i18n.t('word.AirPermeability', lang)} ...</DialogItem>,
       },
       {
         key: 'wall-heat-capacity',

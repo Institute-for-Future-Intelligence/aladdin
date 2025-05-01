@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -16,7 +16,7 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
 
-const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const WallPermeabilityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.wallActionScope);
@@ -27,7 +27,7 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
 
   const wall = useSelectedElement(ObjectType.Wall) as WallModel | undefined;
 
-  const [inputValue, setInputValue] = useState<number>(wall?.volumetricHeatCapacity ?? 0.5);
+  const [inputValue, setInputValue] = useState<number>(wall?.airPermeability ?? 0);
 
   const lang = useLanguage();
 
@@ -35,7 +35,7 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as WallModel).volumetricHeatCapacity = value;
+          (e as WallModel).airPermeability = value;
           break;
         }
       }
@@ -61,7 +61,7 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         for (const e of elements) {
           if (
             e.type === ObjectType.Wall &&
-            value !== (e as WallModel).volumetricHeatCapacity &&
+            value !== (e as WallModel).airPermeability &&
             !e.locked &&
             useStore.getState().selectedElementIdSet.has(e.id)
           ) {
@@ -71,7 +71,7 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Wall && value !== (e as WallModel).volumetricHeatCapacity && !e.locked) {
+          if (e.type === ObjectType.Wall && value !== (e as WallModel).airPermeability && !e.locked) {
             return true;
           }
         }
@@ -81,7 +81,7 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           if (
             e.type === ObjectType.Wall &&
             e.foundationId === wall.foundationId &&
-            value !== (e as WallModel).volumetricHeatCapacity &&
+            value !== (e as WallModel).airPermeability &&
             !e.locked
           ) {
             return true;
@@ -91,14 +91,14 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
       case Scope.AllConnectedObjects: {
         const connectedWalls = Util.getAllConnectedWalls(wall);
         for (const e of connectedWalls) {
-          if (value !== e.volumetricHeatCapacity && !e.locked) {
+          if (value !== e.airPermeability && !e.locked) {
             return true;
           }
         }
         break;
       }
       default:
-        if (value !== wall?.volumetricHeatCapacity) {
+        if (value !== wall?.airPermeability) {
           return true;
         }
         break;
@@ -115,12 +115,12 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         for (const e of elements) {
           if (e.type === ObjectType.Wall && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             const w = e as WallModel;
-            oldValuesSelected.set(e.id, w.volumetricHeatCapacity ?? 0.5);
+            oldValuesSelected.set(e.id, w.airPermeability ?? 0);
             updateById(w.id, value);
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Volumetric Heat Capacity for Selected Walls',
+          name: 'Set Air Permeability for Selected Walls',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
@@ -143,12 +143,12 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         for (const e of elements) {
           if (e.type === ObjectType.Wall && !e.locked) {
             const w = e as WallModel;
-            oldValuesAll.set(e.id, w.volumetricHeatCapacity ?? 0.5);
+            oldValuesAll.set(e.id, w.airPermeability ?? 0);
             updateById(w.id, value);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Volumetric Heat Capacity for All Walls',
+          name: 'Set Air Permeability for All Walls',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -169,12 +169,12 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           for (const e of elements) {
             if (e.type === ObjectType.Wall && e.foundationId === wall.foundationId && !e.locked) {
               const w = e as WallModel;
-              oldValuesAboveFoundation.set(e.id, w.volumetricHeatCapacity ?? 0.5);
+              oldValuesAboveFoundation.set(e.id, w.airPermeability ?? 0);
               updateById(w.id, value);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Volumetric Heat Capacity for All Walls Above Foundation',
+            name: 'Set Air Permeability for All Walls Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
@@ -201,12 +201,12 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           for (const e of connectedWalls) {
             if (!e.locked) {
               const w = e as WallModel;
-              oldValuesConnectedWalls.set(e.id, w.volumetricHeatCapacity ?? 0.5);
+              oldValuesConnectedWalls.set(e.id, w.airPermeability ?? 0);
               updateById(w.id, value);
             }
           }
           const undoableChangeConnectedWalls = {
-            name: 'Set Volumetric Heat Capacity for All Connected Walls',
+            name: 'Set Air Permeability for All Connected Walls',
             timestamp: Date.now(),
             oldValues: oldValuesConnectedWalls,
             newValue: value,
@@ -228,9 +228,9 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
       default: {
         if (wall) {
           const updatedWall = getElementById(wall.id) as WallModel;
-          const oldValue = updatedWall.volumetricHeatCapacity ?? wall.volumetricHeatCapacity ?? 0.5;
+          const oldValue = updatedWall.airPermeability ?? wall.airPermeability ?? 0;
           const undoableChange = {
-            name: 'Set Volumetric Heat Capacity of Wall',
+            name: 'Set Air Permeability of Wall',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
@@ -251,7 +251,7 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
       }
     }
     setCommonStore((state) => {
-      state.actionState.wallVolumetricHeatCapacity = value;
+      state.actionState.wallAirPermeability = value;
     });
   };
 
@@ -264,27 +264,35 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   return (
-    <Dialog width={550} title={i18n.t('word.VolumetricHeatCapacity', lang)} onApply={apply} onClose={close}>
+    <Dialog width={550} title={i18n.t('word.AirPermeability', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col span={7}>
           <InputNumber
-            min={0.01}
+            min={0}
             max={100}
             style={{ width: 120 }}
-            step={0.05}
-            precision={2}
+            step={0.1}
+            precision={1}
             value={inputValue}
-            formatter={(a) => Number(a).toFixed(2)}
+            formatter={(a) => Number(a).toFixed(1)}
             onChange={(value) => {
               if (value === null) return;
               setInputValue(value);
             }}
           />
           <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
-            kWh/(m³·℃)
+            {i18n.t('word.Range', lang)}: [0, 100]
+            <br />
+            {i18n.t('word.Unit', lang)}: m³/(h·m²)
             <br />
             <br />
-            {i18n.t('word.Range', lang)}: [0.01, 100]
+            {i18n.t('shared.Class', lang)} 1: 50 m³/(h·m²)
+            <br />
+            {i18n.t('shared.Class', lang)} 2: 27 m³/(h·m²)
+            <br />
+            {i18n.t('shared.Class', lang)} 3: 9 m³/(h·m²)
+            <br />
+            {i18n.t('shared.Class', lang)} 4: 3 m³/(h·m²)
           </div>
         </Col>
         <Col
@@ -316,4 +324,4 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   );
 };
 
-export default WallHeatCapacityInput;
+export default WallPermeabilityInput;

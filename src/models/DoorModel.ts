@@ -7,6 +7,7 @@ import { ElementModel } from './ElementModel';
 
 export interface DoorModel extends ElementModel {
   uValue: number;
+  airPermeability?: number;
   volumetricHeatCapacity: number;
   textureType: DoorTexture;
   doorType: DoorType;

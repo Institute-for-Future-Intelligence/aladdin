@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -10,24 +10,23 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { WallModel } from '../../../../models/WallModel';
-import { Util } from '../../../../Util';
+import { DoorModel } from '../../../../models/DoorModel';
 import { useSelectedElement } from '../menuHooks';
-import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
+import Dialog from '../../dialog';
 
-const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const DoorPermeabilityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
-  const actionScope = useStore(Selector.wallActionScope);
+  const actionScope = useStore(Selector.doorActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const wall = useSelectedElement(ObjectType.Wall) as WallModel | undefined;
+  const door = useSelectedElement(ObjectType.Door) as DoorModel | undefined;
 
-  const [inputValue, setInputValue] = useState<number>(wall?.volumetricHeatCapacity ?? 0.5);
+  const [inputValue, setInputValue] = useState<number>(door?.airPermeability ?? 0);
 
   const lang = useLanguage();
 
@@ -35,7 +34,7 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as WallModel).volumetricHeatCapacity = value;
+          (e as DoorModel).airPermeability = value;
           break;
         }
       }
@@ -55,13 +54,13 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const needChange = (value: number) => {
-    if (!wall) return;
+    if (!door) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType:
         for (const e of elements) {
           if (
-            e.type === ObjectType.Wall &&
-            value !== (e as WallModel).volumetricHeatCapacity &&
+            e.type === ObjectType.Door &&
+            value !== (e as DoorModel).airPermeability &&
             !e.locked &&
             useStore.getState().selectedElementIdSet.has(e.id)
           ) {
@@ -71,7 +70,7 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         break;
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Wall && value !== (e as WallModel).volumetricHeatCapacity && !e.locked) {
+          if (e.type === ObjectType.Door && value !== (e as DoorModel).airPermeability && !e.locked) {
             return true;
           }
         }
@@ -79,26 +78,29 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
           if (
-            e.type === ObjectType.Wall &&
-            e.foundationId === wall.foundationId &&
-            value !== (e as WallModel).volumetricHeatCapacity &&
+            e.type === ObjectType.Door &&
+            e.foundationId === door.foundationId &&
+            value !== (e as DoorModel).airPermeability &&
             !e.locked
           ) {
             return true;
           }
         }
         break;
-      case Scope.AllConnectedObjects: {
-        const connectedWalls = Util.getAllConnectedWalls(wall);
-        for (const e of connectedWalls) {
-          if (value !== e.volumetricHeatCapacity && !e.locked) {
+      case Scope.OnlyThisSide:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Door &&
+            e.parentId === door.parentId &&
+            value !== (e as DoorModel).airPermeability &&
+            !e.locked
+          ) {
             return true;
           }
         }
         break;
-      }
       default:
-        if (value !== wall?.volumetricHeatCapacity) {
+        if (value !== door?.airPermeability) {
           return true;
         }
         break;
@@ -106,21 +108,23 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     return false;
   };
 
-  const updateValue = (value: number) => {
-    if (!wall) return;
+  const setValue = (value: number) => {
+    if (!door) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
         const oldValuesSelected = new Map<string, number | undefined>();
-        for (const e of elements) {
-          if (e.type === ObjectType.Wall && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
-            const w = e as WallModel;
-            oldValuesSelected.set(e.id, w.volumetricHeatCapacity ?? 0.5);
-            updateById(w.id, value);
+        setCommonStore((state) => {
+          for (const e of state.elements) {
+            if (e.type === ObjectType.Door && !e.locked) {
+              const door = e as DoorModel;
+              oldValuesSelected.set(e.id, door.airPermeability ?? 0);
+              door.airPermeability = value;
+            }
           }
-        }
+        });
         const undoableChangeSelected = {
-          name: 'Set Volumetric Heat Capacity for Selected Walls',
+          name: 'Set Air Permeability for Selected Doors',
           timestamp: Date.now(),
           oldValues: oldValuesSelected,
           newValue: value,
@@ -140,15 +144,17 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
       }
       case Scope.AllObjectsOfThisType: {
         const oldValuesAll = new Map<string, number | undefined>();
-        for (const e of elements) {
-          if (e.type === ObjectType.Wall && !e.locked) {
-            const w = e as WallModel;
-            oldValuesAll.set(e.id, w.volumetricHeatCapacity ?? 0.5);
-            updateById(w.id, value);
+        setCommonStore((state) => {
+          for (const e of state.elements) {
+            if (e.type === ObjectType.Door && !e.locked) {
+              const door = e as DoorModel;
+              oldValuesAll.set(e.id, door.airPermeability ?? 0);
+              door.airPermeability = value;
+            }
           }
-        }
+        });
         const undoableChangeAll = {
-          name: 'Set Volumetric Heat Capacity for All Walls',
+          name: 'Set Air Permeability for All Doors',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -163,22 +169,24 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         setApplyCount(applyCount + 1);
         break;
       }
-      case Scope.AllObjectsOfThisTypeAboveFoundation: {
-        if (wall?.foundationId) {
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        if (door.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
-          for (const e of elements) {
-            if (e.type === ObjectType.Wall && e.foundationId === wall.foundationId && !e.locked) {
-              const w = e as WallModel;
-              oldValuesAboveFoundation.set(e.id, w.volumetricHeatCapacity ?? 0.5);
-              updateById(w.id, value);
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.type === ObjectType.Door && e.foundationId === door.foundationId && !e.locked) {
+                const door = e as DoorModel;
+                oldValuesAboveFoundation.set(e.id, door.airPermeability ?? 0);
+                door.airPermeability = value;
+              }
             }
-          }
+          });
           const undoableChangeAboveFoundation = {
-            name: 'Set Volumetric Heat Capacity for All Walls Above Foundation',
+            name: 'Set Air Permeability for All Doors Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
-            groupId: wall.foundationId,
+            groupId: door.foundationId,
             undo: () => {
               undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
             },
@@ -193,49 +201,49 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           setApplyCount(applyCount + 1);
         }
         break;
-      }
-      case Scope.AllConnectedObjects: {
-        if (wall) {
-          const connectedWalls = Util.getAllConnectedWalls(wall);
-          const oldValuesConnectedWalls = new Map<string, number | undefined>();
-          for (const e of connectedWalls) {
-            if (!e.locked) {
-              const w = e as WallModel;
-              oldValuesConnectedWalls.set(e.id, w.volumetricHeatCapacity ?? 0.5);
-              updateById(w.id, value);
+      case Scope.OnlyThisSide:
+        if (door.parentId) {
+          const oldValues = new Map<string, number>();
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.type === ObjectType.Door && e.parentId === door.parentId && !e.locked) {
+                const door = e as DoorModel;
+                oldValues.set(e.id, door.airPermeability ?? 0);
+                door.airPermeability = value;
+              }
             }
-          }
-          const undoableChangeConnectedWalls = {
-            name: 'Set Volumetric Heat Capacity for All Connected Walls',
+          });
+          const undoableChangeOnSameWall = {
+            name: 'Set Air Permeability for All Doors On the Same Wall',
             timestamp: Date.now(),
-            oldValues: oldValuesConnectedWalls,
+            oldValues: oldValues,
             newValue: value,
+            groupId: door.parentId,
             undo: () => {
-              undoInMap(undoableChangeConnectedWalls.oldValues as Map<string, number>);
+              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, number>);
             },
             redo: () => {
               updateInMap(
-                undoableChangeConnectedWalls.oldValues as Map<string, number>,
-                undoableChangeConnectedWalls.newValue as number,
+                undoableChangeOnSameWall.oldValues as Map<string, number>,
+                undoableChangeOnSameWall.newValue as number,
               );
             },
           } as UndoableChangeGroup;
-          addUndoable(undoableChangeConnectedWalls);
+          addUndoable(undoableChangeOnSameWall);
           setApplyCount(applyCount + 1);
         }
         break;
-      }
-      default: {
-        if (wall) {
-          const updatedWall = getElementById(wall.id) as WallModel;
-          const oldValue = updatedWall.volumetricHeatCapacity ?? wall.volumetricHeatCapacity ?? 0.5;
+      default:
+        if (door) {
+          const updatedDoor = getElementById(door.id) as DoorModel;
+          const oldValue = updatedDoor.airPermeability ?? door.airPermeability ?? 0;
           const undoableChange = {
-            name: 'Set Volumetric Heat Capacity of Wall',
+            name: 'Set Door Air Permeability',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
-            changedElementId: wall.id,
-            changedElementType: wall.type,
+            changedElementId: door.id,
+            changedElementType: door.type,
             undo: () => {
               updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
@@ -244,14 +252,12 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(wall.id, value);
+          updateById(door.id, value);
           setApplyCount(applyCount + 1);
         }
-        break;
-      }
     }
     setCommonStore((state) => {
-      state.actionState.wallVolumetricHeatCapacity = value;
+      state.actionState.doorAirPermeability = value;
     });
   };
 
@@ -260,53 +266,66 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const apply = () => {
-    updateValue(inputValue);
+    setValue(inputValue);
   };
 
   return (
-    <Dialog width={550} title={i18n.t('word.VolumetricHeatCapacity', lang)} onApply={apply} onClose={close}>
+    <Dialog
+      width={550}
+      title={`${i18n.t('word.AirPermeability', lang) + ' '}(${i18n.t('word.ThermalTransmittance', lang)})`}
+      onApply={apply}
+      onClose={close}
+    >
       <Row gutter={6}>
         <Col span={7}>
           <InputNumber
-            min={0.01}
+            min={0}
             max={100}
             style={{ width: 120 }}
-            step={0.05}
-            precision={2}
+            step={0.1}
+            precision={1}
             value={inputValue}
-            formatter={(a) => Number(a).toFixed(2)}
+            formatter={(a) => Number(a).toFixed(1)}
             onChange={(value) => {
               if (value === null) return;
               setInputValue(value);
             }}
           />
           <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
-            kWh/(m³·℃)
+            {i18n.t('word.Range', lang)}: [0, 100]
+            <br />
+            {i18n.t('word.SIUnit', lang)}: m³/(h·m²)
             <br />
             <br />
-            {i18n.t('word.Range', lang)}: [0.01, 100]
+            {i18n.t('shared.Class', lang)} 1: 50 m³/(h·m²)
+            <br />
+            {i18n.t('shared.Class', lang)} 2: 27 m³/(h·m²)
+            <br />
+            {i18n.t('shared.Class', lang)} 3: 9 m³/(h·m²)
+            <br />
+            {i18n.t('shared.Class', lang)} 4: 3 m³/(h·m²)
           </div>
         </Col>
         <Col
           style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
           span={17}
         >
-          <Radio.Group onChange={(e) => useStore.getState().setWallActionScope(e.target.value)} value={actionScope}>
+          <Radio.Group onChange={(e) => useStore.getState().setDoorActionScope(e.target.value)} value={actionScope}>
             <Space direction="vertical">
               <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
-                {i18n.t('wallMenu.OnlyThisWall', lang)}
+                {i18n.t('doorMenu.OnlyThisDoor', lang)}
               </Radio>
-              <Radio style={{ width: '100%' }} value={Scope.AllConnectedObjects}>
-                {i18n.t('wallMenu.AllConnectedWalls', lang)}
+              <Radio style={{ width: '100%' }} value={Scope.OnlyThisSide}>
+                {i18n.t('doorMenu.AllDoorsOnWall', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                {i18n.t('wallMenu.AllWallsAboveFoundation', lang)}
+                {i18n.t('doorMenu.AllDoorsAboveFoundation', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
-                {i18n.t('wallMenu.AllSelectedWalls', lang)}
+                {i18n.t('doorMenu.AllSelectedDoors', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
-                {i18n.t('wallMenu.AllWalls', lang)}
+                {i18n.t('doorMenu.AllDoors', lang)}
               </Radio>
             </Space>
           </Radio.Group>
@@ -316,4 +335,4 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   );
 };
 
-export default WallHeatCapacityInput;
+export default DoorPermeabilityInput;

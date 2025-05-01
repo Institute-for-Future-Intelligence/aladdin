@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { ElementModel } from './ElementModel';
@@ -29,6 +29,7 @@ export interface WallModel extends ElementModel {
   opacity?: number;
   rValue: number;
   volumetricHeatCapacity: number;
+  airPermeability?: number;
 
   fill: WallFill;
   leftUnfilledHeight: number;

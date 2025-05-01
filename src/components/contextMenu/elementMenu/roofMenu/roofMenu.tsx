@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 import type { MenuProps } from 'antd';
 import { ElementModel } from 'src/models/ElementModel';
@@ -19,6 +19,7 @@ import RoofSideColorSelection from './roofSideColorSelection';
 import { createRoofCeilingSubmenu } from './roofCeilingSubmenu';
 import { createRoofStructureSubmenu } from './roofSturctureSubmenu';
 import RoofOpacityInput from './roofOpacityInput';
+import RoofPermeabilityInput from './roofPermeabilityInput';
 
 const legalToPaste = () => {
   const elementsToPaste = useStore.getState().elementsToPaste;
@@ -90,6 +91,10 @@ export const createRoofMenu = (selectedElement: ElementModel) => {
         {
           key: 'roof-r-value',
           label: <DialogItem Dialog={RoofRValueInput}>{i18n.t('roofMenu.RoofRValue', lang)} ...</DialogItem>,
+        },
+        {
+          key: 'roof-air-permeability',
+          label: <DialogItem Dialog={RoofPermeabilityInput}>{i18n.t('word.AirPermeability', lang)} ...</DialogItem>,
         },
         {
           key: 'roof-heat-capacity',

@@ -18,6 +18,7 @@ import DoorHeatCapacityInput from './doorHeatCapacityInput';
 import DoorTextureSelection from './doorTextureSelection';
 import DoorColorSelection from './doorColorSelection';
 import DoorFrameColorSelection from './doorFrameColorSelection';
+import DoorPermeabilityInput from './doorPermeabilityInput';
 
 export const createDoorMenu = (selectedElement: ElementModel) => {
   const items: MenuProps['items'] = [];
@@ -92,6 +93,10 @@ export const createDoorMenu = (selectedElement: ElementModel) => {
         {
           key: 'door-u-value',
           label: <DialogItem Dialog={DoorUValueInput}>{i18n.t('word.UValue', lang)} ...</DialogItem>,
+        },
+        {
+          key: 'door-air-permeability',
+          label: <DialogItem Dialog={DoorPermeabilityInput}>{i18n.t('word.AirPermeability', lang)} ...</DialogItem>,
         },
         {
           key: 'door-heat-capacity',

@@ -74,6 +74,7 @@ export class DefaultActionState implements ActionState {
   wallStructureColor: string;
   wallOpacity: number;
   wallRValue: number;
+  wallAirPermeability: number;
   wallVolumetricHeatCapacity: number;
   wallEavesLength: number;
   wallParapet: ParapetArgs;
@@ -89,6 +90,7 @@ export class DefaultActionState implements ActionState {
   roofRafterSpacing: number;
   roofRafterColor: string;
   roofRValue: number;
+  roofAirPermeability: number;
   roofVolumetricHeatCapacity: number;
   roofRise: number;
   roofCeiling: boolean;
@@ -102,6 +104,7 @@ export class DefaultActionState implements ActionState {
   doorFilled: boolean;
   doorInterior: boolean;
   doorUValue: number;
+  doorAirPermeability: number;
   doorOpacity: number;
   doorVolumetricHeatCapacity: number;
 
@@ -241,6 +244,7 @@ export class DefaultActionState implements ActionState {
     this.wallStructureColor = '#ffffff';
     this.wallOpacity = 0.5;
     this.wallRValue = DEFAULT_WALL_R_VALUE;
+    this.wallAirPermeability = 0;
     this.wallVolumetricHeatCapacity = 0.5;
     this.wallEavesLength = 0.3;
     this.wallParapet = DEFAULT_PARAPET_SETTINGS;
@@ -256,6 +260,7 @@ export class DefaultActionState implements ActionState {
     this.roofRafterSpacing = 1;
     this.roofRafterColor = '#ffffff';
     this.roofRValue = DEFAULT_ROOF_R_VALUE;
+    this.roofAirPermeability = 0;
     this.roofVolumetricHeatCapacity = 0.5;
     this.roofRise = 2;
     this.roofCeiling = false;
@@ -269,6 +274,7 @@ export class DefaultActionState implements ActionState {
     this.doorFilled = true;
     this.doorInterior = false;
     this.doorUValue = DEFAULT_DOOR_U_VALUE;
+    this.doorAirPermeability = 0;
     this.doorOpacity = 1;
     this.doorVolumetricHeatCapacity = 0.5;
 
