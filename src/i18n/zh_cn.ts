@@ -494,6 +494,7 @@ export const i18n_zh_cn = {
         EffectOfSizeOnBuildingEnergy: '房屋大小对能耗的影响',
         EffectOfOrientationOnBuildingEnergy: '房屋方位对能耗的影响',
         EffectOfInsulationOnBuildingEnergy: '房屋隔热对能耗的影响',
+        EffectOfAirtightnessOnBuildingEnergy: '房屋气密性对能耗的影响',
         EffectOfRoofColorOnBuildingEnergy: '屋顶颜色对建筑物能耗的影响',
         EffectOfEavesOverhangLengthOnBuildingEnergy: '屋檐延伸长度对建筑物能耗的影响',
         EffectOfWindowSHGCOnBuildingEnergy: '窗户太阳能输入对房屋能耗的影响',

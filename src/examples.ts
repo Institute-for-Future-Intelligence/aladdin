@@ -121,6 +121,7 @@ import ai_fitchburg_solar_farm from './examples/ai_fitchburg_solar_farm.json';
 import effect_house_size from './examples/effect_house_size.json';
 import effect_house_orientation from './examples/effect_house_orientation.json';
 import effect_wall_roof_insulation from './examples/effect_wall_roof_insulation.json';
+import effect_window_airtightness from './examples/effect_window_airtightness.json';
 import effect_roof_color from './examples/effect_roof_color.json';
 import effect_eaves_overhang_length from './examples/effect_eaves_overhang_length.json';
 import effect_window_shgc from './examples/effect_window_shgc.json';
@@ -157,6 +158,9 @@ export const getExample = (name: string) => {
       break;
     case 'effect_wall_roof_insulation':
       input = effect_wall_roof_insulation;
+      break;
+    case 'effect_window_airtightness':
+      input = effect_window_airtightness;
       break;
     case 'effect_roof_color':
       input = effect_roof_color;

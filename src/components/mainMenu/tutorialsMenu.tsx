@@ -103,6 +103,10 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
           label: 'menu.buildingScienceTutorials.EffectOfInsulationOnBuildingEnergy',
         },
         {
+          key: 'effect_window_airtightness',
+          label: 'menu.buildingScienceTutorials.EffectOfAirtightnessOnBuildingEnergy',
+        },
+        {
           key: 'effect_roof_color',
           label: 'menu.buildingScienceTutorials.EffectOfRoofColorOnBuildingEnergy',
         },

@@ -495,6 +495,7 @@ export const i18n_tr = {
         EffectOfSizeOnBuildingEnergy: 'Effect of Size on Building Energy',
         EffectOfOrientationOnBuildingEnergy: 'Effect of Orientation on Building Energy',
         EffectOfInsulationOnBuildingEnergy: 'Effect of Insulation on Building Energy',
+        EffectOfAirtightnessOnBuildingEnergy: 'Effect of Airtightness on Building Energy',
         EffectOfRoofColorOnBuildingEnergy: 'Effect of Roof Color on Building Energy',
         EffectOfEavesOverhangLengthOnBuildingEnergy: 'Effect of Eaves Overhang Length on Building Energy',
         EffectOfWindowSHGCOnBuildingEnergy: 'Effect of Window Solar Heat Gain on Building Energy',

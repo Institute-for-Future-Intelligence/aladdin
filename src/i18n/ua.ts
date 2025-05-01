@@ -500,6 +500,7 @@ export const i18n_ua = {
         EffectOfSizeOnBuildingEnergy: 'Вплив розміру на енергію будівлі',
         EffectOfOrientationOnBuildingEnergy: 'Вплив орієнтації на енергію будівлі',
         EffectOfInsulationOnBuildingEnergy: 'Вплив інсоляції на енергію будівлі',
+        EffectOfAirtightnessOnBuildingEnergy: 'Effect of Airtightness on Building Energy',
         EffectOfRoofColorOnBuildingEnergy: 'Вплив кольору даху на енергію будівлі',
         EffectOfEavesOverhangLengthOnBuildingEnergy: 'Вплив довжини виступу карнизу на енергію будівлі',
         EffectOfWindowSHGCOnBuildingEnergy: 'Вплив коефіцієнта сонячного теплозиску вікна на енергію будівлі',
