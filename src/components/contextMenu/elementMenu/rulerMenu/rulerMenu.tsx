@@ -45,14 +45,6 @@ export const createRulerMenu = (selectedElement: ElementModel) => {
 
   if (editable) {
     items.push({
-      key: 'ruler-color',
-      label: <DialogItem Dialog={RulerColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>,
-    });
-    items.push({
-      key: 'ruler-tick-color',
-      label: <DialogItem Dialog={RulerTickColorSelection}>{i18n.t('rulerMenu.TickColor', lang)} ...</DialogItem>,
-    });
-    items.push({
       key: 'ruler-width',
       label: <DialogItem Dialog={RulerWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
     });
@@ -61,8 +53,16 @@ export const createRulerMenu = (selectedElement: ElementModel) => {
       label: <DialogItem Dialog={RulerThicknessInput}>{i18n.t('word.Thickness', lang)} ...</DialogItem>,
     });
     items.push({
+      key: 'ruler-color',
+      label: <DialogItem Dialog={RulerColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>,
+    });
+    items.push({
+      key: 'ruler-tick-color',
+      label: <DialogItem Dialog={RulerTickColorSelection}>{i18n.t('rulerMenu.TickMarkColor', lang)} ...</DialogItem>,
+    });
+    items.push({
       key: 'ruler-type',
-      label: <MenuItem>{i18n.t('rulerMenu.RulerType', lang)}</MenuItem>,
+      label: <MenuItem>{i18n.t('rulerMenu.RulerDirection', lang)}</MenuItem>,
       children: [
         {
           key: 'ruler-type-radio-group',

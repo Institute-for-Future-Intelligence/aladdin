@@ -178,7 +178,7 @@ const RulerTickColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
   };
 
   return (
-    <Dialog width={680} title={i18n.t('rulerMenu.TickColor', lang)} onApply={apply} onClose={close}>
+    <Dialog width={680} title={i18n.t('rulerMenu.TickMarkColor', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col span={10}>
           <CompactPicker

@@ -885,11 +885,11 @@ export const i18n_zh_tw = {
     },
 
     rulerMenu: {
-      RulerType: '尺子類型',
+      RulerDirection: '尺子方向',
       Horizontal: '水平',
       Vertical: '豎直',
       Arbitrary: '任意',
-      TickColor: '刻度顔色',
+      TickMarkColor: '刻度顔色',
       OnlyThisRuler: '只這個尺子',
       AllSelectedRulers: '所有選中的尺子',
       AllRulers: '所有尺子',

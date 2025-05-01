@@ -884,11 +884,11 @@ export const i18n_zh_cn = {
     },
 
     rulerMenu: {
-      RulerType: '尺子类型',
+      RulerDirection: '尺子方向',
       Horizontal: '水平',
       Vertical: '竖直',
       Arbitrary: '任意',
-      TickColor: '刻度颜色',
+      TickMarkColor: '刻度颜色',
       OnlyThisRuler: '只这个尺子',
       AllSelectedRulers: '所有选中的尺子',
       AllRulers: '所有尺子',

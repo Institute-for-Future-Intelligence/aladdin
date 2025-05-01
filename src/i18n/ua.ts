@@ -906,11 +906,11 @@ export const i18n_ua = {
     },
 
     rulerMenu: {
-      RulerType: 'Ruler Type',
-      Horizontal: 'Horizonal',
+      RulerDirection: 'Ruler Direction',
+      Horizontal: 'Horizontal',
       Vertical: 'Vertical',
       Arbitrary: 'Arbitrary',
-      TickColor: 'Tick Color',
+      TickMarkColor: 'Tick Mark Color',
       OnlyThisRuler: 'Only This Ruler',
       AllSelectedRulers: 'All Selected Rulers',
       AllRulers: 'All Rulers',
