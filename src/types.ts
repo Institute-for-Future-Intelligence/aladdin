@@ -99,6 +99,10 @@ export enum SchoolID {
   SCHOOL3 = 'SCHOOL 3',
   SCHOOL4 = 'SCHOOL 4',
   SCHOOL5 = 'SCHOOL 5',
+  SCHOOL6 = 'SCHOOL 6',
+  SCHOOL7 = 'SCHOOL 7',
+  SCHOOL8 = 'SCHOOL 8',
+  SCHOOL9 = 'SCHOOL 9',
 }
 
 export enum ClassID {

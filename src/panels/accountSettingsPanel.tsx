@@ -257,6 +257,18 @@ const AccountSettingsPanel = React.memo(
                     <Option key={SchoolID.SCHOOL5} value={SchoolID.SCHOOL5}>
                       {SchoolID.SCHOOL5}
                     </Option>
+                    <Option key={SchoolID.SCHOOL6} value={SchoolID.SCHOOL6}>
+                      {SchoolID.SCHOOL6}
+                    </Option>
+                    <Option key={SchoolID.SCHOOL7} value={SchoolID.SCHOOL7}>
+                      {SchoolID.SCHOOL7}
+                    </Option>
+                    <Option key={SchoolID.SCHOOL8} value={SchoolID.SCHOOL8}>
+                      {SchoolID.SCHOOL8}
+                    </Option>
+                    <Option key={SchoolID.SCHOOL9} value={SchoolID.SCHOOL9}>
+                      {SchoolID.SCHOOL9}
+                    </Option>
                   </Select>
                 </Col>
               </Row>

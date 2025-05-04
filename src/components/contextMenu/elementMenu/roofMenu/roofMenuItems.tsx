@@ -15,7 +15,7 @@ import { useLanguage } from 'src/hooks';
 import i18n from 'src/i18n/i18n';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
 import { UndoableChange } from 'src/undo/UndoableChange';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface RoofMenuItemProps {
   roof: RoofModel;
@@ -34,7 +34,13 @@ interface LockRoofElementsItemProps extends RoofMenuItemProps {
 }
 
 export const RoofCeilingCheckbox = ({ roof }: RoofMenuItemProps) => {
+  // Menu item does not update when clicked. I have to set an internal state to fix this
+  const [ceiling, setCeiling] = useState(roof.ceiling);
   const lang = useLanguage();
+
+  useEffect(() => {
+    setCeiling(roof.ceiling);
+  }, [roof.ceiling]);
 
   const updateRoofCeiling = (roofId: string, b: boolean) => {
     useStore.getState().set((state) => {
@@ -51,7 +57,7 @@ export const RoofCeilingCheckbox = ({ roof }: RoofMenuItemProps) => {
     const undoableCheck = {
       name: 'Roof Ceiling',
       timestamp: Date.now(),
-      checked: checked,
+      checked,
       selectedElementId: roof.id,
       selectedElementType: roof.type,
       undo: () => {
@@ -63,11 +69,12 @@ export const RoofCeilingCheckbox = ({ roof }: RoofMenuItemProps) => {
     } as UndoableCheck;
     useStore.getState().addUndoable(undoableCheck);
     updateRoofCeiling(roof.id, checked);
+    setCeiling(checked);
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
-      <Checkbox style={{ width: '100%' }} checked={roof.ceiling} onChange={handleChange}>
+    <MenuItem stayAfterClick={false} noPadding>
+      <Checkbox style={{ width: '100%' }} checked={ceiling} onChange={handleChange}>
         {i18n.t('roofMenu.Ceiling', lang)}
       </Checkbox>
     </MenuItem>
@@ -190,7 +197,7 @@ export const RoofStructureRadioGroup = ({ roof }: RoofMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <MenuItem stayAfterClick={false} noPadding>
       <Radio.Group value={roof.roofStructure ?? RoofStructure.Default} onChange={handleChange}>
         <Space direction="vertical">
           <Radio style={{ width: '100%' }} value={RoofStructure.Default}>
