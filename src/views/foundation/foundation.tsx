@@ -1704,22 +1704,29 @@ const Foundation = React.memo((foundationModel: FoundationModel) => {
           isSettingWallEndPointRef.current = false;
         } else if (isSettingWallEndPointRef.current && addedWallIdRef.current && baseRef.current) {
           useRefStore.getState().setEnableOrbitController(true);
-          setCommonStore((state) => {
-            if (state.actionModeLock) {
-              state.objectTypeToAdd = ObjectType.Wall;
-              InnerCommonStoreState.selectNone(state);
-            }
-            state.addedWallId = null;
-            if (wall.lx === 0 && elementsStateBeforeResizingRef.current) {
-              state.elements = [...elementsStateBeforeResizingRef.current];
+          if (wall.lx === 0 && elementsStateBeforeResizingRef.current) {
+            setCommonStore((state) => {
+              if (state.actionModeLock) {
+                state.objectTypeToAdd = ObjectType.Wall;
+                InnerCommonStoreState.selectNone(state);
+              }
+              state.addedWallId = null;
+              if (elementsStateBeforeResizingRef.current) state.elements = [...elementsStateBeforeResizingRef.current];
               if (addedWallIdRef.current) {
                 wallMapOnFoundation.current.delete(addedWallIdRef.current);
               }
-            } else {
-              handleUndoableAddWall(wall as WallModel);
-              wallMapOnFoundation.current.set(wall.id, wall);
-            }
-          });
+            });
+          } else {
+            setCommonStore((state) => {
+              if (state.actionModeLock) {
+                state.objectTypeToAdd = ObjectType.Wall;
+                InnerCommonStoreState.selectNone(state);
+              }
+              state.addedWallId = null;
+            });
+            handleUndoableAddWall(wall as WallModel);
+            wallMapOnFoundation.current.set(wall.id, wall);
+          }
           addedWallIdRef.current = null;
           isSettingWallEndPointRef.current = false;
         } else {
