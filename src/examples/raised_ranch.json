@@ -1,11 +1,11 @@
 {
-  "docid": "mqkJkmAf2FgLQBbrx53uMJ",
-  "time": "05/04/2025 07:41 PM",
-  "timestamp": 1746402089468,
+  "docid": "2hso5HD9BBtrWQP464hGvv",
+  "time": "05/05/2025 07:15 PM",
+  "timestamp": 1746486908202,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
-  "version": "1.8.0",
+  "version": "1.8.1",
   "world": {
     "noAnimationForSensorDataCollection": false,
     "countryCode": "US",
@@ -1278,7 +1278,7 @@
       "filled": true,
       "interior": false,
       "archHeight": 1,
-      "textureType": "Door Texture #1",
+      "textureType": "Door Texture #4",
       "color": "#ffffff",
       "uValue": 1,
       "lineWidth": 0.2,
@@ -1675,11 +1675,11 @@
     },
     {
       "type": "Foundation",
-      "cx": 3.514422109483567,
-      "cy": -5.632291816556215,
+      "cx": 3.4966687759901807,
+      "cy": -5.630212217982942,
       "cz": 0.5,
-      "lx": 2.780500229207528,
-      "ly": 5.78,
+      "lx": 2.776341032060983,
+      "ly": 5.869333239814987,
       "lz": 1,
       "normal": [
         0,
@@ -1866,6 +1866,206 @@
       ],
       "parentId": "jRy4RsfhpHEaR4DSkQb6rv",
       "id": "q6wbbiTGubhwj9e6Q1fHax"
+    },
+    {
+      "type": "Cuboid",
+      "cx": -0.6480737282383116,
+      "cy": -4.622997340968334,
+      "cz": 0.5,
+      "lx": 2.240190800496544,
+      "ly": 0.3,
+      "lz": 1,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#808080",
+        "#808080"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "stackable": false,
+      "transparency": 0,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "p7YspSMQYsJtBvDsJGbmXM"
+    },
+    {
+      "type": "Cuboid",
+      "cx": -0.6507021968118147,
+      "cy": -4.876807479754364,
+      "cz": 0.4,
+      "lx": 2.240190800496544,
+      "ly": 0.3,
+      "lz": 0.8,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#808080",
+        "#808080"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "stackable": false,
+      "transparency": 0,
+      "parentId": "Ground",
+      "id": "nyYFFVBNi1QgQk1e896ezJ"
+    },
+    {
+      "type": "Cuboid",
+      "cx": -0.665877798464424,
+      "cy": -5.110820588329644,
+      "cz": 0.3,
+      "lx": 2.240190800496544,
+      "ly": 0.3,
+      "lz": 0.6,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#808080",
+        "#808080"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "stackable": false,
+      "transparency": 0,
+      "parentId": "Ground",
+      "id": "hJADJ9U68PEvQvVRQrd4hm"
+    },
+    {
+      "type": "Cuboid",
+      "cx": -0.671649076085464,
+      "cy": -5.414901772435301,
+      "cz": 0.2,
+      "lx": 2.240190800496544,
+      "ly": 0.3,
+      "lz": 0.4,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#808080",
+        "#808080"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "stackable": false,
+      "transparency": 0,
+      "parentId": "Ground",
+      "id": "eXybMd74fo9dHmEYV8ynLC"
+    },
+    {
+      "type": "Cuboid",
+      "cx": -0.6395177816701412,
+      "cy": -4.318829785762087,
+      "cz": 0.6,
+      "lx": 2.240190800496544,
+      "ly": 0.3,
+      "lz": 1.2,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#808080",
+        "#808080"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "stackable": false,
+      "transparency": 0,
+      "parentId": "Ground",
+      "id": "fYXLm7PPmczMbLviSFAQN2"
     }
   ],
   "sceneRadius": 18,
@@ -1888,8 +2088,8 @@
       "y": 0
     },
     "panCenter": [
-      0.2505101404446652,
-      0.649943887368292,
+      0.26655393104471753,
+      0.6431158628816487,
       1.8695303600297781
     ],
     "mapType": "roadmap",
@@ -1946,7 +2146,7 @@
     },
     "yearlyLightSensorPanelShowDaylight": false,
     "shadowCameraFar": 20000,
-    "cameraZoom": 41.010920913500534,
+    "cameraZoom": 84.09478170866976,
     "solarPanelShininess": 100,
     "mapWeatherStations": false,
     "dailyParabolicTroughYieldPanelX": 0,
@@ -2006,7 +2206,7 @@
     "navigationView": false,
     "cameraPosition2D": [
       3.8874558260944942,
-      -4.395091926946919,
+      -4.3950919269474875,
       150
     ],
     "showElevationAngle": true,
@@ -2046,9 +2246,9 @@
     "groundColor": "#16A5A5",
     "waterSurface": false,
     "cameraPosition": [
-      8.71161859052158,
-      -22.782034983624076,
-      6.203574370598677
+      6.928508961373657,
+      -18.708886267373188,
+      4.178333913037996
     ],
     "mapPanelY": 0,
     "dailyPvYieldPanelY": 0,
