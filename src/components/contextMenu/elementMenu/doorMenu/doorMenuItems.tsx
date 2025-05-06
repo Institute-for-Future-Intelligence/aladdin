@@ -154,9 +154,6 @@ export const DoorInteriorCheckbox = React.memo(({ door }: DoorMenuItemProps) => 
 export const DoorTypeRadioGroup = React.memo(({ door }: DoorMenuItemProps) => {
   const lang = useLanguage();
 
-  const _door = useStore((state) =>
-    state.elements.find((e) => e.id === door.id && e.type === ObjectType.Door),
-  ) as DoorModel;
   const updateDoorTypeById = (id: string, type: DoorType) => {
     useStore.getState().set((state) => {
       for (const e of state.elements) {
@@ -172,10 +169,10 @@ export const DoorTypeRadioGroup = React.memo(({ door }: DoorMenuItemProps) => {
     const undoableChange = {
       name: 'Select Door Type',
       timestamp: Date.now(),
-      oldValue: _door.doorType,
+      oldValue: door.doorType,
       newValue: e.target.value,
-      changedElementId: _door.id,
-      changedElementType: _door.type,
+      changedElementId: door.id,
+      changedElementType: door.type,
       undo: () => {
         updateDoorTypeById(undoableChange.changedElementId, undoableChange.oldValue as DoorType);
       },
@@ -184,16 +181,15 @@ export const DoorTypeRadioGroup = React.memo(({ door }: DoorMenuItemProps) => {
       },
     } as UndoableChange;
     useStore.getState().addUndoable(undoableChange);
-    updateDoorTypeById(_door.id, e.target.value);
+    updateDoorTypeById(door.id, e.target.value);
     useStore.getState().set((state) => {
       state.actionState.doorType = e.target.value;
     });
   };
 
-  if (!_door) return null;
   return (
     <MenuItem stayAfterClick noPadding>
-      <Radio.Group value={_door.doorType} onChange={handleChange}>
+      <Radio.Group value={door.doorType} onChange={handleChange}>
         <Space direction="vertical">
           <Radio style={{ width: '100%' }} value={DoorType.Default}>
             {i18n.t('doorMenu.Default', lang)}

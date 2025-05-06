@@ -40,21 +40,26 @@ export const ShowLabelCheckbox = ({ element, forModelTree }: LabelSubmenuItemPro
   const showLabel = useLabelShow(element);
   const lang = useLanguage();
 
-  const _element = useStore((state) => state.elements.find((e) => e.id === element.id)) as ElementModel;
-
+  // Menu item does not update when clicked. I have to set an internal state to fix this
+  const [show, setShow] = useState(element.showLabel);
   const onChange = () => {
-    showLabel(!_element.showLabel);
+    showLabel(!show);
+    setShow(!show);
   };
 
-  if (!_element) return null;
+  // for sync model tree and context menu
+  useEffect(() => {
+    setShow(element.showLabel);
+  }, [element.showLabel]);
+
   return forModelTree ? (
     <Space>
       <span>{i18n.t('labelSubMenu.KeepShowingLabel', lang)}</span>:
-      <Switch size={'small'} checked={_element.showLabel} onChange={onChange} />
+      <Switch size={'small'} checked={show} onChange={onChange} />
     </Space>
   ) : (
     <MenuItem stayAfterClick noPadding>
-      <Checkbox style={{ width: '100%' }} checked={_element.showLabel} onChange={onChange}>
+      <Checkbox style={{ width: '100%' }} checked={show} onChange={onChange}>
         {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
       </Checkbox>
     </MenuItem>

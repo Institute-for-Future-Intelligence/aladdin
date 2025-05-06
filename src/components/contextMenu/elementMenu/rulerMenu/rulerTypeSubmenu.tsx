@@ -10,15 +10,14 @@ import i18n from 'src/i18n/i18n';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { UndoableChangeRulerType } from 'src/undo/UndoableChange';
+import { useState } from 'react';
 
 interface Props {
   ruler: RulerModel;
 }
 
 export const RulerTypeRadioGroup = ({ ruler }: Props) => {
-  const _ruler = useStore((state) =>
-    state.elements.find((e) => e.id === ruler.id && e.type === ObjectType.Ruler),
-  ) as RulerModel;
+  const [_type, setType] = useState(ruler.rulerType ?? RulerType.Horizontal);
 
   const lang = useLanguage();
 
@@ -39,7 +38,7 @@ export const RulerTypeRadioGroup = ({ ruler }: Props) => {
 
   const handleChange = (e: RadioChangeEvent) => {
     const newType = e.target.value;
-    const newRightPoint = [..._ruler.leftEndPoint.position];
+    const newRightPoint = [...ruler.leftEndPoint.position];
     if (newType === RulerType.Horizontal) {
       newRightPoint[0] += 5;
       newRightPoint[2] = 0;
@@ -49,11 +48,11 @@ export const RulerTypeRadioGroup = ({ ruler }: Props) => {
     const undoableChange = {
       name: 'Select Ruler Type',
       timestamp: Date.now(),
-      oldType: _ruler.rulerType,
+      oldType: ruler.rulerType,
       newType: newType,
-      oldRightPoint: [..._ruler.rightEndPoint.position],
+      oldRightPoint: [...ruler.rightEndPoint.position],
       newRightPoint: newRightPoint,
-      id: _ruler.id,
+      id: ruler.id,
       changedElementType: ObjectType.Ruler,
       undo: () => {
         update(undoableChange.id, undoableChange.oldType as RulerType, undoableChange.oldRightPoint);
@@ -63,13 +62,13 @@ export const RulerTypeRadioGroup = ({ ruler }: Props) => {
       },
     } as UndoableChangeRulerType;
     useStore.getState().addUndoable(undoableChange);
-    update(_ruler.id, newType, newRightPoint);
+    update(ruler.id, newType, newRightPoint);
+    setType(newType);
   };
 
-  if (!_ruler) return null;
   return (
     <MenuItem stayAfterClick noPadding>
-      <Radio.Group value={_ruler.rulerType} onChange={handleChange}>
+      <Radio.Group value={_type} onChange={handleChange}>
         <Space direction="vertical">
           <Radio style={{ width: '100%' }} value={RulerType.Horizontal}>
             {i18n.t('rulerMenu.Horizontal', lang)}

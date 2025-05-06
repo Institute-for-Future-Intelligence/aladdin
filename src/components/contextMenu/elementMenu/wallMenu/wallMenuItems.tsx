@@ -129,9 +129,6 @@ export const LockWallElementsItem = ({ wall, objectType, lock, children }: LockW
 export const ParapetCheckbox = ({ wall }: WallMenuItemProps) => {
   const lang = useLanguage();
 
-  const _wall = useStore((state) =>
-    state.elements.find((e) => e.id === wall.id && e.type === ObjectType.Wall),
-  ) as WallModel;
   const setCommonStore = useStore.getState().set;
 
   const updateParapetDisplayById = (id: string, display: boolean) => {
@@ -148,26 +145,25 @@ export const ParapetCheckbox = ({ wall }: WallMenuItemProps) => {
       name: 'Parapet',
       timestamp: Date.now(),
       checked: checked,
-      selectedElementId: _wall.id,
-      selectedElementType: _wall.type,
+      selectedElementId: wall.id,
+      selectedElementType: wall.type,
       undo: () => {
-        updateParapetDisplayById(_wall.id, !undoableCheck.checked);
+        updateParapetDisplayById(wall.id, !undoableCheck.checked);
       },
       redo: () => {
-        updateParapetDisplayById(_wall.id, undoableCheck.checked);
+        updateParapetDisplayById(wall.id, undoableCheck.checked);
       },
     } as UndoableCheck;
     useStore.getState().addUndoable(undoableCheck);
-    updateParapetDisplayById(_wall.id, checked);
+    updateParapetDisplayById(wall.id, checked);
     setCommonStore((state) => {
       state.actionState.wallParapet.display = checked;
     });
   };
 
-  if (!_wall) return null;
   return (
-    <MenuItem stayAfterClick noPadding>
-      <Checkbox style={{ width: '100%' }} checked={_wall.parapet.display} onChange={handleChange}>
+    <MenuItem stayAfterClick={false} noPadding>
+      <Checkbox style={{ width: '100%' }} checked={wall.parapet.display} onChange={handleChange}>
         {i18n.t('wallMenu.Parapet', lang)}
       </Checkbox>
     </MenuItem>
@@ -176,9 +172,6 @@ export const ParapetCheckbox = ({ wall }: WallMenuItemProps) => {
 
 export const WallStructureRadioGroup = ({ wall }: WallMenuItemProps) => {
   const lang = useLanguage();
-  const _wall = useStore((state) =>
-    state.elements.find((e) => e.id === wall.id && e.type === ObjectType.Wall),
-  ) as WallModel;
 
   const updateWallStructureById = (id: string, structure: WallStructure) => {
     useStore.getState().set((state) => {
@@ -199,10 +192,10 @@ export const WallStructureRadioGroup = ({ wall }: WallMenuItemProps) => {
     const undoableChange = {
       name: 'Select Wall Structure',
       timestamp: Date.now(),
-      oldValue: _wall.wallStructure,
+      oldValue: wall.wallStructure,
       newValue: e.target.value,
-      changedElementId: _wall.id,
-      changedElementType: _wall.type,
+      changedElementId: wall.id,
+      changedElementType: wall.type,
       undo: () => {
         updateWallStructureById(undoableChange.changedElementId, undoableChange.oldValue as WallStructure);
       },
@@ -211,7 +204,7 @@ export const WallStructureRadioGroup = ({ wall }: WallMenuItemProps) => {
       },
     } as UndoableChange;
     useStore.getState().addUndoable(undoableChange);
-    updateWallStructureById(_wall.id, e.target.value);
+    updateWallStructureById(wall.id, e.target.value);
     useStore.getState().set((state) => {
       state.actionState.wallStructure = e.target.value;
       if (
@@ -223,11 +216,10 @@ export const WallStructureRadioGroup = ({ wall }: WallMenuItemProps) => {
     });
   };
 
-  if (!_wall) return null;
-  const value = _wall.wallStructure ?? WallStructure.Default;
+  const value = wall.wallStructure ?? WallStructure.Default;
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <MenuItem stayAfterClick={false} noPadding>
       <Radio.Group value={value} onChange={handleChange}>
         <Space direction="vertical">
           <Radio style={{ width: '100%' }} value={WallStructure.Default}>
@@ -301,9 +293,6 @@ export const AddPolygonOnWallItem = ({ wall }: WallMenuItemProps) => {
 
 export const WallFillRadioGroup = ({ wall }: WallMenuItemProps) => {
   const lang = useLanguage();
-  const _wall = useStore((state) =>
-    state.elements.find((e) => e.id === wall.id && e.type === ObjectType.Wall),
-  ) as WallModel;
 
   const updateWallFillById = (id: string, fill: WallFill) => {
     useStore.getState().set((state) => {
@@ -320,10 +309,10 @@ export const WallFillRadioGroup = ({ wall }: WallMenuItemProps) => {
     const undoableChange = {
       name: 'Select Wall Fill',
       timestamp: Date.now(),
-      oldValue: _wall.fill,
+      oldValue: wall.fill,
       newValue: e.target.value,
-      changedElementId: _wall.id,
-      changedElementType: _wall.type,
+      changedElementId: wall.id,
+      changedElementType: wall.type,
       undo: () => {
         updateWallFillById(undoableChange.changedElementId, undoableChange.oldValue as WallFill);
       },
@@ -332,13 +321,12 @@ export const WallFillRadioGroup = ({ wall }: WallMenuItemProps) => {
       },
     } as UndoableChange;
     useStore.getState().addUndoable(undoableChange);
-    updateWallFillById(_wall.id, e.target.value);
+    updateWallFillById(wall.id, e.target.value);
   };
 
-  if (!_wall) return null;
   return (
-    <MenuItem stayAfterClick noPadding>
-      <Radio.Group value={_wall.fill} onChange={handleChange}>
+    <MenuItem stayAfterClick={false} noPadding>
+      <Radio.Group value={wall.fill} onChange={handleChange}>
         <Space direction="vertical">
           <Radio style={{ width: '100%' }} value={WallFill.Full}>
             {i18n.t('wallMenu.Full', lang)}
@@ -357,9 +345,6 @@ export const WallFillRadioGroup = ({ wall }: WallMenuItemProps) => {
 
 export const WallOpenToOutsideCheckbox = ({ wall }: WallMenuItemProps) => {
   const lang = useLanguage();
-  const _wall = useStore((state) =>
-    state.elements.find((e) => e.id === wall.id && e.type === ObjectType.Wall),
-  ) as WallModel;
 
   const updateOpenToOutsideById = (id: string, open: boolean) => {
     useStore.getState().set((state) => {
@@ -376,10 +361,10 @@ export const WallOpenToOutsideCheckbox = ({ wall }: WallMenuItemProps) => {
     const undoableChange = {
       name: 'Set Open to Outside',
       timestamp: Date.now(),
-      oldValue: !!_wall.openToOutside,
+      oldValue: !!wall.openToOutside,
       newValue: e.target.checked,
-      changedElementId: _wall.id,
-      changedElementType: _wall.type,
+      changedElementId: wall.id,
+      changedElementType: wall.type,
       undo: () => {
         updateOpenToOutsideById(undoableChange.changedElementId, undoableChange.oldValue as boolean);
       },
@@ -388,13 +373,12 @@ export const WallOpenToOutsideCheckbox = ({ wall }: WallMenuItemProps) => {
       },
     } as UndoableChange;
     useStore.getState().addUndoable(undoableChange);
-    updateOpenToOutsideById(_wall.id, e.target.checked);
+    updateOpenToOutsideById(wall.id, e.target.checked);
   };
 
-  if (!_wall) return null;
   return (
-    <MenuItem stayAfterClick noPadding>
-      <Checkbox style={{ width: '100%' }} checked={!!_wall.openToOutside} onChange={handleChange}>
+    <MenuItem stayAfterClick={false} noPadding>
+      <Checkbox style={{ width: '100%' }} checked={!!wall.openToOutside} onChange={handleChange}>
         {i18n.t('wallMenu.OpenToOutside', lang)}
       </Checkbox>
     </MenuItem>
