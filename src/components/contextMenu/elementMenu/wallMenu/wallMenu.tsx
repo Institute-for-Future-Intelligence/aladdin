@@ -157,10 +157,14 @@ export const createWallMenu = (selectedElement: ElementModel) => {
         label: <DialogItem Dialog={WallColorSelection}>{i18n.t('wallMenu.Color', lang)} ...</DialogItem>,
       },
     );
+
+    const wallFillSubmenu = createWallFillSubmenu(wall);
+    console.log('wall fill submenu', wallFillSubmenu);
+
     items.push({
-      key: 'wall-fill',
+      key: `wall-fill`,
       label: <MenuItem>{i18n.t('wallMenu.Fill', lang)}</MenuItem>,
-      children: createWallFillSubmenu(wall),
+      children: wallFillSubmenu,
     });
 
     items.push({

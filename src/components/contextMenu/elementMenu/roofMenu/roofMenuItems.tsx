@@ -34,13 +34,11 @@ interface LockRoofElementsItemProps extends RoofMenuItemProps {
 }
 
 export const RoofCeilingCheckbox = ({ roof }: RoofMenuItemProps) => {
-  // Menu item does not update when clicked. I have to set an internal state to fix this
-  const [ceiling, setCeiling] = useState(roof.ceiling);
   const lang = useLanguage();
 
-  useEffect(() => {
-    setCeiling(roof.ceiling);
-  }, [roof.ceiling]);
+  const _roof = useStore((state) =>
+    state.elements.find((e) => e.id === roof.id && e.type === ObjectType.Roof),
+  ) as RoofModel;
 
   const updateRoofCeiling = (roofId: string, b: boolean) => {
     useStore.getState().set((state) => {
@@ -58,23 +56,23 @@ export const RoofCeilingCheckbox = ({ roof }: RoofMenuItemProps) => {
       name: 'Roof Ceiling',
       timestamp: Date.now(),
       checked,
-      selectedElementId: roof.id,
-      selectedElementType: roof.type,
+      selectedElementId: _roof.id,
+      selectedElementType: _roof.type,
       undo: () => {
-        updateRoofCeiling(roof.id, !undoableCheck.checked);
+        updateRoofCeiling(_roof.id, !undoableCheck.checked);
       },
       redo: () => {
-        updateRoofCeiling(roof.id, undoableCheck.checked);
+        updateRoofCeiling(_roof.id, undoableCheck.checked);
       },
     } as UndoableCheck;
     useStore.getState().addUndoable(undoableCheck);
-    updateRoofCeiling(roof.id, checked);
-    setCeiling(checked);
+    updateRoofCeiling(_roof.id, checked);
   };
 
+  if (!_roof) return null;
   return (
-    <MenuItem stayAfterClick={false} noPadding>
-      <Checkbox style={{ width: '100%' }} checked={ceiling} onChange={handleChange}>
+    <MenuItem stayAfterClick noPadding>
+      <Checkbox style={{ width: '100%' }} checked={_roof.ceiling} onChange={handleChange}>
         {i18n.t('roofMenu.Ceiling', lang)}
       </Checkbox>
     </MenuItem>

@@ -298,7 +298,11 @@ export const AddPolygonItem = ({ foundation }: FoundationItemProps) => {
 export const SolarStructureRadioGroup = ({ foundation }: FoundationItemProps) => {
   const lang = useLanguage();
 
-  const selectedSolarStructure = foundation?.solarStructure ?? SolarStructure.None;
+  const _foundation = useStore((state) =>
+    state.elements.find((e) => e.id === foundation.id && e.type === ObjectType.Foundation),
+  ) as FoundationModel;
+
+  const selectedSolarStructure = _foundation?.solarStructure ?? SolarStructure.None;
 
   const updateFoundationSolarStructureById = (id: string, structure: SolarStructure) => {
     useStore.getState().set((state) => {
@@ -312,15 +316,15 @@ export const SolarStructureRadioGroup = ({ foundation }: FoundationItemProps) =>
   };
 
   const handleChange = (e: RadioChangeEvent) => {
-    const oldValue = foundation.solarStructure;
+    const oldValue = _foundation.solarStructure;
     const newValue = e.target.value;
     const undoableChange = {
       name: 'Select Solar Structure for Selected Foundation',
       timestamp: Date.now(),
       oldValue: oldValue,
       newValue: newValue,
-      changedElementId: foundation.id,
-      changedElementType: foundation.type,
+      changedElementId: _foundation.id,
+      changedElementType: _foundation.type,
       undo: () => {
         updateFoundationSolarStructureById(undoableChange.changedElementId, undoableChange.oldValue as SolarStructure);
       },
@@ -329,9 +333,10 @@ export const SolarStructureRadioGroup = ({ foundation }: FoundationItemProps) =>
       },
     } as UndoableChange;
     useStore.getState().addUndoable(undoableChange);
-    updateFoundationSolarStructureById(foundation.id, newValue);
+    updateFoundationSolarStructureById(_foundation.id, newValue);
   };
 
+  if (!_foundation) return null;
   return (
     <MenuItem stayAfterClick noPadding>
       <Radio.Group value={selectedSolarStructure} onChange={handleChange}>
