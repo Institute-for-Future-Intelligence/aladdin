@@ -157,7 +157,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
                 newChildrenPositionsMapRef.current.set(e.id, new Vector3(e.cx, e.cy, newRelZ));
               }
             }
-          } else if (e.type === ObjectType.SolarPanel) {
+          } else if (e.type === ObjectType.SolarPanel || e.type === ObjectType.BatteryStorage) {
             e.cz = value / 2;
             if (parent.enableSlope) {
               e.cz = e.cz + Util.getZOnSlope(parent.lx, parent.slope, e.cx);
