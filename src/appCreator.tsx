@@ -50,6 +50,7 @@ import { useLanguage } from './hooks';
 import { AlertFilled, CloseOutlined, DoubleRightOutlined } from '@ant-design/icons';
 import { UndoableCheck } from './undo/UndoableCheck';
 import ModelTree from './modeltree/modelTree';
+import AI from './ai/openAI';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -326,6 +327,8 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
     <div className="App" style={{ position: 'relative', overflow: 'hidden' }} onContextMenu={(e) => e.preventDefault()}>
       {/* Spinner, Simulation and Evolution control panels */}
       <Waiting initializing={initializing} />
+
+      <AI />
 
       <div
         style={{
