@@ -2,7 +2,7 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   calculateDiffuseAndReflectedRadiation,
   calculatePeakRadiation,
@@ -361,6 +361,16 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
 
   /* do the yearly simulation to generate yearly PV outputs */
 
+  const [monthIndex, setMonthIndex] = useState<number>(now.getMonth());
+
+  useEffect(() => {
+    // give it some time for the scene to update as a result of month change
+    setTimeout(() => {
+      fetchObjects();
+    }, 200);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [monthIndex]);
+
   useEffect(() => {
     if (runYearlySimulation) {
       if (noAnimation && !Util.hasMovingParts(elements)) {
@@ -371,6 +381,8 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
         }, 50);
       } else {
         initYearly();
+        setMonthIndex(now.getMonth());
+        fetchObjects(); // ensure that the objects are fetched if the initial date happens to be in January
         requestRef.current = requestAnimationFrame(simulateYearly);
         return () => {
           // this is called when the recursive call of requestAnimationFrame exits
@@ -555,6 +567,7 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
         }
         // go to the next month
         now.setMonth(sampledDayRef.current * monthInterval, 22);
+        setMonthIndex(now.getMonth());
         dayRef.current = now.getDay();
         sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
         now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -minuteInterval / 2);
