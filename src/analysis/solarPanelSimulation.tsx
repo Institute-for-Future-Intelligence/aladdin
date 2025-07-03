@@ -365,9 +365,10 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
 
   useEffect(() => {
     // give it some time for the scene to update as a result of month change
+    // the delay should not be too long (otherwise it may get the wrong month)
     setTimeout(() => {
       fetchObjects();
-    }, 200);
+    }, 10);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [monthIndex]);
 
