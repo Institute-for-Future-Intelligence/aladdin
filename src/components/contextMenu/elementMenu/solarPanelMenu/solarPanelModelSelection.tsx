@@ -599,7 +599,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         </Col>
       </Row>
       <Row gutter={6} style={{ paddingBottom: '4px' }}>
-        <Col span={13}>{i18n.t('pvModelPanel.TemperatureCoefficientOfPmax', lang) + ' (%/°C):'}</Col>
+        <Col span={13}>{i18n.t('pvModelPanel.TemperatureCoefficientOfPmax', lang) + ' (°C⁻¹):'}</Col>
         <Col span={11}>
           <Input
             disabled={true}
