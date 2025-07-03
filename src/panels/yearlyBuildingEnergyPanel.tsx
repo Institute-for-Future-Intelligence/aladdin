@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -106,6 +106,7 @@ const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPane
   const referenceX = MONTHS_ABBV[now.getMonth()];
   const daysPerYear = world.daysPerYear ?? 6;
   const monthInterval = 12 / daysPerYear;
+  const daysOfMonth = Util.daysInYear(now) / 12;
 
   const [heaterSum, setHeaterSum] = useState(0);
   const [acSum, setAcSum] = useState(0);
@@ -208,13 +209,13 @@ const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPane
         const id = dataLabels[index] ?? i;
         if (hasSolarPanels) {
           l.push('Heater ' + id, 'AC ' + id, 'Solar ' + id, 'Net ' + id);
-          datum['Solar ' + id] = (solarPanelMap.get(id) ?? 0) * 30;
+          datum['Solar ' + id] = (solarPanelMap.get(id) ?? 0) * daysOfMonth;
         } else {
           l.push('Heater ' + id, 'AC ' + id, 'Net ' + id);
         }
-        datum['Heater ' + id] = (heaterMap.get(id) ?? 0) * 30;
-        datum['AC ' + id] = (acMap.get(id) ?? 0) * 30;
-        datum['Net ' + id] = (netMap.get(id) ?? 0) * 30;
+        datum['Heater ' + id] = (heaterMap.get(id) ?? 0) * daysOfMonth;
+        datum['AC ' + id] = (acMap.get(id) ?? 0) * daysOfMonth;
+        datum['Net ' + id] = (netMap.get(id) ?? 0) * daysOfMonth;
       }
       setLabels(l);
       resultRef.current[indexOfMonth] = datum;
@@ -274,10 +275,10 @@ const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPane
         }
         const datum: DatumEntry = {};
         datum['Month'] = MONTHS_ABBV[now.getMonth()];
-        datum[heaterId] = 30 * heater;
-        datum[acId] = 30 * ac;
-        datum[solarId] = 30 * solarPanel;
-        datum[netId] = 30 * net;
+        datum[heaterId] = daysOfMonth * heater;
+        datum[acId] = daysOfMonth * ac;
+        datum[solarId] = daysOfMonth * solarPanel;
+        datum[netId] = daysOfMonth * net;
         resultRef.current[indexOfMonth] = datum;
       } else {
         setLabels([heaterId, acId, netId]);
@@ -288,9 +289,9 @@ const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPane
         }
         const datum: DatumEntry = {};
         datum['Month'] = MONTHS_ABBV[now.getMonth()];
-        datum[heaterId] = 30 * heater;
-        datum[acId] = 30 * ac;
-        datum[netId] = 30 * net;
+        datum[heaterId] = daysOfMonth * heater;
+        datum[acId] = daysOfMonth * ac;
+        datum[netId] = daysOfMonth * net;
         resultRef.current[indexOfMonth] = datum;
       }
     }
@@ -313,9 +314,9 @@ const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPane
         sumSolarPanel += sumSolarPanelMap.get(key) ?? 0;
       }
     }
-    heaterSumRef.current[indexOfMonth] = sumHeater * monthInterval * 30;
-    acSumRef.current[indexOfMonth] = sumAc * monthInterval * 30;
-    solarPanelSumRef.current[indexOfMonth] = sumSolarPanel * monthInterval * 30;
+    heaterSumRef.current[indexOfMonth] = sumHeater * monthInterval * daysOfMonth;
+    acSumRef.current[indexOfMonth] = sumAc * monthInterval * daysOfMonth;
+    solarPanelSumRef.current[indexOfMonth] = sumSolarPanel * monthInterval * daysOfMonth;
     netSumRef.current[indexOfMonth] =
       heaterSumRef.current[indexOfMonth] + acSumRef.current[indexOfMonth] - solarPanelSumRef.current[indexOfMonth];
     const totalHeater = heaterSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0);
