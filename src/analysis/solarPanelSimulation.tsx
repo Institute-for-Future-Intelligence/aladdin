@@ -570,18 +570,19 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
         }
         // go to the next month
         now.setMonth(sampledDayRef.current * monthInterval, 22);
-        setMonthIndex(now.getMonth());
         dayRef.current = now.getDay();
         sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
         now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -minuteInterval / 2);
         resetDailyOutputsMap();
+        setCommonStore((state) => {
+          state.world.date = now.toLocaleString('en-US');
+        });
+        setMonthIndex(now.getMonth());
+        // give some time for the 3D object tree to update before the next simulation step
         setTimeout(() => {
-          setCommonStore((state) => {
-            state.world.date = now.toLocaleString('en-US');
-          });
           // recursive call to the next step of the simulation
           requestRef.current = requestAnimationFrame(simulateYearly);
-        });
+        }, 500);
       }
     }
   };
