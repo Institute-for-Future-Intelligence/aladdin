@@ -608,16 +608,20 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
           // go to the next month
           now.setMonth(sampledDayRef.current * monthInterval, 22);
           now.setHours(0, minuteInterval / 2);
-          setMonthIndex(now.getMonth());
           dayRef.current = Util.dayOfYear(now);
           resetHourlyMaps();
           resetSolarHeatMaps();
+          // for some reason, we have to pyt the date change in a timeout here
           setTimeout(() => {
             setCommonStore((state) => {
               state.world.date = now.toLocaleString('en-US');
             });
-            // recursive call to the next step of the simulation
-            requestRef.current = requestAnimationFrame(simulateYearly);
+            setMonthIndex(now.getMonth());
+            // give some time for the 3D object tree to update before the next simulation step
+            setTimeout(() => {
+              // recursive call to the next step of the simulation
+              requestRef.current = requestAnimationFrame(simulateYearly);
+            }, 100);
           });
         }
       }
