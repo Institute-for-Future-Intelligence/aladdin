@@ -574,7 +574,9 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
         now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -minuteInterval / 2);
         resetDailyOutputsMap();
         // recursive call to the next step of the simulation
-        requestRef.current = requestAnimationFrame(simulateYearly);
+        setTimeout(() => {
+          requestRef.current = requestAnimationFrame(simulateYearly);
+        }, 500);
       }
     }
   };

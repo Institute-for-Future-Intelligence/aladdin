@@ -611,7 +611,9 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
           resetHourlyMaps();
           resetSolarHeatMaps();
           // recursive call to the next step of the simulation
-          requestRef.current = requestAnimationFrame(simulateYearly);
+          setTimeout(() => {
+            requestRef.current = requestAnimationFrame(simulateYearly);
+          }, 500);
         }
       }
     }
