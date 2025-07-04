@@ -486,8 +486,10 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
       } else {
         initYearly();
         setMonthIndex(now.getMonth());
-        fetchObjects(); // ensure that the objects are fetched if the initial date happens to be in January
-        requestRef.current = requestAnimationFrame(simulateYearly);
+        setTimeout(() => {
+          fetchObjects(); // ensure that the objects are fetched if the initial date happens to be in January
+          requestRef.current = requestAnimationFrame(simulateYearly);
+        }, 500);
         return () => {
           // this is called when the recursive call of requestAnimationFrame exits
           cancelAnimationFrame(requestRef.current);
@@ -610,10 +612,13 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
           dayRef.current = Util.dayOfYear(now);
           resetHourlyMaps();
           resetSolarHeatMaps();
-          // recursive call to the next step of the simulation
           setTimeout(() => {
+            setCommonStore((state) => {
+              state.world.date = now.toLocaleString('en-US');
+            });
+            // recursive call to the next step of the simulation
             requestRef.current = requestAnimationFrame(simulateYearly);
-          }, 500);
+          });
         }
       }
     }

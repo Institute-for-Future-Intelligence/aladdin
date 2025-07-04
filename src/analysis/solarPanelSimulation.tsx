@@ -383,8 +383,10 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
       } else {
         initYearly();
         setMonthIndex(now.getMonth());
-        fetchObjects(); // ensure that the objects are fetched if the initial date happens to be in January
-        requestRef.current = requestAnimationFrame(simulateYearly);
+        setTimeout(() => {
+          fetchObjects(); // ensure that the objects are fetched if the initial date happens to be in January
+          requestRef.current = requestAnimationFrame(simulateYearly);
+        }, 500);
         return () => {
           // this is called when the recursive call of requestAnimationFrame exits
           cancelAnimationFrame(requestRef.current);
@@ -573,10 +575,13 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
         sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
         now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -minuteInterval / 2);
         resetDailyOutputsMap();
-        // recursive call to the next step of the simulation
         setTimeout(() => {
+          setCommonStore((state) => {
+            state.world.date = now.toLocaleString('en-US');
+          });
+          // recursive call to the next step of the simulation
           requestRef.current = requestAnimationFrame(simulateYearly);
-        }, 500);
+        });
       }
     }
   };
