@@ -162,7 +162,7 @@ const handleAddElementOnRoof = (
         roof,
         posRelToFoundation.x,
         posRelToFoundation.y,
-        posRelToFoundation.z,
+        posRelToFoundation.z - foundation.lz / 2,
         ObjectType.Roof,
         rotation,
         0.5,
@@ -177,7 +177,7 @@ const handleAddElementOnRoof = (
         roof,
         posRelToFoundation.x / foundation.lx,
         posRelToFoundation.y / foundation.ly,
-        posRelToFoundation.z,
+        posRelToFoundation.z - foundation.lz / 2,
         normal,
         rotation ?? [0, 0, 1],
       );
@@ -195,7 +195,7 @@ const handleAddElementOnRoof = (
         actionState.lightColor,
         posRelToFoundation.x / foundation.lx,
         posRelToFoundation.y / foundation.ly,
-        posRelToFoundation.z,
+        posRelToFoundation.z - foundation.lz / 2,
         normal,
         rotation ?? [0, 0, 1],
       );
