@@ -9,10 +9,6 @@ import * as Selector from './stores/selector';
 import { Modal } from 'antd';
 import dayjs from 'dayjs';
 import 'antd/dist/reset.css';
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/firestore';
-import 'firebase/storage';
 import { showError, showInfo, showSuccess } from './helpers';
 import {
   ClassID,
@@ -20,7 +16,6 @@ import {
   DataColoring,
   Design,
   DesignProblem,
-  FirebaseName,
   ModelSite,
   ObjectType,
   ProjectState,
@@ -51,6 +46,24 @@ import {
 import { ProjectUtil } from './panels/ProjectUtil';
 import { useLanguage } from './hooks';
 import AnonymousImage from './assets/anonymous.png';
+import { GoogleAuthProvider, onAuthStateChanged, signInAnonymously, signInWithPopup, signOut } from 'firebase/auth';
+import { auth, firestore, storage } from './firebase';
+import {
+  arrayRemove,
+  arrayUnion,
+  collection,
+  deleteDoc,
+  deleteField,
+  doc,
+  getCountFromServer,
+  getDoc,
+  getDocs,
+  increment,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
+import { FirebaseError } from 'firebase/app';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
@@ -151,25 +164,6 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   );
 
   useEffect(() => {
-    const config = {
-      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-      databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
-      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-      appId: import.meta.env.VITE_FIREBASE_APP_ID,
-    };
-    let initialize = firebase.apps.length === 0; // no app, should initialize
-    if (firebase.apps.length === 1 && firebase.apps[0].name === FirebaseName.LOG_DATA) {
-      initialize = true; // if there is only the logger app, should initialize
-    }
-    if (initialize) {
-      firebase.initializeApp(config);
-    } else {
-      firebase.app(); // if already initialized, use the default one
-    }
-
     // don't enable persistence as we often need to open multiple tabs
     // firebase.firestore().enablePersistence()
     //   .catch((err) => {
@@ -182,7 +176,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
 
     // do not use firebase.auth().currentUser - currentUser might be null because the auth object has not finished initializing.
     // If you use an observer to keep track of the user's sign-in status, you don't need to handle this case.
-    firebase.auth().onAuthStateChanged((u) => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
       const params = new URLSearchParams(window.location.search);
       const title = params.get('title');
       if (u) {
@@ -208,6 +202,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     window.addEventListener('popstate', handlePopStateEvent);
     return () => {
       window.removeEventListener('popstate', handlePopStateEvent);
+      unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -344,78 +339,70 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
 
   // get latest version
   const fetchLatestVersion = async () => {
-    await firebase
-      .firestore()
-      .collection('app')
-      .doc('info')
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          const data = doc.data();
-          if (data && data.latestVersion) {
-            usePrimitiveStore.getState().set((state) => {
-              state.latestVersion = data.latestVersion;
-            });
-          }
+    try {
+      const infoRef = doc(firestore, 'app', 'info');
+      const infoSnap = await getDoc(infoRef);
+
+      if (infoSnap.exists()) {
+        const data = infoSnap.data();
+        if (data?.latestVersion) {
+          usePrimitiveStore.getState().set((state) => {
+            state.latestVersion = data.latestVersion;
+          });
         }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const signInAnonymously = () => {
-    firebase
-      .auth()
-      .signInAnonymously()
-      .then((result) => {
-        setCommonStore((state) => {
-          if (result.user) {
-            state.user.uid = result.user.uid;
-            state.user.anonymous = true;
-            state.user.displayName = 'Anonymous';
-            registerUser({ ...state.user }).then(() => {
-              // ignore
-            });
-          }
-        });
-      })
-      .catch((error) => {
-        if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
-          showError(i18n.t('message.CannotSignIn', lang) + ': ' + error);
+  const handleSignInAnonymously = async () => {
+    try {
+      const result = await signInAnonymously(auth);
+      setCommonStore((state) => {
+        if (result.user) {
+          state.user.uid = result.user.uid;
+          state.user.anonymous = true;
+          state.user.displayName = 'Anonymous';
+          registerUser({ ...state.user }).then(() => {
+            // ignore
+          });
         }
       });
+    } catch (e) {
+      const error = e as FirebaseError;
+      if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
+        showError(i18n.t('message.CannotSignIn', lang) + ': ' + error);
+      }
+    }
     resetToSelectMode();
   };
 
-  const signIn = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    firebase
-      .auth()
-      .signInWithPopup(provider)
-      .then((result) => {
-        setCommonStore((state) => {
-          if (result.user) {
-            state.user.uid = result.user.uid;
-            state.user.email = result.user.email;
-            state.user.displayName = result.user.displayName;
-            state.user.photoURL = result.user.photoURL;
-            registerUser({ ...state.user }).then(() => {
-              // ignore
-            });
-          }
-        });
-      })
-      .catch((error) => {
-        if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
-          showError(i18n.t('message.CannotSignIn', lang) + ': ' + error);
+  const signIn = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      setCommonStore((state) => {
+        if (result.user) {
+          state.user.uid = result.user.uid;
+          state.user.email = result.user.email;
+          state.user.displayName = result.user.displayName;
+          state.user.photoURL = result.user.photoURL;
+          registerUser({ ...state.user }).then(() => {
+            // ignore
+          });
         }
       });
+    } catch (e) {
+      const error = e as FirebaseError;
+      if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
+        showError(i18n.t('message.CannotSignIn', lang) + ': ' + error);
+      }
+    }
     resetToSelectMode();
   };
 
   const registerUser = async (user: User): Promise<any> => {
-    const firestore = firebase.firestore();
     let signFile = false;
     let noLogging = false;
     let anonymous = false;
@@ -430,35 +417,27 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     if (user.uid !== null) {
       const superuser = user && user.email === 'charles@intofuture.org';
       if (superuser) {
-        // This way of counting a collection is expensive. It is reserved for only superusers.
-        // It should be replaced by getCountFromServer in the latest version of Firestore;
-        await firestore
-          .collection('users')
-          .get()
-          .then((querySnapshot) => {
-            userCount = querySnapshot.size;
-          });
+        try {
+          const snapshot = await getCountFromServer(collection(firestore, 'users'));
+          userCount = snapshot.data().count;
+        } catch (e) {
+          console.warn('Failed to count users:', e);
+        }
       }
-      found = await firestore
-        .collection('users')
-        .doc(user.uid)
-        .get()
-        .then((doc) => {
-          const docData = doc.data();
-          if (docData) {
-            signFile = !!docData.signFile;
-            noLogging = !!docData.noLogging;
-            anonymous = !!docData.anonymous;
-            schoolID = docData.schoolID ? (docData.schoolID as SchoolID) : SchoolID.UNKNOWN;
-            classID = docData.classID ? (docData.classID as ClassID) : ClassID.UNKNOWN;
-            if (docData.fileList) fileList = docData.fileList;
-            if (docData.likes) likes = docData.likes;
-            if (docData.published) published = docData.published;
-            if (docData.aliases) aliases = docData.aliases;
-            return true;
-          }
-          return false;
-        });
+      const docSnap = await getDoc(doc(firestore, 'users', user.uid));
+      const docData = docSnap.data();
+      if (docData) {
+        signFile = !!docData.signFile;
+        noLogging = !!docData.noLogging;
+        anonymous = !!docData.anonymous;
+        schoolID = docData.schoolID ? (docData.schoolID as SchoolID) : SchoolID.UNKNOWN;
+        classID = docData.classID ? (docData.classID as ClassID) : ClassID.UNKNOWN;
+        if (docData.fileList) fileList = docData.fileList;
+        if (docData.likes) likes = docData.likes;
+        if (docData.published) published = docData.published;
+        if (docData.aliases) aliases = docData.aliases;
+        found = true;
+      }
     }
     if (found) {
       // update common store state
@@ -488,10 +467,8 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       user.aliases = aliases;
     } else {
       if (user.uid) {
-        firestore
-          .collection('users')
-          .doc(user.uid)
-          .set({
+        try {
+          await setDoc(doc(firestore, 'users', user.uid), {
             uid: user.uid,
             anonymous: !!user.anonymous,
             signFile: !!user.signFile, // don't listen to WebStorm's suggestion to simplify it as this may be undefined
@@ -500,63 +477,55 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             classID: user.classID ?? ClassID.UNKNOWN,
             since: dayjs(new Date()).format('MM/DD/YYYY hh:mm A'),
             os: Util.getOS(),
-          })
-          .then(() => {
-            showInfo(i18n.t('message.YourAccountWasCreated', lang));
-          })
-          .catch((error) => {
-            showError(i18n.t('message.CannotCreateAccount', lang) + ': ' + error);
           });
+          showInfo(i18n.t('message.YourAccountWasCreated', lang));
+        } catch (e) {
+          showError(i18n.t('message.CannotCreateAccount', lang) + ': ' + e);
+        }
       }
     }
   };
 
-  const signOut = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        setCommonStore((state) => {
-          state.user.uid = null;
-          state.user.email = null;
-          state.user.displayName = null;
-          state.user.photoURL = null;
-          state.user.signFile = false;
-          state.user.fileList = [];
-          state.user.likes = [];
-          state.user.published = [];
-          state.user.aliases = [];
-          state.cloudFile = undefined; // if there is a current cloud file
-        });
-        usePrimitiveStore.getState().set((state) => {
-          state.showCloudFilePanel = false;
-          state.showAccountSettingsPanel = false;
-          state.showModelsGallery = false;
-          state.showProjectListPanel = false;
-        });
-      })
-      .catch((error) => {
-        showError(i18n.t('message.CannotSignOut', lang) + ': ' + error);
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      setCommonStore((state) => {
+        state.user.uid = null;
+        state.user.email = null;
+        state.user.displayName = null;
+        state.user.photoURL = null;
+        state.user.signFile = false;
+        state.user.fileList = [];
+        state.user.likes = [];
+        state.user.published = [];
+        state.user.aliases = [];
+        state.cloudFile = undefined; // if there is a current cloud file
       });
+      usePrimitiveStore.getState().set((state) => {
+        state.showCloudFilePanel = false;
+        state.showAccountSettingsPanel = false;
+        state.showModelsGallery = false;
+        state.showProjectListPanel = false;
+      });
+    } catch (e) {
+      showError(i18n.t('message.CannotSignOut', lang) + ': ' + e);
+    }
   };
 
-  function saveAccountSettings() {
+  async function saveAccountSettings() {
     if (user.uid) {
-      const firestore = firebase.firestore();
-      firestore
-        .collection('users')
-        .doc(user.uid)
-        .update({
+      try {
+        const userRef = doc(firestore, 'users', user.uid);
+        await updateDoc(userRef, {
           signFile: !!user.signFile, // don't listen to WebStorm's suggestion to simplify it as this may be undefined
           schoolID: user.schoolID ?? SchoolID.UNKNOWN,
           classID: user.classID ?? ClassID.UNKNOWN,
-        })
-        .then(() => {
-          showInfo(i18n.t('message.YourAccountSettingsWereSaved', lang));
-        })
-        .catch((error) => {
-          showError(i18n.t('message.CannotSaveYourAccountSettings', lang) + ': ' + error);
         });
+
+        showInfo(i18n.t('message.YourAccountSettingsWereSaved', lang));
+      } catch (error) {
+        showError(i18n.t('message.CannotSaveYourAccountSettings', lang) + ': ' + error);
+      }
     }
   }
 
@@ -564,263 +533,213 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     setLoading(true);
     const start: number = dayjs(showModelsFromDate).toDate().getTime();
     const end: number = dayjs(showModelsToDate).toDate().getTime();
-    await firebase
-      .firestore()
-      .collection('models')
-      .get()
-      .then((querySnapshot) => {
-        const selectedModels = new Map<string, Map<string, ModelSite>>();
-        const allModels = new Map<string, Map<string, ModelSite>>();
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          if (data) {
-            const m1 = new Map<string, ModelSite>();
-            const m2 = new Map<string, ModelSite>();
-            for (const k in data) {
-              if (!data[k].countryCode) {
-                if (data[k].address?.endsWith('USA')) data[k]['countryCode'] = 'US';
-              }
-              if (showModelsAllTime) {
-                m1.set(k, data[k]);
-              } else {
-                const timestamp = data[k].timeCreated;
-                if (timestamp === undefined || (timestamp >= start && timestamp <= end)) m1.set(k, data[k]);
-              }
-              m2.set(k, data[k]);
+
+    try {
+      const querySnapshot = await getDocs(collection(firestore, 'models'));
+      const selectedModels = new Map<string, Map<string, ModelSite>>();
+      const allModels = new Map<string, Map<string, ModelSite>>();
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data) {
+          const m1 = new Map<string, ModelSite>();
+          const m2 = new Map<string, ModelSite>();
+          for (const k in data) {
+            if (!data[k].countryCode) {
+              if (data[k].address?.endsWith('USA')) data[k]['countryCode'] = 'US';
             }
-            if (m1.size > 0) selectedModels.set(doc.id, m1);
-            if (m2.size > 0) allModels.set(doc.id, m2);
+            if (showModelsAllTime) {
+              m1.set(k, data[k]);
+            } else {
+              const timestamp = data[k].timeCreated;
+              if (timestamp === undefined || (timestamp >= start && timestamp <= end)) m1.set(k, data[k]);
+            }
+            m2.set(k, data[k]);
           }
-        });
-        setCommonStore((state) => {
-          state.modelSites = selectedModels;
-          state.allModelSites = allModels;
-        });
-        return selectedModels;
-      })
-      .catch((error) => {
-        showError(i18n.t('message.CannotLoadModelsOnMap', lang) + ': ' + error);
-      })
-      .finally(() => {
-        setLoading(false);
+          if (m1.size > 0) selectedModels.set(doc.id, m1);
+          if (m2.size > 0) allModels.set(doc.id, m2);
+        }
       });
+      setCommonStore((state) => {
+        state.modelSites = selectedModels;
+        state.allModelSites = allModels;
+      });
+    } catch (error) {
+      showError(i18n.t('message.CannotLoadModelsOnMap', lang) + ': ' + error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // get latest submission
   const fetchLatest = async () => {
-    await firebase
-      .firestore()
-      .collection('board')
-      .doc('info')
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          const data = doc.data();
-          if (data && data.latestModel) {
-            setCommonStore((state) => {
-              // if it has been deleted, don't show
-              let found = false;
-              const m = data.latestModel as ModelSite;
-              if (m.author) {
-                found = !!state.peopleModels.get(m.author)?.get(Util.getModelKey(m));
-              }
-              state.latestModelSite = found ? m : undefined;
-            });
-          }
+    try {
+      const docRef = doc(firestore, 'board', 'info');
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data && data.latestModel) {
+          setCommonStore((state) => {
+            let found = false;
+            const m = data.latestModel as ModelSite;
+
+            if (m.author) {
+              found = !!state.peopleModels.get(m.author)?.get(Util.getModelKey(m));
+            }
+
+            state.latestModelSite = found ? m : undefined;
+          });
         }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const fetchPeopleModels = async () => {
     setLoading(true);
     const start: number = dayjs(showModelsFromDate).toDate().getTime();
     const end: number = dayjs(showModelsToDate).toDate().getTime();
-    await firebase
-      .firestore()
-      .collection('board')
-      .doc('people')
-      .get()
-      .then((doc) => {
-        const data = doc.data();
-        if (data) {
-          const selectedPeopleModels = new Map<string, Map<string, ModelSite>>();
-          const allPeopleModels = new Map<string, Map<string, ModelSite>>();
-          for (const k in data) {
-            if (showModelsAllTime) {
-              selectedPeopleModels.set(k, new Map<string, ModelSite>(Object.entries(data[k])));
-            } else {
-              const newModelSites = new Map<string, ModelSite>();
-              for (const model of Object.entries(data[k])) {
-                const timestamp = (model[1] as any)['timeCreated'];
-                if (timestamp === undefined || (timestamp >= start && timestamp <= end)) {
-                  newModelSites.set(model[0], model[1] as ModelSite);
-                }
+    try {
+      const docRef = doc(firestore, 'board', 'people');
+      const docSnap = await getDoc(docRef);
+      const data = docSnap.data();
+      if (data) {
+        const selectedPeopleModels = new Map<string, Map<string, ModelSite>>();
+        const allPeopleModels = new Map<string, Map<string, ModelSite>>();
+        for (const k in data) {
+          if (showModelsAllTime) {
+            selectedPeopleModels.set(k, new Map<string, ModelSite>(Object.entries(data[k])));
+          } else {
+            const newModelSites = new Map<string, ModelSite>();
+            for (const model of Object.entries(data[k])) {
+              const timestamp = (model[1] as any)['timeCreated'];
+              if (timestamp === undefined || (timestamp >= start && timestamp <= end)) {
+                newModelSites.set(model[0], model[1] as ModelSite);
               }
-              if (newModelSites.size > 0) selectedPeopleModels.set(k, newModelSites);
             }
-            allPeopleModels.set(k, new Map<string, ModelSite>(Object.entries(data[k])));
+            if (newModelSites.size > 0) selectedPeopleModels.set(k, newModelSites);
           }
-          setCommonStore((state) => {
-            state.peopleModels = selectedPeopleModels;
-            state.allPeopleModels = allPeopleModels;
-          });
+          allPeopleModels.set(k, new Map<string, ModelSite>(Object.entries(data[k])));
         }
-      })
-      .catch((error) => {
-        showError(i18n.t('message.CannotLoadLeaderboard', lang) + ': ' + error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  const deleteFromModelsMap = (model: ModelSite, successCallback?: () => void) => {
-    // pass if there is no user currently logged in
-    if (user && user.uid) {
-      firebase
-        .firestore()
-        .collection('models')
-        .doc(Util.getLatLngKey(model.latitude, model.longitude))
-        .update({ [Util.getModelKey(model)]: firebase.firestore.FieldValue.delete() })
-        .then(() => {
-          showSuccess(i18n.t('message.ModelDeletedFromMap', lang));
-          if (successCallback) successCallback();
-        })
-        .catch((error) => {
-          showError(i18n.t('message.CannotDeleteModelFromMap', lang) + ': ' + error);
+        setCommonStore((state) => {
+          state.peopleModels = selectedPeopleModels;
+          state.allPeopleModels = allPeopleModels;
         });
-      // remove the record from the leaderboard
-      firebase
-        .firestore()
-        .collection('board')
-        .doc('people')
-        .update({
-          [(model.author ?? 'Anonymous') + '.' + Util.getModelKey(model)]: firebase.firestore.FieldValue.delete(),
-        })
-        .then(() => {
-          // also remove the cached record
-          setCommonStore((state) => {
-            if (state.peopleModels) {
-              state.peopleModels.delete(Util.getModelKey(model));
-              usePrimitiveStore.getState().set((state) => {
-                state.leaderboardFlag = true;
-              });
-            }
-          });
-        });
-      // remove the record in the user's account
-      firebase
-        .firestore()
-        .collection('users')
-        .doc(user.uid)
-        .update({
-          published: firebase.firestore.FieldValue.arrayRemove(model.title),
-        })
-        .then(() => {
-          // also remove the cached record
-          setCommonStore((state) => {
-            if (state.user && state.user.published) {
-              if (state.user.published.includes(model.title)) {
-                const index = state.user.published.indexOf(model.title);
-                if (index >= 0) {
-                  state.user.published.splice(index, 1);
-                }
-              }
-            }
-          });
-        });
+      }
+    } catch (error) {
+      showError(i18n.t('message.CannotLoadLeaderboard', lang) + ': ' + error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const likeModelsMap = (model: ModelSite, like: boolean, successCallback?: () => void) => {
+  const deleteFromModelsMap = async (model: ModelSite, successCallback?: () => void) => {
+    // pass if there is no user currently logged in
+    if (user && user.uid) {
+      try {
+        const modelDocRef = doc(firestore, 'models', Util.getLatLngKey(model.latitude, model.longitude));
+        await updateDoc(modelDocRef, {
+          [Util.getModelKey(model)]: deleteField(),
+        });
+        showSuccess(i18n.t('message.ModelDeletedFromMap', lang));
+        if (successCallback) successCallback();
+      } catch (error) {
+        showError(i18n.t('message.CannotDeleteModelFromMap', lang) + ': ' + error);
+      }
+
+      try {
+        const leaderboardDocRef = doc(firestore, 'board', 'people');
+        await updateDoc(leaderboardDocRef, {
+          [`${model.author ?? 'Anonymous'}.${Util.getModelKey(model)}`]: deleteField(),
+        });
+        setCommonStore((state) => {
+          if (state.peopleModels) {
+            state.peopleModels.delete(Util.getModelKey(model));
+            usePrimitiveStore.getState().set((state) => {
+              state.leaderboardFlag = true;
+            });
+          }
+        });
+      } catch (error) {
+        console.warn('Failed to update leaderboard:', error);
+      }
+      try {
+        const userDocRef = doc(firestore, 'users', user.uid);
+        await updateDoc(userDocRef, {
+          published: arrayRemove(model.title),
+        });
+        setCommonStore((state) => {
+          if (state.user && state.user.published) {
+            if (state.user.published.includes(model.title)) {
+              const index = state.user.published.indexOf(model.title);
+              if (index >= 0) {
+                state.user.published.splice(index, 1);
+              }
+            }
+          }
+        });
+      } catch (error) {
+        console.warn('Failed to update user record:', error);
+      }
+    }
+  };
+
+  const likeModelsMap = async (model: ModelSite, like: boolean, successCallback?: () => void) => {
     // pass if there is no user currently logged in
     if (user && user.uid) {
       const modelKey = Util.getModelKey(model);
+      const userDocRef = doc(firestore, 'users', user.uid);
+      const modelDocRef = doc(firestore, 'models', Util.getLatLngKey(model.latitude, model.longitude));
+      const likeCountPath = `${modelKey}.likeCount`;
+
       // keep or remove a record of like in the user's account
-      firebase
-        .firestore()
-        .collection('users')
-        .doc(user.uid)
-        .update(
-          like
-            ? {
-                likes: firebase.firestore.FieldValue.arrayUnion(modelKey),
-              }
-            : {
-                likes: firebase.firestore.FieldValue.arrayRemove(modelKey),
-              },
-        )
-        .then(() => {
-          // ignore
-        })
-        .catch((error) => {
-          showError(i18n.t('message.CannotLikeModelFromMap', lang) + ': ' + error);
+      try {
+        await updateDoc(userDocRef, {
+          likes: like ? arrayUnion(modelKey) : arrayRemove(modelKey),
         });
+      } catch (error) {
+        showError(i18n.t('message.CannotLikeModelFromMap', lang) + ': ' + error);
+      }
+
       // increment or decrement the likes counter
-      const likeCountPath = modelKey + '.likeCount';
-      firebase
-        .firestore()
-        .collection('models')
-        .doc(Util.getLatLngKey(model.latitude, model.longitude))
-        .update(
-          like
-            ? {
-                [likeCountPath]: firebase.firestore.FieldValue.increment(1),
-              }
-            : {
-                [likeCountPath]: firebase.firestore.FieldValue.increment(-1),
-              },
-        )
-        .then(() => {
-          if (successCallback) successCallback();
-        })
-        .catch((error) => {
-          showError(i18n.t('message.CannotLikeModelFromMap', lang) + ': ' + error);
+      try {
+        await updateDoc(modelDocRef, {
+          [likeCountPath]: increment(like ? 1 : -1),
         });
+
+        if (successCallback) successCallback();
+      } catch (error) {
+        showError(i18n.t('message.CannotLikeModelFromMap', lang) + ': ' + error);
+      }
     }
   };
 
-  const pinModelsMap = (model: ModelSite, pinned: boolean, successCallback?: () => void) => {
+  const pinModelsMap = async (model: ModelSite, pinned: boolean, successCallback?: () => void) => {
     // pass if there is no user currently logged in
     if (user && user.uid) {
-      firebase
-        .firestore()
-        .collection('models')
-        .doc(Util.getLatLngKey(model.latitude, model.longitude))
-        .update({
-          [Util.getModelKey(model) + '.pinned']: pinned,
-        })
-        .then(() => {
-          if (successCallback) successCallback();
-        })
-        .catch(() => {
-          // ignore
-        });
+      const modelDocRef = doc(firestore, 'models', Util.getLatLngKey(model.latitude, model.longitude));
+      await updateDoc(modelDocRef, {
+        [`${Util.getModelKey(model)}.pinned`]: pinned,
+      });
+      if (successCallback) successCallback();
     }
   };
 
   // TODO:
   // unfortunately, this throws an error for users who do not log in
   // because of write access is only granted to registered users who log in.
-  const countClicksModelsMap = (model: ModelSite) => {
+  const countClicksModelsMap = async (model: ModelSite) => {
     // pass if there is no user currently logged in
     if (user && user.uid) {
-      firebase
-        .firestore()
-        .collection('models')
-        .doc(Util.getLatLngKey(model.latitude, model.longitude))
-        .update({
-          [Util.getModelKey(model) + '.clickCount']: firebase.firestore.FieldValue.increment(1),
-        })
-        .then(() => {
-          // ignore
-        })
-        .catch(() => {
-          // ignore
+      try {
+        const modelDocRef = doc(firestore, 'models', Util.getLatLngKey(model.latitude, model.longitude));
+        await updateDoc(modelDocRef, {
+          [`${Util.getModelKey(model)}.clickCount`]: increment(1),
         });
+      } catch (error) {
+        // console.log(error);
+      }
     }
   };
 
@@ -828,45 +747,42 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
   const fetchMyProjects = async (silent: boolean) => {
     if (!user.uid) return;
     if (!silent) setLoading(true);
-    myProjectsRef.current = await firebase
-      .firestore()
-      .collection('users')
-      .doc(user.uid)
-      .collection('projects')
-      .get()
-      .then((querySnapshot) => {
-        const a: ProjectState[] = [];
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          a.push({
-            owner: user.uid,
-            title: doc.id,
-            timestamp: data.timestamp,
-            description: data.description,
-            dataColoring: data.dataColoring,
-            selectedProperty: data.selectedProperty,
-            sortDescending: data.sortDescending,
-            xAxisNameScatterPlot: data.xAxisNameScatterPlot,
-            yAxisNameScatterPlot: data.yAxisNameScatterPlot,
-            dotSizeScatterPlot: data.dotSizeScatterPlot,
-            thumbnailWidth: data.thumbnailWidth,
-            type: data.type,
-            designs: data.designs ?? [],
-            ranges: data.ranges ?? [],
-            filters: data.filters ?? [],
-            hiddenParameters: data.hiddenParameters ?? ProjectUtil.getDefaultHiddenParameters(data.type),
-            counter: data.counter ?? 0,
-          } as ProjectState);
-        });
-        return a;
-      })
-      .catch((error) => {
-        showError(i18n.t('message.CannotOpenYourProjects', lang) + ': ' + error);
-      })
-      .finally(() => {
-        if (!silent) setLoading(false);
-        setUpdateProjectArray(true);
+
+    try {
+      const projectsColRef = collection(firestore, 'users', user.uid, 'projects');
+      const querySnapshot = await getDocs(projectsColRef);
+      const projects: ProjectState[] = [];
+
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        projects.push({
+          owner: user.uid,
+          title: docSnap.id,
+          timestamp: data.timestamp,
+          description: data.description,
+          dataColoring: data.dataColoring,
+          selectedProperty: data.selectedProperty,
+          sortDescending: data.sortDescending,
+          xAxisNameScatterPlot: data.xAxisNameScatterPlot,
+          yAxisNameScatterPlot: data.yAxisNameScatterPlot,
+          dotSizeScatterPlot: data.dotSizeScatterPlot,
+          thumbnailWidth: data.thumbnailWidth,
+          type: data.type,
+          designs: data.designs ?? [],
+          ranges: data.ranges ?? [],
+          filters: data.filters ?? [],
+          hiddenParameters: data.hiddenParameters ?? ProjectUtil.getDefaultHiddenParameters(data.type),
+          counter: data.counter ?? 0,
+        } as ProjectState);
       });
+
+      myProjectsRef.current = projects;
+    } catch (error) {
+      showError(i18n.t('message.CannotOpenYourProjects', lang) + ': ' + error);
+    } finally {
+      if (!silent) setLoading(false);
+      setUpdateProjectArray(true);
+    }
   };
 
   const listMyProjects = (show: boolean) => {
@@ -881,159 +797,142 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     }
   };
 
-  const deleteProject = (title: string) => {
+  const deleteProject = async (title: string) => {
     if (!user.uid) return;
-    firebase
-      .firestore()
-      .collection('users')
-      .doc(user.uid)
-      .collection('projects')
-      .doc(title)
-      .delete()
-      .then(() => {
-        if (myProjectsRef.current && user.uid) {
-          // also delete the designs of the deleted project
-          for (const p of myProjectsRef.current) {
-            if (p.title === title && p.designs) {
-              for (const d of p.designs) {
-                setCommonStore((state) => {
-                  if (d.title === state.cloudFile) {
-                    state.cloudFile = undefined;
-                  }
-                });
-                firebase
-                  .firestore()
-                  .collection('users')
-                  .doc(user.uid)
-                  .collection('designs')
-                  .doc(d.title)
-                  .delete()
-                  .then(() => {
-                    // ignore
-                  })
-                  .catch((error) => {
-                    showError(i18n.t('message.CannotDeleteCloudFile', lang) + ': ' + error);
-                  });
+    try {
+      await deleteDoc(doc(firestore, 'users', user.uid, 'projects', title));
+
+      if (myProjectsRef.current && user.uid) {
+        for (const p of myProjectsRef.current) {
+          if (p.title === title && p.designs) {
+            for (const d of p.designs) {
+              setCommonStore((state) => {
+                if (d.title === state.cloudFile) {
+                  state.cloudFile = undefined;
+                }
+              });
+
+              try {
+                await deleteDoc(doc(firestore, 'users', user.uid, 'designs', d.title));
+              } catch (error) {
+                showError(i18n.t('message.CannotDeleteCloudFile', lang) + ': ' + error);
               }
-              setUpdateProjectArray(true);
-              break;
             }
+
+            setUpdateProjectArray(true);
+            break;
           }
-          myProjectsRef.current = myProjectsRef.current.filter((e) => {
-            return e.title !== title;
-          });
-          setUpdateFlag(!updateFlag);
         }
-        setCommonStore((state) => {
-          if (title === state.projectState.title) {
-            state.projectState.title = null;
-            state.projectState.description = null;
-            state.projectState.dataColoring = DataColoring.ALL;
-            state.projectState.selectedProperty = null;
-            state.projectState.sortDescending = false;
-            state.projectState.xAxisNameScatterPlot = null;
-            state.projectState.yAxisNameScatterPlot = null;
-            state.projectState.dotSizeScatterPlot = 5;
-            state.projectState.thumbnailWidth = 200;
-            state.projectState.counter = 0;
-            state.projectState.designs = [];
-            state.projectState.ranges = [];
-            state.projectState.filters = [];
-            state.projectState.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectState.type);
-            state.designProjectType = null;
-            state.projectView = false;
-          }
-        });
-      })
-      .catch((error) => {
-        showError(i18n.t('message.CannotDeleteProject', lang) + ': ' + error);
+
+        myProjectsRef.current = myProjectsRef.current.filter((e) => e.title !== title);
+        setUpdateFlag(!updateFlag);
+      }
+
+      setCommonStore((state) => {
+        if (title === state.projectState.title) {
+          state.projectState.title = null;
+          state.projectState.description = null;
+          state.projectState.dataColoring = DataColoring.ALL;
+          state.projectState.selectedProperty = null;
+          state.projectState.sortDescending = false;
+          state.projectState.xAxisNameScatterPlot = null;
+          state.projectState.yAxisNameScatterPlot = null;
+          state.projectState.dotSizeScatterPlot = 5;
+          state.projectState.thumbnailWidth = 200;
+          state.projectState.counter = 0;
+          state.projectState.designs = [];
+          state.projectState.ranges = [];
+          state.projectState.filters = [];
+          state.projectState.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectState.type);
+          state.designProjectType = null;
+          state.projectView = false;
+        }
       });
+    } catch (error) {
+      showError(i18n.t('message.CannotDeleteProject', lang) + ': ' + error);
+    }
   };
 
-  const renameProject = (oldTitle: string, newTitle: string) => {
+  const renameProject = async (oldTitle: string, newTitle: string) => {
     const uid = user.uid;
     if (!uid) return;
     // check if the new project title is already taken
-    doesProjectExist(uid, newTitle, (error) => {
-      showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
-    }).then((exist) => {
+    try {
+      const exist = await doesProjectExist(uid, newTitle, (error) => {
+        showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
+      });
       if (exist) {
         showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + newTitle);
       } else {
-        const files = firebase.firestore().collection('users').doc(uid).collection('projects');
-        files
-          .doc(oldTitle)
-          .get()
-          .then((doc) => {
-            if (doc.exists) {
-              const data = doc.data();
-              if (data) {
-                const newData = { ...data };
-                if (data.designs && data.designs.length > 0) {
-                  const newDesigns: Design[] = changeDesignTitles(newTitle, data.designs) ?? [];
-                  for (const [i, d] of data.designs.entries()) {
-                    copyDesign(d.title, newDesigns[i].title, data.owner, uid);
-                  }
-                  newData.designs = newDesigns;
-                  setCommonStore((state) => {
-                    state.projectState.designs = newDesigns;
-                  });
+        const files = collection(firestore, 'users', uid, 'projects');
+        try {
+          const oldDocRef = doc(files, oldTitle);
+          const docSnap = await getDoc(oldDocRef);
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data) {
+              const newData = { ...data };
+
+              if (data.designs && data.designs.length > 0) {
+                const newDesigns: Design[] = changeDesignTitles(newTitle, data.designs) ?? [];
+                for (const [i, d] of data.designs.entries()) {
+                  copyDesign(d.title, newDesigns[i].title, data.owner, uid);
                 }
-                files
-                  .doc(newTitle)
-                  .set(newData)
-                  .then(() => {
-                    files
-                      .doc(oldTitle)
-                      .delete()
-                      .then(() => {
-                        // ignore
-                      });
-                    if (myProjectsRef.current) {
-                      const newArray: ProjectState[] = [];
-                      for (const p of myProjectsRef.current) {
-                        if (p.title === oldTitle) {
-                          newArray.push({
-                            owner: p.owner,
-                            timestamp: p.timestamp,
-                            title: newTitle,
-                            description: p.description,
-                            type: p.type,
-                            designs: p.designs,
-                            ranges: p.ranges ?? null,
-                            filters: p.filters ?? null,
-                            hiddenParameters: p.hiddenParameters,
-                            counter: p.counter,
-                          } as ProjectState);
-                        } else {
-                          newArray.push(p);
-                        }
-                      }
-                      myProjectsRef.current = newArray;
-                      setUpdateFlag(!updateFlag);
-                      setUpdateProjectArray(true);
-                    }
-                    setCommonStore((state) => {
-                      if (state.projectState.title === oldTitle) {
-                        state.projectState.title = newTitle;
-                      }
-                    });
-                    // TODO
-                    // change the address field of the browser when the project is currently open
-                    // const params = new URLSearchParams(window.location.search);
-                    // if (params.get('title') === oldTitle && params.get('userid') === user.uid) {
-                    //   const newUrl = HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(newTitle);
-                    //   window.history.pushState({}, document.title, newUrl);
-                    // }
-                  });
+                newData.designs = newDesigns;
+                setCommonStore((state) => {
+                  state.projectState.designs = newDesigns;
+                });
               }
+
+              const newDocRef = doc(files, newTitle);
+              await setDoc(newDocRef, newData);
+              await deleteDoc(oldDocRef);
+
+              if (myProjectsRef.current) {
+                const newArray: ProjectState[] = [];
+                for (const p of myProjectsRef.current) {
+                  if (p.title === oldTitle) {
+                    newArray.push({
+                      owner: p.owner,
+                      timestamp: p.timestamp,
+                      title: newTitle,
+                      description: p.description,
+                      type: p.type,
+                      designs: p.designs,
+                      ranges: p.ranges ?? null,
+                      filters: p.filters ?? null,
+                      hiddenParameters: p.hiddenParameters,
+                      counter: p.counter,
+                    } as ProjectState);
+                  } else {
+                    newArray.push(p);
+                  }
+                }
+                myProjectsRef.current = newArray;
+                setUpdateFlag(!updateFlag);
+                setUpdateProjectArray(true);
+              }
+
+              setCommonStore((state) => {
+                if (state.projectState.title === oldTitle) {
+                  state.projectState.title = newTitle;
+                }
+              });
+
+              // TODO
+              // change the address field of the browser when the project is currently open
+              // const params = new URLSearchParams(window.location.search);
+              // if (params.get('title') === oldTitle && params.get('userid') === user.uid) {
+              //   const newUrl = HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(newTitle);
+              //   window.history.pushState({}, document.title, newUrl);
+              // }
             }
-          })
-          .catch((error) => {
-            showError(i18n.t('message.CannotRenameProject', lang) + ': ' + error);
-          });
+          }
+        } catch (error) {
+          showError(i18n.t('message.CannotRenameProject', lang) + ': ' + error);
+        }
       }
-    });
+    } catch (error) {}
   };
 
   const setProjectState = (projectState: ProjectState) => {
@@ -1057,7 +956,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     }
   };
 
-  const addDesignToProject = (
+  const addDesignToProject = async (
     projectType: string,
     projectTitle: string,
     designTitle: string,
@@ -1068,34 +967,26 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     // (don't create a PNG and then store in Firebase storage as I can't get the blob data correctly)
     const thumbnail = Util.resizeCanvas(canvas, thumbnailWidth).toDataURL();
     const design = createDesign(projectType, designTitle, thumbnail);
-    firebase
-      .firestore()
-      .collection('users')
-      .doc(user.uid)
-      .collection('projects')
-      .doc(projectTitle)
-      .update({
-        designs: firebase.firestore.FieldValue.arrayUnion(design),
-        counter: firebase.firestore.FieldValue.increment(1),
-      })
-      .then(() => {
-        setCommonStore((state) => {
-          state.projectState.designs?.push(design);
-          // increment the local counter to be consistent with the database counter
-          state.projectState.counter++;
-          // store the project type in the design for linking it with the right type of project later
-          state.designProjectType = state.projectState.type;
-          state.cloudFile = design.title;
-        });
-        // regardless of where the design is, make a copy on the cloud
-        saveToCloudWithoutCheckingExistence(designTitle, true, true);
-      })
-      .catch((error) => {
-        showError(i18n.t('message.CannotAddDesignToProject', lang) + ': ' + error);
-      })
-      .finally(() => {
-        setLoading(false);
+    try {
+      await updateDoc(doc(firestore, 'users', user.uid, 'projects', projectTitle), {
+        designs: arrayUnion(design),
+        counter: increment(1),
       });
+      setCommonStore((state) => {
+        state.projectState.designs?.push(design);
+        // increment the local counter to be consistent with the database counter
+        state.projectState.counter++;
+        // store the project type in the design for linking it with the right type of project later
+        state.designProjectType = state.projectState.type;
+        state.cloudFile = design.title;
+      });
+      // regardless of where the design is, make a copy on the cloud
+      saveToCloudWithoutCheckingExistence(designTitle, true, true);
+    } catch (error) {
+      showError(i18n.t('message.CannotAddDesignToProject', lang) + ': ' + error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const saveToCloud = (title: string, silent: boolean, checkExistence: boolean) => {
@@ -1181,64 +1072,54 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     }
   };
 
-  const saveToCloudWithoutCheckingExistence = (title: string, silent: boolean, ofProject?: boolean) => {
+  const saveToCloudWithoutCheckingExistence = async (title: string, silent: boolean, ofProject?: boolean) => {
     const uid = user.uid;
     if (!uid) return;
     try {
-      const userDocuments = firebase.firestore().collection('users').doc(uid);
-      if (userDocuments) {
-        if (localContentToImportAfterCloudFileUpdate) {
-          usePrimitiveStore.getState().set((state) => {
-            state.waiting = true;
-          });
+      if (localContentToImportAfterCloudFileUpdate) {
+        usePrimitiveStore.getState().set((state) => {
+          state.waiting = true;
+        });
+      }
+      const userDocuments = doc(firestore, 'users', uid);
+      const docRef = doc(userDocuments, ofProject ? 'designs' : 'files', title);
+      await setDoc(docRef, exportContent());
+
+      if (!silent) {
+        setCommonStore((state) => {
+          state.cloudFile = title;
+        });
+        usePrimitiveStore.getState().setChanged(false);
+      }
+      if (localContentToImportAfterCloudFileUpdate) {
+        if (localContentToImportAfterCloudFileUpdate === 'CREATE_NEW_FILE') {
+          createEmptyFile();
+        } else {
+          importContent(localContentToImportAfterCloudFileUpdate);
         }
-        const doc = userDocuments.collection(ofProject ? 'designs' : 'files').doc(title);
-        doc
-          .set(exportContent())
-          .then(() => {
-            if (!silent) {
-              setCommonStore((state) => {
-                state.cloudFile = title;
-              });
-              usePrimitiveStore.getState().setChanged(false);
-            }
-            if (localContentToImportAfterCloudFileUpdate) {
-              if (localContentToImportAfterCloudFileUpdate === 'CREATE_NEW_FILE') {
-                createEmptyFile();
-              } else {
-                importContent(localContentToImportAfterCloudFileUpdate);
-              }
-            } else {
-              if (!ofProject) {
-                const newUrl = HOME_URL + '?client=web&userid=' + uid + '&title=' + encodeURIComponent(title);
-                window.history.pushState({}, document.title, newUrl);
-              }
-            }
-            // a project file should not be added to the local cache
-            if (!ofProject) {
-              doc.get().then((snapshot) => {
-                const data = snapshot.data();
-                if (data && cloudFilesRef.current.length > 0) {
-                  removeCloudFileIfExisting(uid, title);
-                  const file = { timestamp: data.timestamp, title } as CloudFileInfo;
-                  cloudFilesRef.current.push(file);
-                  addFileToList(uid, file).then(() => {
-                    // ignore
-                  });
-                  setUpdateCloudFileArray(true);
-                }
-              });
-            }
-          })
-          .catch((error) => {
-            showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
-          })
-          .finally(() => {
-            setLoading(false);
-          });
+      } else {
+        if (!ofProject) {
+          const newUrl = HOME_URL + '?client=web&userid=' + uid + '&title=' + encodeURIComponent(title);
+          window.history.pushState({}, document.title, newUrl);
+        }
+      }
+      // a project file should not be added to the local cache
+      if (!ofProject) {
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data && cloudFilesRef.current.length > 0) {
+            removeCloudFileIfExisting(uid, title);
+            const file = { timestamp: data.timestamp, title } as CloudFileInfo;
+            cloudFilesRef.current.push(file);
+            await addFileToList(uid, file);
+            setUpdateCloudFileArray(true);
+          }
+        }
       }
     } catch (error) {
       showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
+    } finally {
       setLoading(false);
     }
   };
@@ -1315,133 +1196,110 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     if (!uid) return;
     setLoading(true);
     cloudFilesRef.current = [];
-    await firebase
-      .firestore()
-      .collection('users')
-      .doc(uid)
-      .get()
-      .then(async (doc) => {
-        const fileList = doc.data()?.fileList;
-        if (!refresh && fileList && fileList.length > 0) {
-          // if a file list exists, use it
-          cloudFilesRef.current?.push(...fileList);
-        } else {
-          // if a file list does not exist, create one
-          await firebase
-            .firestore()
-            .collection('users')
-            .doc(uid)
-            .collection('files')
-            .get()
-            .then((querySnapshot) => {
-              querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                cloudFilesRef.current?.push({ timestamp: data.timestamp, title: doc.id } as CloudFileInfo);
-              });
-            })
-            .catch((error) => {
-              showError(i18n.t('message.CannotOpenCloudFolder', lang) + ': ' + error);
-            })
-            .finally(() => {
-              firebase
-                .firestore()
-                .collection('users')
-                .doc(uid)
-                .update({ fileList: cloudFilesRef.current })
-                .then(() => {
-                  // ignore
-                })
-                .catch((error) => {
-                  console.log(error);
-                });
-            });
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-        setUpdateCloudFileArray(true);
-      });
-  };
+    try {
+      const userDocRef = doc(firestore, 'users', uid);
+      const userDocSnap = await getDoc(userDocRef);
+      const fileList = userDocSnap.data()?.fileList;
 
-  const deleteCloudFile = (uid: string, title: string) => {
-    firebase
-      .firestore()
-      .collection('users')
-      .doc(uid)
-      .collection('files')
-      .doc(title)
-      .delete()
-      .then(() => {
-        removeCloudFileIfExisting(uid, title);
-        setCloudFileArray(cloudFileArray.filter((e) => e.title !== title));
-        setCommonStore((state) => {
-          if (title === state.cloudFile) {
-            state.cloudFile = undefined;
+      if (!refresh && fileList && fileList.length > 0) {
+        // if a file list exists, use it
+        cloudFilesRef.current?.push(...fileList);
+      } else {
+        // if a file list does not exist, create one
+        try {
+          const filesSnapshot = await getDocs(collection(userDocRef, 'files'));
+          filesSnapshot.forEach((fileDoc) => {
+            const data = fileDoc.data();
+            cloudFilesRef.current?.push({
+              timestamp: data.timestamp,
+              title: fileDoc.id,
+            } as CloudFileInfo);
+          });
+        } catch (error) {
+          showError(i18n.t('message.CannotOpenCloudFolder', lang) + ': ' + error);
+        } finally {
+          try {
+            await updateDoc(userDocRef, { fileList: cloudFilesRef.current });
+          } catch (error) {
+            console.log(error);
           }
-        });
-      })
-      .catch((error) => {
-        showError(i18n.t('message.CannotDeleteCloudFile', lang) + ': ' + error);
-      });
+        }
+      }
+    } finally {
+      setLoading(false);
+      setUpdateCloudFileArray(true);
+    }
   };
 
-  const renameCloudFile = (uid: string, oldTitle: string, newTitle: string) => {
-    doesDocExist(uid, newTitle, (error) => {
-      showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
-    }).then((exist) => {
+  const deleteCloudFile = async (uid: string, title: string) => {
+    try {
+      await deleteDoc(doc(firestore, 'users', uid, 'files', title));
+
+      removeCloudFileIfExisting(uid, title);
+      setCloudFileArray(cloudFileArray.filter((e) => e.title !== title));
+
+      setCommonStore((state) => {
+        if (title === state.cloudFile) {
+          state.cloudFile = undefined;
+        }
+      });
+    } catch (error) {
+      showError(i18n.t('message.CannotDeleteCloudFile', lang) + ': ' + error);
+    }
+  };
+
+  const renameCloudFile = async (uid: string, oldTitle: string, newTitle: string) => {
+    try {
+      const exist = await doesDocExist(uid, newTitle, (error: string) => {
+        showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
+      });
+
       if (exist) {
         showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + newTitle);
       } else {
-        const files = firebase.firestore().collection('users').doc(uid).collection('files');
-        files
-          .doc(oldTitle)
-          .get()
-          .then((doc) => {
-            if (doc.exists) {
-              const data = doc.data();
-              if (data) {
-                files
-                  .doc(newTitle)
-                  .set(data)
-                  .then(() => {
-                    files
-                      .doc(oldTitle)
-                      .delete()
-                      .then(() => {
-                        // ignore for now
-                      })
-                      .catch((error) => {
-                        showError(i18n.t('message.CannotDeleteCloudFile', lang) + ' ' + oldTitle + ': ' + error);
-                      });
-                    for (const f of cloudFileArray) {
-                      if (f.title === oldTitle) {
-                        f.title = newTitle;
-                        break;
-                      }
-                    }
-                    setCloudFileArray([...cloudFileArray]);
-                    renameCloudFileAndUpdateList(uid, oldTitle, newTitle);
-                    setCommonStore((state) => {
-                      if (state.cloudFile === oldTitle) {
-                        state.cloudFile = newTitle;
-                      }
-                    });
-                    // change the address field of the browser when the cloud file is currently open
-                    const params = new URLSearchParams(window.location.search);
-                    if (params.get('title') === oldTitle && params.get('userid') === user.uid) {
-                      const newUrl =
-                        HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(newTitle);
-                      window.history.pushState({}, document.title, newUrl);
-                    }
-                  });
+        const filesCollection = collection(firestore, 'users', uid, 'files');
+        const oldDocRef = doc(filesCollection, oldTitle);
+        const newDocRef = doc(filesCollection, newTitle);
+
+        const oldDocSnap = await getDoc(oldDocRef);
+        if (oldDocSnap.exists()) {
+          const oldData = oldDocSnap.data();
+          if (oldData) {
+            await setDoc(newDocRef, oldData);
+
+            try {
+              await deleteDoc(oldDocRef);
+            } catch (error) {
+              showError(i18n.t('message.CannotDeleteCloudFile', lang) + ' ' + oldTitle + ': ' + error);
+            }
+
+            for (const f of cloudFileArray) {
+              if (f.title === oldTitle) {
+                f.title = newTitle;
+                break;
               }
             }
-          })
-          .catch((error) => {
-            showError(i18n.t('message.CannotRenameCloudFile', lang) + ': ' + error);
-          });
+
+            setCloudFileArray([...cloudFileArray]);
+            renameCloudFileAndUpdateList(uid, oldTitle, newTitle);
+
+            setCommonStore((state) => {
+              if (state.cloudFile === oldTitle) {
+                state.cloudFile = newTitle;
+              }
+            });
+            // change the address field of the browser when the cloud file is currently open
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('title') === oldTitle && params.get('userid') === user.uid) {
+              const newUrl = HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(newTitle);
+              window.history.pushState({}, document.title, newUrl);
+            }
+          }
+        }
       }
-    });
+    } catch (error) {
+      showError(i18n.t('message.CannotRenameCloudFile', lang) + ': ' + error);
+    }
   };
 
   function updateCloudFile() {
@@ -1467,7 +1325,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     });
   }
 
-  function publishOnModelsMap() {
+  async function publishOnModelsMap() {
     if (user && user.uid && title) {
       // check if the user is the owner of the current model
       const params = new URLSearchParams(window.location.search);
@@ -1486,130 +1344,115 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           timeCreated: Date.now(),
         } as ModelSite;
         const modelKey = Util.getModelKey(m);
-        const collection = firebase.firestore().collection('models');
-        if (collection) {
-          // first we upload a thumbnail of the model to Firestore Cloud Storage
-          const storageRef = firebase.storage().ref();
-          if (canvas) {
-            const thumbnail = Util.resizeCanvas(canvas, 200);
-            thumbnail.toBlob((blob) => {
-              if (blob) {
-                const metadata = { contentType: 'image/png' };
-                const uploadTask = storageRef.child('images/' + modelKey + '.png').put(blob, metadata);
-                // Listen for state changes, errors, and completion of the upload.
-                uploadTask.on(
-                  firebase.storage.TaskEvent.STATE_CHANGED,
-                  (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    if (progress > 0) {
-                      showInfo(i18n.t('word.Upload', lang) + ': ' + progress + '%');
+        const modelsCollection = collection(firestore, 'models');
+        if (canvas) {
+          const thumbnail = Util.resizeCanvas(canvas, 200);
+          thumbnail.toBlob((blob) => {
+            if (blob) {
+              const metadata = { contentType: 'image/png' };
+              const imageRef = ref(storage, 'images/' + modelKey + '.png');
+              const uploadTask = uploadBytesResumable(imageRef, blob, metadata);
+              // Listen for state changes, errors, and completion of the upload.
+              uploadTask.on(
+                'state_changed',
+                (snapshot) => {
+                  const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                  if (progress > 0) {
+                    showInfo(i18n.t('word.Upload', lang) + ': ' + progress + '%');
+                  }
+                },
+                (error) => {
+                  showError('Storage: ' + error);
+                },
+                async () => {
+                  try {
+                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                    const m2 = { ...m, thumbnailUrl: downloadURL } as ModelSite;
+                    // after we get a download URL for the thumbnail image, we then go on to upload other data
+                    try {
+                      const docKey = Util.getLatLngKey(latitude, longitude);
+                      const documentRef = doc(modelsCollection, docKey);
+                      const docSnap = await getDoc(documentRef);
+                      await setDoc(documentRef, { [modelKey]: m2 }, { merge: true });
+                      if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if (data && data[modelKey]) {
+                          showSuccess(i18n.t('menu.file.UpdatedOnModelsMap', lang) + '.');
+                        } else {
+                          showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
+                        }
+                      } else {
+                        showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
+                      }
+                    } catch (error) {
+                      showError(i18n.t('message.CannotPublishModelOnMap', lang) + ': ' + error);
                     }
-                  },
-                  (error) => {
-                    showError('Storage: ' + error);
-                  },
-                  () => {
-                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                      const m2 = { ...m, thumbnailUrl: downloadURL } as ModelSite;
-                      // after we get a download URL for the thumbnail image, we then go on to upload other data
-                      const document = collection.doc(Util.getLatLngKey(latitude, longitude));
-                      document
-                        .get()
-                        .then((doc) => {
-                          if (doc.exists) {
-                            const data = doc.data();
-                            if (data && data[modelKey]) {
-                              document.set({ [modelKey]: m2 }, { merge: true }).then(() => {
-                                showSuccess(i18n.t('menu.file.UpdatedOnModelsMap', lang) + '.');
-                              });
-                            } else {
-                              document.set({ [modelKey]: m2 }, { merge: true }).then(() => {
-                                showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
-                              });
-                            }
-                          } else {
-                            document.set({ [modelKey]: m2 }, { merge: true }).then(() => {
-                              showSuccess(i18n.t('menu.file.PublishedOnModelsMap', lang) + '.');
-                            });
-                          }
-                        })
-                        .catch((error) => {
-                          showError(i18n.t('message.CannotPublishModelOnMap', lang) + ': ' + error);
-                        });
-                      // add to the leaderboard
-                      firebase
-                        .firestore()
-                        .collection('board')
-                        .doc('people')
-                        .update({
-                          [(m2.author ?? 'Anonymous') + '.' + Util.getModelKey(m2)]: m2,
-                        })
-                        .then(() => {
-                          // update the cache
-                          setCommonStore((state) => {
-                            if (state.peopleModels) {
-                              const models = state.peopleModels.get(m2.author ?? 'Anonymous');
-                              if (models) {
-                                models.set(Util.getModelKey(m2), m2);
-                              }
-                            }
-                          });
-                        });
-                      // notify info
-                      firebase
-                        .firestore()
-                        .collection('board')
-                        .doc('info')
-                        .set({ latestModel: m2 }, { merge: true })
-                        .then(() => {
-                          // TODO
-                        });
+
+                    // add to the leaderboard
+                    const boardPeopleRef = doc(firestore, 'board', 'people');
+                    await updateDoc(boardPeopleRef, {
+                      [`${m2.author ?? 'Anonymous'}.${Util.getModelKey(m2)}`]: m2,
                     });
-                  },
-                );
-              }
-            });
-          }
+                    // update the cache
+                    setCommonStore((state) => {
+                      if (state.peopleModels) {
+                        const models = state.peopleModels.get(m2.author ?? 'Anonymous');
+                        if (models) {
+                          models.set(Util.getModelKey(m2), m2);
+                        }
+                      }
+                    });
+
+                    // notify info
+                    const boardInfoRef = doc(firestore, 'board', 'info');
+                    await setDoc(boardInfoRef, { latestModel: m2 }, { merge: true });
+                  } catch (error) {
+                    console.log(error);
+                  }
+                },
+              );
+            }
+          });
         }
-        // keep a record of the published model in the user's account
-        firebase
-          .firestore()
-          .collection('users')
-          .doc(user.uid)
-          .update(
+
+        try {
+          // keep a record of the published model in the user's account
+          await updateDoc(
+            doc(firestore, 'users', user.uid),
             useStore.getState().modelAuthor === user.displayName
               ? {
-                  published: firebase.firestore.FieldValue.arrayUnion(title),
+                  published: arrayUnion(title),
                 }
               : {
-                  published: firebase.firestore.FieldValue.arrayUnion(title),
-                  aliases: firebase.firestore.FieldValue.arrayUnion(useStore.getState().modelAuthor),
+                  published: arrayUnion(title),
+                  aliases: arrayUnion(useStore.getState().modelAuthor),
                 },
-          )
-          .then(() => {
-            // update the cache
-            setCommonStore((state) => {
-              if (state.user) {
-                if (!state.user.published) state.user.published = [];
-                if (!state.user.published.includes(title)) {
-                  state.user.published.push(title);
-                }
-                if (!state.user.aliases) state.user.aliases = [];
-                if (
-                  state.modelAuthor &&
-                  !state.user.aliases.includes(state.modelAuthor) &&
-                  state.modelAuthor !== user.displayName
-                ) {
-                  state.user.aliases.push(state.modelAuthor);
-                }
+          );
+          // update the cache
+          setCommonStore((state) => {
+            if (state.user) {
+              if (!state.user.published) state.user.published = [];
+              if (!state.user.published.includes(title)) {
+                state.user.published.push(title);
               }
-            });
+              if (!state.user.aliases) state.user.aliases = [];
+              if (
+                state.modelAuthor &&
+                !state.user.aliases.includes(state.modelAuthor) &&
+                state.modelAuthor !== user.displayName
+              ) {
+                state.user.aliases.push(state.modelAuthor);
+              }
+            }
           });
+        } catch (error) {
+          console.log(error);
+        }
       }
     }
   }
 
-  function createNewProject() {
+  async function createNewProject() {
     if (!user || !user.uid) return;
     const title = usePrimitiveStore.getState().projectTitle;
     if (!title) {
@@ -1621,77 +1464,70 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
       return;
     }
-    // check if the project title is already used
-    doesProjectExist(user.uid, t, (error) => {
-      showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
-    })
-      .then((exist) => {
-        if (exist) {
-          showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
-        } else {
-          if (user && user.uid) {
-            const type = usePrimitiveStore.getState().projectType ?? DesignProblem.SOLAR_PANEL_ARRAY;
-            const description = usePrimitiveStore.getState().projectDescription ?? null;
-            const timestamp = new Date().getTime();
-            const counter = 0;
-            firebase
-              .firestore()
-              .collection('users')
-              .doc(user.uid)
-              .collection('projects')
-              .doc(t)
-              .set({
-                owner: user.uid,
-                timestamp,
-                type,
-                description,
-                counter,
-                designs: [],
-                hiddenParameters: ProjectUtil.getDefaultHiddenParameters(type),
-              })
-              .then(() => {
-                setCommonStore((state) => {
-                  state.projectView = true;
-                  // update the local copy as well
-                  state.projectState.owner = user.uid;
-                  state.projectState.type = type;
-                  state.projectState.title = title;
-                  state.projectState.description = description;
-                  state.projectState.counter = 0;
-                  state.projectState.dataColoring = DataColoring.ALL;
-                  state.projectState.selectedProperty = null;
-                  state.projectState.sortDescending = false;
-                  state.projectState.xAxisNameScatterPlot = null;
-                  state.projectState.yAxisNameScatterPlot = null;
-                  state.projectState.dotSizeScatterPlot = 5;
-                  state.projectState.thumbnailWidth = 200;
-                  state.projectState.designs = [];
-                  state.projectState.ranges = [];
-                  state.projectState.filters = [];
-                  state.projectState.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectState.type);
-                });
-              })
-              .catch((error) => {
-                showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
-              })
-              .finally(() => {
-                // if the project list panel is open, update it
-                if (showProjectListPanel) {
-                  fetchMyProjects(false).then(() => {
-                    setUpdateFlag(!updateFlag);
-                  });
-                }
-                setLoading(false);
+
+    try {
+      // check if the project title is already used
+      const exist = await doesDocExist(user.uid, t, (error) => {
+        showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
+      });
+      if (exist) {
+        showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
+      } else {
+        if (user && user.uid) {
+          const type = usePrimitiveStore.getState().projectType ?? DesignProblem.SOLAR_PANEL_ARRAY;
+          const description = usePrimitiveStore.getState().projectDescription ?? null;
+          const timestamp = new Date().getTime();
+          const counter = 0;
+
+          try {
+            await setDoc(doc(firestore, 'users', user.uid, 'projects', t), {
+              owner: user.uid,
+              timestamp,
+              type,
+              description,
+              counter,
+              designs: [],
+              hiddenParameters: ProjectUtil.getDefaultHiddenParameters(type),
+            });
+            setCommonStore((state) => {
+              state.projectView = true;
+              // update the local copy as well
+              state.projectState.owner = user.uid;
+              state.projectState.type = type;
+              state.projectState.title = title;
+              state.projectState.description = description;
+              state.projectState.counter = 0;
+              state.projectState.dataColoring = DataColoring.ALL;
+              state.projectState.selectedProperty = null;
+              state.projectState.sortDescending = false;
+              state.projectState.xAxisNameScatterPlot = null;
+              state.projectState.yAxisNameScatterPlot = null;
+              state.projectState.dotSizeScatterPlot = 5;
+              state.projectState.thumbnailWidth = 200;
+              state.projectState.designs = [];
+              state.projectState.ranges = [];
+              state.projectState.filters = [];
+              state.projectState.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectState.type);
+            });
+          } catch (error) {
+            showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
+          } finally {
+            // if the project list panel is open, update it
+            if (showProjectListPanel) {
+              fetchMyProjects(false).then(() => {
+                setUpdateFlag(!updateFlag);
               });
+            }
+            setLoading(false);
           }
         }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function saveProjectAs() {
+  async function saveProjectAs() {
     if (!user || !user.uid) return;
     const title = usePrimitiveStore.getState().projectTitle;
     if (!title) {
@@ -1703,10 +1539,11 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       showError(i18n.t('message.CannotCreateNewProjectWithoutTitle', lang) + '.');
       return;
     }
-    // check if the project title is already taken
-    doesProjectExist(user.uid, t, (error) => {
-      showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
-    }).then((exist) => {
+    try {
+      // check if the project title is already taken
+      const exist = await doesProjectExist(user.uid, t, (error) => {
+        showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
+      });
       if (exist) {
         showInfo(i18n.t('message.TitleUsedChooseDifferentOne', lang) + ': ' + t);
       } else {
@@ -1737,13 +1574,9 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                   newDesigns[i].thumbnail = getImageData(image);
                 }
               }
-              firebase
-                .firestore()
-                .collection('users')
-                .doc(user.uid)
-                .collection('projects')
-                .doc(t)
-                .set({
+
+              try {
+                await setDoc(doc(firestore, 'users', user.uid, 'projects', t), {
                   owner: user.uid,
                   timestamp,
                   type,
@@ -1760,33 +1593,32 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                   ranges: useStore.getState().projectState.ranges ?? null,
                   filters: useStore.getState().projectState.filters ?? null,
                   hiddenParameters: useStore.getState().projectState.hiddenParameters,
-                })
-                .then(() => {
-                  setCommonStore((state) => {
-                    state.projectView = true;
-                    state.projectState.owner = user.uid;
-                    state.projectState.type = type;
-                    state.projectState.title = title;
-                    state.projectState.description = description;
-                    state.projectState.designs = newDesigns;
-                  });
-                })
-                .catch((error) => {
-                  showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
-                })
-                .finally(() => {
-                  if (showProjectListPanel) {
-                    fetchMyProjects(false).then(() => {
-                      setUpdateFlag(!updateFlag);
-                    });
-                  }
-                  setLoading(false);
                 });
+                setCommonStore((state) => {
+                  state.projectView = true;
+                  state.projectState.owner = user.uid;
+                  state.projectState.type = type;
+                  state.projectState.title = title;
+                  state.projectState.description = description;
+                  state.projectState.designs = newDesigns;
+                });
+              } catch (error) {
+                showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
+              } finally {
+                if (showProjectListPanel) {
+                  fetchMyProjects(false).then(() => {
+                    setUpdateFlag(!updateFlag);
+                  });
+                }
+                setLoading(false);
+              }
             }
           }
         }
       }
-    });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   function curateDesignToProject() {
@@ -1852,7 +1684,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
         setTitleDialogVisible={setTitleDialogVisible}
         isTitleDialogVisible={() => titleDialogVisible}
       />
-      <MainToolBar signIn={signIn} signInAnonymously={signInAnonymously} signOut={signOut} />
+      <MainToolBar signIn={signIn} signInAnonymously={handleSignInAnonymously} signOut={handleSignOut} />
       {showCloudFilePanel && (
         <CloudFilePanel
           cloudFileArray={cloudFileArray}

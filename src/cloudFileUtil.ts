@@ -3,66 +3,49 @@
  */
 
 import { useStore } from './stores/common';
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/storage';
 import { showError, showInfo } from './helpers';
 import i18n from './i18n/i18n';
 import { HOME_URL } from './constants';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { CloudFileInfo } from './types';
+import { arrayRemove, arrayUnion, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { firestore } from './firebase';
 
 export const doesDocExist = async (uid: string, fileName: string, callbackOnError: (error: string) => void) => {
   try {
-    const doc = await firebase.firestore().collection('users').doc(uid).collection('files').doc(fileName).get();
-    return doc.exists;
+    const docRef = doc(firestore, 'users', uid, 'files', fileName);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists();
   } catch (error) {
     callbackOnError(error as string);
   }
 };
 
 export const fetchFileList = async (uid: string, array: CloudFileInfo[]) => {
-  await firebase
-    .firestore()
-    .collection('users')
-    .doc(uid)
-    .get()
-    .then((doc) => {
-      const docData = doc.data();
-      if (docData) {
-        if (docData.fileList) array.push(...docData.fileList);
-        return true;
-      }
-      return false;
-    });
+  const docRef = doc(firestore, 'users', uid);
+  const docSnap = await getDoc(docRef);
+  const docData = docSnap.data();
+  if (docData) {
+    if (docData.fileList) array.push(...docData.fileList);
+    return true;
+  }
+  return false;
 };
 
 export const addFileToList = async (uid: string, file: CloudFileInfo) => {
-  await firebase
-    .firestore()
-    .collection('users')
-    .doc(uid)
-    .update({ fileList: firebase.firestore.FieldValue.arrayUnion(file) })
-    .then(() => {
-      // ignore
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  try {
+    await updateDoc(doc(firestore, 'users', uid), { fileList: arrayUnion(file) });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const removeFileFromList = async (uid: string, file: CloudFileInfo) => {
-  await firebase
-    .firestore()
-    .collection('users')
-    .doc(uid)
-    .update({ fileList: firebase.firestore.FieldValue.arrayRemove(file) })
-    .then(() => {
-      // ignore
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  try {
+    await updateDoc(doc(firestore, 'users', uid), { fileList: arrayRemove(file) });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const loadCloudFile = async (
@@ -80,14 +63,9 @@ export const loadCloudFile = async (
   });
 
   try {
-    const doc = await firebase
-      .firestore()
-      .collection('users')
-      .doc(userid)
-      .collection(ofProject ? 'designs' : 'files')
-      .doc(title)
-      .get();
-    const data = doc.data();
+    const docRef = doc(firestore, 'users', userid, ofProject ? 'designs' : 'files', title);
+    const docSnap = await getDoc(docRef);
+    const data = docSnap.data();
     if (data) {
       useStore.getState().importContent(data, title);
     } else {

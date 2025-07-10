@@ -5,11 +5,12 @@
 import React, { useEffect, useRef } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
-import firebase from 'firebase/app';
+import { getApps, initializeApp } from 'firebase/app';
 import 'firebase/database';
 import dayjs from 'dayjs';
 import { ClassID, FirebaseName, SchoolID } from './types';
 import { showWarning } from './helpers';
+import { Database, getDatabase, ref, set } from 'firebase/database';
 
 const ActionLogger = React.memo(() => {
   const actionInfo = useStore(Selector.actionInfo);
@@ -19,7 +20,7 @@ const ActionLogger = React.memo(() => {
   const projectView = useStore(Selector.projectView);
   const projectTitle = useStore(Selector.projectTitle);
 
-  const databaseRef = useRef<firebase.database.Database>();
+  const databaseRef = useRef<Database>(null!);
   const schoolID = user.schoolID ?? SchoolID.UNKNOWN;
   const classID = user.classID ?? ClassID.UNKNOWN;
 
@@ -34,17 +35,17 @@ const ActionLogger = React.memo(() => {
       appId: import.meta.env.VITE_FIREBASE_APP_ID,
     };
     let app = undefined;
-    for (const a of firebase.apps) {
+    for (const a of getApps()) {
       if (a.name === FirebaseName.LOG_DATA) {
         app = a;
         break;
       }
     }
     if (!app) {
-      app = firebase.initializeApp(config, FirebaseName.LOG_DATA);
+      app = initializeApp(config, FirebaseName.LOG_DATA);
     }
     if (app) {
-      databaseRef.current = firebase.database(app);
+      databaseRef.current = getDatabase(app);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -62,7 +63,8 @@ const ActionLogger = React.memo(() => {
             ' (' +
             dayjs(new Date(currentUndoable.timestamp)).format('MM-DD-YYYY hh:mm A') +
             ')';
-          await databaseRef.current.ref(schoolID + '/' + classID + '/' + user.uid + '/' + timestamp).set(
+          await set(
+            ref(databaseRef.current, `${schoolID}/${classID}/${user.uid}/${timestamp}`),
             projectView
               ? {
                   project: projectTitle ?? 'Untitled',
@@ -87,13 +89,12 @@ const ActionLogger = React.memo(() => {
         if (databaseRef.current) {
           const timestamp =
             actionInfo.timestamp + ' (' + dayjs(new Date(actionInfo.timestamp)).format('MM-DD-YYYY hh:mm A') + ')';
-          await databaseRef.current
-            .ref(schoolID + '/' + classID + '/' + user.uid + '/' + timestamp)
-            .set(
-              projectView
-                ? { project: projectTitle ?? 'Untitled', action: JSON.stringify(actionInfo) }
-                : { file: cloudFile ?? 'Untitled', action: JSON.stringify(actionInfo) },
-            );
+          await set(
+            ref(databaseRef.current, `${schoolID}/${classID}/${user.uid}/${timestamp}`),
+            projectView
+              ? { project: projectTitle ?? 'Untitled', action: JSON.stringify(actionInfo) }
+              : { file: cloudFile ?? 'Untitled', action: JSON.stringify(actionInfo) },
+          );
         }
       };
       logData().catch((e) => {
