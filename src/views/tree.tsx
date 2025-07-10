@@ -277,7 +277,7 @@ const Tree = React.memo((treeModel: TreeModel) => {
               <Cone
                 visible={showModel || orthographic}
                 name={name + ' Model'}
-                userData={{ simulation: true }}
+                userData={{ isTree: true, treeType: name, simulation: true }}
                 position={[0, 0, name === TreeType.Spruce ? 0 : lz * 0.06]}
                 args={[lx / 2, lz, 8, 8, true]}
                 scale={[1, 1, 1]}
@@ -288,7 +288,7 @@ const Tree = React.memo((treeModel: TreeModel) => {
             ) : (
               <Sphere
                 visible={showModel || orthographic}
-                userData={{ simulation: !noLeaves }}
+                userData={{ isTree: true, treeType: name, simulation: !noLeaves }}
                 name={name + ' Model'}
                 args={[lx / 2, 8, 8, 0, TWO_PI, 0, theta]}
                 scale={[1, lz / lx, 1]}

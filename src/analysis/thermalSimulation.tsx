@@ -9,7 +9,7 @@ import * as Selector from '../stores/selector';
 import { RoofModel, RoofType } from '../models/RoofModel';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
-import { DiurnalTemperatureModel, ObjectType } from '../types';
+import { DiurnalTemperatureModel, ObjectType, TreeType } from '../types';
 import { Util } from '../Util';
 import { AIR_DENSITY, AIR_ISOBARIC_SPECIFIC_HEAT, JOULE_TO_KWH, MINUTES_OF_DAY } from './analysisConstants';
 import { WallFill, WallModel, WallStructure } from '../models/WallModel';
@@ -37,6 +37,8 @@ import {
   DEFAULT_DOOR_U_VALUE,
   DEFAULT_FOUNDATION_SLAB_DEPTH,
   DEFAULT_GROUND_FLOOR_R_VALUE,
+  DEFAULT_LEAF_OFF_DAY,
+  DEFAULT_LEAF_OUT_DAY,
   DEFAULT_ROOF_R_VALUE,
   DEFAULT_WALL_R_VALUE,
   DEFAULT_WINDOW_U_VALUE,
@@ -49,6 +51,7 @@ import { SunMinutes } from './SunMinutes';
 import { useDataStore } from '../stores/commonData';
 import { RoofUtil } from '../views/roof/RoofUtil';
 import { useLanguage, useWeather } from '../hooks';
+import { TreeData } from 'src/TreeData';
 
 interface ThermalSimulationProps {
   city: string | null;
@@ -460,17 +463,6 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
 
   // yearly simulation
 
-  const [monthIndex, setMonthIndex] = useState<number>(now.getMonth());
-
-  useEffect(() => {
-    // give it some time for the scene to update as a result of month change
-    // the delay should not be too long (otherwise it may get the wrong month)
-    setTimeout(() => {
-      fetchObjects();
-    }, 10);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [monthIndex]);
-
   useEffect(() => {
     if (runYearlySimulation) {
       usePrimitiveStore.getState().set((state) => {
@@ -485,7 +477,6 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
         }, 50);
       } else {
         initYearly();
-        setMonthIndex(now.getMonth());
         setTimeout(() => {
           fetchObjects(); // ensure that the objects are fetched if the initial date happens to be in January
           requestRef.current = requestAnimationFrame(simulateYearly);
@@ -616,12 +607,9 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
             setCommonStore((state) => {
               state.world.date = now.toLocaleString('en-US');
             });
-            setMonthIndex(now.getMonth());
-            // give some time for the 3D object tree to update before the next simulation step
-            setTimeout(() => {
-              // recursive call to the next step of the simulation
-              requestRef.current = requestAnimationFrame(simulateYearly);
-            }, 100);
+            updateTrees();
+            fetchObjects();
+            requestRef.current = requestAnimationFrame(simulateYearly);
           });
         }
       }
@@ -1699,6 +1687,46 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
       } as RoofSegmentResult);
     }
     return results;
+  };
+
+  const updateTrees = () => {
+    const dayOfYear = Util.dayOfYear(new Date(now.toLocaleString('en-US')));
+    const leafDayOfYear1 = useStore.getState().world.leafDayOfYear1 ?? DEFAULT_LEAF_OUT_DAY;
+    const leafDayOfYear2 = useStore.getState().world.leafDayOfYear2 ?? DEFAULT_LEAF_OFF_DAY;
+
+    const content = scene.children.filter((c) => c.name === 'Content');
+    if (content.length > 0) {
+      const components = content[0].children;
+      for (const c of components) {
+        updateTree(c, objectsRef.current, dayOfYear, leafDayOfYear1, leafDayOfYear2);
+      }
+    }
+  };
+
+  const updateTree = (
+    obj: Object3D,
+    arr: Object3D[],
+    dayOfYear: number,
+    leafDayOfYear1: number,
+    leafDayOfYear2: number,
+  ) => {
+    if (obj.userData['isTree']) {
+      const treeType = obj.userData['treeType'] ?? TreeType.Dogwood;
+      if (!TreeData.isConic(treeType)) {
+        const noLeaves =
+          !TreeData.isEvergreen(treeType) &&
+          (useStore.getState().world.latitude > 0
+            ? dayOfYear < leafDayOfYear1 || dayOfYear > leafDayOfYear2
+            : dayOfYear >= leafDayOfYear1 && dayOfYear <= leafDayOfYear2);
+        obj.userData['simulation'] = !noLeaves;
+      }
+      return;
+    }
+    if (obj.children.length > 0) {
+      for (const c of obj.children) {
+        updateTree(c, arr, dayOfYear, leafDayOfYear1, leafDayOfYear2);
+      }
+    }
   };
 
   return <></>;
