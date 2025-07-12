@@ -7,7 +7,7 @@ import platform from 'platform';
 import { HvacSystem } from './models/HvacSystem';
 import { Theme } from './types';
 
-export const VERSION = '1.8.2';
+export const VERSION = '1.8.5';
 
 // used for check old file that need to update light intensity.
 export const LIGHT_INTENSITY_CHANGED_VERSION = '1.5.0';
@@ -142,7 +142,12 @@ export const REGEX_ALLOWABLE_IN_NAME = /^[A-Za-z0-9\s-_()!?%&,]*$/;
 
 export const KeyCtrl = isMac() ? '⌘' : 'Ctrl';
 
-export const DEFAULT_HVAC_SYSTEM = { heatingSetpoint: 20, coolingSetpoint: 20, temperatureThreshold: 3 } as HvacSystem;
+export const DEFAULT_HVAC_SYSTEM = {
+  heatingSetpoint: 20,
+  coolingSetpoint: 20,
+  temperatureThreshold: 3,
+  coefficientOfPerformanceAC: 4,
+} as HvacSystem;
 
 export enum Operation {
   Move = 'Move',

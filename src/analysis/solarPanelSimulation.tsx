@@ -576,6 +576,7 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
         });
         updateTrees();
         fetchObjects();
+        // recursive call to the next step of the simulation
         requestRef.current = requestAnimationFrame(simulateYearly);
       }
     }

@@ -584,7 +584,7 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
           let netLabel = 'Net';
           let batteryLabel = 'Battery';
           let gridLabel = 'Grid';
-          if (!!hasLabelId) {
+          if (hasLabelId) {
             netLabel = 'Net ' + hvacId;
             batteryLabel = 'Battery ' + hvacId;
             gridLabel = 'Grid ' + hvacId;

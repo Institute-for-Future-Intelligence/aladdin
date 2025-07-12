@@ -13,6 +13,9 @@ export interface HvacSystem {
   heatingSetpoint?: number;
   coolingSetpoint?: number;
 
+  // https://en.wikipedia.org/wiki/Coefficient_of_performance
+  coefficientOfPerformanceAC?: number;
+
   /*
    If the lowest temperature of the day is this degree below the thermostat setpoint,
    then we assume no heating is needed as the heat absorbed during the day can be slowly released

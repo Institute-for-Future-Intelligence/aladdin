@@ -602,13 +602,14 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
           dayRef.current = Util.dayOfYear(now);
           resetHourlyMaps();
           resetSolarHeatMaps();
-          // for some reason, we have to pyt the date change in a timeout here
+          // for some reason, we have to put the date change in a timeout here
           setTimeout(() => {
             setCommonStore((state) => {
               state.world.date = now.toLocaleString('en-US');
             });
             updateTrees();
             fetchObjects();
+            // recursive call to the next step of the simulation
             requestRef.current = requestAnimationFrame(simulateYearly);
           });
         }

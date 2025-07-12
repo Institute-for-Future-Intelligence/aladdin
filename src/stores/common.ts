@@ -3736,7 +3736,6 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   state.pasteNormal,
                   oldParent,
                 );
-                console.log('paste', e);
                 if (e) {
                   if (state.pasteNormal && newParent?.type === ObjectType.Cuboid) {
                     e.normal = state.pasteNormal.toArray();
