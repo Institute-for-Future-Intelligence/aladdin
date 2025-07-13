@@ -37,6 +37,7 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const IDRef = useRef(hvac?.id);
   const [type, setType] = useState<'Simple' | 'Programmable'>(hvac?.type ?? 'Simple');
   const [tolerance, setTolerance] = useState<number>(hvac?.temperatureThreshold ?? 2);
+  const [cop, setCop] = useState<number>(hvac?.coefficientOfPerformanceAC ?? 4);
   const [heatingSetpoint, setHeatingSetpoint] = useState<number>(
     hvac?.heatingSetpoint ?? hvac?.thermostatSetpoint ?? 20,
   );
@@ -58,6 +59,7 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
       h1.temperatureThreshold !== h2.temperatureThreshold ||
       h1.heatingSetpoint !== h2.heatingSetpoint ||
       h1.coolingSetpoint !== h2.coolingSetpoint ||
+      h1.coefficientOfPerformanceAC !== h2.coefficientOfPerformanceAC ||
       h1.type !== h2.type
     ) {
       return false;
@@ -175,6 +177,7 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
       heatingSetpoint,
       coolingSetpoint,
       temperatureThreshold: tolerance,
+      coefficientOfPerformanceAC: cop,
       type,
       thermostatSetpoints,
     } as HvacSystem;
@@ -241,6 +244,23 @@ const BuildingHVACSystem = ({ setDialogVisible }: { setDialogVisible: (b: boolea
             onChange={(val) => {
               if (val === null) return;
               setTolerance(Number(val));
+            }}
+          />
+        </Col>
+      </Row>
+      <Row style={{ padding: '4px 0', height: '39px' }}>
+        <Col span={16} style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+          <b>{i18n.t('HVACMenu.ACCoefficientOfPerformance', lang)} (&lt;7.8):</b>
+        </Col>
+        <Col span={8} style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <InputNumber
+            value={cop}
+            min={1}
+            max={7.8} // theoretical limit is 7.8
+            step={0.01}
+            onChange={(val) => {
+              if (val === null) return;
+              setCop(Number(val));
             }}
           />
         </Col>

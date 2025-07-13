@@ -298,6 +298,7 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
                   adjustedAc += value.geothermal;
                   if (adjustedAc < 0) adjustedAc = 0;
                 }
+                adjustedAc /= f.hvacSystem.coefficientOfPerformanceAC ?? 4;
                 const heaterId = 'Heater ' + id;
                 if (datum[heaterId]) {
                   datum[heaterId] = (datum[heaterId] as number) + adjustedHeat;
@@ -413,6 +414,7 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
                   adjustedAc += value.geothermal;
                   if (adjustedAc < 0) adjustedAc = 0;
                 }
+                adjustedAc /= f.hvacSystem.coefficientOfPerformanceAC ?? 4;
                 datum['Heater'] = adjustedHeat;
                 datum['AC'] = adjustedAc;
                 if (value.solarPanel !== undefined) {

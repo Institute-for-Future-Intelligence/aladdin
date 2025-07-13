@@ -688,10 +688,11 @@ export const i18n_zh_tw = {
 
     HVACMenu: {
       BuildingHVACSystem: '建築物暖通空調系統',
+      ID: 'ID',
       Tolerance: '溫度忍耐閾值',
       ToleranceExplanation:
         '當日最低外面溫度高於恆溫器設定值減去此閾值，暖氣不開。\n當日最高外面溫度低於恆溫器設定值加上此閾值，空調不開。',
-      ID: 'ID',
+      ACCoefficientOfPerformance: '空調性能係數',
       ThermostatType: '恆溫器類型',
       Simple: '簡單',
       Programmable: '編程',

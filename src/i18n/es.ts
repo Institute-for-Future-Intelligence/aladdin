@@ -691,9 +691,10 @@ export const i18n_es = {
     HVACMenu: {
       BuildingHVACSystem: 'Building HVAC System',
       ID: 'ID',
-      TemperatureTolerance: 'Tolerance',
-      TemperatureToleranceExplanation:
+      Tolerance: 'Tolerance',
+      ToleranceExplanation:
         'Heater will not run if the lowest outside temperature of the day is higher than the setpoint minus this threshold.\nAC will not run if the highest outside temperature of the day is lower than the setpoint plus this threshold.',
+      ACCoefficientOfPerformance: 'Coefficient of Performance of AC',
       ThermostatType: 'Thermostat Type',
       Simple: 'Simple',
       Programmable: 'Programmable',
@@ -707,6 +708,7 @@ export const i18n_es = {
       Day: 'Day',
       Evening: 'Evening',
       Sleep: 'Sleep',
+      TimeErrorMessage: 'Start time should be later than previous period.',
     },
 
     avatarMenu: {
