@@ -1491,6 +1491,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             });
             setCommonStore((state) => {
               state.projectView = true;
+              state.canvasPercentWidth = 50;
               // update the local copy as well
               state.projectState.owner = user.uid;
               state.projectState.type = type;
