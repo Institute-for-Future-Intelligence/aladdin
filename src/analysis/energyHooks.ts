@@ -298,6 +298,7 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
                   adjustedAc += value.geothermal;
                   if (adjustedAc < 0) adjustedAc = 0;
                 }
+                // we only need to apply AC efficiency (electrical heating has an efficiency of 100%)
                 adjustedAc /= f.hvacSystem.coefficientOfPerformanceAC ?? 4;
                 const heaterId = 'Heater ' + id;
                 if (datum[heaterId]) {
@@ -414,6 +415,7 @@ export const useDailyEnergySorter = (now: Date, weather: WeatherModel, hasSolarP
                   adjustedAc += value.geothermal;
                   if (adjustedAc < 0) adjustedAc = 0;
                 }
+                // we only need to apply AC efficiency (electrical heating has an efficiency of 100%)
                 adjustedAc /= f.hvacSystem.coefficientOfPerformanceAC ?? 4;
                 datum['Heater'] = adjustedHeat;
                 datum['AC'] = adjustedAc;
