@@ -182,6 +182,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const economicsParams = useStore(Selector.economicsParams);
   const cloudFileBelongToProject = useStore(Selector.cloudFileBelongToProject);
   const closeProject = useStore(Selector.closeProject);
+  const generating = usePrimitiveStore(Selector.generating);
 
   const [selectedDesign, setSelectedDesign] = useState<Design | undefined>();
   const [hoveredDesign, setHoveredDesign] = useState<Design | undefined>();
@@ -1380,7 +1381,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                   </Button>
                 )}
 
-                {false ? (
+                {generating ? (
                   <span
                     title={t('message.GeneratingHouse', lang)}
                     onClick={(e) => {

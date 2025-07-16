@@ -17,6 +17,7 @@ import i18n from 'src/i18n/i18n';
 import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
+import { callAzureOpenAI } from '../../functions/src/callAzureOpenAI';
 
 export interface GenerateHouseModalProps {
   setDialogVisible: (visible: boolean) => void;
@@ -33,7 +34,7 @@ const GenerateHouseModal = React.memo(({ setDialogVisible, isDialogVisible }: Ge
   const setGenerating = usePrimitiveStore(Selector.setGenerating);
   const setChanged = usePrimitiveStore(Selector.setChanged);
 
-  const [prompt, setPrompt] = useState<string>(generateHousePrompt);
+  const [prompt, setPrompt] = useState<string>('build a colonial style house');
   const [listening, setListening] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({
@@ -56,7 +57,11 @@ const GenerateHouseModal = React.memo(({ setDialogVisible, isDialogVisible }: Ge
     setPrompt(generateHousePrompt);
   }, [generateHousePrompt]);
 
-  const handleGenerativeAI = async () => {};
+  const handleGenerativeAI = async () => {
+    await generate();
+    console.log('set false');
+    setGenerating(false);
+  };
 
   const generate = async () => {
     if (import.meta.env.PROD) {
@@ -77,13 +82,16 @@ const GenerateHouseModal = React.memo(({ setDialogVisible, isDialogVisible }: Ge
   };
 
   const callFromBrowser = async () => {
-    // const apiKey = import.meta.env.VITE_AZURE_API_KEY;
-    // try {
-    //   const response = await callAzureOpenAI(apiKey, prompt + ' ' + hydrogen, true, reasoningEffort);
-    //   resultRef.current = response.choices[0].message.content;
-    // } catch (e) {
-    //   console.log(e);
-    // }
+    const apiKey = import.meta.env.VITE_AZURE_API_KEY;
+    try {
+      console.log('calling...', prompt);
+      const response = await callAzureOpenAI(apiKey, prompt, true, reasoningEffort);
+      resultRef.current = response.choices[0].message.content;
+      console.log('res', resultRef.current);
+      return resultRef.current;
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const { error, interimResult, results, setResults, startSpeechToText, stopSpeechToText } = useSpeechToText({
@@ -119,11 +127,11 @@ const GenerateHouseModal = React.memo(({ setDialogVisible, isDialogVisible }: Ge
 
   const onOk = async () => {
     setGenerating(true);
+    console.log('set true');
     setCommonStore((state) => {
       state.projectState.generateHousePrompt = prompt;
     });
-    await handleGenerativeAI();
-    setGenerating(false);
+    handleGenerativeAI();
     close();
   };
 
