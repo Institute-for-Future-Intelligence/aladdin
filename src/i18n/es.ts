@@ -183,6 +183,8 @@ export const i18n_es = {
       Nickname: 'Nickname',
       Pin: 'Pin',
       Unpin: 'Unpin',
+      Low: 'Low',
+      Generate: 'Generate',
     },
 
     shared: {
@@ -317,6 +319,10 @@ export const i18n_es = {
       SigningOutAnonymousAccount: 'Are you sure you want to sign out? This anonymous account will be lost.',
       SigningInAnonymousAccount:
         'Are you sure you want to sign in anonymously? An anonymous account will be lost if you sign out. It should be used only for temporary purposes and on the same computer.',
+      GeneratingHouse: 'Generating house...',
+      GeneratingAHouseMayTakeAWhile:
+        'Generating a house may take a long time and cannot be cancelled. Think about your prompt carefully before pressing the Generate button.',
+      GeneratedResultNotAccepted: 'Sorry, the generated result is not accepted.',
     },
 
     menu: {
@@ -1714,6 +1720,10 @@ export const i18n_es = {
       GenerateScatterPlot: 'Generate Scatter Plot',
       SelectXAxis: 'Select X Axis',
       SelectYAxis: 'Select Y Axis',
+      HouseDesign: 'House Design',
+      GenerateHouse: 'Generate a House using AI',
+      WhatHouseDoYouWant: 'What house do you want?',
+      Listening: 'Listening...',
     },
 
     accountSettingsPanel: {

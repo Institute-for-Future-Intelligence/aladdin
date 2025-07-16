@@ -184,6 +184,8 @@ export const i18n_ua = {
       Nickname: 'Нікнейм',
       Pin: 'Закріпити',
       Unpin: 'Відкріпити',
+      Low: 'Low',
+      Generate: 'Generate',
     },
 
     shared: {
@@ -320,6 +322,10 @@ export const i18n_ua = {
       SigningOutAnonymousAccount: 'Ви впевнені, що хочете вийти? Анонімний обліковий запис буде втрачено.',
       SigningInAnonymousAccount:
         'Ви впевнені, що хочете увійти анонімно? Анонімний обліковий запис буде втрачено після виходу. Його слід використовувати лише тимчасово і на цьому ж комп’ютері.',
+      GeneratingHouse: 'Generating house...',
+      GeneratingAHouseMayTakeAWhile:
+        'Generating a house may take a long time and cannot be cancelled. Think about your prompt carefully before pressing the Generate button.',
+      GeneratedResultNotAccepted: 'Sorry, the generated result is not accepted.',
     },
 
     menu: {
@@ -1718,6 +1724,10 @@ export const i18n_ua = {
       GenerateScatterPlot: 'Згенерувати діаграму розсіювання',
       SelectXAxis: 'Виберіть вісь X',
       SelectYAxis: 'Виберіть вісь Y',
+      HouseDesign: 'House Design',
+      GenerateHouse: 'Generate a House using AI',
+      WhatHouseDoYouWant: 'What house do you want?',
+      Listening: 'Listening...',
     },
 
     accountSettingsPanel: {

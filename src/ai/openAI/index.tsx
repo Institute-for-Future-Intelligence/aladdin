@@ -360,8 +360,6 @@ const AI = memo(() => {
     console.log('getting response...');
 
     const response = await client.responses.create({
-      // model: 'gpt-4.1',
-      // model: 'o3',
       model: 'o4-mini',
       store: true,
       previous_response_id: responseId,

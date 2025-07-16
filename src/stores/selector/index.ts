@@ -79,6 +79,10 @@ export const changed = (state: PrimitiveStoreState) => state.changed;
 
 export const setChanged = (state: PrimitiveStoreState) => state.setChanged;
 
+export const generating = (state: PrimitiveStoreState) => state.generating;
+
+export const setGenerating = (state: PrimitiveStoreState) => state.setGenerating;
+
 export const setSkipChange = (state: PrimitiveStoreState) => state.setSkipChange;
 
 export const applyCount = (state: CommonStoreState) => state.applyCount;
@@ -1005,6 +1009,10 @@ export const particleSwarmOptimizationWizardSelectedTab = (state: CommonStoreSta
   state.particleSwarmOptimizationWizardSelectedTab;
 
 export const countHeatmapCells = (state: CommonStoreState) => state.countHeatmapCells;
+
+export const reasoningEffort = (state: CommonStoreState) => state.projectState.reasoningEffort;
+
+export const generateHousePrompt = (state: CommonStoreState) => state.projectState.generateHousePrompt;
 
 export const setPrimitiveStore = (state: PrimitiveStoreState) => state.setPrimitiveStore;
 

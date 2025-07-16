@@ -637,6 +637,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             yAxisNameScatterPlot: null,
             dotSizeScatterPlot: 5,
             thumbnailWidth: 200,
+            reasoningEffort: 'medium',
+            generateHousePrompt: 'Generate a colonial style house.',
           } as ProjectState,
           projectImages: new Map<string, HTMLImageElement>(),
           designProjectType: null,

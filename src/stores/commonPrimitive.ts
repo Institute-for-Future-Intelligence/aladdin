@@ -23,6 +23,9 @@ export interface PrimitiveStoreState {
 
   waiting: boolean;
 
+  generating: boolean;
+  setGenerating: (b: boolean) => void;
+
   contextMenuFlag: boolean;
   updateContextMenu: () => void;
 
@@ -221,6 +224,13 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
     },
 
     waiting: false,
+
+    generating: false,
+    setGenerating(b: boolean) {
+      immerSet((state) => {
+        state.generating = b;
+      });
+    },
 
     contextMenuFlag: false,
     updateContextMenu() {

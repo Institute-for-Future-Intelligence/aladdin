@@ -183,6 +183,8 @@ export const i18n_zh_cn = {
       Nickname: '别名',
       Pin: '置顶',
       Unpin: '解除置顶',
+      Low: '低',
+      Generate: '生成',
     },
 
     shared: {
@@ -315,6 +317,9 @@ export const i18n_zh_cn = {
       SigningOutAnonymousAccount: '你确定退出吗？一旦退出，此匿名账号将不可恢复。',
       SigningInAnonymousAccount:
         '你确定匿名登录吗？一旦退出，匿名账号将无法恢复。匿名登录主要是为无法实名登录的用户提供临时方便。',
+      GeneratingHouse: '正在生成分子。。。',
+      GeneratingAHouseMayTakeAWhile: '生成一个房子可能需要一些时间且无法取消。在按生成键前请仔细考虑好给AI的输入。',
+      GeneratedResultNotAccepted: '抱歉，返回结果无法解读。',
     },
 
     menu: {
@@ -1686,6 +1691,10 @@ export const i18n_zh_cn = {
       GenerateScatterPlot: '生成散点图',
       SelectXAxis: '选择X轴',
       SelectYAxis: '选择Y轴',
+      HouseDesign: '房屋设计',
+      GenerateHouse: '用AI设计一个房子',
+      WhatHouseDoYouWant: '你想要什么样的房子？',
+      Listening: '正在倾听...',
     },
 
     accountSettingsPanel: {

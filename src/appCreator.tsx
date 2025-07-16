@@ -328,8 +328,6 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
       {/* Spinner, Simulation and Evolution control panels */}
       <Waiting initializing={initializing} />
 
-      <AI />
-
       <div
         style={{
           backgroundColor: 'lightblue',

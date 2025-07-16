@@ -43,6 +43,7 @@ import {
 } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_fail_try_again.png';
+import GenaiImage from '../assets/genai.png';
 import { DataColoring, DatumEntry, Design, DesignProblem, Orientation } from '../types';
 import ParallelCoordinates from '../components/parallelCoordinates';
 //@ts-expect-error ignore
@@ -72,6 +73,8 @@ import { Filter, FilterType } from '../Filter';
 import { useLanguage } from '../hooks';
 import { UndoableCheck } from '../undo/UndoableCheck';
 import { UndoableChange } from '../undo/UndoableChange';
+import { FidgetSpinner } from 'react-loader-spinner';
+import GenerateHouseModal from 'src/components/generateMoleculeModal';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -184,6 +187,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const [hoveredDesign, setHoveredDesign] = useState<Design | undefined>();
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [updateHiddenFlag, setUpdateHiddenFlag] = useState<boolean>(false);
+  const [generateMoleculeDialogVisible, setGenerateMoleculeDialogVisible] = useState(false);
 
   const descriptionTextAreaEditableRef = useRef<boolean>(false);
   const descriptionRef = useRef<string | null>(projectDescription ?? null);
@@ -1375,6 +1379,29 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                     )}
                   </Button>
                 )}
+
+                {false ? (
+                  <span
+                    title={t('message.GeneratingHouse', lang)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    <FidgetSpinner width={24} height={24} />
+                  </span>
+                ) : (
+                  <Button
+                    disabled={false}
+                    style={{ border: 'none', padding: '4px' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setGenerateMoleculeDialogVisible(true);
+                    }}
+                  >
+                    <img src={GenaiImage} alt={'spark'} title={t('projectPanel.GenerateHouse', lang)} />
+                  </Button>
+                )}
+
                 <Button
                   style={{ border: 'none', padding: '4px' }}
                   onClick={(e) => {
@@ -1901,6 +1928,10 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
             />
           </SubContainer>
         )}
+        <GenerateHouseModal
+          setDialogVisible={setGenerateMoleculeDialogVisible}
+          isDialogVisible={() => generateMoleculeDialogVisible}
+        />
       </ColumnWrapper>
     </Container>
   );
