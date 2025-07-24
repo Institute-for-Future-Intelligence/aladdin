@@ -1663,6 +1663,7 @@ export const i18n_zh_cn = {
     },
 
     projectPanel: {
+      AIMemory: 'AI记忆',
       ProjectSettings: '项目设定',
       ThumbnailImageSize: '缩略图大小',
       ProjectByOtherPeople: '别人的项目',

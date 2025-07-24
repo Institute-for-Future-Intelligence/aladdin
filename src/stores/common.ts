@@ -638,7 +638,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             dotSizeScatterPlot: 5,
             thumbnailWidth: 200,
             reasoningEffort: 'medium',
-            generateHousePrompt: 'Generate a colonial style house.',
+            generateBuildingPrompt: 'Generate a colonial style house.',
+            independentPrompt: false,
           } as ProjectState,
           projectImages: new Map<string, HTMLImageElement>(),
           designProjectType: null,
@@ -671,6 +672,9 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.projectState.title = null;
               state.projectState.description = null;
               state.projectState.owner = null;
+              state.projectState.reasoningEffort = 'medium';
+              state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
+              state.projectState.independentPrompt = false;
               // when a project is closed, the current cloud file is detached
               const designs = state.projectState.designs;
               if (designs) {

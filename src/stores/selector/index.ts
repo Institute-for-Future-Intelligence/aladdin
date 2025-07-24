@@ -1012,7 +1012,9 @@ export const countHeatmapCells = (state: CommonStoreState) => state.countHeatmap
 
 export const reasoningEffort = (state: CommonStoreState) => state.projectState.reasoningEffort;
 
-export const generateHousePrompt = (state: CommonStoreState) => state.projectState.generateHousePrompt;
+export const generateBuildingPrompt = (state: CommonStoreState) => state.projectState.generateBuildingPrompt;
+
+export const independentPrompt = (state: CommonStoreState) => state.projectState.independentPrompt;
 
 export const setPrimitiveStore = (state: PrimitiveStoreState) => state.setPrimitiveStore;
 

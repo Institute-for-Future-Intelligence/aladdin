@@ -18,6 +18,9 @@ import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
 import { callAzureOpenAI } from '../../functions/src/callAzureOpenAI';
+import { ObjectType } from 'src/types';
+import { GenAIUtil } from 'src/panels/genAIUtil';
+import { RoofType } from 'src/models/RoofModel';
 
 export interface GenerateHouseModalProps {
   setDialogVisible: (visible: boolean) => void;
@@ -30,11 +33,11 @@ const GenerateHouseModal = React.memo(({ setDialogVisible, isDialogVisible }: Ge
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const reasoningEffort = useStore(Selector.reasoningEffort) ?? 'medium';
-  const generateHousePrompt = useStore(Selector.generateHousePrompt);
+  const generateBuildingPrompt = useStore(Selector.generateBuildingPrompt);
   const setGenerating = usePrimitiveStore(Selector.setGenerating);
   const setChanged = usePrimitiveStore(Selector.setChanged);
 
-  const [prompt, setPrompt] = useState<string>('build a colonial style house');
+  const [prompt, setPrompt] = useState<string>('Generate a colonial style house');
   const [listening, setListening] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({
@@ -51,16 +54,99 @@ const GenerateHouseModal = React.memo(({ setDialogVisible, isDialogVisible }: Ge
     return { lng: language };
   }, [language]);
 
-  const resultRef = useRef<string | null>(null);
-
   useEffect(() => {
-    setPrompt(generateHousePrompt);
-  }, [generateHousePrompt]);
+    setPrompt(generateBuildingPrompt);
+  }, [generateBuildingPrompt]);
 
   const handleGenerativeAI = async () => {
-    await generate();
-    console.log('set false');
-    setGenerating(false);
+    setGenerating(true);
+    try {
+      const result = await generate();
+      if (result) {
+        processResult(result);
+        setTimeout(() => {
+          usePrimitiveStore.getState().set((state) => {
+            state.curateDesignToProjectFlag = true;
+          });
+        }, 1500);
+      }
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const processResult = (text: string) => {
+    const json = JSON.parse(text);
+    useStore.getState().set((state) => {
+      state.elements = [];
+      for (const e of json) {
+        switch (e.type) {
+          case ObjectType.Foundation: {
+            const { id, center, size, color } = e;
+            const f = GenAIUtil.makeFoundation(id, center, size, color);
+            state.elements.push(f);
+            break;
+          }
+          case ObjectType.Wall: {
+            const { id, pId, center, size, leftPoint, rightPoint, color } = e;
+            const w = GenAIUtil.makeWall(
+              id,
+              pId,
+              center,
+              size,
+              color,
+              leftPoint,
+              rightPoint,
+              e.leftConnectId,
+              e.rightConnectId,
+            );
+            state.elements.push(w);
+            break;
+          }
+          case ObjectType.Door: {
+            const { id, pId, fId, center, size, color } = e;
+            const wall = state.elements.find((e) => e.id === pId);
+            if (wall) {
+              center[1] = (-wall.lz / 2 + size[1] / 2) / wall.lz;
+              size[0] = size[0] / wall.lx;
+              size[1] = size[1] / wall.lz;
+              const d = GenAIUtil.makeDoor(id, pId, fId, center, size, color);
+              state.elements.push(d);
+            }
+            break;
+          }
+          case ObjectType.Window: {
+            const { id, pId, fId, center, size } = e;
+            const wall = state.elements.find((e) => e.id === pId);
+            if (wall) {
+              size[0] = size[0] / wall.lx;
+              size[1] = size[1] / wall.lz;
+              const w = GenAIUtil.makeWindow(id, pId, fId, center, size);
+              state.elements.push(w);
+            }
+            break;
+          }
+          case ObjectType.Roof: {
+            switch (e.roofType) {
+              case RoofType.Gable: {
+                const { id, fId, wId, rise, color } = e;
+                const r = GenAIUtil.makeGableRoof(id, fId, wId, rise, color);
+                state.elements.push(r);
+                state.addedRoofIdSet.add(id);
+                break;
+              }
+              case RoofType.Pyramid: {
+                const { id, fId, wId, rise, color } = e;
+                const r = GenAIUtil.makePyramidRoof(id, fId, wId, rise, color);
+                state.elements.push(r);
+                state.addedRoofIdSet.add(id);
+              }
+            }
+            break;
+          }
+        }
+      }
+    });
   };
 
   const generate = async () => {
@@ -79,6 +165,7 @@ const GenerateHouseModal = React.memo(({ setDialogVisible, isDialogVisible }: Ge
     //   reasoningEffort,
     // })) as any;
     // resultRef.current = res.data.text;
+    return null;
   };
 
   const callFromBrowser = async () => {
@@ -86,11 +173,12 @@ const GenerateHouseModal = React.memo(({ setDialogVisible, isDialogVisible }: Ge
     try {
       console.log('calling...', prompt);
       const response = await callAzureOpenAI(apiKey, prompt, true, reasoningEffort);
-      resultRef.current = response.choices[0].message.content;
-      console.log('res', resultRef.current);
-      return resultRef.current;
+      const result = response.choices[0].message.content;
+      console.log('res', result);
+      return result;
     } catch (e) {
       console.log(e);
+      return null;
     }
   };
 
@@ -126,17 +214,15 @@ const GenerateHouseModal = React.memo(({ setDialogVisible, isDialogVisible }: Ge
   };
 
   const onOk = async () => {
-    setGenerating(true);
-    console.log('set true');
     setCommonStore((state) => {
-      state.projectState.generateHousePrompt = prompt;
+      state.projectState.generateBuildingPrompt = prompt;
     });
     handleGenerativeAI();
     close();
   };
 
   const onCancel = () => {
-    setPrompt(generateHousePrompt);
+    setPrompt(generateBuildingPrompt);
     close();
   };
 

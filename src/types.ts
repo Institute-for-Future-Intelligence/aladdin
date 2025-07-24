@@ -155,7 +155,8 @@ export interface ProjectState {
   dotSizeScatterPlot: number | null;
   thumbnailWidth: number | null;
   reasoningEffort: string;
-  generateHousePrompt: string;
+  generateBuildingPrompt: string;
+  independentPrompt: boolean;
 }
 
 export interface ActionInfo {
@@ -194,7 +195,7 @@ export enum BuildingCompletionStatus {
 export enum DesignProblem {
   SOLAR_PANEL_TILT_ANGLE = 'Solar Panel Tilt Angle',
   SOLAR_PANEL_ARRAY = 'Solar Panel Array',
-  HOUSE_DESIGN = 'House Design',
+  BUILDING_DESIGN = 'Building Design',
 }
 
 export enum ObjectiveFunctionType {

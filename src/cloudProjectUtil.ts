@@ -52,6 +52,9 @@ export const fetchProject = async (
         yAxisNameScatterPlot: data.yAxisNameScatterPlot,
         dotSizeScatterPlot: data.dotSizeScatterPlot,
         thumbnailWidth: data.thumbnailWidth,
+        reasoningEffort: data.reasoningEffort,
+        independentPrompt: data.independentPrompt,
+        generateBuildingPrompt: data.generateBuildingPrompt,
       } as ProjectState);
     } else {
       showError(i18n.t('message.CannotOpenProject', lang) + ': ' + project);

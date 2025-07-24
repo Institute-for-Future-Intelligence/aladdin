@@ -74,7 +74,7 @@ import { useLanguage } from '../hooks';
 import { UndoableCheck } from '../undo/UndoableCheck';
 import { UndoableChange } from '../undo/UndoableChange';
 import { FidgetSpinner } from 'react-loader-spinner';
-import GenerateHouseModal from 'src/components/generateMoleculeModal';
+import GenerateHouseModal from 'src/components/generateHouseModal';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -183,12 +183,13 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const cloudFileBelongToProject = useStore(Selector.cloudFileBelongToProject);
   const closeProject = useStore(Selector.closeProject);
   const generating = usePrimitiveStore(Selector.generating);
+  const independentPrompt = useStore(Selector.independentPrompt);
 
   const [selectedDesign, setSelectedDesign] = useState<Design | undefined>();
   const [hoveredDesign, setHoveredDesign] = useState<Design | undefined>();
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [updateHiddenFlag, setUpdateHiddenFlag] = useState<boolean>(false);
-  const [generateMoleculeDialogVisible, setGenerateMoleculeDialogVisible] = useState(false);
+  const [generateHouseDialogVisible, setGenerateHouseDialogVisible] = useState(false);
 
   const descriptionTextAreaEditableRef = useRef<boolean>(false);
   const descriptionRef = useRef<string | null>(projectDescription ?? null);
@@ -292,6 +293,12 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateFlag]);
 
+  const setAIMemory = (b: boolean) => {
+    useStore.getState().set((state) => {
+      state.projectState.independentPrompt = !b;
+    });
+  };
+
   const curateCurrentDesign = () => {
     usePrimitiveStore.getState().set((state) => {
       state.curateDesignToProjectFlag = true;
@@ -394,6 +401,25 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           d['selected'] = selectedDesign === design;
           d['hovered'] = hoveredDesign === design;
           d['invisible'] = design.invisible;
+          d['excluded'] = false;
+          if (projectFilters) {
+            for (const f of projectFilters) {
+              if (f.type === FilterType.Between && f.upperBound !== undefined && f.lowerBound !== undefined) {
+                const v = d[f.variable];
+                if (typeof v === 'number') {
+                  if (v > f.upperBound || v < f.lowerBound) {
+                    d['excluded'] = true;
+                    break;
+                  }
+                }
+              }
+            }
+          }
+          data.push(d);
+        }
+      } else if (projectType === DesignProblem.BUILDING_DESIGN) {
+        for (const design of projectDesigns) {
+          const d = {} as DatumEntry;
           d['excluded'] = false;
           if (projectFilters) {
             for (const f of projectFilters) {
@@ -1303,6 +1329,43 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       <div style={{ width: '250px' }} onClick={(e) => e.stopPropagation()}>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col span={14} style={{ paddingTop: '5px' }}>
+            <span>{t('projectPanel.AIMemory', lang)}: </span>
+          </Col>
+          <Col span={10}>
+            <Select
+              style={{ width: '100%' }}
+              value={!independentPrompt}
+              onChange={(value: boolean) => {
+                const oldValue = !independentPrompt;
+                const newValue = value;
+                if (newValue === oldValue) return;
+                const undoableChange = {
+                  name: 'Select AI Memory',
+                  timestamp: Date.now(),
+                  oldValue: oldValue,
+                  newValue: newValue,
+                  undo: () => {
+                    setAIMemory(undoableChange.oldValue as boolean);
+                  },
+                  redo: () => {
+                    setAIMemory(undoableChange.newValue as boolean);
+                  },
+                } as UndoableChange;
+                useStore.getState().addUndoable(undoableChange);
+                setAIMemory(newValue);
+              }}
+            >
+              <Option key={'Yes'} value={true}>
+                {t('word.Yes', lang)}
+              </Option>
+              <Option key={'No'} value={false}>
+                {t('word.No', lang)}
+              </Option>
+            </Select>
+          </Col>
+        </Row>
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col span={14} style={{ paddingTop: '5px' }}>
             <span style={{ fontSize: '12px' }}>{t('projectPanel.ThumbnailImageSize', lang)}: </span>
           </Col>
           <Col span={10}>
@@ -1396,7 +1459,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                     style={{ border: 'none', padding: '4px' }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setGenerateMoleculeDialogVisible(true);
+                      setGenerateHouseDialogVisible(true);
                     }}
                   >
                     <img src={GenaiImage} alt={'spark'} title={t('projectPanel.GenerateHouse', lang)} />
@@ -1930,8 +1993,8 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           </SubContainer>
         )}
         <GenerateHouseModal
-          setDialogVisible={setGenerateMoleculeDialogVisible}
-          isDialogVisible={() => generateMoleculeDialogVisible}
+          setDialogVisible={setGenerateHouseDialogVisible}
+          isDialogVisible={() => generateHouseDialogVisible}
         />
       </ColumnWrapper>
     </Container>

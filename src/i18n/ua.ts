@@ -1696,6 +1696,7 @@ export const i18n_ua = {
     },
 
     projectPanel: {
+      AIMemory: 'AI Memory',
       ProjectSettings: 'Налаштування проєкту',
       ThumbnailImageSize: 'Розмір мініатюри',
       ProjectByOtherPeople: 'Проєкт інших користувачів',
@@ -1724,7 +1725,7 @@ export const i18n_ua = {
       GenerateScatterPlot: 'Згенерувати діаграму розсіювання',
       SelectXAxis: 'Виберіть вісь X',
       SelectYAxis: 'Виберіть вісь Y',
-      HouseDesign: 'House Design',
+      HouseDesign: 'Building Design',
       GenerateHouse: 'Generate a House using AI',
       WhatHouseDoYouWant: 'What house do you want?',
       Listening: 'Listening...',

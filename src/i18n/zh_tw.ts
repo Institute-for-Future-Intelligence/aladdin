@@ -1664,6 +1664,7 @@ export const i18n_zh_tw = {
     },
 
     projectPanel: {
+      AIMemory: 'AI記憶',
       ProjectSettings: '專案設定',
       ThumbnailImageSize: '縮略圖大小',
       ProjectByOtherPeople: '別人的專案',

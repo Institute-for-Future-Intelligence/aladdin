@@ -265,6 +265,8 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             hiddenParameters: f.hiddenParameters ?? ProjectUtil.getDefaultHiddenParameters(f.type),
             counter: f.counter,
             action: '',
+            reasoningEffort: f.reasoningEffort,
+            generateBuildingPrompt: f.generateBuildingPrompt,
           });
         });
         arr.sort((a, b) => b.timestamp - a.timestamp);
@@ -773,6 +775,9 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           filters: data.filters ?? [],
           hiddenParameters: data.hiddenParameters ?? ProjectUtil.getDefaultHiddenParameters(data.type),
           counter: data.counter ?? 0,
+          independentPrompt: !!data.independentPrompt,
+          reasoningEffort: data.reasoningEffrot ?? 'medium',
+          generateBuildingPrompt: data.generateBuildingPrompt ?? 'Generate a colonial style house.',
         } as ProjectState);
       });
 
@@ -846,6 +851,9 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           state.projectState.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectState.type);
           state.designProjectType = null;
           state.projectView = false;
+          state.projectState.independentPrompt = false;
+          state.projectState.reasoningEffort = 'medium';
+          state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
         }
       });
     } catch (error) {
@@ -1509,6 +1517,9 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
               state.projectState.ranges = [];
               state.projectState.filters = [];
               state.projectState.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectState.type);
+              state.projectState.independentPrompt = false;
+              state.projectState.reasoningEffort = 'medium';
+              state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
             });
           } catch (error) {
             showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
@@ -1564,6 +1575,9 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             const dotSizeScatterPlot = useStore.getState().projectState.dotSizeScatterPlot ?? 5;
             const thumbnailWidth = useStore.getState().projectState.thumbnailWidth ?? 200;
             const newDesigns: Design[] = changeDesignTitles(t, designs) ?? [];
+            const reasoningEffort = useStore.getState().projectState.reasoningEffort ?? 'medium';
+            const generateBuildingPrompt =
+              useStore.getState().projectState.generateBuildingPrompt ?? 'Generate a colonial style house.';
             for (const [i, d] of designs.entries()) {
               copyDesign(d.title, newDesigns[i].title, owner, user.uid);
             }
@@ -1594,6 +1608,9 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                   ranges: useStore.getState().projectState.ranges ?? null,
                   filters: useStore.getState().projectState.filters ?? null,
                   hiddenParameters: useStore.getState().projectState.hiddenParameters,
+                  independentPrompt: useStore.getState().projectState.independentPrompt,
+                  reasoningEffort,
+                  generateBuildingPrompt: generateBuildingPrompt,
                 });
                 setCommonStore((state) => {
                   state.projectView = true;

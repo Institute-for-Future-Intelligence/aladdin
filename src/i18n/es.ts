@@ -1692,6 +1692,7 @@ export const i18n_es = {
     },
 
     projectPanel: {
+      AIMemory: 'AI Memory',
       ProjectSettings: 'Project Settings',
       ThumbnailImageSize: 'Thumbnail Image Size',
       ProjectByOtherPeople: 'Project by Other People',
@@ -1720,7 +1721,7 @@ export const i18n_es = {
       GenerateScatterPlot: 'Generate Scatter Plot',
       SelectXAxis: 'Select X Axis',
       SelectYAxis: 'Select Y Axis',
-      HouseDesign: 'House Design',
+      HouseDesign: 'Building Design',
       GenerateHouse: 'Generate a House using AI',
       WhatHouseDoYouWant: 'What house do you want?',
       Listening: 'Listening...',
