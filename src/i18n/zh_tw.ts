@@ -31,6 +31,7 @@ export const i18n_zh_tw = {
     },
 
     word: {
+      Prompt: '提示',
       AirPermeability: '透氣度',
       Visible: '可見',
       Settings: '設定',
@@ -1701,6 +1702,9 @@ export const i18n_zh_tw = {
       GenerateBuilding: '用AI設計建築',
       WhatBuildingDoYouWant: '你想要什麽樣的建築?',
       Listening: '傾聽中...',
+      ReasoningEffort: '推理努力程度',
+      GenAIPrompt: '生成此分子的提示',
+      CopyPrompt: '拷貝此提示',
     },
 
     accountSettingsPanel: {

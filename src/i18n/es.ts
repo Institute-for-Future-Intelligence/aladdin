@@ -31,6 +31,7 @@ export const i18n_es = {
     },
 
     word: {
+      Prompt: 'Prompt',
       AirPermeability: 'Air Permeability',
       Visible: 'Visible',
       Settings: 'Settings',
@@ -1729,6 +1730,9 @@ export const i18n_es = {
       GenerateBuilding: 'Generate a Building using AI',
       WhatBuildingDoYouWant: 'What building do you want?',
       Listening: 'Listening...',
+      ReasoningEffort: 'Reasoning Effort',
+      GenAIPrompt: 'Prompt used to generate this molecule',
+      CopyPrompt: 'Copy this prompt',
     },
 
     accountSettingsPanel: {
