@@ -577,6 +577,8 @@ export interface CommonStoreState {
   geneticAlgorithmWizardSelectedTab: string;
   particleSwarmOptimizationWizardSelectedTab: string;
 
+  genAIData: { prompt: string; data: string } | null;
+
   // the following is to fix the bug that when ctrl+o is pressed, the file dialog gets fired up multiple times
   localFileDialogRequested: boolean;
 
@@ -643,6 +645,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           } as ProjectState,
           projectImages: new Map<string, HTMLImageElement>(),
           designProjectType: null,
+          genAIData: null,
 
           cloudFileBelongToProject() {
             const cf = get().cloudFile;

@@ -124,7 +124,7 @@ const CreateNewProjectDialog = React.memo(
                 {`${i18n.t('projectPanel.SolarPanelArray', lang)}`}
               </Option>
               <Option key={DesignProblem.BUILDING_DESIGN} value={DesignProblem.BUILDING_DESIGN}>
-                {`${i18n.t('projectPanel.HouseDesign', lang)}`}
+                {`${i18n.t('projectPanel.BuildingDesign', lang)}`}
               </Option>
             </Select>
           </Col>

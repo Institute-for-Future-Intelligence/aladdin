@@ -4,7 +4,7 @@
 
 import { AzureOpenAI, OpenAI } from 'openai';
 
-const endpoint = 'https://aims-test-resource.cognitiveservices.azure.com/';
+const endpoint = 'https://ifi-aims-genai.services.ai.azure.com/';
 const modelName = 'o4-mini';
 const deployment = 'o4-mini';
 const apiVersion = '2024-12-01-preview';
@@ -64,7 +64,7 @@ Return the result in an array, and can be parsed by JSON.parse().
 
 export const callAzureOpenAI = async (
   apiKey: string | undefined,
-  prompt: string,
+  inputMessage: [],
   fromBrowser = false,
   reasoningEffort: string,
 ) => {
@@ -80,13 +80,7 @@ export const callAzureOpenAI = async (
   const client = new AzureOpenAI(options);
 
   const response = await client.chat.completions.create({
-    messages: [
-      { role: 'system', content: RULES },
-      {
-        role: 'user',
-        content: prompt,
-      },
-    ],
+    messages: [{ role: 'system', content: RULES }, ...inputMessage],
     reasoning_effort: reasoningEffort as OpenAI.ReasoningEffort,
     max_completion_tokens: 100000,
     model: modelName,

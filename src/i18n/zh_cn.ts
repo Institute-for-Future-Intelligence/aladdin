@@ -317,8 +317,8 @@ export const i18n_zh_cn = {
       SigningOutAnonymousAccount: '你确定退出吗？一旦退出，此匿名账号将不可恢复。',
       SigningInAnonymousAccount:
         '你确定匿名登录吗？一旦退出，匿名账号将无法恢复。匿名登录主要是为无法实名登录的用户提供临时方便。',
-      GeneratingHouse: '正在生成分子。。。',
-      GeneratingAHouseMayTakeAWhile: '生成一个房子可能需要一些时间且无法取消。在按生成键前请仔细考虑好给AI的输入。',
+      GeneratingBuilding: '正在生成建筑。。。',
+      GeneratingABuildingMayTakeAWhile: '生成一个建筑可能需要一些时间且无法取消。在按生成键前请仔细考虑好给AI的输入。',
       GeneratedResultNotAccepted: '抱歉，返回结果无法解读。',
     },
 
@@ -1663,6 +1663,10 @@ export const i18n_zh_cn = {
     },
 
     projectPanel: {
+      ShowPrompts: '显示提示',
+      GeneratedByAI: 'AI生成',
+      ClickForMoreInfo: '点击此处查看更多信息。。。',
+      ClickToClosePopup: '点击此处关闭弹窗',
       AIMemory: 'AI记忆',
       ProjectSettings: '项目设定',
       ThumbnailImageSize: '缩略图大小',
@@ -1692,9 +1696,9 @@ export const i18n_zh_cn = {
       GenerateScatterPlot: '生成散点图',
       SelectXAxis: '选择X轴',
       SelectYAxis: '选择Y轴',
-      HouseDesign: '房屋设计',
-      GenerateHouse: '用AI设计一个房子',
-      WhatHouseDoYouWant: '你想要什么样的房子？',
+      BuildingDesign: '建筑设计',
+      GenerateBuilding: '用AI设计建筑',
+      WhatBuildingDoYouWant: '你想要什么样的建筑？',
       Listening: '正在倾听...',
     },
 

@@ -317,8 +317,8 @@ export const i18n_zh_tw = {
       SigningOutAnonymousAccount: '你確定退出嗎？一旦退出，此匿名帳號將不可恢復。',
       SigningInAnonymousAccount:
         '你確定匿名登入嗎？一旦退出，匿名帳號將無法恢復。匿名登入主要是為無法實名登入的使用者提供臨時方便。',
-      GeneratingHouse: '正在生成房子。。。',
-      GeneratingAMoleculeMayTakeAWhile: '生成一個房子可能需要一些時間且無法取消。按生成鍵前請仔細考慮好給AI的輸入。',
+      GeneratingBuilding: '正在生成建築。。。',
+      GeneratingABuildingMayTakeAWhile: '生成一個建築可能需要一些時間且無法取消。按生成鍵前請仔細考慮好給AI的輸入。',
       GeneratedResultNotAccepted: '抱歉，回傳結果無法解讀。',
     },
 
@@ -1664,6 +1664,10 @@ export const i18n_zh_tw = {
     },
 
     projectPanel: {
+      ShowPrompts: '顯示提示',
+      GeneratedByAI: 'AI生成',
+      ClickForMoreInfo: '點擊此處查看更多資訊。 。 。',
+      ClickToClosePopup: '點擊此處關閉彈窗',
       AIMemory: 'AI記憶',
       ProjectSettings: '專案設定',
       ThumbnailImageSize: '縮略圖大小',
@@ -1693,9 +1697,9 @@ export const i18n_zh_tw = {
       GenerateScatterPlot: '生成散點圖',
       SelectXAxis: '選擇X軸',
       SelectYAxis: '選擇Y軸',
-      HouseDesign: '房屋設計',
-      GenerateHouse: '用AI設計一個房子',
-      WhatHouseDoYouWant: '你想要什麽樣的房子?',
+      BuildingDesign: '建築設計',
+      GenerateBuilding: '用AI設計建築',
+      WhatBuildingDoYouWant: '你想要什麽樣的建築?',
       Listening: '傾聽中...',
     },
 

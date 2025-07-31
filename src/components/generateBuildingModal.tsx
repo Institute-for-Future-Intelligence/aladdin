@@ -22,14 +22,14 @@ import { ObjectType } from 'src/types';
 import { GenAIUtil } from 'src/panels/genAIUtil';
 import { RoofType } from 'src/models/RoofModel';
 
-export interface GenerateHouseModalProps {
+export interface GenerateBuildingModalProps {
   setDialogVisible: (visible: boolean) => void;
   isDialogVisible: () => boolean;
 }
 
 const { TextArea } = Input;
 
-const GenerateHouseModal = React.memo(({ setDialogVisible, isDialogVisible }: GenerateHouseModalProps) => {
+const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }: GenerateBuildingModalProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const reasoningEffort = useStore(Selector.reasoningEffort) ?? 'medium';
@@ -58,20 +58,30 @@ const GenerateHouseModal = React.memo(({ setDialogVisible, isDialogVisible }: Ge
     setPrompt(generateBuildingPrompt);
   }, [generateBuildingPrompt]);
 
-  const handleGenerativeAI = async () => {
-    setGenerating(true);
-    try {
-      const result = await generate();
-      if (result) {
-        processResult(result);
-        setTimeout(() => {
-          usePrimitiveStore.getState().set((state) => {
-            state.curateDesignToProjectFlag = true;
-          });
-        }, 1500);
+  const createInput = () => {
+    const input = [];
+    const designs = useStore.getState().projectState.designs;
+    if (!useStore.getState().projectState.independentPrompt && designs && designs.length > 0) {
+      for (const d of designs) {
+        if (d.prompt && d.data) {
+          input.push({ role: 'user', content: d.prompt });
+          input.push({ role: 'assistant', content: d.data });
+        }
       }
-    } finally {
-      setGenerating(false);
+    }
+    // add a period at the end of the prompt to avoid misunderstanding
+    input.push({
+      role: 'user',
+      content: prompt.trim().endsWith('.') ? prompt.trim() : prompt.trim() + '. ',
+    });
+    return input;
+  };
+
+  const generate = async () => {
+    if (import.meta.env.PROD) {
+      return await callFromFirebaseFunction();
+    } else {
+      return await callFromBrowser();
     }
   };
 
@@ -149,14 +159,6 @@ const GenerateHouseModal = React.memo(({ setDialogVisible, isDialogVisible }: Ge
     });
   };
 
-  const generate = async () => {
-    if (import.meta.env.PROD) {
-      return await callFromFirebaseFunction();
-    } else {
-      return await callFromBrowser();
-    }
-  };
-
   const callFromFirebaseFunction = async () => {
     // const functions = getFunctions(app, 'us-east4');
     // const callAzure = httpsCallable(functions, 'callAzure', { timeout: 300000 });
@@ -171,14 +173,38 @@ const GenerateHouseModal = React.memo(({ setDialogVisible, isDialogVisible }: Ge
   const callFromBrowser = async () => {
     const apiKey = import.meta.env.VITE_AZURE_API_KEY;
     try {
-      console.log('calling...', prompt);
-      const response = await callAzureOpenAI(apiKey, prompt, true, reasoningEffort);
+      const input = createInput(); // for debugging
+      console.log('calling...', input);
+      const response = await callAzureOpenAI(apiKey, input as [], true, reasoningEffort);
       const result = response.choices[0].message.content;
       console.log('res', result);
       return result;
     } catch (e) {
       console.log(e);
       return null;
+    }
+  };
+
+  const handleGenerativeAI = async () => {
+    setGenerating(true);
+    try {
+      const result = await generate();
+      if (result) {
+        processResult(result);
+        setTimeout(() => {
+          useStore.getState().set((state) => {
+            state.genAIData = {
+              prompt: prompt.trim().endsWith('.') ? prompt.trim() : prompt.trim() + '. ',
+              data: result,
+            };
+          });
+          usePrimitiveStore.getState().set((state) => {
+            state.curateDesignToProjectFlag = true;
+          });
+        }, 1500);
+      }
+    } finally {
+      setGenerating(false);
     }
   };
 
@@ -246,7 +272,7 @@ const GenerateHouseModal = React.memo(({ setDialogVisible, isDialogVisible }: Ge
           onMouseOver={() => setDragEnabled(true)}
           onMouseOut={() => setDragEnabled(false)}
         >
-          <img src={GenaiImage} width={'16px'} alt={'genai'} /> {t('projectPanel.GenerateHouse', lang)}
+          <img src={GenaiImage} width={'16px'} alt={'genai'} /> {t('projectPanel.GenerateBuilding', lang)}
         </div>
       }
       open={isDialogVisible()}
@@ -275,7 +301,7 @@ const GenerateHouseModal = React.memo(({ setDialogVisible, isDialogVisible }: Ge
     >
       <Space direction={'vertical'} style={{ width: '100%', paddingBottom: '10px', paddingTop: '10px' }}>
         <Space>
-          {i18n.t('projectPanel.WhatHouseDoYouWant', lang)}
+          {i18n.t('projectPanel.WhatBuildingDoYouWant', lang)}
           {!error && (
             <>
               {listening ? (
@@ -330,11 +356,11 @@ const GenerateHouseModal = React.memo(({ setDialogVisible, isDialogVisible }: Ge
           />
         </Space>
         <span style={{ fontSize: '12px' }}>
-          <WarningOutlined /> {t('message.GeneratingAHouseMayTakeAWhile', lang)}
+          <WarningOutlined /> {t('message.GeneratingABuildingMayTakeAWhile', lang)}
         </span>
       </Space>
     </Modal>
   );
 });
 
-export default GenerateHouseModal;
+export default GenerateBuildingModal;

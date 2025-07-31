@@ -256,6 +256,14 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
     case DesignProblem.SOLAR_PANEL_TILT_ANGLE:
       // TODO: Each row has a different tilt angle
       break;
+    case DesignProblem.BUILDING_DESIGN: {
+      const genAIData = useStore.getState().genAIData;
+      if (genAIData) {
+        design.prompt = genAIData.prompt;
+        design.data = genAIData.data;
+      }
+      break;
+    }
   }
   return design;
 };

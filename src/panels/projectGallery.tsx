@@ -40,6 +40,7 @@ import {
   SortDescendingOutlined,
   FolderOpenOutlined,
   QuestionCircleOutlined,
+  CopyOutlined,
 } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_fail_try_again.png';
@@ -74,7 +75,8 @@ import { useLanguage } from '../hooks';
 import { UndoableCheck } from '../undo/UndoableCheck';
 import { UndoableChange } from '../undo/UndoableChange';
 import { FidgetSpinner } from 'react-loader-spinner';
-import GenerateHouseModal from 'src/components/generateHouseModal';
+import GenerateBuildingModal from 'src/components/generateBuildingModal';
+import SparkImage from 'src/assets/spark.png';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -189,7 +191,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const [hoveredDesign, setHoveredDesign] = useState<Design | undefined>();
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [updateHiddenFlag, setUpdateHiddenFlag] = useState<boolean>(false);
-  const [generateHouseDialogVisible, setGenerateHouseDialogVisible] = useState(false);
+  const [generateBuildingDialogVisible, setGenerateBuildingDialogVisible] = useState(false);
 
   const descriptionTextAreaEditableRef = useRef<boolean>(false);
   const descriptionRef = useRef<string | null>(projectDescription ?? null);
@@ -205,6 +207,8 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const scatterChartHorizontalLinesRef = useRef<boolean>(true);
   const scatterChartVerticalLinesRef = useRef<boolean>(true);
   const timePassed = useRef(0);
+
+  const [pop, setPop] = useState(false);
 
   useEffect(() => {
     xAxisRef.current = xAxisNameScatterPlot ?? 'rowWidth';
@@ -1446,7 +1450,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
 
                 {generating ? (
                   <span
-                    title={t('message.GeneratingHouse', lang)}
+                    title={t('message.GeneratingBuilding', lang)}
                     onClick={(e) => {
                       e.stopPropagation();
                     }}
@@ -1459,10 +1463,10 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                     style={{ border: 'none', padding: '4px' }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setGenerateHouseDialogVisible(true);
+                      setGenerateBuildingDialogVisible(true);
                     }}
                   >
-                    <img src={GenaiImage} alt={'spark'} title={t('projectPanel.GenerateHouse', lang)} />
+                    <img src={GenaiImage} alt={'spark'} title={t('projectPanel.GenerateBuilding', lang)} />
                   </Button>
                 )}
 
@@ -1858,55 +1862,112 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                         }
                       }}
                     />
-                    <div
-                      style={{
-                        position: 'relative',
-                        left: '10px',
-                        textAlign: 'left',
-                        bottom: '18px',
-                        color: 'white',
-                        fontSize: '8px',
-                        fontWeight: design.title === cloudFile ? 'bold' : 'normal',
+                    <Popover
+                      trigger={'click'}
+                      onOpenChange={(open: boolean) => {
+                        setPop(open);
                       }}
+                      content={
+                        <Space direction="vertical" style={{ width: '600px' }}>
+                          <Space style={{ fontWeight: 'bold' }}>
+                            {design.title
+                              ? design.title.length > labelDisplayLength
+                                ? design.title.substring(0, Math.min(labelDisplayLength, lastSpaceIndex)) +
+                                  '...' +
+                                  design.title.substring(lastSpaceIndex)
+                                : design.title
+                              : 'Unknown'}
+                          </Space>
+
+                          <div>
+                            <span style={{ display: 'inline', fontWeight: 'bold' }}>{t('word.Prompt', lang)}: </span>
+                            <span style={{ display: 'inline' }}>
+                              {design.prompt}
+                              <CopyOutlined
+                                style={{ paddingLeft: '10px', cursor: 'copy' }}
+                                title={t('projectPanel.CopyPrompt', lang)}
+                                onClick={() => {
+                                  if (design?.prompt) {
+                                    navigator.clipboard.writeText(design.prompt).then(() => {
+                                      showInfo(t('projectPanel.PromptInClipBoard', lang));
+                                    });
+                                  }
+                                }}
+                              />
+                            </span>
+                          </div>
+                        </Space>
+                      }
                     >
-                      {design.title
-                        ? design.title.length > labelDisplayLength
-                          ? design.title.substring(0, Math.min(labelDisplayLength, lastSpaceIndex)) +
-                            '...' +
-                            design.title.substring(lastSpaceIndex)
-                          : design.title
-                        : 'Unknown'}
-                    </div>
-                    <div
-                      style={{
-                        position: 'relative',
-                        right: '10px',
-                        textAlign: 'right',
-                        bottom: '36px',
-                        color: 'white',
-                      }}
-                    >
-                      {design.title === cloudFile && (
-                        <FolderOpenOutlined style={{ paddingRight: '4px', fontSize: '16px' }} />
-                      )}
-                      {design.invisible ? (
-                        <CheckCircleOutlined
-                          onClick={() => {
-                            toggleDesignVisibility(design);
+                      <Space
+                        style={{
+                          position: 'relative', // I have no idea why this one has to be relative
+                          width: '100%',
+                          bottom: '42px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: '4px',
+                            left: '10px',
+                            textAlign: 'left',
+                            color: 'white',
+                            fontSize: '8px',
+                            fontWeight: design.title === cloudFile ? 'bold' : 'normal',
                           }}
-                          style={{ fontSize: '16px' }}
-                          title={t('projectPanel.DesignNotShownInSolutionSpaceClickToShow', lang)}
-                        />
-                      ) : (
-                        <CheckCircleFilled
-                          onClick={() => {
-                            toggleDesignVisibility(design);
+                        >
+                          <img
+                            src={SparkImage}
+                            alt={'spark'}
+                            title={t('projectPanel.GeneratedByAI', lang)}
+                            height={18}
+                            style={{ paddingBottom: '4px' }}
+                          />
+                          <span
+                            style={{ cursor: 'pointer' }}
+                            title={t(pop ? 'projectPanel.ClickToClosePopup' : 'projectPanel.ClickForMoreInfo', lang)}
+                          >
+                            {design.title
+                              ? design.title.length > labelDisplayLength
+                                ? design.title.substring(0, Math.min(labelDisplayLength, lastSpaceIndex)) +
+                                  '...' +
+                                  design.title.substring(lastSpaceIndex)
+                                : design.title
+                              : 'Unknown'}
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            position: 'absolute',
+                            right: '10px',
+                            textAlign: 'right',
+                            color: 'white',
                           }}
-                          style={{ fontSize: '16px' }}
-                          title={t('projectPanel.DesignShownInSolutionSpaceClickToHide', lang)}
-                        />
-                      )}
-                    </div>
+                        >
+                          {design.title === cloudFile && (
+                            <FolderOpenOutlined style={{ paddingRight: '4px', fontSize: '16px' }} />
+                          )}
+                          {design.invisible ? (
+                            <CheckCircleOutlined
+                              onClick={() => {
+                                toggleDesignVisibility(design);
+                              }}
+                              style={{ fontSize: '16px' }}
+                              title={t('projectPanel.DesignNotShownInSolutionSpaceClickToShow', lang)}
+                            />
+                          ) : (
+                            <CheckCircleFilled
+                              onClick={() => {
+                                toggleDesignVisibility(design);
+                              }}
+                              style={{ fontSize: '16px' }}
+                              title={t('projectPanel.DesignShownInSolutionSpaceClickToHide', lang)}
+                            />
+                          )}
+                        </div>
+                      </Space>
+                    </Popover>
                   </List.Item>
                 );
               }}
@@ -1992,9 +2053,9 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
             />
           </SubContainer>
         )}
-        <GenerateHouseModal
-          setDialogVisible={setGenerateHouseDialogVisible}
-          isDialogVisible={() => generateHouseDialogVisible}
+        <GenerateBuildingModal
+          setDialogVisible={setGenerateBuildingDialogVisible}
+          isDialogVisible={() => generateBuildingDialogVisible}
         />
       </ColumnWrapper>
     </Container>
