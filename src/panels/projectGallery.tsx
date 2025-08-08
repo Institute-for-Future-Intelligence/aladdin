@@ -1448,40 +1448,46 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                   </Button>
                 )}
 
-                {generating ? (
-                  <span
-                    title={t('message.GeneratingBuilding', lang)}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    <FidgetSpinner width={24} height={24} />
-                  </span>
-                ) : (
+                {projectType === DesignProblem.BUILDING_DESIGN && (
+                  <>
+                    {generating ? (
+                      <span
+                        title={t('message.GeneratingBuilding', lang)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <FidgetSpinner width={24} height={24} />
+                      </span>
+                    ) : (
+                      <Button
+                        disabled={false}
+                        style={{ border: 'none', padding: '4px' }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setGenerateBuildingDialogVisible(true);
+                        }}
+                      >
+                        <img src={GenaiImage} alt={'spark'} title={t('projectPanel.GenerateBuilding', lang)} />
+                      </Button>
+                    )}
+                  </>
+                )}
+
+                {projectType !== DesignProblem.BUILDING_DESIGN && (
                   <Button
-                    disabled={false}
                     style={{ border: 'none', padding: '4px' }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setGenerateBuildingDialogVisible(true);
+                      curateCurrentDesign();
                     }}
                   >
-                    <img src={GenaiImage} alt={'spark'} title={t('projectPanel.GenerateBuilding', lang)} />
+                    <ImportOutlined
+                      style={{ fontSize: '24px', color: 'gray' }}
+                      title={t('projectPanel.CurateCurrentDesign', lang)}
+                    />
                   </Button>
                 )}
-
-                <Button
-                  style={{ border: 'none', padding: '4px' }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    curateCurrentDesign();
-                  }}
-                >
-                  <ImportOutlined
-                    style={{ fontSize: '24px', color: 'gray' }}
-                    title={t('projectPanel.CurateCurrentDesign', lang)}
-                  />
-                </Button>
                 {selectedDesign && selectedDesign.title === cloudFile && (
                   <Button
                     style={{ border: 'none', padding: '4px' }}
@@ -1865,45 +1871,49 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                     <Popover
                       trigger={'click'}
                       onOpenChange={(open: boolean) => {
-                        setPop(open);
+                        if (projectType === DesignProblem.BUILDING_DESIGN) {
+                          setPop(open);
+                        }
                       }}
                       content={
-                        <Space direction="vertical" style={{ width: '600px' }}>
-                          <Space style={{ fontWeight: 'bold' }}>
-                            {design.title
-                              ? design.title.length > labelDisplayLength
-                                ? design.title.substring(0, Math.min(labelDisplayLength, lastSpaceIndex)) +
-                                  '...' +
-                                  design.title.substring(lastSpaceIndex)
-                                : design.title
-                              : 'Unknown'}
-                          </Space>
+                        projectType === DesignProblem.BUILDING_DESIGN && (
+                          <Space direction="vertical" style={{ width: '600px' }}>
+                            <Space style={{ fontWeight: 'bold' }}>
+                              {design.title
+                                ? design.title.length > labelDisplayLength
+                                  ? design.title.substring(0, Math.min(labelDisplayLength, lastSpaceIndex)) +
+                                    '...' +
+                                    design.title.substring(lastSpaceIndex)
+                                  : design.title
+                                : 'Unknown'}
+                            </Space>
 
-                          <div>
-                            <span style={{ display: 'inline', fontWeight: 'bold' }}>{t('word.Prompt', lang)}: </span>
-                            <span style={{ display: 'inline' }}>
-                              {design.prompt}
-                              <CopyOutlined
-                                style={{ paddingLeft: '10px', cursor: 'copy' }}
-                                title={t('projectPanel.CopyPrompt', lang)}
-                                onClick={() => {
-                                  if (design?.prompt) {
-                                    navigator.clipboard.writeText(design.prompt).then(() => {
-                                      showInfo(t('projectPanel.PromptInClipBoard', lang));
-                                    });
-                                  }
-                                }}
-                              />
-                            </span>
-                          </div>
-                        </Space>
+                            <div>
+                              <span style={{ display: 'inline', fontWeight: 'bold' }}>{t('word.Prompt', lang)}: </span>
+                              <span style={{ display: 'inline' }}>
+                                {design.prompt}
+                                <CopyOutlined
+                                  style={{ paddingLeft: '10px', cursor: 'copy' }}
+                                  title={t('projectPanel.CopyPrompt', lang)}
+                                  onClick={() => {
+                                    if (design?.prompt) {
+                                      navigator.clipboard.writeText(design.prompt).then(() => {
+                                        showInfo(t('projectPanel.PromptInClipBoard', lang));
+                                      });
+                                    }
+                                  }}
+                                />
+                              </span>
+                            </div>
+                          </Space>
+                        )
                       }
                     >
                       <Space
                         style={{
                           position: 'relative', // I have no idea why this one has to be relative
                           width: '100%',
-                          bottom: '42px',
+                          bottom: '46px',
                         }}
                       >
                         <div
@@ -1917,16 +1927,22 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                             fontWeight: design.title === cloudFile ? 'bold' : 'normal',
                           }}
                         >
-                          <img
-                            src={SparkImage}
-                            alt={'spark'}
-                            title={t('projectPanel.GeneratedByAI', lang)}
-                            height={18}
-                            style={{ paddingBottom: '4px' }}
-                          />
+                          {projectType === DesignProblem.BUILDING_DESIGN && (
+                            <img
+                              src={SparkImage}
+                              alt={'spark'}
+                              title={t('projectPanel.GeneratedByAI', lang)}
+                              height={18}
+                              style={{ paddingBottom: '4px' }}
+                            />
+                          )}
                           <span
-                            style={{ cursor: 'pointer' }}
-                            title={t(pop ? 'projectPanel.ClickToClosePopup' : 'projectPanel.ClickForMoreInfo', lang)}
+                            style={{ cursor: 'pointer', fontSize: '14px', paddingLeft: '4px' }}
+                            title={
+                              projectType === DesignProblem.BUILDING_DESIGN
+                                ? t(pop ? 'projectPanel.ClickToClosePopup' : 'projectPanel.ClickForMoreInfo', lang)
+                                : undefined
+                            }
                           >
                             {design.title
                               ? design.title.length > labelDisplayLength
@@ -1940,6 +1956,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                         <div
                           style={{
                             position: 'absolute',
+                            bottom: '-28px',
                             right: '10px',
                             textAlign: 'right',
                             color: 'white',

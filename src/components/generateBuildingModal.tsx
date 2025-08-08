@@ -72,24 +72,26 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
     // add a period at the end of the prompt to avoid misunderstanding
     input.push({
       role: 'user',
-      content: prompt.trim().endsWith('.') ? prompt.trim() : prompt.trim() + '. ',
+      content: prompt.trim(),
     });
     return input;
   };
 
-  const generate = async () => {
-    if (import.meta.env.PROD) {
-      return await callFromFirebaseFunction();
-    } else {
-      return await callFromBrowser();
-    }
-  };
-
   const processResult = (text: string) => {
     const json = JSON.parse(text);
+    if (!json.elements || json.elements.length === 0) return;
+
+    console.log('prompt:', prompt);
+    console.log('raw:', JSON.parse(text).elements);
+
+    const jsonElements = GenAIUtil.arrayCorrection(json.elements);
+
+    console.log('validated:', jsonElements);
+    console.log('thinking:', json.thinking);
+
     useStore.getState().set((state) => {
       state.elements = [];
-      for (const e of json) {
+      for (const e of jsonElements) {
         switch (e.type) {
           case ObjectType.Foundation: {
             const { id, center, size, color } = e;
@@ -98,13 +100,13 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
             break;
           }
           case ObjectType.Wall: {
-            const { id, pId, center, size, leftPoint, rightPoint, color } = e;
+            const { id, pId, size, leftPoint, rightPoint, color, overhang } = e;
             const w = GenAIUtil.makeWall(
               id,
               pId,
-              center,
               size,
               color,
+              overhang,
               leftPoint,
               rightPoint,
               e.leftConnectId,
@@ -117,10 +119,9 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
             const { id, pId, fId, center, size, color } = e;
             const wall = state.elements.find((e) => e.id === pId);
             if (wall) {
-              center[1] = (-wall.lz / 2 + size[1] / 2) / wall.lz;
-              size[0] = size[0] / wall.lx;
-              size[1] = size[1] / wall.lz;
-              const d = GenAIUtil.makeDoor(id, pId, fId, center, size, color);
+              const _center = [center[0] / wall.lx, (-wall.lz / 2 + size[1] / 2) / wall.lz];
+              const _size = [size[0] / wall.lx, size[1] / wall.lz];
+              const d = GenAIUtil.makeDoor(id, pId, fId, _center, _size, color);
               state.elements.push(d);
             }
             break;
@@ -129,9 +130,9 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
             const { id, pId, fId, center, size } = e;
             const wall = state.elements.find((e) => e.id === pId);
             if (wall) {
-              size[0] = size[0] / wall.lx;
-              size[1] = size[1] / wall.lz;
-              const w = GenAIUtil.makeWindow(id, pId, fId, center, size);
+              const _size = [size[0] / wall.lx, size[1] / wall.lz];
+              const _center = [center[0] / wall.lx, (center[1] - wall.lz / 2) / wall.lz];
+              const w = GenAIUtil.makeWindow(id, pId, fId, _center, _size);
               state.elements.push(w);
             }
             break;
@@ -150,6 +151,28 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
                 const r = GenAIUtil.makePyramidRoof(id, fId, wId, rise, color);
                 state.elements.push(r);
                 state.addedRoofIdSet.add(id);
+                break;
+              }
+              case RoofType.Gambrel: {
+                const { id, fId, wId, rise, color } = e;
+                const r = GenAIUtil.makeGambrelRoof(id, fId, wId, rise, color);
+                state.elements.push(r);
+                state.addedRoofIdSet.add(id);
+                break;
+              }
+              case RoofType.Mansard: {
+                const { id, fId, wId, rise, color, ridgeLength } = e;
+                const r = GenAIUtil.makeMansardRoof(id, fId, wId, rise, color, ridgeLength);
+                state.elements.push(r);
+                state.addedRoofIdSet.add(id);
+                break;
+              }
+              case RoofType.Hip: {
+                const { id, fId, wId, rise, color, ridgeLength } = e;
+                const r = GenAIUtil.makeHipRoof(id, fId, wId, rise, color, ridgeLength);
+                state.elements.push(r);
+                state.addedRoofIdSet.add(id);
+                break;
               }
             }
             break;
@@ -160,28 +183,43 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
   };
 
   const callFromFirebaseFunction = async () => {
-    // const functions = getFunctions(app, 'us-east4');
-    // const callAzure = httpsCallable(functions, 'callAzure', { timeout: 300000 });
-    // const res = (await callAzure({
-    //   text: prompt + ' ' + hydrogen,
-    //   reasoningEffort,
-    // })) as any;
-    // resultRef.current = res.data.text;
-    return null;
+    try {
+      const functions = getFunctions(app, 'us-east4');
+      const callAzure = httpsCallable(functions, 'callAzure', { timeout: 300000 });
+
+      const input = createInput();
+      console.log('calling...', input); // for debugging
+      const res = (await callAzure({
+        text: input,
+        reasoningEffort,
+      })) as any;
+      return res.data.text;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
   };
 
   const callFromBrowser = async () => {
     const apiKey = import.meta.env.VITE_AZURE_API_KEY;
     try {
-      const input = createInput(); // for debugging
-      console.log('calling...', input);
+      const input = createInput();
+      console.log('calling...', input); // for debugging
       const response = await callAzureOpenAI(apiKey, input as [], true, reasoningEffort);
       const result = response.choices[0].message.content;
-      console.log('res', result);
+      console.log('res', response);
       return result;
     } catch (e) {
       console.log(e);
       return null;
+    }
+  };
+
+  const generate = async () => {
+    if (import.meta.env.PROD) {
+      return await callFromFirebaseFunction();
+    } else {
+      return await callFromBrowser();
     }
   };
 
@@ -191,13 +229,13 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
       const result = await generate();
       if (result) {
         processResult(result);
+        useStore.getState().set((state) => {
+          state.genAIData = {
+            prompt: prompt.trim(),
+            data: result,
+          };
+        });
         setTimeout(() => {
-          useStore.getState().set((state) => {
-            state.genAIData = {
-              prompt: prompt.trim().endsWith('.') ? prompt.trim() : prompt.trim() + '. ',
-              data: result,
-            };
-          });
           usePrimitiveStore.getState().set((state) => {
             state.curateDesignToProjectFlag = true;
           });

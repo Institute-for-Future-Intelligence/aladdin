@@ -2213,4 +2213,33 @@ export class Util {
     const project = params.get('project');
     return !!(userid && title && !project);
   }
+
+  static getWallRelativeAngle(leftPoint: number[], rightPoint: number[]) {
+    const [lpx, lpy] = leftPoint;
+    const [rpx, rpy] = rightPoint;
+    let angle = Math.atan2(rpy - lpy, rpx - lpx);
+    angle = angle >= 0 ? angle : (TWO_PI + angle) % TWO_PI;
+    return angle;
+  }
+
+  static isRectOverlap(rect1: number[], rect2: number[]) {
+    const [cx1, cy1, lx1, ly1] = rect1;
+    const [cx2, cy2, lx2, ly2] = rect2;
+
+    const left1 = cx1 - lx1 / 2;
+    const right1 = cx1 + lx1 / 2;
+    const top1 = cy1 + ly1 / 2;
+    const bottom1 = cy1 - ly1 / 2;
+
+    const left2 = cx2 - lx2 / 2;
+    const right2 = cx2 + lx2 / 2;
+    const top2 = cy2 + ly2 / 2;
+    const bottom2 = cy2 - ly2 / 2;
+
+    if (right1 <= left2 || right2 <= left1 || top1 <= bottom2 || top2 <= bottom1) {
+      return false;
+    }
+
+    return true;
+  }
 }
