@@ -157,6 +157,8 @@ export interface ProjectGalleryProps {
   canvas: HTMLCanvasElement | null;
 }
 
+const enabledGenAI = import.meta.env.PROD ? false : true;
+
 const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
@@ -1448,7 +1450,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                   </Button>
                 )}
 
-                {projectType === DesignProblem.BUILDING_DESIGN && (
+                {enabledGenAI && projectType === DesignProblem.BUILDING_DESIGN && (
                   <>
                     {generating ? (
                       <span
