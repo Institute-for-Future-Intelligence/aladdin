@@ -1608,7 +1608,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                   ranges: useStore.getState().projectState.ranges ?? null,
                   filters: useStore.getState().projectState.filters ?? null,
                   hiddenParameters: useStore.getState().projectState.hiddenParameters,
-                  independentPrompt: useStore.getState().projectState.independentPrompt,
+                  independentPrompt: !!useStore.getState().projectState.independentPrompt,
                   reasoningEffort,
                   generateBuildingPrompt: generateBuildingPrompt,
                 });

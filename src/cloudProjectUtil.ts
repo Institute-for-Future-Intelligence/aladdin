@@ -53,7 +53,7 @@ export const fetchProject = async (
         dotSizeScatterPlot: data.dotSizeScatterPlot,
         thumbnailWidth: data.thumbnailWidth,
         reasoningEffort: data.reasoningEffort,
-        independentPrompt: data.independentPrompt,
+        independentPrompt: !!data.independentPrompt,
         generateBuildingPrompt: data.generateBuildingPrompt,
       } as ProjectState);
     } else {
