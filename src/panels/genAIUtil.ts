@@ -162,8 +162,8 @@ export class GenAIUtil {
       cx: cx,
       cy: cy,
       cz: lz / 2,
-      lx: lx,
-      ly: ly,
+      lx: lx + 0.5,
+      ly: ly + 0.5,
       lz: lz,
       normal: [0, 0, 1],
       rotation: [0, 0, 0],
@@ -257,7 +257,7 @@ export class GenAIUtil {
       filled: actionState.doorFilled,
       interior: actionState.doorInterior,
       archHeight: actionState.doorArchHeight,
-      textureType: actionState.doorTexture ?? DoorTexture.Default,
+      textureType: DoorTexture.Texture04,
       color: color,
       uValue: actionState.doorUValue ?? 0.5,
       lineWidth: 0.2,
@@ -293,7 +293,7 @@ export class GenAIUtil {
       horizontalMullionSpacing: actionState.windowHorizontalMullionSpacing,
       verticalMullionSpacing: actionState.windowVerticalMullionSpacing,
       mullionColor: actionState.windowMullionColor,
-      frame: actionState.windowFrame,
+      frame: true,
       frameWidth: actionState.windowFrameWidth,
       sillWidth: RoofUtil.isTypeRoof(ObjectType.Wall) ? 0 : actionState.windowSillWidth,
       windowType: actionState.windowType,
@@ -303,7 +303,7 @@ export class GenAIUtil {
       lineWidth: 0.2,
       lineColor: '#000000',
       showLabel: false,
-      color: actionState.windowColor ?? '#ffffff', // frame color
+      color: '#73D8FF', // frame color
       tint: actionState.windowTint ?? '#73D8FF', // glass color
       opacity: actionState.windowOpacity !== undefined ? actionState.windowOpacity : 0.5,
       uValue: actionState.windowUValue ?? 0.5,
