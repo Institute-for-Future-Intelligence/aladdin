@@ -1949,7 +1949,7 @@ export const i18n_zh_tw = {
       Volume: '體積',
       SurfaceArea: '表面積',
       WindowToWallRatio: '窗牆比',
-      HouseOrientation: '房屋朝向',
+      BuildingOrientation: '建築朝向',
     },
   },
 };

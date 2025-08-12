@@ -489,7 +489,7 @@ export class GenAIUtil {
     let fenestratedArea = 0; // no windows on roof for now
     let wallArea = 0;
     let height = 0;
-    let houseOrientation = null;
+    let buildingOrientation = null;
     for (const e of useStore.getState().elements) {
       if (e.type === ObjectType.Wall) {
         const wall = e as WallModel;
@@ -517,8 +517,8 @@ export class GenAIUtil {
           }
         }
         height = Math.max(height, highestWall + roofRise);
-        if (houseOrientation === null) {
-          houseOrientation = (e.rotation[2] / Math.PI) * 180;
+        if (buildingOrientation === null) {
+          buildingOrientation = (e.rotation[2] / Math.PI) * 180;
         }
       } else if (e.type === ObjectType.Roof) {
         const roof = e as RoofModel;
@@ -532,7 +532,7 @@ export class GenAIUtil {
     design['surfaceArea'] = surfaceArea;
     design['windowToWallRatio'] = fenestratedArea / wallArea;
     design['height'] = height;
-    design['houseOrientation'] = houseOrientation ?? 0;
+    design['buildingOrientation'] = buildingOrientation ?? 0;
   }
 
   // todo: no skylight for now

@@ -433,7 +433,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           if (!hiddenParameters?.includes('surfaceArea')) d['surfaceArea'] = design.surfaceArea;
           if (!hiddenParameters?.includes('windowToWallRatio')) d['windowToWallRatio'] = design.windowToWallRatio;
           if (!hiddenParameters?.includes('height')) d['height'] = design.height;
-          if (!hiddenParameters?.includes('houseOrientation')) d['houseOrientation'] = design.houseOrientation;
+          if (!hiddenParameters?.includes('buildingOrientation')) d['buildingOrientation'] = design.buildingOrientation;
           d['group'] = projectDataColoring === DataColoring.INDIVIDUALS ? design.title : 'default';
           d['selected'] = selectedDesign === design;
           d['hovered'] = hoveredDesign === design;
@@ -533,7 +533,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('surfaceArea')) array.push(0);
       if (!hiddenParameters?.includes('windowToWallRatio')) array.push(0);
       if (!hiddenParameters?.includes('height')) array.push(0);
-      if (!hiddenParameters?.includes('houseOrientation')) array.push(-180);
+      if (!hiddenParameters?.includes('buildingOrientation')) array.push(-180);
       return array;
     }
     return [];
@@ -566,7 +566,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('surfaceArea')) array.push(getMax('surfaceArea', 800));
       if (!hiddenParameters?.includes('windowToWallRatio')) array.push(getMax('windowToWallRatio', 1));
       if (!hiddenParameters?.includes('height')) array.push(getMax('height', 20));
-      if (!hiddenParameters?.includes('houseOrientation')) array.push(getMax('houseOrientation', 180));
+      if (!hiddenParameters?.includes('buildingOrientation')) array.push(getMax('buildingOrientation', 180));
       return array;
     }
     return [];
@@ -652,7 +652,8 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('surfaceArea')) array.push(createFilter('surfaceArea', 800, 0));
       if (!hiddenParameters?.includes('windowToWallRatio')) array.push(createFilter('windowToWallRatio', 1, 0));
       if (!hiddenParameters?.includes('height')) array.push(createFilter('height', 15, 0));
-      if (!hiddenParameters?.includes('houseOrientation')) array.push(createFilter('houseOrientation', 180, -180));
+      if (!hiddenParameters?.includes('buildingOrientation'))
+        array.push(createFilter('buildingOrientation', 180, -180));
       return array;
     }
     return [];
@@ -681,7 +682,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('surfaceArea')) array.push(1);
       if (!hiddenParameters?.includes('windowToWallRatio')) array.push(0.1);
       if (!hiddenParameters?.includes('height')) array.push(1);
-      if (!hiddenParameters?.includes('houseOrientation')) array.push(1);
+      if (!hiddenParameters?.includes('buildingOrientation')) array.push(1);
       return array;
     }
     return [];
@@ -692,7 +693,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const surfaceAreaRef = useRef<boolean>(!hiddenParameters?.includes('surfaceArea'));
   const windowToWallRatioRef = useRef<boolean>(!hiddenParameters?.includes('windowToWallRatio'));
   const heightRef = useRef<boolean>(!hiddenParameters?.includes('height'));
-  const houseOrientationRef = useRef<boolean>(!hiddenParameters?.includes('houseOrientation'));
+  const buildingOrientationRef = useRef<boolean>(!hiddenParameters?.includes('buildingOrientation'));
 
   const rowWidthSelectionRef = useRef<boolean>(!hiddenParameters?.includes('rowWidth'));
   const tiltAngleSelectionRef = useRef<boolean>(!hiddenParameters?.includes('tiltAngle'));
@@ -713,7 +714,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     surfaceAreaRef.current = !hiddenParameters?.includes('surfaceArea');
     windowToWallRatioRef.current = !hiddenParameters?.includes('windowToWallRatio');
     heightRef.current = !hiddenParameters?.includes('height');
-    houseOrientationRef.current = !hiddenParameters?.includes('houseOrientation');
+    buildingOrientationRef.current = !hiddenParameters?.includes('buildingOrientation');
 
     rowWidthSelectionRef.current = !hiddenParameters?.includes('rowWidth');
     tiltAngleSelectionRef.current = !hiddenParameters?.includes('tiltAngle');
@@ -1099,13 +1100,13 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           <Checkbox
             style={{ width: '100%' }}
             onChange={(e) => {
-              houseOrientationRef.current = e.target.checked;
-              selectParameter(houseOrientationRef.current, 'houseOrientation');
+              buildingOrientationRef.current = e.target.checked;
+              selectParameter(buildingOrientationRef.current, 'buildingOrientation');
               setUpdateHiddenFlag(!updateHiddenFlag);
             }}
-            checked={houseOrientationRef.current}
+            checked={buildingOrientationRef.current}
           >
-            <span style={{ fontSize: '12px' }}>{t('solutionSpace.HouseOrientation', lang)}</span>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.BuildingOrientation', lang)}</span>
           </Checkbox>
           <br />
         </div>
@@ -1174,8 +1175,8 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           <Option key={'height'} value={'height'}>
             <span style={{ fontSize: '12px' }}>{t('word.Height', lang)}</span>
           </Option>
-          <Option key={'houseOrientation'} value={'houseOrientation'}>
-            <span style={{ fontSize: '12px' }}>{t('solutionSpace.HouseOrientation', lang)}</span>
+          <Option key={'buildingOrientation'} value={'buildingOrientation'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.BuildingOrientation', lang)}</span>
           </Option>
         </>
       );
@@ -1306,9 +1307,9 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           bound.min = getMin('height', 0);
           bound.max = getMax('height', 20);
           break;
-        case 'houseOrientation':
-          bound.min = getMin('houseOrientation', -180);
-          bound.max = getMax('houseOrientation', 180);
+        case 'buildingOrientation':
+          bound.min = getMin('buildingOrientation', -180);
+          bound.max = getMax('buildingOrientation', 180);
           break;
       }
     }

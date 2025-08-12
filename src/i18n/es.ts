@@ -1977,7 +1977,7 @@ export const i18n_es = {
       Volume: 'Volume',
       SurfaceArea: 'Surface Area',
       WindowToWallRatio: 'Window-to-Wall Ratio',
-      HouseOrientation: 'House Orientation',
+      BuildingOrientation: 'Building Orientation',
     },
   },
 };

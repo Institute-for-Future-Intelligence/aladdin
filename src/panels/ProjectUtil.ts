@@ -37,7 +37,7 @@ export class ProjectUtil {
       if (!hidden?.includes('surfaceArea')) a.push('surfaceArea');
       if (!hidden?.includes('windowToWallRatio')) a.push('windowToWallRatio');
       if (!hidden?.includes('height')) a.push('height');
-      if (!hidden?.includes('houseOrientation')) a.push('houseOrientation');
+      if (!hidden?.includes('buildingOrientation')) a.push('buildingOrientation');
       return a;
     }
     return [];
@@ -66,7 +66,7 @@ export class ProjectUtil {
       if (!hidden?.includes('surfaceArea')) a.push(i18n.t('solutionSpace.SurfaceArea', l));
       if (!hidden?.includes('windowToWallRatio')) a.push(i18n.t('solutionSpace.WindowToWallRatio', l));
       if (!hidden?.includes('height')) a.push(i18n.t('word.Height', l));
-      if (!hidden?.includes('houseOrientation')) a.push(i18n.t('solutionSpace.HouseOrientation', l));
+      if (!hidden?.includes('buildingOrientation')) a.push(i18n.t('solutionSpace.BuildingOrientation', l));
       return a;
     }
     return [];
@@ -95,7 +95,7 @@ export class ProjectUtil {
       if (!hidden?.includes('surfaceArea')) a.push('number');
       if (!hidden?.includes('windowToWallRatio')) a.push('number');
       if (!hidden?.includes('height')) a.push('number');
-      if (!hidden?.includes('houseOrientation')) a.push('number');
+      if (!hidden?.includes('buildingOrientation')) a.push('number');
       return a;
     }
     return [];
@@ -124,7 +124,7 @@ export class ProjectUtil {
       if (!hidden?.includes('surfaceArea')) a.push(1);
       if (!hidden?.includes('windowToWallRatio')) a.push(2);
       if (!hidden?.includes('height')) a.push(1);
-      if (!hidden?.includes('houseOrientation')) a.push(1);
+      if (!hidden?.includes('buildingOrientation')) a.push(1);
       return a;
     }
     return [];
@@ -153,7 +153,7 @@ export class ProjectUtil {
       if (!hidden?.includes('surfaceArea')) a.push(false);
       if (!hidden?.includes('windowToWallRatio')) a.push(false);
       if (!hidden?.includes('height')) a.push(false);
-      if (!hidden?.includes('houseOrientation')) a.push(false);
+      if (!hidden?.includes('buildingOrientation')) a.push(false);
       return a;
     }
     return [];
@@ -182,7 +182,7 @@ export class ProjectUtil {
       if (!hidden?.includes('surfaceArea')) a.push(' m²');
       if (!hidden?.includes('windowToWallRatio')) a.push('');
       if (!hidden?.includes('height')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));
-      if (!hidden?.includes('houseOrientation')) a.push('°');
+      if (!hidden?.includes('buildingOrientation')) a.push('°');
       return a;
     }
     return [];
@@ -200,7 +200,7 @@ export class ProjectUtil {
     if (variable === 'volume') return 'm³';
     if (variable === 'surfaceArea') return 'm²';
     if (variable === 'height') return i18n.t('word.MeterAbbreviation', l);
-    if (variable === 'houseOrientation') return '°';
+    if (variable === 'buildingOrientation') return '°';
     return '';
   }
 
@@ -221,8 +221,8 @@ export class ProjectUtil {
       case 'height':
         datum[axis] = design.height;
         break;
-      case 'houseOrientation':
-        datum[axis] = design.houseOrientation;
+      case 'buildingOrientation':
+        datum[axis] = design.buildingOrientation;
         break;
       case 'rowWidth':
         datum[axis] = design.rowsPerRack;
