@@ -1976,7 +1976,7 @@ export const i18n_es = {
       FloorArea: 'Floor Area',
       Volume: 'Volume',
       SurfaceArea: 'Surface Area',
-      FenestrationRatio: 'Fenestration Ratio',
+      WindowToWallRatio: 'Window-to-Wall Ratio',
       HouseOrientation: 'House Orientation',
     },
   },

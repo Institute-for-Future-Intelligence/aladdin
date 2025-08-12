@@ -1947,7 +1947,7 @@ export const i18n_zh_cn = {
       FloorArea: '建筑面积',
       Volume: '体积',
       SurfaceArea: '表面积',
-      FenestrationRatio: '窗墙比',
+      WindowToWallRatio: '窗墙比',
       HouseOrientation: '房屋朝向',
     },
   },

@@ -530,7 +530,7 @@ export class GenAIUtil {
     design['floorArea'] = floorArea;
     design['volume'] = floorArea * height; // todo: genAI volume
     design['surfaceArea'] = surfaceArea;
-    design['fenestrationRatio'] = fenestratedArea / wallArea;
+    design['windowToWallRatio'] = fenestratedArea / wallArea;
     design['height'] = height;
     design['houseOrientation'] = houseOrientation ?? 0;
   }
