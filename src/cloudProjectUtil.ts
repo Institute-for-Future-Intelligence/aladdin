@@ -11,6 +11,7 @@ import { usePrimitiveStore } from './stores/commonPrimitive';
 import { Filter } from './Filter';
 import { arrayRemove, arrayUnion, deleteDoc, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { firestore } from './firebase';
+import { GenAIUtil } from './panels/genAIUtil';
 
 export const doesProjectExist = async (uid: string, projectName: string, callbackOnError: (error: string) => void) => {
   try {
@@ -261,6 +262,7 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
       if (genAIData) {
         design.prompt = genAIData.prompt;
         design.data = genAIData.data;
+        GenAIUtil.calculateSolutionSpace(design);
       }
       break;
     }

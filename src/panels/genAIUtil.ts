@@ -2,19 +2,22 @@ import { DEFAULT_HVAC_SYSTEM, GROUND_ID, TWO_PI } from 'src/constants';
 import { DoorModel } from 'src/models/DoorModel';
 import { ElementModel } from 'src/models/ElementModel';
 import { FoundationModel } from 'src/models/FoundationModel';
+import { Point2 } from 'src/models/Point2';
 import {
   GableRoofModel,
   GambrelRoofModel,
   HipRoofModel,
   MansardRoofModel,
   PyramidRoofModel,
+  RoofModel,
   RoofStructure,
   RoofType,
 } from 'src/models/RoofModel';
 import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { WindowModel } from 'src/models/WindowModel';
 import { useStore } from 'src/stores/common';
-import { DoorTexture, FoundationTexture, ObjectType, RoofTexture, WallTexture } from 'src/types';
+import { useDataStore } from 'src/stores/commonData';
+import { Design, DoorTexture, FoundationTexture, ObjectType, RoofTexture, WallTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { RoofUtil } from 'src/views/roof/RoofUtil';
 
@@ -154,7 +157,7 @@ export class GenAIUtil {
     return correctedElements;
   }
 
-  static makeFoundation(id: string, center: number[], size: number[], color: string) {
+  static makeFoundation(id: string, center: number[], size: number[], r: number, color: string) {
     const [cx = 0, cy = 0] = center;
     const [lx = 10, ly = 10, lz = 0.1] = size;
     return {
@@ -166,7 +169,7 @@ export class GenAIUtil {
       ly: ly + 0.5,
       lz: lz,
       normal: [0, 0, 1],
-      rotation: [0, 0, 0],
+      rotation: [0, 0, ((((r + 180) % 360) + 360) % 360) - 180],
       parentId: GROUND_ID,
       color: color,
       textureType: FoundationTexture.NoTexture,
@@ -458,10 +461,10 @@ export class GenAIUtil {
       ly: 0,
       lz: 0,
       ceiling: actionState.roofCeiling ?? false,
-      rise: actionState.roofRise < 0 ? 2 : actionState.roofRise,
+      rise: rise,
       thickness: actionState.roofThickness ?? 0.2,
       rValue: actionState.roofRValue ?? 3,
-      color: actionState.roofColor ?? '#454769',
+      color: color,
       sideColor: actionState.roofSideColor ?? '#ffffff',
       textureType: actionState.roofTexture ?? RoofTexture.Default,
       roofType: RoofType.Hip,
@@ -478,5 +481,144 @@ export class GenAIUtil {
       leftRidgeLength: ridgeLength / 2,
       rightRidgeLength: ridgeLength / 2,
     } as HipRoofModel;
+  }
+
+  static calculateSolutionSpace(design: Design) {
+    let floorArea = 0;
+    let surfaceArea = 0;
+    let fenestratedArea = 0; // no windows on roof for now
+    let wallArea = 0;
+    let height = 0;
+    let houseOrientation = null;
+    for (const e of useStore.getState().elements) {
+      if (e.type === ObjectType.Wall) {
+        const wall = e as WallModel;
+        const frameVertices = Util.getWallVertices(wall, 0);
+        const area = Util.getPolygonArea(frameVertices);
+        surfaceArea += area;
+        wallArea += area;
+        for (const child of useStore.getState().elements) {
+          if (child.parentId === wall.id) {
+            if (child.type === ObjectType.Window) {
+              fenestratedArea += Util.getWindowArea(child as WindowModel, wall);
+            } else if (child.type === ObjectType.Door) {
+              fenestratedArea += child.lx * child.lz * wall.lx * wall.lz;
+            }
+          }
+        }
+      } else if (e.type === ObjectType.Foundation) {
+        let highestWall = 0;
+        let roofRise = 0;
+        for (const child of useStore.getState().elements) {
+          if (child.type === ObjectType.Wall && child.parentId === e.id) {
+            highestWall = Math.max(highestWall, child.lz);
+          } else if (child.type === ObjectType.Roof && child.parentId === e.id) {
+            roofRise = (child as RoofModel).rise;
+          }
+        }
+        height = Math.max(height, highestWall + roofRise);
+        if (houseOrientation === null) {
+          houseOrientation = (e.rotation[2] / Math.PI) * 180;
+        }
+      } else if (e.type === ObjectType.Roof) {
+        const roof = e as RoofModel;
+        floorArea += Util.calculateBuildingArea(roof);
+        surfaceArea += GenAIUtil.calculateRoofArea(roof);
+      }
+    }
+
+    design['floorArea'] = floorArea;
+    design['volume'] = floorArea * height; // todo: genAI volume
+    design['surfaceArea'] = surfaceArea;
+    design['fenestrationRatio'] = fenestratedArea / wallArea;
+    design['height'] = height;
+    design['houseOrientation'] = houseOrientation ?? 0;
+  }
+
+  // todo: no skylight for now
+  static calculateRoofArea(roof: RoofModel) {
+    const segmentsWithoutOverhang = useDataStore.getState().getRoofSegmentVerticesWithoutOverhang(roof.id);
+    if (!segmentsWithoutOverhang) return 0;
+    const n = segmentsWithoutOverhang.length;
+    if (n === 0) return 0;
+
+    // check if the roof is flat or not
+    let flat = true;
+    const h0 = segmentsWithoutOverhang[0][0].z;
+    for (const s of segmentsWithoutOverhang) {
+      for (const v of s) {
+        if (Math.abs(v.z - h0) > 0.01) {
+          flat = false;
+          break;
+        }
+      }
+    }
+
+    let totalArea = 0;
+    switch (roof.roofType) {
+      case RoofType.Pyramid: {
+        if (flat) {
+          let a = 0;
+          for (const s of segmentsWithoutOverhang) {
+            const points: Point2[] = [];
+            for (const v of s) {
+              points.push(Util.mapVector3ToPoint2(v));
+            }
+            a += Util.getPolygonArea(points);
+          }
+          totalArea += a;
+        } else {
+          for (const s of segmentsWithoutOverhang) {
+            let a = Util.getTriangleArea(s[0], s[1], s[2]);
+            totalArea += a;
+          }
+        }
+        break;
+      }
+      case RoofType.Hip: {
+        for (const s of segmentsWithoutOverhang) {
+          let a = 0;
+          if (s.length === 3) {
+            a = Util.getTriangleArea(s[0], s[1], s[2]);
+          } else if (s.length === 4) {
+            a = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
+          }
+          totalArea += a;
+        }
+        break;
+      }
+      case RoofType.Gambrel: {
+        for (const s of segmentsWithoutOverhang) {
+          let a = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
+          totalArea += a;
+        }
+        break;
+      }
+      case RoofType.Gable: {
+        for (const s of segmentsWithoutOverhang) {
+          let a = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
+          totalArea += a;
+        }
+        break;
+      }
+      case RoofType.Mansard: {
+        for (let i = 0; i < n - 1; i++) {
+          const s = segmentsWithoutOverhang[i];
+          let a = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
+          totalArea += a;
+        }
+        // the last segment may not be a quad
+        const s = segmentsWithoutOverhang[n - 1];
+        const points = new Array<Point2>();
+        for (const p of s) {
+          points.push({ x: p.x, y: p.y } as Point2);
+        }
+        let a = Util.getPolygonArea(points);
+        totalArea += a;
+        break;
+      }
+    }
+
+    return totalArea;
   }
 }

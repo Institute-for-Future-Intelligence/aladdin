@@ -30,6 +30,15 @@ export class ProjectUtil {
       if (!hidden.includes('meanYearlyYield')) a.push('meanYearlyYield');
       if (!hidden.includes('yearlyProfit')) a.push('yearlyProfit');
       return a;
+    } else if (projectType === DesignProblem.BUILDING_DESIGN) {
+      const a: string[] = [];
+      if (!hidden?.includes('floorArea')) a.push('floorArea');
+      if (!hidden?.includes('volume')) a.push('volume');
+      if (!hidden?.includes('surfaceArea')) a.push('surfaceArea');
+      if (!hidden?.includes('fenestrationRatio')) a.push('fenestrationRatio');
+      if (!hidden?.includes('height')) a.push('height');
+      if (!hidden?.includes('houseOrientation')) a.push('houseOrientation');
+      return a;
     }
     return [];
   }
@@ -49,6 +58,15 @@ export class ProjectUtil {
       if (!hidden.includes('totalYearlyYield')) a.push(i18n.t('polygonMenu.SolarPanelArrayTotalYearlyYield', l));
       if (!hidden.includes('meanYearlyYield')) a.push(i18n.t('polygonMenu.SolarPanelArrayMeanYearlyYield', l));
       if (!hidden.includes('yearlyProfit')) a.push(i18n.t('polygonMenu.SolarPanelArrayYearlyProfit', l));
+      return a;
+    } else if (projectType === DesignProblem.BUILDING_DESIGN) {
+      const a: string[] = [];
+      if (!hidden?.includes('floorArea')) a.push(i18n.t('solutionSpace.FloorArea', l));
+      if (!hidden?.includes('volume')) a.push(i18n.t('solutionSpace.Volume', l));
+      if (!hidden?.includes('surfaceArea')) a.push(i18n.t('solutionSpace.SurfaceArea', l));
+      if (!hidden?.includes('fenestrationRatio')) a.push(i18n.t('solutionSpace.FenestrationRatio', l));
+      if (!hidden?.includes('height')) a.push(i18n.t('word.Height', l));
+      if (!hidden?.includes('houseOrientation')) a.push(i18n.t('solutionSpace.HouseOrientation', l));
       return a;
     }
     return [];
@@ -70,6 +88,15 @@ export class ProjectUtil {
       if (!hidden.includes('meanYearlyYield')) a.push('number');
       if (!hidden.includes('yearlyProfit')) a.push('number');
       return a;
+    } else if (projectType === DesignProblem.BUILDING_DESIGN) {
+      const a: string[] = [];
+      if (!hidden?.includes('floorArea')) a.push('number');
+      if (!hidden?.includes('volume')) a.push('number');
+      if (!hidden?.includes('surfaceArea')) a.push('number');
+      if (!hidden?.includes('fenestrationRatio')) a.push('number');
+      if (!hidden?.includes('height')) a.push('number');
+      if (!hidden?.includes('houseOrientation')) a.push('number');
+      return a;
     }
     return [];
   }
@@ -89,6 +116,15 @@ export class ProjectUtil {
       if (!hidden.includes('totalYearlyYield')) a.push(1);
       if (!hidden.includes('meanYearlyYield')) a.push(1);
       if (!hidden.includes('yearlyProfit')) a.push(3);
+      return a;
+    } else if (projectType === DesignProblem.BUILDING_DESIGN) {
+      const a: number[] = [];
+      if (!hidden?.includes('floorArea')) a.push(1);
+      if (!hidden?.includes('volume')) a.push(1);
+      if (!hidden?.includes('surfaceArea')) a.push(1);
+      if (!hidden?.includes('fenestrationRatio')) a.push(2);
+      if (!hidden?.includes('height')) a.push(1);
+      if (!hidden?.includes('houseOrientation')) a.push(1);
       return a;
     }
     return [];
@@ -110,6 +146,15 @@ export class ProjectUtil {
       if (!hidden.includes('meanYearlyYield')) a.push(false);
       if (!hidden.includes('yearlyProfit')) a.push(false);
       return a;
+    } else if (projectType === DesignProblem.BUILDING_DESIGN) {
+      const a: boolean[] = [];
+      if (!hidden?.includes('floorArea')) a.push(false);
+      if (!hidden?.includes('volume')) a.push(false);
+      if (!hidden?.includes('surfaceArea')) a.push(false);
+      if (!hidden?.includes('fenestrationRatio')) a.push(false);
+      if (!hidden?.includes('height')) a.push(false);
+      if (!hidden?.includes('houseOrientation')) a.push(false);
+      return a;
     }
     return [];
   }
@@ -130,6 +175,15 @@ export class ProjectUtil {
       if (!hidden.includes('meanYearlyYield')) a.push(' kWh');
       if (!hidden.includes('yearlyProfit')) a.push('K');
       return a;
+    } else if (projectType === DesignProblem.BUILDING_DESIGN) {
+      const a: string[] = [];
+      if (!hidden?.includes('floorArea')) a.push(' m²');
+      if (!hidden?.includes('volume')) a.push(' m³');
+      if (!hidden?.includes('surfaceArea')) a.push(' m²');
+      if (!hidden?.includes('fenestrationRatio')) a.push('');
+      if (!hidden?.includes('height')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));
+      if (!hidden?.includes('houseOrientation')) a.push('°');
+      return a;
     }
     return [];
   }
@@ -142,11 +196,34 @@ export class ProjectUtil {
     if (variable === 'meanYearlyYield') return 'kWh';
     if (variable === 'totalYearlyCost') return 'K';
     if (variable === 'yearlyProfit') return 'K';
+    if (variable === 'floorArea') return 'm²';
+    if (variable === 'volume') return 'm³';
+    if (variable === 'surfaceArea') return 'm²';
+    if (variable === 'height') return i18n.t('word.MeterAbbreviation', l);
+    if (variable === 'houseOrientation') return '°';
     return '';
   }
 
   static setScatterData(name: string, axis: 'x' | 'y', datum: { x: number; y: number }, design: Design) {
     switch (name) {
+      case 'floorArea':
+        datum[axis] = design.floorArea;
+        break;
+      case 'volume':
+        datum[axis] = design.volume;
+        break;
+      case 'surfaceArea':
+        datum[axis] = design.surfaceArea;
+        break;
+      case 'fenestrationRatio':
+        datum[axis] = design.fenestrationRatio;
+        break;
+      case 'height':
+        datum[axis] = design.height;
+        break;
+      case 'houseOrientation':
+        datum[axis] = design.houseOrientation;
+        break;
       case 'rowWidth':
         datum[axis] = design.rowsPerRack;
         break;

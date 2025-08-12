@@ -1971,5 +1971,13 @@ export const i18n_es = {
       GroundMountedSolarPanels: 'Ground-Mounted Solar Panels',
       VertexCount: 'Vertex Count',
     },
+
+    solutionSpace: {
+      FloorArea: 'Floor Area',
+      Volume: 'Volume',
+      SurfaceArea: 'Surface Area',
+      FenestrationRatio: 'Fenestration Ratio',
+      HouseOrientation: 'House Orientation',
+    },
   },
 };

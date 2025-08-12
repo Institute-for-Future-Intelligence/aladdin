@@ -1943,5 +1943,13 @@ export const i18n_zh_tw = {
       GroundMountedSolarPanels: '地面安裝的光伏板',
       VertexCount: '頂點數量',
     },
+
+    solutionSpace: {
+      FloorArea: '建築面積',
+      Volume: '體積',
+      SurfaceArea: '表面積',
+      FenestrationRatio: '窗牆比',
+      HouseOrientation: '房屋朝向',
+    },
   },
 };

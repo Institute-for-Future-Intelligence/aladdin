@@ -1976,5 +1976,13 @@ export const i18n_ua = {
       GroundMountedSolarPanels: 'Наземні сонячні панелі',
       VertexCount: 'Кількість вершин',
     },
+
+    solutionSpace: {
+      FloorArea: 'Floor Area',
+      Volume: 'Volume',
+      SurfaceArea: 'Surface Area',
+      FenestrationRatio: 'Fenestration Ratio',
+      HouseOrientation: 'House Orientation',
+    },
   },
 };

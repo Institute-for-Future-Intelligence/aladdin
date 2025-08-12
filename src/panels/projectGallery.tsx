@@ -203,7 +203,9 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const parameterSelectionChangedRef = useRef<boolean>(false);
   const projectDesignsRef = useRef<Design[]>(projectDesigns ?? []); // store sorted designs
   const thumbnailSizeRef = useRef<number>(projectThumbnailWidth ?? 200);
-  const xAxisRef = useRef<string>(xAxisNameScatterPlot ?? 'rowWidth');
+  const xAxisRef = useRef<string>(
+    xAxisNameScatterPlot ?? projectType === DesignProblem.BUILDING_DESIGN ? 'floorArea' : 'rowWidth',
+  );
   const yAxisRef = useRef<string>(yAxisNameScatterPlot ?? 'rowWidth');
   const dotSizeRef = useRef<number>(dotSizeScatterPlot ?? 5);
   const scatterChartHorizontalLinesRef = useRef<boolean>(true);
@@ -213,12 +215,12 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const [pop, setPop] = useState(false);
 
   useEffect(() => {
-    xAxisRef.current = xAxisNameScatterPlot ?? 'rowWidth';
-  }, [xAxisNameScatterPlot]);
+    xAxisRef.current = xAxisNameScatterPlot ?? projectType === DesignProblem.BUILDING_DESIGN ? 'floorArea' : 'rowWidth';
+  }, [xAxisNameScatterPlot, projectType]);
 
   useEffect(() => {
-    yAxisRef.current = yAxisNameScatterPlot ?? 'rowWidth';
-  }, [yAxisNameScatterPlot]);
+    yAxisRef.current = yAxisNameScatterPlot ?? projectType === DesignProblem.BUILDING_DESIGN ? 'floorArea' : 'rowWidth';
+  }, [yAxisNameScatterPlot, projectType]);
 
   useEffect(() => {
     dotSizeRef.current = dotSizeScatterPlot ?? 5;
@@ -426,6 +428,16 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       } else if (projectType === DesignProblem.BUILDING_DESIGN) {
         for (const design of projectDesigns) {
           const d = {} as DatumEntry;
+          if (!hiddenParameters?.includes('floorArea')) d['floorArea'] = design.floorArea;
+          if (!hiddenParameters?.includes('volume')) d['volume'] = design.volume;
+          if (!hiddenParameters?.includes('surfaceArea')) d['surfaceArea'] = design.surfaceArea;
+          if (!hiddenParameters?.includes('fenestrationRatio')) d['fenestrationRatio'] = design.fenestrationRatio;
+          if (!hiddenParameters?.includes('height')) d['height'] = design.height;
+          if (!hiddenParameters?.includes('houseOrientation')) d['houseOrientation'] = design.houseOrientation;
+          d['group'] = projectDataColoring === DataColoring.INDIVIDUALS ? design.title : 'default';
+          d['selected'] = selectedDesign === design;
+          d['hovered'] = hoveredDesign === design;
+          d['invisible'] = design.invisible;
           d['excluded'] = false;
           if (projectFilters) {
             for (const f of projectFilters) {
@@ -514,6 +526,15 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('meanYearlyYield')) array.push(getMin('meanYearlyYield', 0)); // electricity output in kWh
       if (!hiddenParameters?.includes('yearlyProfit')) array.push(getMin('yearlyProfit', -10)); // profit in $1,000
       return array;
+    } else if (projectType === DesignProblem.BUILDING_DESIGN) {
+      const array: number[] = [];
+      if (!hiddenParameters?.includes('floorArea')) array.push(0);
+      if (!hiddenParameters?.includes('volume')) array.push(0);
+      if (!hiddenParameters?.includes('surfaceArea')) array.push(0);
+      if (!hiddenParameters?.includes('fenestrationRatio')) array.push(0);
+      if (!hiddenParameters?.includes('height')) array.push(0);
+      if (!hiddenParameters?.includes('houseOrientation')) array.push(-180);
+      return array;
     }
     return [];
   }, [solarPanelArrayLayoutConstraints, projectType, projectRanges, hiddenParameters, updateHiddenFlag]);
@@ -536,6 +557,16 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('totalYearlyYield')) array.push(getMax('totalYearlyYield', 100)); // electricity output in MWh
       if (!hiddenParameters?.includes('meanYearlyYield')) array.push(getMax('meanYearlyYield', 1000)); // electricity output in kWh
       if (!hiddenParameters?.includes('yearlyProfit')) array.push(getMax('yearlyProfit', 10)); // profit in $1,000
+      return array;
+    } else if (projectType === DesignProblem.BUILDING_DESIGN) {
+      const array: number[] = [];
+      // todo: genAI range max
+      if (!hiddenParameters?.includes('floorArea')) array.push(getMax('floorArea', 500));
+      if (!hiddenParameters?.includes('volume')) array.push(getMax('volume', 2000));
+      if (!hiddenParameters?.includes('surfaceArea')) array.push(getMax('surfaceArea', 800));
+      if (!hiddenParameters?.includes('fenestrationRatio')) array.push(getMax('fenestrationRatio', 1));
+      if (!hiddenParameters?.includes('height')) array.push(getMax('height', 20));
+      if (!hiddenParameters?.includes('houseOrientation')) array.push(getMax('houseOrientation', 180));
       return array;
     }
     return [];
@@ -577,42 +608,55 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   };
 
   const filters: Filter[] = useMemo(() => {
-    const array: Filter[] = [];
-    if (!hiddenParameters?.includes('rowWidth'))
-      array.push(
-        createFilter(
-          'rowWidth',
-          solarPanelArrayLayoutConstraints.maximumRowsPerRack,
-          solarPanelArrayLayoutConstraints.minimumRowsPerRack,
-        ),
-      );
-    if (!hiddenParameters?.includes('tiltAngle'))
-      array.push(
-        createFilter(
-          'tiltAngle',
-          Util.toDegrees(solarPanelArrayLayoutConstraints.maximumTiltAngle),
-          Util.toDegrees(solarPanelArrayLayoutConstraints.minimumTiltAngle),
-        ),
-      );
-    if (!hiddenParameters?.includes('interRowSpacing'))
-      array.push(
-        createFilter(
-          'interRowSpacing',
-          solarPanelArrayLayoutConstraints.maximumInterRowSpacing,
-          solarPanelArrayLayoutConstraints.minimumInterRowSpacing,
-        ),
-      );
-    if (!hiddenParameters?.includes('latitude')) array.push(createFilter('latitude', 90, -90));
-    if (!hiddenParameters?.includes('orientation')) array.push(createFilter('orientation', 1, 0));
-    if (!hiddenParameters?.includes('poleHeight')) array.push(createFilter('poleHeight', 5, 0));
-    if (!hiddenParameters?.includes('unitCost')) array.push(createFilter('unitCost', 1, 0.1));
-    if (!hiddenParameters?.includes('sellingPrice')) array.push(createFilter('sellingPrice', 0.5, 0.1));
-    if (!hiddenParameters?.includes('totalYearlyCost')) array.push(createFilter('totalYearlyCost', 100, 0));
-    if (!hiddenParameters?.includes('totalYearlyYield')) array.push(createFilter('totalYearlyYield', 100, 0));
-    if (!hiddenParameters?.includes('meanYearlyYield')) array.push(createFilter('meanYearlyYield', 1000, 0));
-    if (!hiddenParameters?.includes('yearlyProfit')) array.push(createFilter('yearlyProfit', 10, -10));
-    return array;
-  }, [updateHiddenFlag, projectFilters, hiddenParameters]);
+    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
+      const array: Filter[] = [];
+      if (!hiddenParameters?.includes('rowWidth'))
+        array.push(
+          createFilter(
+            'rowWidth',
+            solarPanelArrayLayoutConstraints.maximumRowsPerRack,
+            solarPanelArrayLayoutConstraints.minimumRowsPerRack,
+          ),
+        );
+      if (!hiddenParameters?.includes('tiltAngle'))
+        array.push(
+          createFilter(
+            'tiltAngle',
+            Util.toDegrees(solarPanelArrayLayoutConstraints.maximumTiltAngle),
+            Util.toDegrees(solarPanelArrayLayoutConstraints.minimumTiltAngle),
+          ),
+        );
+      if (!hiddenParameters?.includes('interRowSpacing'))
+        array.push(
+          createFilter(
+            'interRowSpacing',
+            solarPanelArrayLayoutConstraints.maximumInterRowSpacing,
+            solarPanelArrayLayoutConstraints.minimumInterRowSpacing,
+          ),
+        );
+      if (!hiddenParameters?.includes('latitude')) array.push(createFilter('latitude', 90, -90));
+      if (!hiddenParameters?.includes('orientation')) array.push(createFilter('orientation', 1, 0));
+      if (!hiddenParameters?.includes('poleHeight')) array.push(createFilter('poleHeight', 5, 0));
+      if (!hiddenParameters?.includes('unitCost')) array.push(createFilter('unitCost', 1, 0.1));
+      if (!hiddenParameters?.includes('sellingPrice')) array.push(createFilter('sellingPrice', 0.5, 0.1));
+      if (!hiddenParameters?.includes('totalYearlyCost')) array.push(createFilter('totalYearlyCost', 100, 0));
+      if (!hiddenParameters?.includes('totalYearlyYield')) array.push(createFilter('totalYearlyYield', 100, 0));
+      if (!hiddenParameters?.includes('meanYearlyYield')) array.push(createFilter('meanYearlyYield', 1000, 0));
+      if (!hiddenParameters?.includes('yearlyProfit')) array.push(createFilter('yearlyProfit', 10, -10));
+      return array;
+    } else if (projectType === DesignProblem.BUILDING_DESIGN) {
+      // todo: genAI range filter
+      const array: Filter[] = [];
+      if (!hiddenParameters?.includes('floorArea')) array.push(createFilter('floorArea', 500, 0));
+      if (!hiddenParameters?.includes('volume')) array.push(createFilter('volume', 1000, 0));
+      if (!hiddenParameters?.includes('surfaceArea')) array.push(createFilter('surfaceArea', 800, 0));
+      if (!hiddenParameters?.includes('fenestrationRatio')) array.push(createFilter('fenestrationRatio', 1, 0));
+      if (!hiddenParameters?.includes('height')) array.push(createFilter('height', 15, 0));
+      if (!hiddenParameters?.includes('houseOrientation')) array.push(createFilter('houseOrientation', 180, -180));
+      return array;
+    }
+    return [];
+  }, [updateHiddenFlag, projectFilters, hiddenParameters, projectType]);
 
   const steps: number[] = useMemo(() => {
     if (projectType === DesignProblem.SOLAR_PANEL_ARRAY && solarPanelArrayLayoutConstraints) {
@@ -630,9 +674,25 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('meanYearlyYield')) array.push(1); // electricity output in kWh
       if (!hiddenParameters?.includes('yearlyProfit')) array.push(0.1); // profit in $1,000
       return array;
+    } else if (projectType === DesignProblem.BUILDING_DESIGN) {
+      const array: number[] = [];
+      if (!hiddenParameters?.includes('floorArea')) array.push(1);
+      if (!hiddenParameters?.includes('volume')) array.push(1);
+      if (!hiddenParameters?.includes('surfaceArea')) array.push(1);
+      if (!hiddenParameters?.includes('fenestrationRatio')) array.push(0.1);
+      if (!hiddenParameters?.includes('height')) array.push(1);
+      if (!hiddenParameters?.includes('houseOrientation')) array.push(1);
+      return array;
     }
     return [];
   }, [projectType, hiddenParameters, updateHiddenFlag]);
+
+  const floorAreaRef = useRef<boolean>(!hiddenParameters?.includes('floorArea'));
+  const volumeRef = useRef<boolean>(!hiddenParameters?.includes('volume'));
+  const surfaceAreaRef = useRef<boolean>(!hiddenParameters?.includes('surfaceArea'));
+  const fenestrationRatioRef = useRef<boolean>(!hiddenParameters?.includes('fenestrationRatio'));
+  const heightRef = useRef<boolean>(!hiddenParameters?.includes('height'));
+  const houseOrientationRef = useRef<boolean>(!hiddenParameters?.includes('houseOrientation'));
 
   const rowWidthSelectionRef = useRef<boolean>(!hiddenParameters?.includes('rowWidth'));
   const tiltAngleSelectionRef = useRef<boolean>(!hiddenParameters?.includes('tiltAngle'));
@@ -648,6 +708,13 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const profitSelectionRef = useRef<boolean>(!hiddenParameters?.includes('yearlyProfit'));
 
   useEffect(() => {
+    floorAreaRef.current = !hiddenParameters?.includes('floorArea');
+    volumeRef.current = !hiddenParameters?.includes('volume');
+    surfaceAreaRef.current = !hiddenParameters?.includes('surfaceArea');
+    fenestrationRatioRef.current = !hiddenParameters?.includes('fenestrationRatio');
+    heightRef.current = !hiddenParameters?.includes('height');
+    houseOrientationRef.current = !hiddenParameters?.includes('houseOrientation');
+
     rowWidthSelectionRef.current = !hiddenParameters?.includes('rowWidth');
     tiltAngleSelectionRef.current = !hiddenParameters?.includes('tiltAngle');
     rowSpacingSelectionRef.current = !hiddenParameters?.includes('interRowSpacing');
@@ -812,202 +879,321 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   };
 
   const createChooseSolutionSpaceContent = () => {
-    return (
-      <div>
-        <Checkbox
-          style={{ width: '100%' }}
-          onChange={(e) => {
-            rowWidthSelectionRef.current = e.target.checked;
-            selectParameter(rowWidthSelectionRef.current, 'rowWidth');
-            setUpdateHiddenFlag(!updateHiddenFlag);
-          }}
-          checked={rowWidthSelectionRef.current}
-        >
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayRowWidth', lang)}</span>
-        </Checkbox>
-        <br />
-        <Checkbox
-          style={{ width: '100%' }}
-          onChange={(e) => {
-            tiltAngleSelectionRef.current = e.target.checked;
-            selectParameter(tiltAngleSelectionRef.current, 'tiltAngle');
-            setUpdateHiddenFlag(!updateHiddenFlag);
-          }}
-          checked={tiltAngleSelectionRef.current}
-        >
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTiltAngle', lang)}</span>
-        </Checkbox>
-        <br />
-        <Checkbox
-          style={{ width: '100%' }}
-          onChange={(e) => {
-            rowSpacingSelectionRef.current = e.target.checked;
-            selectParameter(rowSpacingSelectionRef.current, 'interRowSpacing');
-            setUpdateHiddenFlag(!updateHiddenFlag);
-          }}
-          checked={rowSpacingSelectionRef.current}
-        >
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayRowSpacing', lang)}</span>
-        </Checkbox>
-        <br />
-        <Checkbox
-          style={{ width: '100%' }}
-          onChange={(e) => {
-            latitudeSelectionRef.current = e.target.checked;
-            selectParameter(latitudeSelectionRef.current, 'latitude');
-            setUpdateHiddenFlag(!updateHiddenFlag);
-          }}
-          checked={latitudeSelectionRef.current}
-        >
-          <span style={{ fontSize: '12px' }}>{t('word.Latitude', lang)}</span>
-        </Checkbox>
-        <br />
-        <Checkbox
-          style={{ width: '100%' }}
-          onChange={(e) => {
-            orientationSelectionRef.current = e.target.checked;
-            selectParameter(orientationSelectionRef.current, 'orientation');
-            setUpdateHiddenFlag(!updateHiddenFlag);
-          }}
-          checked={orientationSelectionRef.current}
-        >
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayOrientation', lang)}</span>
-        </Checkbox>
-        <br />
-        <Checkbox
-          style={{ width: '100%' }}
-          onChange={(e) => {
-            poleHeightSelectionRef.current = e.target.checked;
-            selectParameter(poleHeightSelectionRef.current, 'poleHeight');
-            setUpdateHiddenFlag(!updateHiddenFlag);
-          }}
-          checked={poleHeightSelectionRef.current}
-        >
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayPoleHeight', lang)}</span>
-        </Checkbox>
-        <br />
-        <Checkbox
-          style={{ width: '100%' }}
-          onChange={(e) => {
-            unitCostSelectionRef.current = e.target.checked;
-            selectParameter(unitCostSelectionRef.current, 'unitCost');
-            setUpdateHiddenFlag(!updateHiddenFlag);
-          }}
-          checked={unitCostSelectionRef.current}
-        >
-          <span style={{ fontSize: '12px' }}>{t('economicsPanel.UnitCost', lang)}</span>
-        </Checkbox>
-        <br />
-        <Checkbox
-          style={{ width: '100%' }}
-          onChange={(e) => {
-            sellingPriceSelectionRef.current = e.target.checked;
-            selectParameter(sellingPriceSelectionRef.current, 'sellingPrice');
-            setUpdateHiddenFlag(!updateHiddenFlag);
-          }}
-          checked={sellingPriceSelectionRef.current}
-        >
-          <span style={{ fontSize: '12px' }}>{t('economicsPanel.SellingPrice', lang)}</span>
-        </Checkbox>
-        <br />
-        <Checkbox
-          style={{ width: '100%' }}
-          onChange={(e) => {
-            costSelectionRef.current = e.target.checked;
-            selectParameter(costSelectionRef.current, 'totalYearlyCost');
-            setUpdateHiddenFlag(!updateHiddenFlag);
-          }}
-          checked={costSelectionRef.current}
-        >
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTotalYearlyCost', lang)}</span>
-        </Checkbox>
-        <br />
-        <Checkbox
-          style={{ width: '100%' }}
-          onChange={(e) => {
-            totalYieldSelectionRef.current = e.target.checked;
-            selectParameter(totalYieldSelectionRef.current, 'totalYearlyYield');
-            setUpdateHiddenFlag(!updateHiddenFlag);
-          }}
-          checked={totalYieldSelectionRef.current}
-        >
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTotalYearlyYield', lang)}</span>
-        </Checkbox>
-        <br />
-        <Checkbox
-          style={{ width: '100%' }}
-          onChange={(e) => {
-            meanYieldSelectionRef.current = e.target.checked;
-            selectParameter(meanYieldSelectionRef.current, 'meanYearlyYield');
-            setUpdateHiddenFlag(!updateHiddenFlag);
-          }}
-          checked={meanYieldSelectionRef.current}
-        >
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayMeanYearlyYield', lang)}</span>
-        </Checkbox>
-        <br />
-        <Checkbox
-          style={{ width: '100%' }}
-          onChange={(e) => {
-            profitSelectionRef.current = e.target.checked;
-            selectParameter(profitSelectionRef.current, 'yearlyProfit');
-            setUpdateHiddenFlag(!updateHiddenFlag);
-          }}
-          checked={profitSelectionRef.current}
-        >
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayYearlyProfit', lang)}</span>
-        </Checkbox>
-      </div>
-    );
+    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
+      return (
+        <div>
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              rowWidthSelectionRef.current = e.target.checked;
+              selectParameter(rowWidthSelectionRef.current, 'rowWidth');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={rowWidthSelectionRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayRowWidth', lang)}</span>
+          </Checkbox>
+          <br />
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              tiltAngleSelectionRef.current = e.target.checked;
+              selectParameter(tiltAngleSelectionRef.current, 'tiltAngle');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={tiltAngleSelectionRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTiltAngle', lang)}</span>
+          </Checkbox>
+          <br />
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              rowSpacingSelectionRef.current = e.target.checked;
+              selectParameter(rowSpacingSelectionRef.current, 'interRowSpacing');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={rowSpacingSelectionRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayRowSpacing', lang)}</span>
+          </Checkbox>
+          <br />
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              latitudeSelectionRef.current = e.target.checked;
+              selectParameter(latitudeSelectionRef.current, 'latitude');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={latitudeSelectionRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('word.Latitude', lang)}</span>
+          </Checkbox>
+          <br />
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              orientationSelectionRef.current = e.target.checked;
+              selectParameter(orientationSelectionRef.current, 'orientation');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={orientationSelectionRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayOrientation', lang)}</span>
+          </Checkbox>
+          <br />
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              poleHeightSelectionRef.current = e.target.checked;
+              selectParameter(poleHeightSelectionRef.current, 'poleHeight');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={poleHeightSelectionRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayPoleHeight', lang)}</span>
+          </Checkbox>
+          <br />
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              unitCostSelectionRef.current = e.target.checked;
+              selectParameter(unitCostSelectionRef.current, 'unitCost');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={unitCostSelectionRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('economicsPanel.UnitCost', lang)}</span>
+          </Checkbox>
+          <br />
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              sellingPriceSelectionRef.current = e.target.checked;
+              selectParameter(sellingPriceSelectionRef.current, 'sellingPrice');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={sellingPriceSelectionRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('economicsPanel.SellingPrice', lang)}</span>
+          </Checkbox>
+          <br />
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              costSelectionRef.current = e.target.checked;
+              selectParameter(costSelectionRef.current, 'totalYearlyCost');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={costSelectionRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTotalYearlyCost', lang)}</span>
+          </Checkbox>
+          <br />
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              totalYieldSelectionRef.current = e.target.checked;
+              selectParameter(totalYieldSelectionRef.current, 'totalYearlyYield');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={totalYieldSelectionRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTotalYearlyYield', lang)}</span>
+          </Checkbox>
+          <br />
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              meanYieldSelectionRef.current = e.target.checked;
+              selectParameter(meanYieldSelectionRef.current, 'meanYearlyYield');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={meanYieldSelectionRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayMeanYearlyYield', lang)}</span>
+          </Checkbox>
+          <br />
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              profitSelectionRef.current = e.target.checked;
+              selectParameter(profitSelectionRef.current, 'yearlyProfit');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={profitSelectionRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayYearlyProfit', lang)}</span>
+          </Checkbox>
+        </div>
+      );
+    }
+    if (projectType === DesignProblem.BUILDING_DESIGN) {
+      return (
+        <div>
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              floorAreaRef.current = e.target.checked;
+              selectParameter(floorAreaRef.current, 'floorArea');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={floorAreaRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.FloorArea', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              volumeRef.current = e.target.checked;
+              selectParameter(volumeRef.current, 'volume');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={volumeRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.Volume', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              surfaceAreaRef.current = e.target.checked;
+              selectParameter(surfaceAreaRef.current, 'surfaceArea');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={surfaceAreaRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.SurfaceArea', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              fenestrationRatioRef.current = e.target.checked;
+              selectParameter(fenestrationRatioRef.current, 'fenestrationRatio');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={fenestrationRatioRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.FenestrationRatio', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              heightRef.current = e.target.checked;
+              selectParameter(heightRef.current, 'height');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={heightRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('word.Height', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              houseOrientationRef.current = e.target.checked;
+              selectParameter(houseOrientationRef.current, 'houseOrientation');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={houseOrientationRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.HouseOrientation', lang)}</span>
+          </Checkbox>
+          <br />
+        </div>
+      );
+    }
   };
 
   const createAxisOptions = () => {
-    return (
-      <>
-        <Option key={'rowWidth'} value={'rowWidth'}>
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayRowWidth', lang)}</span>
-        </Option>
-        <Option key={'tiltAngle'} value={'tiltAngle'}>
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTiltAngle', lang)}</span>
-        </Option>
-        <Option key={'interRowSpacing'} value={'interRowSpacing'}>
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayRowSpacing', lang)}</span>
-        </Option>
-        <Option key={'latitude'} value={'latitude'}>
-          <span style={{ fontSize: '12px' }}>{t('word.Latitude', lang)}</span>
-        </Option>
-        <Option key={'orientation'} value={'orientation'}>
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayOrientation', lang)}</span>
-        </Option>
-        <Option key={'poleHeight'} value={'poleHeight'}>
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayPoleHeight', lang)}</span>
-        </Option>
-        <Option key={'unitCost'} value={'unitCost'}>
-          <span style={{ fontSize: '12px' }}>{t('economicsPanel.UnitCost', lang)}</span>
-        </Option>
-        <Option key={'sellingPrice'} value={'sellingPrice'}>
-          <span style={{ fontSize: '12px' }}>{t('economicsPanel.SellingPrice', lang)}</span>
-        </Option>
-        <Option key={'totalYearlyCost'} value={'totalYearlyCost'}>
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTotalYearlyCost', lang)}</span>
-        </Option>
-        <Option key={'totalYearlyYield'} value={'totalYearlyYield'}>
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTotalYearlyYield', lang)}</span>
-        </Option>
-        <Option key={'meanYearlyYield'} value={'meanYearlyYield'}>
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayMeanYearlyYield', lang)}</span>
-        </Option>
-        <Option key={'yearlyProfit'} value={'yearlyProfit'}>
-          <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayYearlyProfit', lang)}</span>
-        </Option>
-      </>
-    );
+    if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
+      return (
+        <>
+          <Option key={'rowWidth'} value={'rowWidth'}>
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayRowWidth', lang)}</span>
+          </Option>
+          <Option key={'tiltAngle'} value={'tiltAngle'}>
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTiltAngle', lang)}</span>
+          </Option>
+          <Option key={'interRowSpacing'} value={'interRowSpacing'}>
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayRowSpacing', lang)}</span>
+          </Option>
+          <Option key={'latitude'} value={'latitude'}>
+            <span style={{ fontSize: '12px' }}>{t('word.Latitude', lang)}</span>
+          </Option>
+          <Option key={'orientation'} value={'orientation'}>
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayOrientation', lang)}</span>
+          </Option>
+          <Option key={'poleHeight'} value={'poleHeight'}>
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayPoleHeight', lang)}</span>
+          </Option>
+          <Option key={'unitCost'} value={'unitCost'}>
+            <span style={{ fontSize: '12px' }}>{t('economicsPanel.UnitCost', lang)}</span>
+          </Option>
+          <Option key={'sellingPrice'} value={'sellingPrice'}>
+            <span style={{ fontSize: '12px' }}>{t('economicsPanel.SellingPrice', lang)}</span>
+          </Option>
+          <Option key={'totalYearlyCost'} value={'totalYearlyCost'}>
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTotalYearlyCost', lang)}</span>
+          </Option>
+          <Option key={'totalYearlyYield'} value={'totalYearlyYield'}>
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayTotalYearlyYield', lang)}</span>
+          </Option>
+          <Option key={'meanYearlyYield'} value={'meanYearlyYield'}>
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayMeanYearlyYield', lang)}</span>
+          </Option>
+          <Option key={'yearlyProfit'} value={'yearlyProfit'}>
+            <span style={{ fontSize: '12px' }}>{t('polygonMenu.SolarPanelArrayYearlyProfit', lang)}</span>
+          </Option>
+        </>
+      );
+    }
+    if (projectType === DesignProblem.BUILDING_DESIGN) {
+      return (
+        <>
+          <Option key={'floorArea'} value={'floorArea'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.FloorArea', lang)}</span>
+          </Option>
+          <Option key={'volume'} value={'volume'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.Volume', lang)}</span>
+          </Option>
+          <Option key={'surfaceArea'} value={'surfaceArea'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.SurfaceArea', lang)}</span>
+          </Option>
+          <Option key={'fenestrationRatio'} value={'fenestrationRatio'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.FenestrationRatio', lang)}</span>
+          </Option>
+          <Option key={'height'} value={'height'}>
+            <span style={{ fontSize: '12px' }}>{t('word.Height', lang)}</span>
+          </Option>
+          <Option key={'houseOrientation'} value={'houseOrientation'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.HouseOrientation', lang)}</span>
+          </Option>
+        </>
+      );
+    }
   };
 
   const scatterData = useMemo(() => {
     const data: { x: number; y: number }[] = [];
     if (projectDesigns) {
       if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
+        for (const design of projectDesigns) {
+          if (design.invisible || design === selectedDesign) continue;
+          const d = {} as { x: number; y: number };
+          ProjectUtil.setScatterData(xAxisRef.current, 'x', d, design);
+          ProjectUtil.setScatterData(yAxisRef.current, 'y', d, design);
+          data.push(d);
+        }
+      } else if (projectType === DesignProblem.BUILDING_DESIGN) {
         for (const design of projectDesigns) {
           if (design.invisible || design === selectedDesign) continue;
           const d = {} as { x: number; y: number };
@@ -1024,6 +1210,14 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     const data: { x: number; y: number }[] = [];
     if (projectDesigns) {
       if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
+        for (const design of projectDesigns) {
+          if (design !== selectedDesign) continue;
+          const d = {} as { x: number; y: number };
+          ProjectUtil.setScatterData(xAxisRef.current, 'x', d, design);
+          ProjectUtil.setScatterData(yAxisRef.current, 'y', d, design);
+          data.push(d);
+        }
+      } else if (projectType === DesignProblem.BUILDING_DESIGN) {
         for (const design of projectDesigns) {
           if (design !== selectedDesign) continue;
           const d = {} as { x: number; y: number };
@@ -1089,7 +1283,36 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           bound.max = getMax('yearlyProfit', 10);
           break;
       }
+    } else if (projectType === DesignProblem.BUILDING_DESIGN) {
+      // todo: genAI range scatter plot
+      switch (axisName) {
+        case 'floorArea':
+          bound.min = getMin('floorArea', 0);
+          bound.max = getMax('floorArea', 500);
+          break;
+        case 'volume':
+          bound.min = getMin('volume', 0);
+          bound.max = getMax('volume', 2000);
+          break;
+        case 'surfaceArea':
+          bound.min = getMin('surfaceArea', 0);
+          bound.max = getMax('surfaceArea', 800);
+          break;
+        case 'fenestrationRatio':
+          bound.min = getMin('fenestrationRatio', 0);
+          bound.max = getMax('fenestrationRatio', 1);
+          break;
+        case 'height':
+          bound.min = getMin('height', 0);
+          bound.max = getMax('height', 20);
+          break;
+        case 'houseOrientation':
+          bound.min = getMin('houseOrientation', -180);
+          bound.max = getMax('houseOrientation', 180);
+          break;
+      }
     }
+
     return bound;
   };
 
@@ -1994,7 +2217,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
             <SolutionSpaceHeader>
               <span style={{ paddingLeft: '20px' }}>{t('projectPanel.SolutionSpace', lang)}</span>
               <span>
-                {projectType === DesignProblem.SOLAR_PANEL_ARRAY && (
+                {(projectType === DesignProblem.SOLAR_PANEL_ARRAY || projectType === DesignProblem.BUILDING_DESIGN) && (
                   <Popover
                     title={t('projectPanel.ChooseSolutionSpace', lang)}
                     onOpenChange={(visible) => {

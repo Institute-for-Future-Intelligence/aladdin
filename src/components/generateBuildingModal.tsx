@@ -94,8 +94,8 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
       for (const e of jsonElements) {
         switch (e.type) {
           case ObjectType.Foundation: {
-            const { id, center, size, color } = e;
-            const f = GenAIUtil.makeFoundation(id, center, size, color);
+            const { id, center, size, color, rotation } = e;
+            const f = GenAIUtil.makeFoundation(id, center, size, (rotation / 180) * Math.PI, color);
             state.elements.push(f);
             break;
           }

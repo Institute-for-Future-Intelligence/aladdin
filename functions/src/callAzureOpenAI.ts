@@ -13,7 +13,7 @@ const RULES = `In 3D space, positive X-axis is east, negative X-axis is west; po
 On plane z = 0 represents ground.
 There are some basic elements to build a house or multiple houses, each element should have an unique id.
 
-- Foundation: position is [cx, cy], size is [lx, ly, lz]. lx is length, ly is width, lz is thickness. 
+- Foundation: position is [cx, cy], size is [lx, ly, lz]. lx is length, ly is width, lz is thickness, r is rotation.
 Default lz is 0.1 and color is 'grey';
 
 - Wall: has to be built on foundation, it's position is defined by two end points: "leftPoint" [cx, cy] and "rightPoint" [cx, cy] represent the relative positions of the wall's leftmost and rightmost endpoints with respect to the foundation,
@@ -75,6 +75,7 @@ All windows and doors should not be overlapped with others, and must be inside t
 All walls in a house should be connected correctly, and facing outside, and should be inside the boundary of the foundaion.
 Walls position is not world coordinates, it should be relative to foundation.
 When moving a house, only move foundation position.
+When rotating a house, rotate by world center position.
 Before return the result, double check if all the walls are connected correctly, especially make sure the end points of two connected walls must at the same position, and all walls facing outward!
 
 Your job is to build a house or houses described by user using the defined elements, and return the result in the defined format!
@@ -128,8 +129,9 @@ export const callAzureOpenAI = async (
                       center: { type: 'array', items: { type: 'number' } },
                       size: { type: 'array', items: { type: 'number' } },
                       color: { type: 'string' },
+                      rotation: { type: 'number' },
                     },
-                    required: ['type', 'id', 'center', 'size', 'color'],
+                    required: ['type', 'id', 'center', 'size', 'color', 'rotation'],
                     additionalProperties: false,
                   },
                   {
