@@ -262,8 +262,8 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
       if (genAIData) {
         design.prompt = genAIData.prompt;
         design.data = genAIData.data;
-        GenAIUtil.calculateSolutionSpace(design);
       }
+      GenAIUtil.calculateSolutionSpace(design);
       break;
     }
   }
@@ -407,7 +407,17 @@ export const updateDesign = async (
           // If found, update the design in the array
           if (index >= 0) {
             // Update design from the current parameters and results and the new thumbnail
-            updatedDesigns[index] = createDesign(projectType, designTitle, thumbnail);
+            if (projectType === DesignProblem.BUILDING_DESIGN) {
+              const prompt = updatedDesigns[index].prompt;
+              const data = updatedDesigns[index].data;
+              updatedDesigns[index] = createDesign(projectType, designTitle, thumbnail);
+              if (prompt && data) {
+                updatedDesigns[index].prompt = prompt;
+                updatedDesigns[index].data = data;
+              }
+            } else {
+              updatedDesigns[index] = createDesign(projectType, designTitle, thumbnail);
+            }
             // Finally, upload the updated design array back to Firestore
             try {
               const projectDocRef = doc(firestore, 'users', userid, 'projects', projectTitle);
