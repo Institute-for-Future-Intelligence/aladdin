@@ -142,6 +142,7 @@ const CreateNewProjectDialog = React.memo(
                   e.preventDefault();
                   return false;
                 }
+                e.stopPropagation(); // do this to prevent this event from passing to the canvas behind it
               }}
               onChange={(e) => {
                 setProjectTitle(e.target.value);
