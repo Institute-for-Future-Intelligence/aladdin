@@ -217,6 +217,7 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
                 e.preventDefault();
                 return false;
               }
+              e.stopPropagation(); // do this to prevent this event from passing to the canvas behind it
             }}
             onChange={(e) => {
               setModelAuthor(e.target.value);
@@ -237,6 +238,7 @@ const ModelSiteDialog = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
                 e.preventDefault();
                 return false;
               }
+              e.stopPropagation(); // do this to prevent this event from passing to the canvas behind it
             }}
             onChange={(e) => {
               setModelLabel(e.target.value);
