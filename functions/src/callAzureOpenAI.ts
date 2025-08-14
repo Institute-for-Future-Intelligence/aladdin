@@ -9,78 +9,91 @@ const modelName = 'o4-mini';
 const deployment = 'o4-mini';
 const apiVersion = '2024-12-01-preview';
 
-const RULES = `In 3D space, positive X-axis is east, negative X-axis is west; positive Y-axis is north, negative Y-axis is south; positive Z-axis is up. 
-On plane z = 0 represents ground.
-There are some basic elements to build a house or multiple houses, each element should have an unique id.
+const RULES = `In 3D space, positive X-axis is east, negative X-axis is west; positive Y-axis is north, negative Y-axis is south; positive Z-axis is up.
+The plane z = 0 represents ground.
+There are some basic elements for building houses. Each element should have a unique id.
 
 - Foundation: position is [cx, cy], size is [lx, ly, lz]. lx is length, ly is width, lz is thickness, r is rotation.
 Default lz is 0.1 and color is 'grey';
 
-- Wall: has to be built on foundation, it's position is defined by two end points: "leftPoint" [cx, cy] and "rightPoint" [cx, cy] represent the relative positions of the wall's leftmost and rightmost endpoints with respect to the foundation,
-The size is [ly, lz], ly is thickness, lz is height. 
-"pId" is the id of the foundation it built on.
-"leftConnectId" and "rightConnectId" represent the wall's id it connected to. When two wall's endpoint are on the same position, means they are connected. If wall A is connected to Wall B, then Wall B is also connected to Wall A.
-"overhang" is the roof eaves overhang length, default is 0.3.
-Default color is white, ly is 0.1.
-Note that "leftConnectId" can only be connected to other wall's "rightConnectId", vise versa.
-Each wall has a normal direction, should be reprsented by the normal vector from leftpoint to rightpoint rotate clockwise by 90 degree. 
+- Wall: Must be built on foundation. It's position is defined by two points: "leftPoint" [cx, cy] and "rightPoint" [cx, cy],
+representing the relative positions of the wall's leftmost and rightmost endpoints with respect to the foundation,
+The size is [ly, lz], ly is thickness, lz is height. "pId" is the id of the foundation on which it is built.
+"leftConnectId" and "rightConnectId" represent the id of the wall that it is connected to.
+When two walls' endpoints are at the same position, they are connected.
+If wall A is connected to wall B, then wall B is also connected to wall A.
+"overhang" is the roof eaves overhang length, with a default value of 0.3.
+Default color is white. Default ly is 0.1.
+Note that "leftConnectId" can only be connected to other wall's "rightConnectId", and vise versa.
+Each wall has a normal direction represented by the normal vector from leftpoint to rightpoint, rotated clockwise by 90 degree.
 
-- Roof: When a wall is connected to other wall and it's connection forms a loop, then a "Roof" can be built on that wall.
-wId should be the wall's id it built on, fId should be the foundation' id it built on. Roof should preferably be built on the wall facing south.
+- Roof: When a wall is connected to other walls and the connection forms a loop, a "Roof" can be built on that wall.
+"wId" is the id of the wall that it is built on. "fId" is the id of the foundation that it is built on.
+Roof should preferably be built on the wall that faces south.
 Roof has default color: "#454769".
-Roof has defulat "rise": 2
-Roof has "roofType": "Gable", "Pyramid", "Hip", "Mansard", "Gambrel".
-For Hip roof type, it has a ridgeLength, which by default should be half of the wall's length it built on.
+Roof has default "rise": 2
+Roof has "roofType" that is either "Gable", "Pyramid", "Hip", "Mansard", or "Gambrel".
+For Hip roof type, it has a ridgeLength, which by default should be half of the length of the wall that it is built on.
 
-- Door: is built on wall. "pId" means the wall's id which it built on, "fId" means the foundation's id which it built on.
-Door size [lx, ly], lx means width, ly means height.
-Door center position [cx], is relative to wall's center.
-Door has default color white. 
-Door should preferably be built on the center of the wall facing south. 
+- Door: is built on a wall. "pId" is the id of the wall on which it is built. "fId" is the id of the foundation on which it is built.
+Door size [lx, ly], lx is width, ly is height.
+Door center position [cx] is relative to the wall's center.
+Door has default color white.
+Door should preferably be built at the center of the wall that faces south.
 
-- Window: is built on wall. "pId" means the wall's id it built on, "fId" means the foundation's id it built on.
+- Window: is built on a wall. "pId" is the id of the wall on which it is built. "fId" is the id of the foundation on which it is built.
 Window size [lx, ly], lx is width, ly is height.
-Window position [cx, cz], cx is relative to center of the parental wall, cz is height, which is calculated from the bottom of the wall.
+Window position [cx, cz]. cx is relative to center of the parent wall, cz is height calculated from the bottom of the wall.
 
-When build a house, first draw a rectangle on the foundation, which is used for define the position of walls, then put a wall on each side of the rectangle, so wall's end points should be the same of the position of the rectangle.
-A typical house is built by one foundation, four walls connected one by one forming a loop, all walls should have normal facing outside, a roof, a door and windows.
+When building a house, first draw a rectangle on the foundation, which defines the positions of walls, then put a wall on each side of the rectangle.
+The endpoints of the walls should be the same as the vertices of the rectangle.
+A house is built on top of one foundation, with four walls connected one by one forming a loop.
+All walls should have normal facing outside. There should be windows on each wall.
 
-There are some houses examples:
+Here are some examples:
 
-- Colonial style house has four walls with 5 height forms a rectangular area with 10 * 11 connected one by one forming a loop, , all walls should have normal facing outside
-a gable roof with 2.2 rise, 
-one door on the wall facing south, size 1 * 2.1,
-and each wall has four windows with evenly distributed position in two rows.
+- A colonial style house has four walls connected with each other in a loop. Each wall is a 5-meter high.
+The walls form a rectangular area with the size of 10 by 12 meters.
+All walls should have normal facing outside. There is a gable roof with a rise of 2.4 meters.
+Add a door on the wall facing south with a size of 1.6 by 2.1 meters.
+On each wall, there should be a set of two windows eventually distributed in the vertical direction
+and the set should be repeated in every four meters in the horizontal direction.
 
-- Gable-and-valley roof house has two foundations, each foundation has four walls and one gable roof.
-Foundation A is 20 * 7, foundation B is 7 * 9, they are overlapped to form a T-shape, the north edge of foundation B should be align with the center of foundation A
-The roof on foundation A is built on wall facing south, the roof on foundaion B is built on wall facing east.
-There is one door on south wall on foundation B. The overhang is 0 on north wall of foundaion B.
-Each wall has two rows of windows, and each row should has serveral windows, the number should be based on the wall's width, the wider, the more.
-Wall height is 5. roof color is grey.
+- A gable-and-valley roof house has two foundations, each foundation has four walls and one gable roof.
+The size of foundation A is 20 by 7 meters. The size of foundation B is 7 by 9 meters. They overlap to form a T-shape.
+The northern edge of foundation B should be align with the center of foundation A.
+The roof on foundation A is built on wall facing south. The roof on foundation B is built on wall facing east.
+There is one door on the south wall on foundation B. The overhang is 0 on north wall of foundation B.
+Each wall has two rows of windows, and each row should has several windows.
+The number of windows should be based on the wall's length. The longer the wall, the more windows it has.
+Wall height is 5 meters. Roof color is grey.
 
-- Dutch gable roof house has two foundations, each foundation has four walls and one gable roof.
-Foundation A is 13.8 * 11, foundation B is 10.8 * 6.5, they are overlapped at same center. Foundation A has hip roof, foundation B has gable roof with 2.3 rise, they both built on south side of the wall.
-Walls on foundaion A is 4.1 height. Walls on foundaion B is 4.9 height, and 0.1 overhang.
-Door is built on foundaion A, size 3.6 * 2.5. 
-Each wall has one row of windows, and each row should has serveral windows, the number should be based on the wall's width, the wider, the more.
+- Dutch gable roof house has two foundations. Each foundation has four walls and one gable roof.
+The size of foundation A is 13.8 by 11 meters, the size of foundation B is 10.8 by 6.5 meters. They overlap at the same center.
+Foundation A has a hip roof. foundation B has a gable roof with a rise of 2.3 meters. They are both built on the south wall.
+Walls on foundaion A have a 4.1-meter height. Walls on foundaion B have a 4.9-meter height and an overhang of 0.1 meter.
+Door is built on foundaion A, with a size of 3.6 by 2.5 meters.
+Each wall has one row of windows, and each row should has several windows. The number of windows depends on the wall's length.
+The longer the wall, the more windows it has.
 
-- Monitor roof house has two foundations, foundation A, size 11.3 * 11.3, has mansard roof with rise of 2 and ridgeLength of 2.75, wall height of 4. With a door on south wall, and a three to four windows on each wall with size 0.9 * 1.5.
-Foundation B, size 6.4 * 6.4, has pyramid roof with 2.4 rise, wall height 7.5 and 1 overhang length. One door on east wall and one door on west wall. 
-Each wall on foundaion B has two windows with size 2 * 1, with cz 6.5.
-Foundation A and B are overalpped at same center.
+- Monitor roof house has two foundations. Foundation A has a size of 11.3 by 11.3 meters. It has a mansard roof with rise of 2 meters,
+ridgeLength of 2.75 meters, and a wall height of 4 meters. There is a door on the south wall, and 3-4 windows on each wall with a size of 0.9 * 1.5 meters.
+Foundation B has a size of 6.4 by 6.4 meters. It has a pyramid roof with a rise of 2.4 meters, wall height of 7.5 meters, and overhang of 1 meter long.
+There is a door on the east wall and a door on the west wall.
+Each wall on foundation B has two windows with the size of 2 by 1 meters and cz of 6.5 meters.
+Foundation A and foundation B overlap at same center.
 
 
-All windows and doors should not be overlapped with others, and must be inside the boundary of the wall.
+All windows and doors must not overlap with one another, and must be within the boundary of a wall.
 All walls in a house should be connected correctly, and facing outside, and should be inside the boundary of the foundaion.
-Walls position is not world coordinates, it should be relative to foundation.
-When moving a house, only move foundation position.
-When rotating a house, rotate by world center position.
-Before return the result, double check if all the walls are connected correctly, especially make sure the end points of two connected walls must at the same position, and all walls facing outward!
+The position of a wall does not use the world coordinates and it should be relative to the foundation.
+When moving a house, only move the foundation position.
+When rotating a house, rotate by the world center position.
+Before returning the result, ensure that all the walls are connected correctly,
+the endpoints of two connected walls are at the same position, and all the walls face outward.
 
-Your job is to build a house or houses described by user using the defined elements, and return the result in the defined format!
-And descript your thinking process.
-If user descirbe irrelevant things, just build a simple house.
+Build houses described by the user using the defined elements and return the result in the defined format. Also document the thinking process.
+If the user's prompts are irrelevant, just build and return a simple house.
 `;
 
 export const callAzureOpenAI = async (
