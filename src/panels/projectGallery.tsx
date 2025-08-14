@@ -2026,7 +2026,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                 overflowX: 'hidden',
                 overflowY: 'auto',
               }}
-              grid={{ column: imageColumns, gutter: 1 }}
+              grid={{ column: imageColumns, gutter: [2, 12] }}
               dataSource={projectDesignsRef.current}
               renderItem={(design) => {
                 const lastSpaceIndex = design.title.lastIndexOf(' ');
