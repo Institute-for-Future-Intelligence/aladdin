@@ -2131,6 +2131,12 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                                 />
                               </span>
                             </div>
+                            {design?.data && (
+                              <div>
+                                <span style={{ display: 'inline', fontWeight: 'bold' }}>Thinking: </span>
+                                {<span style={{ display: 'inline' }}>{JSON.parse(design.data).thinking}</span>}
+                              </div>
+                            )}
                           </Space>
                         )
                       }
