@@ -41,6 +41,7 @@ import {
   FolderOpenOutlined,
   QuestionCircleOutlined,
   CopyOutlined,
+  ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_fail_try_again.png';
@@ -49,12 +50,13 @@ import { DataColoring, DatumEntry, Design, DesignProblem, Orientation } from '..
 import ParallelCoordinates from '../components/parallelCoordinates';
 //@ts-expect-error ignore
 import { saveSvgAsPng } from 'save-svg-as-png';
-import { showInfo, showSuccess } from '../helpers';
+import { showError, showInfo, showSuccess } from '../helpers';
 import { Util } from '../Util';
 import { ProjectUtil } from './ProjectUtil';
 import { HOME_URL } from '../constants';
 import {
   removeDesignFromProject,
+  updateAIMemory,
   updateDataColoring,
   updateDescription,
   updateDesign,
@@ -77,6 +79,9 @@ import { UndoableChange } from '../undo/UndoableChange';
 import { FidgetSpinner } from 'react-loader-spinner';
 import GenerateBuildingModal from 'src/components/generateBuildingModal';
 import SparkImage from 'src/assets/spark.png';
+import { firestore } from 'src/firebase';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import i18n from 'src/i18n/i18n';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -739,6 +744,10 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     windowToWallRatioRef.current = !hiddenParameters?.includes('windowToWallRatio');
     heightRef.current = !hiddenParameters?.includes('height');
     buildingOrientationRef.current = !hiddenParameters?.includes('buildingOrientation');
+    heatingRef.current = !hiddenParameters?.includes('heating');
+    coolingRef.current = !hiddenParameters?.includes('cooling');
+    solarRef.current = !hiddenParameters?.includes('solar');
+    netRef.current = !hiddenParameters?.includes('net');
 
     rowWidthSelectionRef.current = !hiddenParameters?.includes('rowWidth');
     tiltAngleSelectionRef.current = !hiddenParameters?.includes('tiltAngle');
@@ -815,32 +824,16 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
 
   // select parameter
 
-  const localSelectParameter = (selected: boolean, parameter: string) => {
-    setCommonStore((state) => {
-      if (state.projectState.hiddenParameters) {
-        if (selected) {
-          if (state.projectState.hiddenParameters.includes(parameter)) {
-            state.projectState.hiddenParameters.splice(state.projectState.hiddenParameters.indexOf(parameter), 1);
-          }
-        } else {
-          if (!state.projectState.hiddenParameters.includes(parameter)) {
-            state.projectState.hiddenParameters.push(parameter);
-          }
-        }
-      }
-    });
-  };
-
   const selectParameterSync = (selected: boolean, parameter: string) => {
     parameterSelectionChangedRef.current = true;
     if (isOwner) {
       if (user.uid && projectTitle) {
         updateHiddenParameters(user.uid, projectTitle, parameter, !selected).then(() => {
-          localSelectParameter(selected, parameter);
+          ProjectUtil.localSelectParameter(selected, parameter);
         });
       }
     } else {
-      localSelectParameter(selected, parameter);
+      ProjectUtil.localSelectParameter(selected, parameter);
     }
   };
 
@@ -1653,7 +1646,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
             <Select
               style={{ width: '100%' }}
               value={!independentPrompt}
-              onChange={(value: boolean) => {
+              onChange={async (value: boolean) => {
                 const oldValue = !independentPrompt;
                 const newValue = value;
                 if (newValue === oldValue) return;
@@ -1670,6 +1663,9 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                   },
                 } as UndoableChange;
                 useStore.getState().addUndoable(undoableChange);
+                if (isOwner && user.uid && projectTitle) {
+                  await updateAIMemory(user.uid, projectTitle, newValue);
+                }
                 setAIMemory(newValue);
               }}
             >
@@ -2064,6 +2060,101 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     confirmToOpenDesign(design);
   };
 
+  const updateDesignModelChanged = async (userid: string, projectTitle: string, designTitle: string) => {
+    const lang = { lng: useStore.getState().language };
+    usePrimitiveStore.getState().set((state) => {
+      state.waiting = true;
+    });
+
+    // First we update the design file by overwriting it with the current content
+    try {
+      const designDocRef = doc(firestore, 'users', userid, 'designs', designTitle);
+      const exportContent = useStore.getState().exportContent();
+      await setDoc(designDocRef, exportContent);
+    } catch (error) {
+      console.error(error);
+    }
+    usePrimitiveStore.getState().setChanged(false);
+    try {
+      const projectDocRef = doc(firestore, 'users', userid, 'projects', projectTitle);
+      const documentSnapshot = await getDoc(projectDocRef);
+      if (documentSnapshot.exists()) {
+        const data_1 = documentSnapshot.data();
+        if (data_1) {
+          const updatedDesigns: Design[] = [];
+          updatedDesigns.push(...data_1.designs);
+          for (const [i, d] of updatedDesigns.entries()) {
+            if (d.title === designTitle) {
+              d.modelChanged = true;
+              try {
+                const projectDocRef = doc(firestore, 'users', userid, 'projects', projectTitle);
+
+                await updateDoc(projectDocRef, { designs: updatedDesigns });
+              } catch (error) {
+                showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+              } finally {
+                // Update the cached array in the local storage via the common store
+                useStore.getState().set((state_1) => {
+                  state_1.projectState.designs = updatedDesigns;
+                });
+                usePrimitiveStore.getState().set((state_2) => {
+                  state_2.updateProjectsFlag = true;
+                  state_2.waiting = false;
+                });
+              }
+              break;
+            }
+          }
+        }
+      }
+    } catch (error) {
+      showError(i18n.t('message.CannotFetchProjectData', lang) + ': ' + error);
+    }
+  };
+
+  const elements = useStore(Selector.elements);
+  useEffect(() => {
+    if (usePrimitiveStore.getState().skipChange && usePrimitiveStore.getState().modelChanged) {
+      usePrimitiveStore.getState().set((state) => {
+        state.modelChanged = false;
+      });
+    }
+    if (!usePrimitiveStore.getState().skipChange && !usePrimitiveStore.getState().modelChanged) {
+      usePrimitiveStore.getState().set((state) => {
+        state.modelChanged = true;
+      });
+    }
+  }, [elements]);
+
+  useEffect(() => {
+    const onPointUp = () => {
+      if (usePrimitiveStore.getState().modelChanged) {
+        const userid = useStore.getState().user.uid;
+        const projectTitle = useStore.getState().projectState.title;
+        const designTitle = useStore.getState().cloudFile;
+
+        if (!designTitle || !userid || !projectTitle) {
+          return;
+        }
+
+        if (userid !== useStore.getState().projectState.owner) {
+          return;
+        }
+
+        if (selectedDesign) {
+          if (selectedDesign.modelChanged) return;
+          updateDesignModelChanged(userid, projectTitle, designTitle);
+          setSelectedDesign({ ...selectedDesign, modelChanged: false });
+        }
+        usePrimitiveStore.getState().set((state) => {
+          state.modelChanged = false;
+        });
+      }
+    };
+    window.addEventListener('pointerup', onPointUp);
+    return () => window.removeEventListener('pointerup', onPointUp);
+  }, [selectedDesign]);
+
   return (
     <Container
       onContextMenu={(e) => {
@@ -2282,6 +2373,13 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                             color: 'white',
                           }}
                         >
+                          {/* todo: genAI - model  */}
+                          {design.modelChanged && (
+                            <ExclamationCircleOutlined
+                              style={{ paddingRight: '4px', fontSize: '16px' }}
+                              title={t('projectPanel.ModelChanged', lang)}
+                            />
+                          )}
                           {design.title === cloudFile && (
                             <FolderOpenOutlined style={{ paddingRight: '4px', fontSize: '16px' }} />
                           )}

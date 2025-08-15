@@ -21,6 +21,7 @@ import { callAzureOpenAI } from 'functions/src/callAzureOpenAI';
 import { ObjectType } from 'src/types';
 import { GenAIUtil } from 'src/panels/genAIUtil';
 import { RoofType } from 'src/models/RoofModel';
+import { updateGenerateBuildingPrompt } from 'src/cloudProjectUtil';
 
 export interface GenerateBuildingModalProps {
   setDialogVisible: (visible: boolean) => void;
@@ -283,6 +284,9 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
     });
     handleGenerativeAI();
     setChanged(true);
+    const userid = useStore.getState().user.uid;
+    const projectTitle = useStore.getState().projectState.title;
+    if (userid && projectTitle) await updateGenerateBuildingPrompt(userid, projectTitle, prompt);
     close();
   };
 

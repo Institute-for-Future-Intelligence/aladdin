@@ -5,11 +5,31 @@
 import { Design, DesignProblem, Orientation } from '../types';
 import i18n from '../i18n/i18n';
 import { Util } from '../Util';
+import { useStore } from 'src/stores/common';
 
 export class ProjectUtil {
+  static localSelectParameter(selected: boolean, parameter: string) {
+    useStore.getState().set((state) => {
+      if (state.projectState.hiddenParameters) {
+        if (selected) {
+          if (state.projectState.hiddenParameters.includes(parameter)) {
+            state.projectState.hiddenParameters.splice(state.projectState.hiddenParameters.indexOf(parameter), 1);
+          }
+        } else {
+          if (!state.projectState.hiddenParameters.includes(parameter)) {
+            state.projectState.hiddenParameters.push(parameter);
+          }
+        }
+      }
+    });
+  }
+
   static getDefaultHiddenParameters(projectType: DesignProblem): string[] {
     if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
       return ['latitude', 'orientation', 'poleHeight'];
+    }
+    if (projectType === DesignProblem.BUILDING_DESIGN) {
+      return ['heating', 'cooling', 'solar', 'net'];
     }
     return [];
   }

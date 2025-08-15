@@ -23,7 +23,7 @@ import { checkBuilding, CheckStatus } from '../analysis/heatTools';
 import { useDataStore } from '../stores/commonData';
 import { useLanguage, useWeather } from '../hooks';
 import { createDesign } from 'src/cloudProjectUtil';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { arrayRemove, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { firestore } from 'src/firebase';
 
 const Container = styled.div`
@@ -204,6 +204,10 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
             updatedDesigns[index].cooling = cooling;
             updatedDesigns[index].solar = solar;
             updatedDesigns[index].net = net;
+            updatedDesigns[index].modelChanged = false;
+            usePrimitiveStore.getState().set((state) => {
+              state.modelChanged = false;
+            });
 
             // Finally, upload the updated design array back to Firestore
             try {
@@ -227,6 +231,47 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
       }
     } catch (error) {
       showError(i18n.t('message.CannotFetchProjectData', lang) + ': ' + error);
+    }
+  };
+
+  const updateHiddenParameters = async () => {
+    const hiddenParameters = useStore.getState().projectState.hiddenParameters;
+    let counter = 0;
+    hiddenParameters?.forEach((p) => {
+      if (p === 'heating' || p === 'cooling' || p === 'solar' || p === 'net') counter++;
+    });
+    if (counter !== 4) return;
+
+    const userid = useStore.getState().user.uid;
+
+    if (userid && userid === useStore.getState().projectState.owner) {
+      const projectTitle = useStore.getState().projectState.title;
+      if (projectTitle) {
+        const lang = { lng: useStore.getState().language };
+        try {
+          await updateDoc(doc(firestore, 'users', userid, 'projects', projectTitle), {
+            hiddenParameters: arrayRemove('heating', 'cooling', 'solar', 'net'),
+          });
+        } catch (error) {
+          showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+        }
+
+        useStore.getState().set((state) => {
+          if (state.projectState.hiddenParameters) {
+            state.projectState.hiddenParameters = state.projectState.hiddenParameters.filter(
+              (p) => p !== 'heating' && p !== 'cooling' && p !== 'solar' && p !== 'net',
+            );
+          }
+        });
+      }
+    } else {
+      useStore.getState().set((state) => {
+        if (state.projectState.hiddenParameters) {
+          state.projectState.hiddenParameters = state.projectState.hiddenParameters.filter(
+            (p) => p !== 'heating' && p !== 'cooling' && p !== 'solar' && p !== 'net',
+          );
+        }
+      });
     }
   };
 
@@ -279,6 +324,7 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
 
     if (useStore.getState().designProjectType === DesignProblem.BUILDING_DESIGN) {
       updateDesign(sumHeater, sumAc, sumSolarPanel, sumHeater + sumAc - sumSolarPanel);
+      updateHiddenParameters();
     }
     setHeaterSum(sumHeater);
     setAcSum(sumAc);

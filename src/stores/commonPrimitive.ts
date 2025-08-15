@@ -9,6 +9,7 @@ import produce from 'immer';
 // avoid using undefined value in the store for now.
 export interface PrimitiveStoreState {
   latestVersion: string | undefined;
+  modelChanged: boolean;
   changed: boolean;
   setChanged: (b: boolean) => void;
   skipChange: boolean;
@@ -195,6 +196,7 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
 
     latestVersion: undefined,
 
+    modelChanged: false,
     changed: false,
     setChanged(b) {
       immerSet((state: PrimitiveStoreState) => {

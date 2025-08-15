@@ -266,6 +266,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             counter: f.counter,
             action: '',
             reasoningEffort: f.reasoningEffort,
+            independentPrompt: f.independentPrompt,
             generateBuildingPrompt: f.generateBuildingPrompt,
           });
         });

@@ -222,6 +222,30 @@ export const updateDotSizeScatterPlot = async (userid: string, projectTitle: str
   }
 };
 
+export const updateGenerateBuildingPrompt = async (
+  userid: string,
+  projectTitle: string,
+  generateBuildingPrompt: string,
+) => {
+  const lang = { lng: useStore.getState().language };
+  try {
+    await updateDoc(doc(firestore, 'users', userid, 'projects', projectTitle), {
+      generateBuildingPrompt,
+    });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
+};
+
+export const updateAIMemory = async (userid: string, projectTitle: string, memory: boolean) => {
+  const lang = { lng: useStore.getState().language };
+  try {
+    await updateDoc(doc(firestore, 'users', userid, 'projects', projectTitle), { independentPrompt: !memory });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
+};
+
 export const updateThumbnailWidth = async (userid: string, projectTitle: string, thumbnailWidth: number) => {
   const lang = { lng: useStore.getState().language };
   try {
@@ -414,6 +438,7 @@ export const updateDesign = async (
               const cooling = updatedDesigns[index].cooling;
               const solar = updatedDesigns[index].solar;
               const net = updatedDesigns[index].net;
+              const changed = updatedDesigns[index].modelChanged;
 
               updatedDesigns[index] = createDesign(projectType, designTitle, thumbnail);
               if (prompt && data) {
@@ -424,6 +449,7 @@ export const updateDesign = async (
               updatedDesigns[index].cooling = cooling;
               updatedDesigns[index].solar = solar;
               updatedDesigns[index].net = net;
+              updatedDesigns[index].modelChanged = changed;
             } else {
               updatedDesigns[index] = createDesign(projectType, designTitle, thumbnail);
             }
