@@ -71,8 +71,8 @@ Wall height is 5 meters. Roof color is grey.
 - Dutch gable roof house has two foundations. Each foundation has four walls and one gable roof.
 The size of foundation A is 13.8 by 11 meters, the size of foundation B is 10.8 by 6.5 meters. They overlap at the same center.
 Foundation A has a hip roof. foundation B has a gable roof with a rise of 2.3 meters. They are both built on the south wall.
-Walls on foundaion A have a 4.1-meter height. Walls on foundaion B have a 4.9-meter height and an overhang of 0.1 meter.
-Door is built on foundaion A, with a size of 3.6 by 2.5 meters.
+Walls on foundation A have a 4.1-meter height. Walls on foundation B have a 4.9-meter height and an overhang of 0.1 meter.
+Door is built on foundation A, with a size of 3.6 by 2.5 meters.
 Each wall has one row of windows, and each row should has several windows. The number of windows depends on the wall's length.
 The longer the wall, the more windows it has.
 
@@ -85,7 +85,7 @@ Foundation A and foundation B overlap at same center.
 
 
 All windows and doors must not overlap with one another, and must be within the boundary of a wall.
-All walls in a house should be connected correctly, and facing outside, and should be inside the boundary of the foundaion.
+All walls in a house should be connected correctly, and facing outside, and should be inside the boundary of the foundation.
 The position of a wall does not use the world coordinates and it should be relative to the foundation.
 When moving a house, only move the foundation position.
 When rotating a house, rotate by the world center position.

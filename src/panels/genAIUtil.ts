@@ -98,7 +98,7 @@ export class GenAIUtil {
         const wall = wallMap.get(pId);
         if (!wall) continue;
 
-        // check bounday
+        // check boundary
         const wallLx = Math.hypot(wall.leftPoint[0] - wall.rightPoint[0], wall.leftPoint[1] - wall.rightPoint[1]);
         const wallHx = wallLx / 2;
         const margin = 0.05;
@@ -138,7 +138,7 @@ export class GenAIUtil {
           for (const sib of siblings) {
             if (Util.isRectOverlap([cx, cz, lx, lz], [...sib.center, ...sib.size])) {
               isOverlap = true;
-              console.log('ovrelap with sib', center, size, sib);
+              console.log('overlap with sib', center, size, sib);
               break;
             }
           }
