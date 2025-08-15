@@ -410,11 +410,20 @@ export const updateDesign = async (
             if (projectType === DesignProblem.BUILDING_DESIGN) {
               const prompt = updatedDesigns[index].prompt;
               const data = updatedDesigns[index].data;
+              const heating = updatedDesigns[index].heating;
+              const cooling = updatedDesigns[index].cooling;
+              const solar = updatedDesigns[index].solar;
+              const net = updatedDesigns[index].net;
+
               updatedDesigns[index] = createDesign(projectType, designTitle, thumbnail);
               if (prompt && data) {
                 updatedDesigns[index].prompt = prompt;
                 updatedDesigns[index].data = data;
               }
+              updatedDesigns[index].heating = heating;
+              updatedDesigns[index].cooling = cooling;
+              updatedDesigns[index].solar = solar;
+              updatedDesigns[index].net = net;
             } else {
               updatedDesigns[index] = createDesign(projectType, designTitle, thumbnail);
             }

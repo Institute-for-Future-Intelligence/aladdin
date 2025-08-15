@@ -434,6 +434,10 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           if (!hiddenParameters?.includes('windowToWallRatio')) d['windowToWallRatio'] = design.windowToWallRatio;
           if (!hiddenParameters?.includes('height')) d['height'] = design.height;
           if (!hiddenParameters?.includes('buildingOrientation')) d['buildingOrientation'] = design.buildingOrientation;
+          if (!hiddenParameters?.includes('heating')) d['heating'] = design.heating;
+          if (!hiddenParameters?.includes('cooling')) d['cooling'] = design.cooling;
+          if (!hiddenParameters?.includes('solar')) d['solar'] = design.solar;
+          if (!hiddenParameters?.includes('net')) d['net'] = design.net;
           d['group'] = projectDataColoring === DataColoring.INDIVIDUALS ? design.title : 'default';
           d['selected'] = selectedDesign === design;
           d['hovered'] = hoveredDesign === design;
@@ -534,6 +538,10 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('windowToWallRatio')) array.push(0);
       if (!hiddenParameters?.includes('height')) array.push(0);
       if (!hiddenParameters?.includes('buildingOrientation')) array.push(-180);
+      if (!hiddenParameters?.includes('heating')) array.push(0);
+      if (!hiddenParameters?.includes('cooling')) array.push(0);
+      if (!hiddenParameters?.includes('solar')) array.push(0);
+      if (!hiddenParameters?.includes('net')) array.push(0);
       return array;
     }
     return [];
@@ -567,6 +575,10 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('windowToWallRatio')) array.push(getMax('windowToWallRatio', 1));
       if (!hiddenParameters?.includes('height')) array.push(getMax('height', 20));
       if (!hiddenParameters?.includes('buildingOrientation')) array.push(getMax('buildingOrientation', 180));
+      if (!hiddenParameters?.includes('heating')) array.push(getMax('heating', 100));
+      if (!hiddenParameters?.includes('cooilng')) array.push(getMax('cooilng', 100));
+      if (!hiddenParameters?.includes('solar')) array.push(getMax('solar', 100));
+      if (!hiddenParameters?.includes('net')) array.push(getMax('net', 100));
       return array;
     }
     return [];
@@ -654,6 +666,10 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('height')) array.push(createFilter('height', 15, 0));
       if (!hiddenParameters?.includes('buildingOrientation'))
         array.push(createFilter('buildingOrientation', 180, -180));
+      if (!hiddenParameters?.includes('heating')) array.push(createFilter('heating', 100, 0));
+      if (!hiddenParameters?.includes('cooling')) array.push(createFilter('cooling', 100, 0));
+      if (!hiddenParameters?.includes('solar')) array.push(createFilter('solar', 100, 0));
+      if (!hiddenParameters?.includes('net')) array.push(createFilter('net', 100, 0));
       return array;
     }
     return [];
@@ -683,6 +699,10 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('windowToWallRatio')) array.push(0.1);
       if (!hiddenParameters?.includes('height')) array.push(1);
       if (!hiddenParameters?.includes('buildingOrientation')) array.push(1);
+      if (!hiddenParameters?.includes('heating')) array.push(1);
+      if (!hiddenParameters?.includes('cooling')) array.push(1);
+      if (!hiddenParameters?.includes('solar')) array.push(1);
+      if (!hiddenParameters?.includes('net')) array.push(1);
       return array;
     }
     return [];
@@ -694,6 +714,10 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const windowToWallRatioRef = useRef<boolean>(!hiddenParameters?.includes('windowToWallRatio'));
   const heightRef = useRef<boolean>(!hiddenParameters?.includes('height'));
   const buildingOrientationRef = useRef<boolean>(!hiddenParameters?.includes('buildingOrientation'));
+  const heatingRef = useRef<boolean>(!hiddenParameters?.includes('heating'));
+  const coolingRef = useRef<boolean>(!hiddenParameters?.includes('cooling'));
+  const solarRef = useRef<boolean>(!hiddenParameters?.includes('solar'));
+  const netRef = useRef<boolean>(!hiddenParameters?.includes('net'));
 
   const rowWidthSelectionRef = useRef<boolean>(!hiddenParameters?.includes('rowWidth'));
   const tiltAngleSelectionRef = useRef<boolean>(!hiddenParameters?.includes('tiltAngle'));
@@ -1109,6 +1133,58 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
             <span style={{ fontSize: '12px' }}>{t('solutionSpace.BuildingOrientation', lang)}</span>
           </Checkbox>
           <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              heatingRef.current = e.target.checked;
+              selectParameter(heatingRef.current, 'heating');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={heatingRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.Heating', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              coolingRef.current = e.target.checked;
+              selectParameter(coolingRef.current, 'cooling');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={coolingRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.Cooling', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              solarRef.current = e.target.checked;
+              selectParameter(solarRef.current, 'solar');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={solarRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.Solar', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              netRef.current = e.target.checked;
+              selectParameter(netRef.current, 'net');
+              setUpdateHiddenFlag(!updateHiddenFlag);
+            }}
+            checked={netRef.current}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.Net', lang)}</span>
+          </Checkbox>
+          <br />
         </div>
       );
     }
@@ -1177,6 +1253,18 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           </Option>
           <Option key={'buildingOrientation'} value={'buildingOrientation'}>
             <span style={{ fontSize: '12px' }}>{t('solutionSpace.BuildingOrientation', lang)}</span>
+          </Option>
+          <Option key={'heating'} value={'heating'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.Heating', lang)}</span>
+          </Option>
+          <Option key={'cooling'} value={'cooling'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.Cooling', lang)}</span>
+          </Option>
+          <Option key={'solar'} value={'solar'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.Solar', lang)}</span>
+          </Option>
+          <Option key={'net'} value={'net'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.Net', lang)}</span>
           </Option>
         </>
       );

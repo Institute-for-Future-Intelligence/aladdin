@@ -38,6 +38,10 @@ export class ProjectUtil {
       if (!hidden?.includes('windowToWallRatio')) a.push('windowToWallRatio');
       if (!hidden?.includes('height')) a.push('height');
       if (!hidden?.includes('buildingOrientation')) a.push('buildingOrientation');
+      if (!hidden?.includes('heating')) a.push('heating');
+      if (!hidden?.includes('cooling')) a.push('cooling');
+      if (!hidden?.includes('solar')) a.push('solar');
+      if (!hidden?.includes('net')) a.push('net');
       return a;
     }
     return [];
@@ -67,6 +71,10 @@ export class ProjectUtil {
       if (!hidden?.includes('windowToWallRatio')) a.push(i18n.t('solutionSpace.WindowToWallRatio', l));
       if (!hidden?.includes('height')) a.push(i18n.t('word.Height', l));
       if (!hidden?.includes('buildingOrientation')) a.push(i18n.t('solutionSpace.BuildingOrientation', l));
+      if (!hidden?.includes('heating')) a.push('heating');
+      if (!hidden?.includes('cooling')) a.push('cooling');
+      if (!hidden?.includes('solar')) a.push('solar');
+      if (!hidden?.includes('net')) a.push('net');
       return a;
     }
     return [];
@@ -96,6 +104,10 @@ export class ProjectUtil {
       if (!hidden?.includes('windowToWallRatio')) a.push('number');
       if (!hidden?.includes('height')) a.push('number');
       if (!hidden?.includes('buildingOrientation')) a.push('number');
+      if (!hidden?.includes('heating')) a.push('number');
+      if (!hidden?.includes('cooling')) a.push('number');
+      if (!hidden?.includes('solar')) a.push('number');
+      if (!hidden?.includes('net')) a.push('number');
       return a;
     }
     return [];
@@ -125,6 +137,10 @@ export class ProjectUtil {
       if (!hidden?.includes('windowToWallRatio')) a.push(2);
       if (!hidden?.includes('height')) a.push(1);
       if (!hidden?.includes('buildingOrientation')) a.push(1);
+      if (!hidden?.includes('heating')) a.push(1);
+      if (!hidden?.includes('cooling')) a.push(1);
+      if (!hidden?.includes('solar')) a.push(1);
+      if (!hidden?.includes('net')) a.push(1);
       return a;
     }
     return [];
@@ -154,6 +170,10 @@ export class ProjectUtil {
       if (!hidden?.includes('windowToWallRatio')) a.push(false);
       if (!hidden?.includes('height')) a.push(false);
       if (!hidden?.includes('buildingOrientation')) a.push(false);
+      if (!hidden?.includes('heating')) a.push(false);
+      if (!hidden?.includes('cooling')) a.push(false);
+      if (!hidden?.includes('solar')) a.push(false);
+      if (!hidden?.includes('net')) a.push(false);
       return a;
     }
     return [];
@@ -183,6 +203,10 @@ export class ProjectUtil {
       if (!hidden?.includes('windowToWallRatio')) a.push('');
       if (!hidden?.includes('height')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));
       if (!hidden?.includes('buildingOrientation')) a.push('°');
+      if (!hidden?.includes('heating')) a.push('kWh');
+      if (!hidden?.includes('cooling')) a.push('kWh');
+      if (!hidden?.includes('solar')) a.push('kWh');
+      if (!hidden?.includes('net')) a.push('kWh');
       return a;
     }
     return [];
@@ -201,11 +225,27 @@ export class ProjectUtil {
     if (variable === 'surfaceArea') return 'm²';
     if (variable === 'height') return i18n.t('word.MeterAbbreviation', l);
     if (variable === 'buildingOrientation') return '°';
+    if (variable === 'heating') return 'kWh';
+    if (variable === 'cooling') return 'kWh';
+    if (variable === 'solar') return 'kWh';
+    if (variable === 'net') return 'kWh';
     return '';
   }
 
   static setScatterData(name: string, axis: 'x' | 'y', datum: { x: number; y: number }, design: Design) {
     switch (name) {
+      case 'heating':
+        datum[axis] = design.heating;
+        break;
+      case 'cooling':
+        datum[axis] = design.cooling;
+        break;
+      case 'solar':
+        datum[axis] = design.solar;
+        break;
+      case 'net':
+        datum[axis] = design.net;
+        break;
       case 'floorArea':
         datum[axis] = design.floorArea;
         break;

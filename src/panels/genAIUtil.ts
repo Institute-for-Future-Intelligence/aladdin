@@ -533,6 +533,11 @@ export class GenAIUtil {
     design['windowToWallRatio'] = fenestratedArea / wallArea;
     design['height'] = height;
     design['buildingOrientation'] = buildingOrientation ?? 0;
+
+    design['heating'] = 0;
+    design['cooling'] = 0;
+    design['solar'] = 0;
+    design['net'] = 0;
   }
 
   // todo: no skylight for now

@@ -1950,6 +1950,10 @@ export const i18n_zh_tw = {
       SurfaceArea: '表面積',
       WindowToWallRatio: '窗牆比',
       BuildingOrientation: '建築朝向',
+      Heating: '暖氣',
+      Cooling: '空調',
+      Solar: '太陽能',
+      Net: '净能耗',
     },
   },
 };

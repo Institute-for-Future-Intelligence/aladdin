@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { BuildingCompletionStatus, DatumEntry, GraphDataType } from '../types';
+import { BuildingCompletionStatus, DatumEntry, Design, DesignProblem, GraphDataType } from '../types';
 import { FLOATING_WINDOW_OPACITY, MONTHS_ABBV, Z_INDEX_FRONT_PANEL } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Popover, Space } from 'antd';
@@ -21,6 +21,9 @@ import { Util } from '../Util';
 import { checkBuilding, CheckStatus } from '../analysis/heatTools';
 import { useDataStore } from '../stores/commonData';
 import { useLanguage, useWeather } from '../hooks';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { firestore } from 'src/firebase';
+import { createDesign } from 'src/cloudProjectUtil';
 
 const Container = styled.div`
   position: fixed;
@@ -325,7 +328,13 @@ const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPane
     setAcSum(totalAc);
     const totalSolarPanel = solarPanelSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0);
     setSolarPanelSum(totalSolarPanel);
-    setNetSum(netSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0));
+    const totalNet = netSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0);
+    setNetSum(totalNet);
+
+    if (useStore.getState().designProjectType === DesignProblem.BUILDING_DESIGN) {
+      updateDesign(totalHeater, totalAc, totalSolarPanel, totalNet);
+    }
+
     // for logger
     setTotalBuildingHeater(totalHeater);
     setTotalBuildingAc(totalAc);
@@ -378,6 +387,90 @@ const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPane
       resizeObserverRef.current?.disconnect();
     };
   }, []);
+
+  const updateDesign = async (heating: number, cooling: number, solar: number, net: number) => {
+    const userid = useStore.getState().user.uid;
+    const projectTitle = useStore.getState().projectState.title;
+    const designTitle = useStore.getState().cloudFile;
+
+    if (!designTitle || !userid || !projectTitle) {
+      console.log('no design title, userid or projectTitle');
+      return;
+    }
+    const lang = { lng: useStore.getState().language };
+    usePrimitiveStore.getState().set((state) => {
+      state.waiting = true;
+    });
+
+    // First we update the design file by overwriting it with the current content
+    try {
+      const designDocRef = doc(firestore, 'users', userid, 'designs', designTitle);
+      const exportContent = useStore.getState().exportContent();
+      await setDoc(designDocRef, exportContent);
+    } catch (error) {
+      console.error(error);
+    }
+    usePrimitiveStore.getState().setChanged(false);
+    try {
+      const projectDocRef = doc(firestore, 'users', userid, 'projects', projectTitle);
+      const documentSnapshot = await getDoc(projectDocRef);
+      if (documentSnapshot.exists()) {
+        const data_1 = documentSnapshot.data();
+        if (data_1) {
+          const updatedDesigns: Design[] = [];
+          updatedDesigns.push(...data_1.designs);
+          // Get the index of the design to be modified by the title
+          let index = -1;
+          for (const [i, d] of updatedDesigns.entries()) {
+            if (d.title === designTitle) {
+              index = i;
+              break;
+            }
+          }
+          // If found, update the design in the array
+          if (index >= 0) {
+            // Update design from the current parameters and results and the new thumbnail
+            const prompt = updatedDesigns[index].prompt;
+            const data = updatedDesigns[index].data;
+            updatedDesigns[index] = createDesign(
+              DesignProblem.BUILDING_DESIGN,
+              designTitle,
+              updatedDesigns[index].thumbnail,
+            );
+            if (prompt && data) {
+              updatedDesigns[index].prompt = prompt;
+              updatedDesigns[index].data = data;
+            }
+            // update simulation result
+            updatedDesigns[index].heating = heating;
+            updatedDesigns[index].cooling = cooling;
+            updatedDesigns[index].solar = solar;
+            updatedDesigns[index].net = net;
+
+            // Finally, upload the updated design array back to Firestore
+            try {
+              const projectDocRef = doc(firestore, 'users', userid, 'projects', projectTitle);
+
+              await updateDoc(projectDocRef, { designs: updatedDesigns });
+            } catch (error) {
+              showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+            } finally {
+              // Update the cached array in the local storage via the common store
+              useStore.getState().set((state_1) => {
+                state_1.projectState.designs = updatedDesigns;
+              });
+              usePrimitiveStore.getState().set((state_2) => {
+                state_2.updateProjectsFlag = true;
+                state_2.waiting = false;
+              });
+            }
+          }
+        }
+      }
+    } catch (error) {
+      showError(i18n.t('message.CannotFetchProjectData', lang) + ': ' + error);
+    }
+  };
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({

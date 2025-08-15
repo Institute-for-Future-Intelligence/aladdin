@@ -1983,6 +1983,10 @@ export const i18n_ua = {
       SurfaceArea: 'Surface Area',
       WindowToWallRatio: 'Window-to-Wall Ratio',
       BuildingOrientation: 'Building Orientation',
+      Heating: 'Heating',
+      Cooling: 'Cooling',
+      Solar: 'Soalr',
+      Net: 'Net',
     },
   },
 };

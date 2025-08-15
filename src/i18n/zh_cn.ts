@@ -1949,6 +1949,10 @@ export const i18n_zh_cn = {
       SurfaceArea: '表面积',
       WindowToWallRatio: '窗墙比',
       BuildingOrientation: '建筑朝向',
+      Heating: '暖气',
+      Cooling: '空调',
+      Solar: '太阳能',
+      Net: '净能耗',
     },
   },
 };
