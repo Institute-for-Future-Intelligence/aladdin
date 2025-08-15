@@ -321,7 +321,7 @@ export const i18n_tr = {
         'Are you sure you want to sign in anonymously? An anonymous account will be lost if you sign out. It should be used only for temporary purposes and on the same computer.',
       GeneratingBuilding: 'Generating building...',
       GeneratingABuildingMayTakeAWhile:
-        'Generating a building may take a long time and cannot be cancelled. Think about your prompt carefully before pressing the Generate button.',
+        'Generating a building may take a long time and cannot be cancelled. Think about your prompt carefully before pressing the OK button.',
       GeneratedResultNotAccepted: 'Sorry, the generated result is not accepted.',
     },
 

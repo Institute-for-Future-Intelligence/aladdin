@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Button, Checkbox, Input, Modal, Select, Space } from 'antd';
+import { Button, Input, Modal, Select, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import * as Selector from '../stores/selector';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +17,7 @@ import i18n from 'src/i18n/i18n';
 import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
-import { callAzureOpenAI } from '../../functions/src/callAzureOpenAI';
+import { callAzureOpenAI } from 'functions/src/callAzureOpenAI';
 import { ObjectType } from 'src/types';
 import { GenAIUtil } from 'src/panels/genAIUtil';
 import { RoofType } from 'src/models/RoofModel';
@@ -282,6 +282,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
       state.projectState.generateBuildingPrompt = prompt;
     });
     handleGenerativeAI();
+    setChanged(true);
     close();
   };
 
@@ -322,7 +323,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
           {t('word.Clear', lang)}
         </Button>,
         <Button key="OK" type="primary" onClick={onOk} disabled={prompt === ''}>
-          {t('word.Generate', lang)}
+          {t('word.OK', lang)}
         </Button>,
       ]}
       onCancel={onCancel}

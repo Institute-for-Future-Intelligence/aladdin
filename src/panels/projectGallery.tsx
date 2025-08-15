@@ -532,16 +532,16 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       return array;
     } else if (projectType === DesignProblem.BUILDING_DESIGN) {
       const array: number[] = [];
-      if (!hiddenParameters?.includes('floorArea')) array.push(0);
-      if (!hiddenParameters?.includes('volume')) array.push(0);
-      if (!hiddenParameters?.includes('surfaceArea')) array.push(0);
-      if (!hiddenParameters?.includes('windowToWallRatio')) array.push(0);
-      if (!hiddenParameters?.includes('height')) array.push(0);
-      if (!hiddenParameters?.includes('buildingOrientation')) array.push(-180);
-      if (!hiddenParameters?.includes('heating')) array.push(0);
-      if (!hiddenParameters?.includes('cooling')) array.push(0);
-      if (!hiddenParameters?.includes('solar')) array.push(0);
-      if (!hiddenParameters?.includes('net')) array.push(0);
+      if (!hiddenParameters?.includes('floorArea')) array.push(getMin('floorArea', 0));
+      if (!hiddenParameters?.includes('volume')) array.push(getMin('volume', 0));
+      if (!hiddenParameters?.includes('surfaceArea')) array.push(getMin('surfaceArea', 0));
+      if (!hiddenParameters?.includes('windowToWallRatio')) array.push(getMin('windowToWallRatio', 0));
+      if (!hiddenParameters?.includes('height')) array.push(getMin('height', 0));
+      if (!hiddenParameters?.includes('buildingOrientation')) array.push(getMin('buildingOrientation', -180));
+      if (!hiddenParameters?.includes('heating')) array.push(getMin('heating', 0));
+      if (!hiddenParameters?.includes('cooling')) array.push(getMin('cooling', 0));
+      if (!hiddenParameters?.includes('solar')) array.push(getMin('solar', 0));
+      if (!hiddenParameters?.includes('net')) array.push(getMin('net', 0));
       return array;
     }
     return [];

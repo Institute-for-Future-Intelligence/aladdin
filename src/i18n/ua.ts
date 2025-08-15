@@ -325,7 +325,7 @@ export const i18n_ua = {
         'Ви впевнені, що хочете увійти анонімно? Анонімний обліковий запис буде втрачено після виходу. Його слід використовувати лише тимчасово і на цьому ж комп’ютері.',
       GeneratingBuilding: 'Generating building...',
       GeneratingABuildingMayTakeAWhile:
-        'Generating a building may take a long time and cannot be cancelled. Think about your prompt carefully before pressing the Generate button.',
+        'Generating a building may take a long time and cannot be cancelled. Think about your prompt carefully before pressing the OK button.',
       GeneratedResultNotAccepted: 'Sorry, the generated result is not accepted.',
     },
 
@@ -1985,7 +1985,7 @@ export const i18n_ua = {
       BuildingOrientation: 'Building Orientation',
       Heating: 'Heating',
       Cooling: 'Cooling',
-      Solar: 'Soalr',
+      Solar: 'Solar',
       Net: 'Net',
     },
   },

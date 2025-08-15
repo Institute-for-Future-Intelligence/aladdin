@@ -319,7 +319,7 @@ export const i18n_zh_tw = {
       SigningInAnonymousAccount:
         '你確定匿名登入嗎？一旦退出，匿名帳號將無法恢復。匿名登入主要是為無法實名登入的使用者提供臨時方便。',
       GeneratingBuilding: '正在生成建築。。。',
-      GeneratingABuildingMayTakeAWhile: '生成一個建築可能需要一些時間且無法取消。按生成鍵前請仔細考慮好給AI的輸入。',
+      GeneratingABuildingMayTakeAWhile: '生成一個建築可能需要一些時間且無法取消。按確定鍵前請仔細考慮好給AI的輸入。',
       GeneratedResultNotAccepted: '抱歉，回傳結果無法解讀。',
     },
 

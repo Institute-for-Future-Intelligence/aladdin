@@ -71,10 +71,10 @@ export class ProjectUtil {
       if (!hidden?.includes('windowToWallRatio')) a.push(i18n.t('solutionSpace.WindowToWallRatio', l));
       if (!hidden?.includes('height')) a.push(i18n.t('word.Height', l));
       if (!hidden?.includes('buildingOrientation')) a.push(i18n.t('solutionSpace.BuildingOrientation', l));
-      if (!hidden?.includes('heating')) a.push('heating');
-      if (!hidden?.includes('cooling')) a.push('cooling');
-      if (!hidden?.includes('solar')) a.push('solar');
-      if (!hidden?.includes('net')) a.push('net');
+      if (!hidden?.includes('heating')) a.push(i18n.t('solutionSpace.Heating', l));
+      if (!hidden?.includes('cooling')) a.push(i18n.t('solutionSpace.Cooling', l));
+      if (!hidden?.includes('solar')) a.push(i18n.t('solutionSpace.Solar', l));
+      if (!hidden?.includes('net')) a.push(i18n.t('solutionSpace.Net', l));
       return a;
     }
     return [];
