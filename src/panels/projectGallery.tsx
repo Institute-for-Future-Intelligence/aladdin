@@ -575,10 +575,10 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('windowToWallRatio')) array.push(getMax('windowToWallRatio', 1));
       if (!hiddenParameters?.includes('height')) array.push(getMax('height', 20));
       if (!hiddenParameters?.includes('buildingOrientation')) array.push(getMax('buildingOrientation', 180));
-      if (!hiddenParameters?.includes('heating')) array.push(getMax('heating', 100));
-      if (!hiddenParameters?.includes('cooilng')) array.push(getMax('cooilng', 100));
-      if (!hiddenParameters?.includes('solar')) array.push(getMax('solar', 100));
-      if (!hiddenParameters?.includes('net')) array.push(getMax('net', 100));
+      if (!hiddenParameters?.includes('heating')) array.push(getMax('heating', 100000));
+      if (!hiddenParameters?.includes('cooling')) array.push(getMax('cooling', 100000));
+      if (!hiddenParameters?.includes('solar')) array.push(getMax('solar', 100000));
+      if (!hiddenParameters?.includes('net')) array.push(getMax('net', 100000));
       return array;
     }
     return [];
@@ -666,10 +666,10 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('height')) array.push(createFilter('height', 15, 0));
       if (!hiddenParameters?.includes('buildingOrientation'))
         array.push(createFilter('buildingOrientation', 180, -180));
-      if (!hiddenParameters?.includes('heating')) array.push(createFilter('heating', 100, 0));
-      if (!hiddenParameters?.includes('cooling')) array.push(createFilter('cooling', 100, 0));
-      if (!hiddenParameters?.includes('solar')) array.push(createFilter('solar', 100, 0));
-      if (!hiddenParameters?.includes('net')) array.push(createFilter('net', 100, 0));
+      if (!hiddenParameters?.includes('heating')) array.push(createFilter('heating', 100000, 0));
+      if (!hiddenParameters?.includes('cooling')) array.push(createFilter('cooling', 100000, 0));
+      if (!hiddenParameters?.includes('solar')) array.push(createFilter('solar', 100000, 0));
+      if (!hiddenParameters?.includes('net')) array.push(createFilter('net', 100000, 0));
       return array;
     }
     return [];
@@ -699,10 +699,10 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('windowToWallRatio')) array.push(0.1);
       if (!hiddenParameters?.includes('height')) array.push(1);
       if (!hiddenParameters?.includes('buildingOrientation')) array.push(1);
-      if (!hiddenParameters?.includes('heating')) array.push(1);
-      if (!hiddenParameters?.includes('cooling')) array.push(1);
-      if (!hiddenParameters?.includes('solar')) array.push(1);
-      if (!hiddenParameters?.includes('net')) array.push(1);
+      if (!hiddenParameters?.includes('heating')) array.push(100);
+      if (!hiddenParameters?.includes('cooling')) array.push(100);
+      if (!hiddenParameters?.includes('solar')) array.push(100);
+      if (!hiddenParameters?.includes('net')) array.push(100);
       return array;
     }
     return [];
