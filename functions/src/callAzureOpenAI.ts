@@ -152,7 +152,7 @@ export const callAzureOpenAI = async (
                       rValue: { type: 'string' },
                       rotation: { type: 'number' },
                     },
-                    required: ['type', 'id', 'center', 'size', 'color', 'rotation'],
+                    required: ['type', 'id', 'center', 'size', 'color', 'rotation', 'rValue'],
                     additionalProperties: false,
                   },
                   {
@@ -198,7 +198,7 @@ export const callAzureOpenAI = async (
                       rValue: { type: 'string' },
                       ridgeLength: { type: 'number' },
                     },
-                    required: ['type', 'id', 'fId', 'wId', 'roofType', 'rise', 'color', 'ridgeLength'],
+                    required: ['type', 'id', 'fId', 'wId', 'roofType', 'rise', 'color', 'ridgeLength', 'rValue'],
                     additionalProperties: false,
                   },
                   {
@@ -213,7 +213,7 @@ export const callAzureOpenAI = async (
                       color: { type: 'string' },
                       uValue: { type: 'string' },
                     },
-                    required: ['type', 'id', 'pId', 'fId', 'center', 'size', 'color'],
+                    required: ['type', 'id', 'pId', 'fId', 'center', 'size', 'color', 'uValue'],
                     additionalProperties: false,
                   },
                   {
@@ -227,7 +227,7 @@ export const callAzureOpenAI = async (
                       size: { type: 'array', items: { type: 'number' } },
                       uValue: { type: 'string' },
                     },
-                    required: ['type', 'id', 'pId', 'fId', 'center', 'size'],
+                    required: ['type', 'id', 'pId', 'fId', 'center', 'size', 'uValue'],
                     additionalProperties: false,
                   },
                 ],
