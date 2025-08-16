@@ -93,7 +93,9 @@ When rotating a house, rotate by the world center position.
 Before returning the result, ensure that all the walls are connected correctly,
 the endpoints of two connected walls are at the same position, and all the walls face outward.
 
-Build houses described by the user using the defined elements and return the result in the defined format. Also document the thinking process.
+Build houses described by the user using the defined elements and return the result in the defined format.
+When evaluating their energy efficiencies, consider the geographical location and climate conditions.
+Document the thinking process.
 If the user's prompts are irrelevant, just build and return a simple house.
 `;
 

@@ -1712,7 +1712,7 @@ export const i18n_es = {
       UpdateSelectedDesign: 'Update selected design',
       RemoveSelectedDesign: 'Remove selected design',
       ClickToFlipSortingOrder: 'Click to flip the sorting order',
-      ModelChanged: 'Model is changed',
+      NeedToRedoSimulation: 'Need to redo simulation to update graph',
       DesignNotShownInSolutionSpaceClickToShow: 'This design is not shown in solution space; click to show',
       DesignShownInSolutionSpaceClickToHide: 'This design is shown in solution space; click to hide',
       SolutionSpace: 'Solution Space',

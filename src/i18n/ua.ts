@@ -1716,7 +1716,7 @@ export const i18n_ua = {
       UpdateSelectedDesign: 'Оновити вибраний дизайн',
       RemoveSelectedDesign: 'Видалити вибраний дизайн',
       ClickToFlipSortingOrder: 'Натисніть, щоб змінити порядок сортування',
-      ModelChanged: 'Model is changed',
+      NeedToRedoSimulation: 'Need to redo simulation to update graph',
       DesignNotShownInSolutionSpaceClickToShow: 'Цей дизайн не показаний у просторі рішень; натисніть, щоб показати',
       DesignShownInSolutionSpaceClickToHide: 'Цей дизайн показаний у просторі рішень; натисніть, щоб приховати',
       SolutionSpace: 'Простір рішень',

@@ -1684,7 +1684,7 @@ export const i18n_zh_tw = {
       UpdateSelectedDesign: '更新選中設計',
       RemoveSelectedDesign: '刪除選中設計',
       ClickToFlipSortingOrder: '點擊逆轉排序方向',
-      ModelChanged: '模型已經更改',
+      NeedToRedoSimulation: '需要重做模擬分析以更新圖表',
       DesignNotShownInSolutionSpaceClickToShow: '此設計目前不顯示在設計空間內，點擊顯示',
       DesignShownInSolutionSpaceClickToHide: '此設計目前顯示在設計空間內,點擊隱藏',
       SolutionSpace: '設計空間',

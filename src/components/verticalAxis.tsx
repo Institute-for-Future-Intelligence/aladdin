@@ -454,7 +454,12 @@ const VerticalAxis = React.memo(
                 fontSize: '10px',
                 textAnchor: 'start',
                 alignmentBaseline: 'central',
-                transform: 'translateX(-25px)',
+                transform:
+                  Math.abs(max) > 9999 || Math.abs(min) > 9999
+                    ? 'translateX(-35px)'
+                    : Math.abs(max) > 999 || Math.abs(min) > 999
+                    ? 'translateX(-30px)'
+                    : 'translateX(-25px)',
               }}
             >
               {variable === 'orientation' ? (value === 0 ? '▭' : '▯') : value}

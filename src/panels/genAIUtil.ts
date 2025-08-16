@@ -1,6 +1,9 @@
+/*
+ * @Copyright 2025. Institute for Future Intelligence, Inc.
+ */
+
 import { DEFAULT_HVAC_SYSTEM, GROUND_ID, TWO_PI } from 'src/constants';
 import { DoorModel } from 'src/models/DoorModel';
-import { ElementModel } from 'src/models/ElementModel';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { Point2 } from 'src/models/Point2';
 import {
@@ -176,7 +179,7 @@ export class GenAIUtil {
       solarUpdraftTower: {},
       solarAbsorberPipe: {},
       solarPowerTower: {},
-      hvacSystem: { ...DEFAULT_HVAC_SYSTEM },
+      hvacSystem: { ...DEFAULT_HVAC_SYSTEM, id: 'A' },
       id: id,
     } as FoundationModel;
   }
@@ -574,7 +577,7 @@ export class GenAIUtil {
           totalArea += a;
         } else {
           for (const s of segmentsWithoutOverhang) {
-            let a = Util.getTriangleArea(s[0], s[1], s[2]);
+            const a = Util.getTriangleArea(s[0], s[1], s[2]);
             totalArea += a;
           }
         }
@@ -594,14 +597,14 @@ export class GenAIUtil {
       }
       case RoofType.Gambrel: {
         for (const s of segmentsWithoutOverhang) {
-          let a = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
+          const a = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
           totalArea += a;
         }
         break;
       }
       case RoofType.Gable: {
         for (const s of segmentsWithoutOverhang) {
-          let a = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
+          const a = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
           totalArea += a;
         }
         break;
@@ -609,7 +612,7 @@ export class GenAIUtil {
       case RoofType.Mansard: {
         for (let i = 0; i < n - 1; i++) {
           const s = segmentsWithoutOverhang[i];
-          let a = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
+          const a = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
           totalArea += a;
         }
         // the last segment may not be a quad
@@ -618,7 +621,7 @@ export class GenAIUtil {
         for (const p of s) {
           points.push({ x: p.x, y: p.y } as Point2);
         }
-        let a = Util.getPolygonArea(points);
+        const a = Util.getPolygonArea(points);
         totalArea += a;
         break;
       }

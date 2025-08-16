@@ -1683,7 +1683,7 @@ export const i18n_zh_cn = {
       UpdateSelectedDesign: '更新选中设计',
       RemoveSelectedDesign: '删除选中设计',
       ClickToFlipSortingOrder: '点击逆转排序方向',
-      ModelChanged: '模型已经更改',
+      NeedToRedoSimulation: '需要重做模拟分析以更新图表',
       DesignNotShownInSolutionSpaceClickToShow: '此设计目前不显示在设计空间内，点击显示',
       DesignShownInSolutionSpaceClickToHide: '此设计目前显示在设计空间内,点击隐藏',
       SolutionSpace: '设计空间',

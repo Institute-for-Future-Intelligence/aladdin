@@ -41,7 +41,7 @@ import {
   FolderOpenOutlined,
   QuestionCircleOutlined,
   CopyOutlined,
-  ExclamationCircleOutlined,
+  SyncOutlined,
 } from '@ant-design/icons';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_fail_try_again.png';
@@ -162,7 +162,7 @@ export interface ProjectGalleryProps {
   canvas: HTMLCanvasElement | null;
 }
 
-const enabledGenAI = import.meta.env.PROD ? false : true;
+const enabledGenAI = !import.meta.env.PROD;
 
 const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
@@ -2330,7 +2330,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                         <div
                           style={{
                             position: 'absolute',
-                            top: '4px',
+                            top: '6px',
                             left: '10px',
                             textAlign: 'left',
                             color: 'white',
@@ -2348,7 +2348,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                             />
                           )}
                           <span
-                            style={{ cursor: 'pointer', fontSize: '14px', paddingLeft: '4px' }}
+                            style={{ cursor: 'pointer', fontSize: '11px', paddingLeft: '4px' }}
                             title={
                               projectType === DesignProblem.BUILDING_DESIGN
                                 ? t(pop ? 'projectPanel.ClickToClosePopup' : 'projectPanel.ClickForMoreInfo', lang)
@@ -2375,9 +2375,9 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                         >
                           {/* todo: genAI - model  */}
                           {design.modelChanged && (
-                            <ExclamationCircleOutlined
+                            <SyncOutlined
                               style={{ paddingRight: '4px', fontSize: '16px' }}
-                              title={t('projectPanel.ModelChanged', lang)}
+                              title={t('projectPanel.NeedToRedoSimulation', lang)}
                             />
                           )}
                           {design.title === cloudFile && (
