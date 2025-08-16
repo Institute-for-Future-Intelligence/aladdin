@@ -85,6 +85,7 @@ Foundation A and foundation B overlap at same center.
 
 
 All windows and doors must not overlap with one another, and must be within the boundary of a wall.
+The windows on a wall should be even distributed on the horizontal and vertical directions on the wall.
 All walls in a house should be connected correctly, and facing outside, and should be inside the boundary of the foundation.
 The position of a wall does not use the world coordinates and it should be relative to the foundation.
 When moving a house, only move the foundation position.
