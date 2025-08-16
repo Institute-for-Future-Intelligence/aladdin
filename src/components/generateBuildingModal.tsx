@@ -101,13 +101,14 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
             break;
           }
           case ObjectType.Wall: {
-            const { id, pId, size, leftPoint, rightPoint, color, overhang } = e;
+            const { id, pId, size, leftPoint, rightPoint, color, overhang, rValue } = e;
             const w = GenAIUtil.makeWall(
               id,
               pId,
               size,
               color,
               overhang,
+              rValue,
               leftPoint,
               rightPoint,
               e.leftConnectId,

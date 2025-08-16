@@ -26,6 +26,7 @@ If wall A is connected to wall B, then wall B is also connected to wall A.
 Default color is white. Default ly is 0.1.
 Note that "leftConnectId" can only be connected to other wall's "rightConnectId", and vise versa.
 Each wall has a normal direction represented by the normal vector from leftpoint to rightpoint, rotated clockwise by 90 degree.
+Each wall has a property "rValue" in the unit of m²·℃/W, which defaults to 2.
 
 - Roof: When a wall is connected to other walls and the connection forms a loop, a "Roof" can be built on that wall.
 "wId" is the id of the wall that it is built on. "fId" is the id of the foundation that it is built on.
@@ -158,6 +159,7 @@ export const callAzureOpenAI = async (
                       pId: { type: 'string' },
                       size: { type: 'array', items: { type: 'number' } },
                       color: { type: 'string' },
+                      rValue: { type: 'string' },
                       leftPoint: { type: 'array', items: { type: 'number' } },
                       rightPoint: { type: 'array', items: { type: 'number' } },
                       leftConnectId: { type: 'string' },
@@ -170,6 +172,7 @@ export const callAzureOpenAI = async (
                       'pId',
                       'size',
                       'color',
+                      'rValue',
                       'leftPoint',
                       'rightPoint',
                       'leftConnectId',

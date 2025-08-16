@@ -1705,6 +1705,11 @@ export const i18n_zh_cn = {
       ReasoningEffort: '推理努力程度',
       GenAIPrompt: '生成此分子的提示',
       CopyPrompt: '拷贝此提示',
+      PromptInClipBoard: '您现在可以粘贴提示了。',
+      CopyReasoning: '拷贝此推理',
+      ReasoningInClipBoard: '您现在可以粘贴推理了。',
+      UserPrompt: '用户提示',
+      AIReasoning: 'AI推理',
     },
 
     accountSettingsPanel: {

@@ -2294,7 +2294,9 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                             </Space>
 
                             <div>
-                              <span style={{ display: 'inline', fontWeight: 'bold' }}>{t('word.Prompt', lang)}: </span>
+                              <span style={{ display: 'inline', fontWeight: 'bold' }}>
+                                {t('projectPanel.UserPrompt', lang)}:{' '}
+                              </span>
                               <span style={{ display: 'inline' }}>
                                 {design.prompt}
                                 <CopyOutlined
@@ -2312,8 +2314,26 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                             </div>
                             {design?.data && (
                               <div>
-                                <span style={{ display: 'inline', fontWeight: 'bold' }}>Thinking: </span>
-                                {<span style={{ display: 'inline' }}>{JSON.parse(design.data).thinking}</span>}
+                                <span style={{ display: 'inline', fontWeight: 'bold' }}>
+                                  {t('projectPanel.AIReasoning', lang)}:{' '}
+                                </span>
+                                {
+                                  <span style={{ display: 'inline' }}>
+                                    {JSON.parse(design.data).thinking}
+                                    <CopyOutlined
+                                      style={{ paddingLeft: '10px', cursor: 'copy' }}
+                                      title={t('projectPanel.CopyReasoning', lang)}
+                                      onClick={() => {
+                                        const thinking = JSON.parse(design.data).thinking;
+                                        if (thinking) {
+                                          navigator.clipboard.writeText(thinking).then(() => {
+                                            showInfo(t('projectPanel.ReasoningInClipBoard', lang));
+                                          });
+                                        }
+                                      }}
+                                    />
+                                  </span>
+                                }
                               </div>
                             )}
                           </Space>

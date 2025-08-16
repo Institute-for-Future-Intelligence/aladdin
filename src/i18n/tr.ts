@@ -1735,6 +1735,11 @@ export const i18n_tr = {
       ReasoningEffort: 'Reasoning Effort',
       GenAIPrompt: 'Prompt used to generate this molecule',
       CopyPrompt: 'Copy this prompt',
+      PromptInClipBoard: 'The prompt was copied and is ready to paste.',
+      CopyReasoning: 'Copy this reasoning',
+      ReasoningInClipBoard: 'The reasoning was copied and is ready to paste.',
+      UserPrompt: 'User Prompt',
+      AIReasoning: 'AI Reasoning',
     },
 
     accountSettingsPanel: {
