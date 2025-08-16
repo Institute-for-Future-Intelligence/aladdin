@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import {
@@ -39,7 +39,15 @@ import {
   RoofStructure,
   RoofType,
 } from './RoofModel';
-import { DEFAULT_HVAC_SYSTEM, GROUND_ID } from '../constants';
+import {
+  DEFAULT_DOOR_U_VALUE,
+  DEFAULT_GROUND_FLOOR_R_VALUE,
+  DEFAULT_HVAC_SYSTEM,
+  DEFAULT_ROOF_R_VALUE,
+  DEFAULT_WALL_R_VALUE,
+  DEFAULT_WINDOW_U_VALUE,
+  GROUND_ID,
+} from '../constants';
 import { WindowModel } from './WindowModel';
 import { Point2 } from './Point2';
 import { PolygonModel } from './PolygonModel';
@@ -53,7 +61,6 @@ import { DoorModel } from './DoorModel';
 import { WindTurbineModel } from './WindTurbineModel';
 import { FlowerData } from '../FlowerData';
 import { LightModel } from './LightModel';
-import { HvacSystem } from './HvacSystem';
 import { useStore } from 'src/stores/common';
 import { RoofUtil } from '../views/roof/RoofUtil';
 import { BatteryStorageModel } from './BatteryStorageModel';
@@ -255,6 +262,7 @@ export class ElementModelFactory {
   }
 
   static makeFoundation(x: number, y: number, height: number, color: string, texture: FoundationTexture) {
+    const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Foundation,
       cx: x,
@@ -268,6 +276,7 @@ export class ElementModelFactory {
       parentId: GROUND_ID,
       color: color ?? '#808080',
       textureType: texture ?? FoundationTexture.NoTexture,
+      rValue: actionState.groundFloorRValue ?? DEFAULT_GROUND_FLOOR_R_VALUE,
       solarUpdraftTower: {},
       solarAbsorberPipe: {},
       solarPowerTower: {},
@@ -618,7 +627,7 @@ export class ElementModelFactory {
       lz: actionState.wallHeight ?? 5,
       parapet: actionState.wallParapet,
       eavesLength: actionState.wallEavesLength ?? 0.3,
-      rValue: actionState.wallRValue ?? 3,
+      rValue: actionState.wallRValue ?? DEFAULT_WALL_R_VALUE,
       fill: WallFill.Full,
       leftUnfilledHeight: 0.5,
       rightUnfilledHeight: 0.5,
@@ -781,7 +790,7 @@ export class ElementModelFactory {
       color: actionState.windowColor ?? '#ffffff', // frame color
       tint: actionState.windowTint ?? '#73D8FF', // glass color
       opacity: actionState.windowOpacity !== undefined ? actionState.windowOpacity : 0.5,
-      uValue: actionState.windowUValue ?? 0.5,
+      uValue: actionState.windowUValue ?? DEFAULT_WINDOW_U_VALUE,
       normal: [0, -1, 0],
       rotation: rotation ? [...rotation] : [0, 0, 0],
       parentId: parent.id,
@@ -816,7 +825,7 @@ export class ElementModelFactory {
       archHeight: actionState.doorArchHeight,
       textureType: actionState.doorTexture ?? DoorTexture.Default,
       color: actionState.doorColor ?? '#ffffff',
-      uValue: actionState.doorUValue ?? 0.5,
+      uValue: actionState.doorUValue ?? DEFAULT_DOOR_U_VALUE,
       lineWidth: 0.2,
       lineColor: '#000000',
       showLabel: false,
@@ -841,7 +850,7 @@ export class ElementModelFactory {
       ceiling: actionState.roofCeiling ?? false,
       rise: actionState.roofRise < 0 ? 2 : actionState.roofRise,
       thickness: actionState.roofThickness ?? 0.2,
-      rValue: actionState.roofRValue ?? 3,
+      rValue: actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
       color: actionState.roofColor ?? '#454769',
       sideColor: actionState.roofSideColor ?? '#ffffff',
       textureType: actionState.roofTexture ?? RoofTexture.Default,
@@ -872,7 +881,7 @@ export class ElementModelFactory {
       ceiling: actionState.roofCeiling ?? false,
       rise: actionState.roofRise < 0 ? 2 : actionState.roofRise,
       thickness: actionState.roofThickness ?? 0.2,
-      rValue: actionState.roofRValue ?? 3,
+      rValue: actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
       color: actionState.roofColor ?? '#454769',
       sideColor: actionState.roofSideColor ?? '#ffffff',
       textureType: actionState.roofTexture ?? RoofTexture.Default,
@@ -905,7 +914,7 @@ export class ElementModelFactory {
       ceiling: actionState.roofCeiling ?? false,
       rise: actionState.roofRise < 0 ? 2 : actionState.roofRise,
       thickness: actionState.roofThickness ?? 0.2,
-      rValue: actionState.roofRValue ?? 3,
+      rValue: actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
       color: actionState.roofColor ?? '#454769',
       sideColor: actionState.roofSideColor ?? '#ffffff',
       textureType: actionState.roofTexture ?? RoofTexture.Default,
@@ -939,7 +948,7 @@ export class ElementModelFactory {
       ceiling: actionState.roofCeiling ?? false,
       rise: actionState.roofRise < 0 ? 2 : actionState.roofRise,
       thickness: actionState.roofThickness ?? 0.2,
-      rValue: actionState.roofRValue ?? 3,
+      rValue: actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
       color: actionState.roofColor ?? '#454769',
       sideColor: actionState.roofSideColor ?? '#ffffff',
       textureType: actionState.roofTexture ?? RoofTexture.Default,
@@ -973,7 +982,7 @@ export class ElementModelFactory {
       ceiling: actionState.roofCeiling ?? false,
       rise: actionState.roofRise < 0 ? 2 : actionState.roofRise,
       thickness: actionState.roofThickness ?? 0.2,
-      rValue: actionState.roofRValue ?? 3,
+      rValue: actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
       color: actionState.roofColor ?? '#454769',
       sideColor: actionState.roofSideColor ?? '#ffffff',
       textureType: actionState.roofTexture ?? RoofTexture.Default,

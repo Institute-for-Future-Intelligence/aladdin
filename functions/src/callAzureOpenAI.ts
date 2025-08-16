@@ -14,7 +14,8 @@ The plane z = 0 represents ground.
 There are some basic elements for building houses. Each element should have a unique id.
 
 - Foundation: position is [cx, cy], size is [lx, ly, lz]. lx is length, ly is width, lz is thickness, r is rotation.
-Default lz is 0.1 and color is 'grey';
+Foundation has a property "rValue" in the unit of m²·℃/W, which defaults to 2.
+Default lz is 0.1 meter and color is 'grey';
 
 - Wall: Must be built on foundation. It's position is defined by two points: "leftPoint" [cx, cy] and "rightPoint" [cx, cy],
 representing the relative positions of the wall's leftmost and rightmost endpoints with respect to the foundation,
@@ -22,8 +23,8 @@ The size is [ly, lz], ly is thickness, lz is height. "pId" is the id of the foun
 "leftConnectId" and "rightConnectId" represent the id of the wall that it is connected to.
 When two walls' endpoints are at the same position, they are connected.
 If wall A is connected to wall B, then wall B is also connected to wall A.
-"overhang" is the roof eaves overhang length, with a default value of 0.3.
-Default color is white. Default ly is 0.1.
+"overhang" is the roof eaves overhang length, with a default value of 0.3 meter.
+Default color is white. Default ly is 0.1 meter.
 Note that "leftConnectId" can only be connected to other wall's "rightConnectId", and vise versa.
 Each wall has a normal direction represented by the normal vector from leftpoint to rightpoint, rotated clockwise by 90 degree.
 Each wall has a property "rValue" in the unit of m²·℃/W, which defaults to 2.
@@ -32,7 +33,8 @@ Each wall has a property "rValue" in the unit of m²·℃/W, which defaults to 2
 "wId" is the id of the wall that it is built on. "fId" is the id of the foundation that it is built on.
 Roof should preferably be built on the wall that faces south.
 Roof has default color: "#454769".
-Roof has default "rise": 2
+Roof has default "rise" of 2 meters.
+Roof has a property "rValue" in the unit of m²·℃/W, which defaults to 2.
 Roof has "roofType" that is either "Gable", "Pyramid", "Hip", "Mansard", or "Gambrel".
 For Hip roof type, it has a ridgeLength, which by default should be half of the length of the wall that it is built on.
 
@@ -41,10 +43,12 @@ Door size [lx, ly], lx is width, ly is height.
 Door center position [cx] is relative to the wall's center.
 Door has default color white.
 Door should preferably be built at the center of the wall that faces south.
+Door has a property "uValue" in the unit of W/(m²·℃), which defaults to 1.
 
 - Window: is built on a wall. "pId" is the id of the wall on which it is built. "fId" is the id of the foundation on which it is built.
 Window size [lx, ly], lx is width, ly is height.
 Window position [cx, cz]. cx is relative to center of the parent wall, cz is height calculated from the bottom of the wall.
+Window has a property "uValue" in the unit of W/(m²·℃), which defaults to 2.
 
 When building a house, first draw a rectangle on the foundation, which defines the positions of walls, then put a wall on each side of the rectangle.
 The endpoints of the walls should be the same as the vertices of the rectangle.
@@ -83,7 +87,6 @@ Foundation B has a size of 6.4 by 6.4 meters. It has a pyramid roof with a rise 
 There is a door on the east wall and a door on the west wall.
 Each wall on foundation B has two windows with the size of 2 by 1 meters and cz of 6.5 meters.
 Foundation A and foundation B overlap at same center.
-
 
 All windows and doors must not overlap with one another, and must be within the boundary of a wall.
 The windows on a wall should be even distributed on the horizontal and vertical directions on the wall.
@@ -146,6 +149,7 @@ export const callAzureOpenAI = async (
                       center: { type: 'array', items: { type: 'number' } },
                       size: { type: 'array', items: { type: 'number' } },
                       color: { type: 'string' },
+                      rValue: { type: 'string' },
                       rotation: { type: 'number' },
                     },
                     required: ['type', 'id', 'center', 'size', 'color', 'rotation'],
@@ -191,6 +195,7 @@ export const callAzureOpenAI = async (
                       roofType: { type: 'string', enum: ['Gable', 'Pyramid', 'Hip', 'Mansard', 'Gambrel'] },
                       rise: { type: 'number' },
                       color: { type: 'string' },
+                      rValue: { type: 'string' },
                       ridgeLength: { type: 'number' },
                     },
                     required: ['type', 'id', 'fId', 'wId', 'roofType', 'rise', 'color', 'ridgeLength'],
@@ -206,6 +211,7 @@ export const callAzureOpenAI = async (
                       center: { type: 'array', items: { type: 'number' } },
                       size: { type: 'array', items: { type: 'number' } },
                       color: { type: 'string' },
+                      uValue: { type: 'string' },
                     },
                     required: ['type', 'id', 'pId', 'fId', 'center', 'size', 'color'],
                     additionalProperties: false,
@@ -219,6 +225,7 @@ export const callAzureOpenAI = async (
                       fId: { type: 'string' },
                       center: { type: 'array', items: { type: 'number' } },
                       size: { type: 'array', items: { type: 'number' } },
+                      uValue: { type: 'string' },
                     },
                     required: ['type', 'id', 'pId', 'fId', 'center', 'size'],
                     additionalProperties: false,

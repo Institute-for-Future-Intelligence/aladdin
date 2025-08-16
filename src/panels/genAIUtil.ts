@@ -2,7 +2,16 @@
  * @Copyright 2025. Institute for Future Intelligence, Inc.
  */
 
-import { DEFAULT_HVAC_SYSTEM, GROUND_ID, TWO_PI } from 'src/constants';
+import {
+  DEFAULT_DOOR_U_VALUE,
+  DEFAULT_GROUND_FLOOR_R_VALUE,
+  DEFAULT_HVAC_SYSTEM,
+  DEFAULT_ROOF_R_VALUE,
+  DEFAULT_WALL_R_VALUE,
+  DEFAULT_WINDOW_U_VALUE,
+  GROUND_ID,
+  TWO_PI,
+} from 'src/constants';
 import { DoorModel } from 'src/models/DoorModel';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { Point2 } from 'src/models/Point2';
@@ -160,9 +169,10 @@ export class GenAIUtil {
     return correctedElements;
   }
 
-  static makeFoundation(id: string, center: number[], size: number[], r: number, color: string) {
+  static makeFoundation(id: string, center: number[], size: number[], r: number, color: string, rValue: number) {
     const [cx = 0, cy = 0] = center;
     const [lx = 10, ly = 10, lz = 0.1] = size;
+    const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Foundation,
       cx: cx,
@@ -176,6 +186,7 @@ export class GenAIUtil {
       parentId: GROUND_ID,
       color: color,
       textureType: FoundationTexture.NoTexture,
+      rValue: rValue ?? actionState.groundFloorRValue ?? DEFAULT_GROUND_FLOOR_R_VALUE,
       solarUpdraftTower: {},
       solarAbsorberPipe: {},
       solarPowerTower: {},
@@ -217,7 +228,7 @@ export class GenAIUtil {
       lz: lz,
       parapet: actionState.wallParapet,
       eavesLength: overhang,
-      rValue: rValue ?? actionState.wallRValue ?? 3,
+      rValue: rValue ?? actionState.wallRValue ?? DEFAULT_WALL_R_VALUE,
       fill: WallFill.Full,
       leftUnfilledHeight: 0.5,
       rightUnfilledHeight: 0.5,
@@ -248,7 +259,15 @@ export class GenAIUtil {
     } as WallModel;
   }
 
-  static makeDoor(id: string, pId: string, fId: string, center: number[], size: number[], color: string) {
+  static makeDoor(
+    id: string,
+    pId: string,
+    fId: string,
+    center: number[],
+    size: number[],
+    color: string,
+    uValue: number,
+  ) {
     const actionState = useStore.getState().actionState;
     const [cx, cz] = center;
     const [lx, lz] = size;
@@ -266,7 +285,7 @@ export class GenAIUtil {
       archHeight: actionState.doorArchHeight,
       textureType: DoorTexture.Texture04,
       color: color,
-      uValue: actionState.doorUValue ?? 0.5,
+      uValue: uValue ?? actionState.doorUValue ?? DEFAULT_DOOR_U_VALUE,
       lineWidth: 0.2,
       lineColor: '#000000',
       showLabel: false,
@@ -278,7 +297,7 @@ export class GenAIUtil {
     } as DoorModel;
   }
 
-  static makeWindow(id: string, pId: string, fId: string, center: number[], size: number[]) {
+  static makeWindow(id: string, pId: string, fId: string, center: number[], size: number[], uValue: number) {
     const actionState = useStore.getState().actionState;
     const [cx, cz] = center;
     const [lx, lz] = size;
@@ -313,7 +332,7 @@ export class GenAIUtil {
       color: '#73D8FF', // frame color
       tint: actionState.windowTint ?? '#73D8FF', // glass color
       opacity: actionState.windowOpacity !== undefined ? actionState.windowOpacity : 0.5,
-      uValue: actionState.windowUValue ?? 0.5,
+      uValue: uValue ?? actionState.windowUValue ?? DEFAULT_WINDOW_U_VALUE,
       normal: [0, -1, 0],
       rotation: [0, 0, 0],
       parentId: pId,
@@ -323,7 +342,7 @@ export class GenAIUtil {
     } as WindowModel;
   }
 
-  static makeGableRoof(id: string, fId: string, wId: string, rise: number, color: string) {
+  static makeGableRoof(id: string, fId: string, wId: string, rise: number, color: string, rValue: number) {
     const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Roof,
@@ -336,7 +355,7 @@ export class GenAIUtil {
       ceiling: actionState.roofCeiling ?? false,
       rise: rise,
       thickness: actionState.roofThickness ?? 0.2,
-      rValue: actionState.roofRValue ?? 3,
+      rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
       color: color,
       sideColor: actionState.roofSideColor ?? '#ffffff',
       textureType: actionState.roofTexture ?? RoofTexture.Default,
@@ -356,7 +375,7 @@ export class GenAIUtil {
     } as GableRoofModel;
   }
 
-  static makePyramidRoof(id: string, fId: string, wId: string, rise: number, color: string) {
+  static makePyramidRoof(id: string, fId: string, wId: string, rise: number, color: string, rValue: number) {
     const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Roof,
@@ -369,7 +388,7 @@ export class GenAIUtil {
       ceiling: actionState.roofCeiling ?? false,
       rise: rise,
       thickness: actionState.roofThickness ?? 0.2,
-      rValue: actionState.roofRValue ?? 3,
+      rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
       color: color,
       sideColor: actionState.roofSideColor ?? '#ffffff',
       textureType: actionState.roofTexture ?? RoofTexture.Default,
@@ -387,7 +406,15 @@ export class GenAIUtil {
     } as PyramidRoofModel;
   }
 
-  static makeMansardRoof(id: string, fId: string, wId: string, rise: number, color: string, ridgeLength = 1) {
+  static makeMansardRoof(
+    id: string,
+    fId: string,
+    wId: string,
+    rise: number,
+    color: string,
+    ridgeLength = 1,
+    rValue: number,
+  ) {
     const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Roof,
@@ -400,7 +427,7 @@ export class GenAIUtil {
       ceiling: actionState.roofCeiling ?? false,
       rise: rise,
       thickness: actionState.roofThickness ?? 0.2,
-      rValue: actionState.roofRValue ?? 3,
+      rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
       color: color,
       sideColor: actionState.roofSideColor ?? '#ffffff',
       textureType: actionState.roofTexture ?? RoofTexture.Default,
@@ -419,7 +446,7 @@ export class GenAIUtil {
     } as MansardRoofModel;
   }
 
-  static makeGambrelRoof(id: string, fId: string, wId: string, rise: number, color: string) {
+  static makeGambrelRoof(id: string, fId: string, wId: string, rise: number, color: string, rValue: number) {
     const xPercent = 0.35;
     const actionState = useStore.getState().actionState;
     return {
@@ -433,7 +460,7 @@ export class GenAIUtil {
       ceiling: actionState.roofCeiling ?? false,
       rise: rise,
       thickness: actionState.roofThickness ?? 0.2,
-      rValue: actionState.roofRValue ?? 3,
+      rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
       color: color,
       sideColor: actionState.roofSideColor ?? '#ffffff',
       textureType: actionState.roofTexture ?? RoofTexture.Default,
@@ -454,7 +481,15 @@ export class GenAIUtil {
     } as GambrelRoofModel;
   }
 
-  static makeHipRoof(id: string, fId: string, wId: string, rise: number, color: string, ridgeLength = 2) {
+  static makeHipRoof(
+    id: string,
+    fId: string,
+    wId: string,
+    rise: number,
+    color: string,
+    ridgeLength = 2,
+    rValue: number,
+  ) {
     const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Roof,
@@ -467,7 +502,7 @@ export class GenAIUtil {
       ceiling: actionState.roofCeiling ?? false,
       rise: rise,
       thickness: actionState.roofThickness ?? 0.2,
-      rValue: actionState.roofRValue ?? 3,
+      rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
       color: color,
       sideColor: actionState.roofSideColor ?? '#ffffff',
       textureType: actionState.roofTexture ?? RoofTexture.Default,
