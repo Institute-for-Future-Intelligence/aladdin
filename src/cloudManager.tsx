@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -311,11 +311,17 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
       const project = params.get('project');
       if (project) {
         setLoading(true);
+        setCommonStore((state) => {
+          // if (state.canvasPercentWidth === 100) state.canvasPercentWidth = 50;
+          state.projectView = true;
+          state.canvasPercentWidth = 50;
+          state.viewState.showModelTree = false;
+        });
         fetchProject(userid, project, setProjectState).finally(() => {
           setLoading(false);
         });
         if (title) {
-          openDesignFile(userid, title, true);
+          openDesignFile(userid, title);
         }
       } else {
         if (title) {
@@ -959,18 +965,11 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     });
   };
 
-  const openDesignFile = (userid: string, title: string, initial?: boolean) => {
+  const openDesignFile = (userid: string, title: string) => {
     if (userid && title) {
       setLoading(true);
       loadCloudFile(userid, title, true, true, viewOnly).finally(() => {
         setLoading(false);
-        if (initial) {
-          setCommonStore((state) => {
-            // if (state.canvasPercentWidth === 100) state.canvasPercentWidth = 50;
-            state.canvasPercentWidth = 50;
-            state.viewState.showModelTree = false;
-          });
-        }
       });
     }
   };
