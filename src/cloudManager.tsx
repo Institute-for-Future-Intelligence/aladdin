@@ -941,7 +941,9 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           showError(i18n.t('message.CannotRenameProject', lang) + ': ' + error);
         }
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const setProjectState = (projectState: ProjectState) => {

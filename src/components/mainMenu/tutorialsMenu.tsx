@@ -441,7 +441,7 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
         {
           key: 'llm-sim',
           label: (
-            <MenuItem noPadding onClick={() => loadProject('LLM and Sim', 0)}>
+            <MenuItem noPadding onClick={() => loadProject('LLM and Sim', 11)}>
               {i18n.t('menu.generativeDesignTutorials.GenerativeOptimizationEnergyEfficientHouse', lang)}
             </MenuItem>
           ),
