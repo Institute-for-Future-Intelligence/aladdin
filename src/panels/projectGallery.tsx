@@ -2064,14 +2064,6 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       state.waiting = true;
     });
 
-    // First we update the design file by overwriting it with the current content
-    try {
-      const designDocRef = doc(firestore, 'users', userid, 'designs', designTitle);
-      const exportContent = useStore.getState().exportContent();
-      await setDoc(designDocRef, exportContent);
-    } catch (error) {
-      console.error(error);
-    }
     usePrimitiveStore.getState().setChanged(false);
     try {
       const projectDocRef = doc(firestore, 'users', userid, 'projects', projectTitle);
