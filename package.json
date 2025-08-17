@@ -61,7 +61,8 @@
     "start": "vite",
     "build": "vite build",
     "postinstall": "husky install",
-    "update": "node ./src/scripts/updateExamples.js"
+    "update": "node ./src/scripts/updateExamples.js",
+    "deploy-firebase-functions": "firebase deploy --only functions"
   },
   "lint-staged": {
     "*.ts?(x)": [
