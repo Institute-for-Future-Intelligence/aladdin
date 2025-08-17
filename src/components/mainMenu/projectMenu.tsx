@@ -1,15 +1,16 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { MenuProps } from 'antd';
 import { MenuItem } from '../contextMenu/menuItems';
 import i18n from 'src/i18n/i18n';
 import { useStore } from 'src/stores/common';
-import { showInfo } from 'src/helpers';
+import { showInfo, showSuccess } from 'src/helpers';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { CreateNewProjectItem } from './createNewProjectItem';
 import { SaveProjectAsItem } from './saveProjectAsItem';
+import { HOME_URL } from '../../constants';
 
 export const createProjectMenu = () => {
   const lang = { lng: useStore.getState().language };
@@ -62,6 +63,36 @@ export const createProjectMenu = () => {
     items.push({
       key: 'save-project-as',
       label: <SaveProjectAsItem />,
+    });
+  }
+
+  if (user.uid && projectState.title) {
+    items.push({
+      key: 'generate-project-link',
+      label: (
+        <MenuItem
+          noPadding
+          onClick={() => {
+            if (!projectState.title || !user.uid) return;
+            const url =
+              HOME_URL + '?client=web&userid=' + user.uid + '&project=' + encodeURIComponent(projectState.title);
+            navigator.clipboard.writeText(url).then(() => {
+              showSuccess(i18n.t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
+              if (loggable) {
+                setCommonStore((state) => {
+                  state.actionInfo = {
+                    name: 'Generate Project Link',
+                    timestamp: new Date().getTime(),
+                    details: url,
+                  };
+                });
+              }
+            });
+          }}
+        >
+          {i18n.t('projectListPanel.GenerateProjectLink', lang)}
+        </MenuItem>
+      ),
     });
   }
 
