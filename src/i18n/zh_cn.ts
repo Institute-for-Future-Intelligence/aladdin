@@ -593,6 +593,7 @@ export const i18n_zh_cn = {
         SolarPanelArrayInterRowSpacing: '光伏板阵列的行间距',
         OutputOfSolarPanelArrayInDifferentPlaces: '一个光伏板阵列在不同地区的产出',
         SimpleSolarFarmParetoFront: '简单太阳能农场设计的帕累托前沿',
+        GenerativeOptimizationEnergyEfficientHouse: '节能房屋的生成式优化设计',
       },
 
       examplesSubMenu: '例子',

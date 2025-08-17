@@ -597,6 +597,7 @@ export const i18n_es = {
         SolarPanelArrayInterRowSpacing: 'The Inter-Row Spacing of a Solar Panel Array',
         OutputOfSolarPanelArrayInDifferentPlaces: 'The Output of a Solar Panel Array in Different Places',
         SimpleSolarFarmParetoFront: 'The Pareto Front for Designing a Simple Solar Farm',
+        GenerativeOptimizationEnergyEfficientHouse: 'Generative Optimization for an Energy-Efficient House',
       },
 
       examplesSubMenu: 'Ejemplos',

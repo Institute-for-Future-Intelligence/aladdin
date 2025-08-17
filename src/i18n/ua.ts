@@ -601,6 +601,7 @@ export const i18n_ua = {
         SolarPanelArrayInterRowSpacing: 'Міжрядний інтервал масиву сонячних панелей',
         OutputOfSolarPanelArrayInDifferentPlaces: 'Потужність масиву сонячних панелей у різних місцях',
         SimpleSolarFarmParetoFront: 'Парето-фронт для проєктування простої сонячної ферми',
+        GenerativeOptimizationEnergyEfficientHouse: 'Generative Optimization for an Energy-Efficient House',
       },
 
       examplesSubMenu: 'Приклади',
