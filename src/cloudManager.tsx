@@ -315,7 +315,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           setLoading(false);
         });
         if (title) {
-          openDesignFile(userid, title);
+          openDesignFile(userid, title, true);
         }
       } else {
         if (title) {
@@ -331,6 +331,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     fetchLatestVersion().then(() => {
       // ignore
     });
+    ``;
   };
 
   const resetToSelectMode = () => {
@@ -958,11 +959,18 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
     });
   };
 
-  const openDesignFile = (userid: string, title: string) => {
+  const openDesignFile = (userid: string, title: string, initial?: boolean) => {
     if (userid && title) {
       setLoading(true);
       loadCloudFile(userid, title, true, true, viewOnly).finally(() => {
         setLoading(false);
+        if (initial) {
+          setCommonStore((state) => {
+            // if (state.canvasPercentWidth === 100) state.canvasPercentWidth = 50;
+            state.canvasPercentWidth = 50;
+            state.viewState.showModelTree = false;
+          });
+        }
       });
     }
   };
