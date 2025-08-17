@@ -39,7 +39,11 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
     if (title && owner) {
       fetchProject(owner, title, setProjectState).then(() => {
         loadCloudFile(owner, title + ' ' + designIndex, true, true, viewOnly).then(() => {
-          // ignore
+          setCommonStore((state) => {
+            // if (state.canvasPercentWidth === 100) state.canvasPercentWidth = 50;
+            state.canvasPercentWidth = 50;
+            state.viewState.showModelTree = false;
+          });
         });
       });
       usePrimitiveStore.getState().set((state) => {
