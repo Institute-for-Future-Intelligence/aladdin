@@ -315,8 +315,10 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
     }
 
     if (useStore.getState().designProjectType === DesignProblem.BUILDING_DESIGN) {
-      updateDesign(sumHeater, sumAc, sumSolarPanel, sumHeater + sumAc - sumSolarPanel);
-      updateHiddenParameters();
+      if (sumHeater !== 0 || sumAc !== 0 || sumSolarPanel !== 0) {
+        updateDesign(sumHeater, sumAc, sumSolarPanel, sumHeater + sumAc - sumSolarPanel);
+        updateHiddenParameters();
+      }
     }
     setHeaterSum(sumHeater);
     setAcSum(sumAc);

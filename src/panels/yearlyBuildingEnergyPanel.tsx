@@ -332,8 +332,10 @@ const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPane
     setNetSum(totalNet);
 
     if (useStore.getState().designProjectType === DesignProblem.BUILDING_DESIGN) {
-      updateDesign(totalHeater, totalAc, totalSolarPanel, totalNet);
-      updateHiddenParameters();
+      if (totalHeater !== 0 || totalAc !== 0 || totalSolarPanel !== 0) {
+        updateDesign(totalHeater, totalAc, totalSolarPanel, totalNet);
+        updateHiddenParameters();
+      }
     }
 
     // for logger
