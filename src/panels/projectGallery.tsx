@@ -2340,7 +2340,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                         <div
                           style={{
                             position: 'absolute',
-                            top: '6px',
+                            top: '12px',
                             left: '10px',
                             textAlign: 'left',
                             color: 'white',
@@ -2358,7 +2358,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                             />
                           )}
                           <span
-                            style={{ cursor: 'pointer', fontSize: '11px', paddingLeft: '4px' }}
+                            style={{ cursor: 'pointer', fontSize: '10px', paddingLeft: '4px' }}
                             title={
                               projectType === DesignProblem.BUILDING_DESIGN
                                 ? t(pop ? 'projectPanel.ClickToClosePopup' : 'projectPanel.ClickForMoreInfo', lang)

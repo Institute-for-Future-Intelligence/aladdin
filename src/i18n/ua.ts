@@ -1989,7 +1989,7 @@ export const i18n_ua = {
       Volume: 'Volume',
       SurfaceArea: 'Surface Area',
       WindowToWallRatio: 'Window/Wall',
-      BuildingOrientation: 'Building Orientation',
+      BuildingOrientation: 'Orientation',
       Heating: 'Heating',
       Cooling: 'Cooling',
       Solar: 'Solar',
