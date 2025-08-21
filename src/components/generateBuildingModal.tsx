@@ -81,104 +81,111 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
 
   const processResult = (text: string) => {
     const json = JSON.parse(text);
-    if (!json.elements || json.elements.length === 0) return;
 
     console.log('prompt:', prompt);
     console.log('raw:', JSON.parse(text).elements);
 
-    const jsonElements = GenAIUtil.arrayCorrection(json.elements);
+    const jsonWorld = json.world;
+    const jsonElements = json.elements ? GenAIUtil.arrayCorrection(json.elements) : [];
 
     console.log('validated:', jsonElements);
     console.log('thinking:', json.thinking);
 
     useStore.getState().set((state) => {
-      state.elements = [];
-      for (const e of jsonElements) {
-        switch (e.type) {
-          case ObjectType.Foundation: {
-            const { id, center, size, color, rotation, rValue } = e;
-            const f = GenAIUtil.makeFoundation(id, center, size, Util.toRadians(rotation), color, rValue);
-            state.elements.push(f);
-            break;
-          }
-          case ObjectType.Wall: {
-            const { id, pId, size, leftPoint, rightPoint, color, overhang, rValue } = e;
-            const w = GenAIUtil.makeWall(
-              id,
-              pId,
-              size,
-              color,
-              overhang,
-              rValue,
-              leftPoint,
-              rightPoint,
-              e.leftConnectId,
-              e.rightConnectId,
-            );
-            state.elements.push(w);
-            break;
-          }
-          case ObjectType.Door: {
-            const { id, pId, fId, center, size, color, uValue } = e;
-            const wall = state.elements.find((e) => e.id === pId);
-            if (wall) {
-              const _center = [center[0] / wall.lx, (-wall.lz / 2 + size[1] / 2) / wall.lz];
-              const _size = [size[0] / wall.lx, size[1] / wall.lz];
-              const d = GenAIUtil.makeDoor(id, pId, fId, _center, _size, color, uValue);
-              state.elements.push(d);
+      if (jsonWorld) {
+        state.world.address = jsonWorld.address ?? 'Natick, MA';
+        state.world.latitude = jsonWorld.latitude === undefined ? 42.2844063 : jsonWorld.latitude;
+        state.world.longitude = jsonWorld.longitude === undefined ? -71.3488548 : jsonWorld.longitude;
+      }
+      if (jsonElements.length > 0) {
+        state.elements = [];
+        for (const e of jsonElements) {
+          switch (e.type) {
+            case ObjectType.Foundation: {
+              const { id, center, size, color, rotation, rValue } = e;
+              const f = GenAIUtil.makeFoundation(id, center, size, Util.toRadians(rotation), color, rValue);
+              state.elements.push(f);
+              break;
             }
-            break;
-          }
-          case ObjectType.Window: {
-            const { id, pId, fId, center, size, uValue } = e;
-            const wall = state.elements.find((e) => e.id === pId);
-            if (wall) {
-              const _size = [size[0] / wall.lx, size[1] / wall.lz];
-              const _center = [center[0] / wall.lx, (center[1] - wall.lz / 2) / wall.lz];
-              const w = GenAIUtil.makeWindow(id, pId, fId, _center, _size, uValue);
+            case ObjectType.Wall: {
+              const { id, pId, size, leftPoint, rightPoint, color, overhang, rValue } = e;
+              const w = GenAIUtil.makeWall(
+                id,
+                pId,
+                size,
+                color,
+                overhang,
+                rValue,
+                leftPoint,
+                rightPoint,
+                e.leftConnectId,
+                e.rightConnectId,
+              );
               state.elements.push(w);
+              break;
             }
-            break;
-          }
-          case ObjectType.Roof: {
-            switch (e.roofType) {
-              case RoofType.Gable: {
-                const { id, fId, wId, rise, color, rValue } = e;
-                const r = GenAIUtil.makeGableRoof(id, fId, wId, rise, color, rValue);
-                state.elements.push(r);
-                state.addedRoofIdSet.add(id);
-                break;
+            case ObjectType.Door: {
+              const { id, pId, fId, center, size, color, uValue } = e;
+              const wall = state.elements.find((e) => e.id === pId);
+              if (wall) {
+                const _center = [center[0] / wall.lx, (-wall.lz / 2 + size[1] / 2) / wall.lz];
+                const _size = [size[0] / wall.lx, size[1] / wall.lz];
+                const d = GenAIUtil.makeDoor(id, pId, fId, _center, _size, color, uValue);
+                state.elements.push(d);
               }
-              case RoofType.Pyramid: {
-                const { id, fId, wId, rise, color, rValue } = e;
-                const r = GenAIUtil.makePyramidRoof(id, fId, wId, rise, color, rValue);
-                state.elements.push(r);
-                state.addedRoofIdSet.add(id);
-                break;
-              }
-              case RoofType.Gambrel: {
-                const { id, fId, wId, rise, color, rValue } = e;
-                const r = GenAIUtil.makeGambrelRoof(id, fId, wId, rise, color, rValue);
-                state.elements.push(r);
-                state.addedRoofIdSet.add(id);
-                break;
-              }
-              case RoofType.Mansard: {
-                const { id, fId, wId, rise, color, ridgeLength, rValue } = e;
-                const r = GenAIUtil.makeMansardRoof(id, fId, wId, rise, color, ridgeLength, rValue);
-                state.elements.push(r);
-                state.addedRoofIdSet.add(id);
-                break;
-              }
-              case RoofType.Hip: {
-                const { id, fId, wId, rise, color, ridgeLength, rValue } = e;
-                const r = GenAIUtil.makeHipRoof(id, fId, wId, rise, color, ridgeLength, rValue);
-                state.elements.push(r);
-                state.addedRoofIdSet.add(id);
-                break;
-              }
+              break;
             }
-            break;
+            case ObjectType.Window: {
+              const { id, pId, fId, center, size, uValue } = e;
+              const wall = state.elements.find((e) => e.id === pId);
+              if (wall) {
+                const _size = [size[0] / wall.lx, size[1] / wall.lz];
+                const _center = [center[0] / wall.lx, (center[1] - wall.lz / 2) / wall.lz];
+                const w = GenAIUtil.makeWindow(id, pId, fId, _center, _size, uValue);
+                state.elements.push(w);
+              }
+              break;
+            }
+            case ObjectType.Roof: {
+              switch (e.roofType) {
+                case RoofType.Gable: {
+                  const { id, fId, wId, rise, color, rValue } = e;
+                  const r = GenAIUtil.makeGableRoof(id, fId, wId, rise, color, rValue);
+                  state.elements.push(r);
+                  state.addedRoofIdSet.add(id);
+                  break;
+                }
+                case RoofType.Pyramid: {
+                  const { id, fId, wId, rise, color, rValue } = e;
+                  const r = GenAIUtil.makePyramidRoof(id, fId, wId, rise, color, rValue);
+                  state.elements.push(r);
+                  state.addedRoofIdSet.add(id);
+                  break;
+                }
+                case RoofType.Gambrel: {
+                  const { id, fId, wId, rise, color, rValue } = e;
+                  const r = GenAIUtil.makeGambrelRoof(id, fId, wId, rise, color, rValue);
+                  state.elements.push(r);
+                  state.addedRoofIdSet.add(id);
+                  break;
+                }
+                case RoofType.Mansard: {
+                  const { id, fId, wId, rise, color, ridgeLength, rValue } = e;
+                  const r = GenAIUtil.makeMansardRoof(id, fId, wId, rise, color, ridgeLength, rValue);
+                  state.elements.push(r);
+                  state.addedRoofIdSet.add(id);
+                  break;
+                }
+                case RoofType.Hip: {
+                  const { id, fId, wId, rise, color, ridgeLength, rValue } = e;
+                  const r = GenAIUtil.makeHipRoof(id, fId, wId, rise, color, ridgeLength, rValue);
+                  state.elements.push(r);
+                  state.addedRoofIdSet.add(id);
+                  break;
+                }
+              }
+              break;
+            }
           }
         }
       }
