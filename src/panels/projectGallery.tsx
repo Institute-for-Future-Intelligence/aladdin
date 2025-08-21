@@ -2119,22 +2119,28 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   useEffect(() => {
     const onPointUp = () => {
       if (usePrimitiveStore.getState().modelChanged) {
-        const userid = useStore.getState().user.uid;
-        const projectTitle = useStore.getState().projectState.title;
-        const designTitle = useStore.getState().cloudFile;
+        if (usePrimitiveStore.getState().genAIModelCreated) {
+          usePrimitiveStore.getState().set((state) => {
+            state.genAIModelCreated = false;
+          });
+        } else {
+          const userid = useStore.getState().user.uid;
+          const projectTitle = useStore.getState().projectState.title;
+          const designTitle = useStore.getState().cloudFile;
 
-        if (!designTitle || !userid || !projectTitle) {
-          return;
-        }
+          if (!designTitle || !userid || !projectTitle) {
+            return;
+          }
 
-        if (userid !== useStore.getState().projectState.owner) {
-          return;
-        }
+          if (userid !== useStore.getState().projectState.owner) {
+            return;
+          }
 
-        if (selectedDesign) {
-          if (selectedDesign.modelChanged) return;
-          updateDesignModelChanged(userid, projectTitle, designTitle);
-          setSelectedDesign({ ...selectedDesign, modelChanged: false });
+          if (selectedDesign) {
+            if (selectedDesign.modelChanged) return;
+            updateDesignModelChanged(userid, projectTitle, designTitle);
+            setSelectedDesign({ ...selectedDesign, modelChanged: false });
+          }
         }
         usePrimitiveStore.getState().set((state) => {
           state.modelChanged = false;

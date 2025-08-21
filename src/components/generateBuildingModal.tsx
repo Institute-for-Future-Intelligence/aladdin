@@ -249,6 +249,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
         setTimeout(() => {
           usePrimitiveStore.getState().set((state) => {
             state.curateDesignToProjectFlag = true;
+            state.genAIModelCreated = true;
           });
         }, 1500);
       }

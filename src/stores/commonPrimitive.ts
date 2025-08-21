@@ -10,6 +10,7 @@ import produce from 'immer';
 export interface PrimitiveStoreState {
   latestVersion: string | undefined;
   modelChanged: boolean;
+  genAIModelCreated: boolean;
   changed: boolean;
   setChanged: (b: boolean) => void;
   skipChange: boolean;
@@ -197,6 +198,7 @@ export const usePrimitiveStore = createWithEqualityFn<PrimitiveStoreState>()((se
     latestVersion: undefined,
 
     modelChanged: false,
+    genAIModelCreated: false,
     changed: false,
     setChanged(b) {
       immerSet((state: PrimitiveStoreState) => {
