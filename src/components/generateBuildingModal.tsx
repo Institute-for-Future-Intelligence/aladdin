@@ -93,6 +93,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
 
     useStore.getState().set((state) => {
       if (jsonWorld) {
+        state.world.date = jsonWorld.date ?? '06/22/2025, 12:00:00 PM';
         state.world.address = jsonWorld.address ?? 'Natick, MA';
         state.world.latitude = jsonWorld.latitude === undefined ? 42.2844063 : jsonWorld.latitude;
         state.world.longitude = jsonWorld.longitude === undefined ? -71.3488548 : jsonWorld.longitude;

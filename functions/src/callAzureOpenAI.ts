@@ -11,8 +11,12 @@ const apiVersion = '2024-12-01-preview';
 
 const RULES = `In 3D space, positive X-axis is east, negative X-axis is west; positive Y-axis is north, negative Y-axis is south; positive Z-axis is up.
 The plane z = 0 represents ground.
+
 There should be an address for the location of houses. If not specified, the default address is Natick, Massachusetts, USA.
 Provide the latitude and longitude of the location.
+
+Date and time should be set as a string in a format MM/dd/yyyy, hh:mm:ss a. If not specified, set the default date and time to 06/22/2025, 12:00:00 PM.
+
 There are some basic elements for building houses. Each element should have a unique id.
 
 - Foundation: position is [cx, cy], size is [lx, ly, lz]. lx is length, ly is width, lz is thickness, r is rotation.
@@ -141,11 +145,12 @@ export const callAzureOpenAI = async (
             world: {
               type: 'object',
               properties: {
+                date: { type: 'string' },
                 address: { type: 'string' },
                 latitude: { type: 'number' },
                 longitude: { type: 'number' },
               },
-              required: ['address', 'latitude', 'longitude'],
+              required: ['date', 'address', 'latitude', 'longitude'],
               additionalProperties: false,
             },
             elements: {
