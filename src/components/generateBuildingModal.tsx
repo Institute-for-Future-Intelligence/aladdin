@@ -23,6 +23,7 @@ import { GenAIUtil } from 'src/panels/genAIUtil';
 import { RoofType } from 'src/models/RoofModel';
 import { updateGenerateBuildingPrompt } from 'src/cloudProjectUtil';
 import { Util } from '../Util';
+import { DEFAULT_LATITUDE, DEFAULT_LONGITUDE } from '../constants';
 
 export interface GenerateBuildingModalProps {
   setDialogVisible: (visible: boolean) => void;
@@ -95,8 +96,8 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
       if (jsonWorld) {
         state.world.date = jsonWorld.date ?? '06/22/2025, 12:00:00 PM';
         state.world.address = jsonWorld.address ?? 'Natick, MA';
-        state.world.latitude = jsonWorld.latitude === undefined ? 42.2844063 : jsonWorld.latitude;
-        state.world.longitude = jsonWorld.longitude === undefined ? -71.3488548 : jsonWorld.longitude;
+        state.world.latitude = jsonWorld.latitude === undefined ? DEFAULT_LATITUDE : jsonWorld.latitude;
+        state.world.longitude = jsonWorld.longitude === undefined ? DEFAULT_LONGITUDE : jsonWorld.longitude;
       }
       if (jsonElements.length > 0) {
         state.elements = [];

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { ElementModel } from '../models/ElementModel';
@@ -10,7 +10,14 @@ import { WorldModel } from '../models/WorldModel';
 import { GroundModel } from '../models/GroundModel';
 import { HumanModel } from '../models/HumanModel';
 import short from 'short-uuid';
-import { DEFAULT_ADDRESS, DEFAULT_LEAF_OFF_DAY, DEFAULT_LEAF_OUT_DAY, GROUND_ID } from '../constants';
+import {
+  DEFAULT_ADDRESS,
+  DEFAULT_LATITUDE,
+  DEFAULT_LEAF_OFF_DAY,
+  DEFAULT_LEAF_OUT_DAY,
+  DEFAULT_LONGITUDE,
+  GROUND_ID,
+} from '../constants';
 import { HumanData } from '../HumanData';
 import { immerable } from 'immer';
 
@@ -59,8 +66,8 @@ export class DefaultWorldModel implements WorldModel {
   noAnimationForSolarUpdraftTowerSimulation: boolean;
 
   constructor() {
-    this.latitude = 42.2844063;
-    this.longitude = -71.3488548;
+    this.latitude = DEFAULT_LATITUDE;
+    this.longitude = DEFAULT_LONGITUDE;
     this.address = DEFAULT_ADDRESS;
     this.countryCode = 'US';
     this.date = new Date(new Date().getFullYear(), 5, 22, 12).toLocaleString('en-US');
@@ -108,8 +115,8 @@ export class DefaultWorldModel implements WorldModel {
   }
 
   static resetWorldModel(worldModel: WorldModel) {
-    worldModel.latitude = 42.2844063;
-    worldModel.longitude = -71.3488548;
+    worldModel.latitude = DEFAULT_LATITUDE;
+    worldModel.longitude = DEFAULT_LONGITUDE;
     worldModel.address = DEFAULT_ADDRESS;
     worldModel.countryCode = 'US';
     worldModel.date = new Date(new Date().getFullYear(), 5, 22, 12).toLocaleString('en-US');

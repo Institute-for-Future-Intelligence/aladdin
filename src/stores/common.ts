@@ -60,6 +60,8 @@ import { HumanModel } from '../models/HumanModel';
 import { FoundationModel } from '../models/FoundationModel';
 import {
   DEFAULT_ADDRESS,
+  DEFAULT_LATITUDE,
+  DEFAULT_LONGITUDE,
   DEFAULT_MODEL_MAP_ZOOM,
   DEFAULT_SOLAR_PANEL_MODEL,
   DEFAULT_WIND_TURBINE_BLADE_COLOR,
@@ -709,8 +711,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           allModelSites: new Map<string, Map<string, ModelSite>>(),
           peopleModels: new Map<string, Map<string, ModelSite>>(),
           allPeopleModels: new Map<string, Map<string, ModelSite>>(),
-          modelsMapLatitude: 42.2844063,
-          modelsMapLongitude: -71.3488548,
+          modelsMapLatitude: DEFAULT_LATITUDE,
+          modelsMapLongitude: DEFAULT_LONGITUDE,
           modelsMapAddress: DEFAULT_ADDRESS,
           modelsMapZoom: DEFAULT_MODEL_MAP_ZOOM,
           modelsMapType: 'roadmap',

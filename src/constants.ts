@@ -7,7 +7,7 @@ import platform from 'platform';
 import { HvacSystem } from './models/HvacSystem';
 import { Theme } from './types';
 
-export const VERSION = '1.8.7';
+export const VERSION = '1.8.8';
 
 // used for check old file that need to update light intensity.
 export const LIGHT_INTENSITY_CHANGED_VERSION = '1.5.0';
@@ -72,6 +72,9 @@ export const MONTHS = [
 ];
 export const DEFAULT_LEAF_OUT_DAY = 105;
 export const DEFAULT_LEAF_OFF_DAY = 320;
+
+export const DEFAULT_LATITUDE = 42.2844063;
+export const DEFAULT_LONGITUDE = -71.3488548;
 
 export const DEFAULT_SKY_RADIUS = 5000;
 export const DEFAULT_FOV = 45;
