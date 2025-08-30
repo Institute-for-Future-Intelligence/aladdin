@@ -391,9 +391,6 @@ export const MONTHS = [
   'December',
 ];
 
-export const DEFAULT_LATITUDE = 42.2844063;
-export const DEFAULT_LONGITUDE = -71.3488548;
-
 export const DEFAULT_SKY_RADIUS = 5000;
 export const DEFAULT_FOV = 45;
 export const DEFAULT_SHADOW_MAP_SIZE = 4096;
