@@ -4,7 +4,7 @@
 
 import { useStore } from 'src/stores/common';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
-import { DEFAULT_SOLAR_PANEL_SHININESS, SOLAR_PANEL_BLACK_SPECULAR, Operation } from 'src/constants';
+import { DEFAULT_VIEW_SOLAR_PANEL_SHININESS, SOLAR_PANEL_BLACK_SPECULAR, Operation } from 'src/constants';
 import * as Selector from '../../stores/selector';
 import { Color, Side } from 'three';
 import { useMaterialSize, useSolarPanelHeatmapTexture } from '../solarPanel/hooks';
@@ -45,7 +45,7 @@ const PanelMaterial = React.memo(
       return (
         <meshPhongMaterial
           specular={new Color(SOLAR_PANEL_BLACK_SPECULAR)}
-          shininess={solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS}
+          shininess={solarPanelShininess ?? DEFAULT_VIEW_SOLAR_PANEL_SHININESS}
           side={side}
           map={texture}
           transparent={true}

@@ -12,7 +12,7 @@ import { ObjectType } from 'src/types';
 import { UndoableResetView } from 'src/undo/UndoableResetView';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
-import { DEFAULT_SOLAR_PANEL_SHININESS, FLOATING_WINDOW_OPACITY, KeyCtrl } from 'src/constants';
+import { DEFAULT_VIEW_SOLAR_PANEL_SHININESS, FLOATING_WINDOW_OPACITY, KeyCtrl } from 'src/constants';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import * as Selector from '../../stores/selector';
 import { UndoableCameraChange } from '../../undo/UndoableCameraChange';
@@ -322,12 +322,12 @@ export const createViewMenu = (keyHome: string, isMac: boolean) => {
   };
 
   const toggleShininess = (e: CheckboxChangeEvent) => {
-    const value = e.target.checked ? DEFAULT_SOLAR_PANEL_SHININESS : 0;
+    const value = e.target.checked ? DEFAULT_VIEW_SOLAR_PANEL_SHININESS : 0;
 
     const undoableChange = {
       name: 'Set Surface Shininess',
       timestamp: Date.now(),
-      oldValue: useStore.getState().viewState.solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS,
+      oldValue: useStore.getState().viewState.solarPanelShininess ?? DEFAULT_VIEW_SOLAR_PANEL_SHININESS,
       newValue: value,
       undo: () => {
         useStore.getState().set((state) => {

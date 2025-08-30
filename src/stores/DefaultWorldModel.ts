@@ -188,8 +188,6 @@ export class DefaultWorldModel implements WorldModel {
       rotation: [0, 0, 0],
       id: short.generate() as string,
       showLabel: true,
-      light: true,
-      heatFlux: false,
     } as SensorModel;
     elements.push(sensor);
 

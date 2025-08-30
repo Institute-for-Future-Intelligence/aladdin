@@ -7,7 +7,11 @@ import { useStore } from 'src/stores/common';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
 import { PvModel } from 'src/models/PvModel';
-import { DEFAULT_SOLAR_PANEL_SHININESS, SOLAR_PANEL_BLACK_SPECULAR, SOLAR_PANEL_BLUE_SPECULAR } from 'src/constants';
+import {
+  DEFAULT_VIEW_SOLAR_PANEL_SHININESS,
+  SOLAR_PANEL_BLACK_SPECULAR,
+  SOLAR_PANEL_BLUE_SPECULAR,
+} from 'src/constants';
 import * as Selector from '../../stores/selector';
 import { Color, FrontSide } from 'three';
 import { useMemo } from 'react';
@@ -48,7 +52,7 @@ const Materials = ({ solarPanel, lx, ly }: MaterialsProps) => {
       <meshPhongMaterial
         attach="material-4"
         specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
-        shininess={solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS}
+        shininess={solarPanelShininess ?? DEFAULT_VIEW_SOLAR_PANEL_SHININESS}
         side={FrontSide}
         map={texture}
         color={color}
@@ -65,7 +69,7 @@ const Materials = ({ solarPanel, lx, ly }: MaterialsProps) => {
       <meshPhongMaterial
         attach="material-5"
         specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
-        shininess={solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS}
+        shininess={solarPanelShininess ?? DEFAULT_VIEW_SOLAR_PANEL_SHININESS}
         side={FrontSide}
         map={texture}
         color={color}

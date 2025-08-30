@@ -13,16 +13,13 @@ export interface WindowModel extends ElementModel {
   airPermeability?: number;
   setback?: number;
 
-  shutter: ShutterProps | undefined; // backward compatibility
-  leftShutter: boolean;
-  rightShutter: boolean;
+  leftShutter?: boolean;
+  rightShutter?: boolean;
   shutterColor: string;
   shutterWidth: number;
 
-  mullion: boolean;
-  horizontalMullion: boolean;
-  verticalMullion: boolean;
-  mullionSpacing: number;
+  horizontalMullion?: boolean;
+  verticalMullion?: boolean;
   horizontalMullionSpacing: number;
   verticalMullionSpacing: number;
   mullionWidth: number;

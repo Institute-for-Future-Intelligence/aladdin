@@ -21,7 +21,7 @@ export interface RoofModel extends ElementModel {
   volumetricHeatCapacity: number;
   airPermeability?: number;
   rise: number;
-  ceiling: boolean;
+  ceiling?: boolean;
   ceilingRValue?: number;
   // old files
   overhang?: number;

@@ -6,12 +6,12 @@ import { ViewState } from './ViewState';
 import { immerable } from 'immer';
 import { Rectangle } from '../models/Rectangle';
 import {
-  DEFAULT_HEAT_FLUX_COLOR,
-  DEFAULT_HEAT_FLUX_SCALE_FACTOR,
-  DEFAULT_HEAT_FLUX_WIDTH,
-  DEFAULT_SHADOW_CAMERA_FAR,
-  DEFAULT_SOLAR_PANEL_SHININESS,
-  DEFAULT_WINDOW_SHININESS,
+  DEFAULT_VIEW_HEAT_FLUX_COLOR,
+  DEFAULT_VIEW_HEAT_FLUX_SCALE_FACTOR,
+  DEFAULT_VIEW_HEAT_FLUX_WIDTH,
+  DEFAULT_VIEW_SHADOW_CAMERA_FAR,
+  DEFAULT_VIEW_SOLAR_PANEL_SHININESS,
+  DEFAULT_VIEW_WINDOW_SHININESS,
 } from '../constants';
 
 export class DefaultViewState implements ViewState {
@@ -134,12 +134,12 @@ export class DefaultViewState implements ViewState {
     this.cameraZoom = 20;
     this.cameraPositionNav = [5, -30, 1];
     this.cameraRotationNav = [1.5374753309166491, 0.16505866097993566, 0.005476951734475092];
-    this.shadowCameraFar = DEFAULT_SHADOW_CAMERA_FAR;
+    this.shadowCameraFar = DEFAULT_VIEW_SHADOW_CAMERA_FAR;
 
     this.axes = true;
-    this.heatFluxScaleFactor = DEFAULT_HEAT_FLUX_SCALE_FACTOR;
-    this.heatFluxColor = DEFAULT_HEAT_FLUX_COLOR;
-    this.heatFluxWidth = DEFAULT_HEAT_FLUX_WIDTH;
+    this.heatFluxScaleFactor = DEFAULT_VIEW_HEAT_FLUX_SCALE_FACTOR;
+    this.heatFluxColor = DEFAULT_VIEW_HEAT_FLUX_COLOR;
+    this.heatFluxWidth = DEFAULT_VIEW_HEAT_FLUX_WIDTH;
     this.solarRadiationHeatMapMaxValue = 5;
     this.solarRadiationHeatMapReflectionOnly = false;
     this.shadowEnabled = true;
@@ -154,8 +154,8 @@ export class DefaultViewState implements ViewState {
     this.groundImageType = 'roadmap';
     this.groundColor = '#16A5A5';
     this.waterSurface = false;
-    this.solarPanelShininess = DEFAULT_SOLAR_PANEL_SHININESS;
-    this.windowShininess = DEFAULT_WINDOW_SHININESS;
+    this.solarPanelShininess = DEFAULT_VIEW_SOLAR_PANEL_SHININESS;
+    this.windowShininess = DEFAULT_VIEW_WINDOW_SHININESS;
 
     this.showModelTree = false;
     this.hideShareLinks = false;
@@ -239,12 +239,12 @@ export class DefaultViewState implements ViewState {
     viewState.ambientLightIntensity = 0.2;
     viewState.cameraPositionNav = [5, -30, 1];
     viewState.cameraRotationNav = [1.5374753309166491, 0.16505866097993566, 0.005476951734475092];
-    viewState.shadowCameraFar = DEFAULT_SHADOW_CAMERA_FAR;
+    viewState.shadowCameraFar = DEFAULT_VIEW_SHADOW_CAMERA_FAR;
 
     viewState.axes = true;
-    viewState.heatFluxScaleFactor = DEFAULT_HEAT_FLUX_SCALE_FACTOR;
-    viewState.heatFluxColor = DEFAULT_HEAT_FLUX_COLOR;
-    viewState.heatFluxWidth = DEFAULT_HEAT_FLUX_WIDTH;
+    viewState.heatFluxScaleFactor = DEFAULT_VIEW_HEAT_FLUX_SCALE_FACTOR;
+    viewState.heatFluxColor = DEFAULT_VIEW_HEAT_FLUX_COLOR;
+    viewState.heatFluxWidth = DEFAULT_VIEW_HEAT_FLUX_WIDTH;
     viewState.solarRadiationHeatMapMaxValue = 5;
     viewState.solarRadiationHeatMapReflectionOnly = false;
     viewState.shadowEnabled = true;
@@ -259,8 +259,8 @@ export class DefaultViewState implements ViewState {
     viewState.groundImageType = 'roadmap';
     viewState.groundColor = '#16A5A5';
     viewState.waterSurface = false;
-    viewState.solarPanelShininess = DEFAULT_SOLAR_PANEL_SHININESS;
-    viewState.windowShininess = DEFAULT_WINDOW_SHININESS;
+    viewState.solarPanelShininess = DEFAULT_VIEW_SOLAR_PANEL_SHININESS;
+    viewState.windowShininess = DEFAULT_VIEW_WINDOW_SHININESS;
 
     viewState.showModelTree = false;
     viewState.hideShareLinks = false;

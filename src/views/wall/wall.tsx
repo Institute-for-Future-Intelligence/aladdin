@@ -47,6 +47,8 @@ import { showError } from 'src/helpers';
 import i18n from 'src/i18n/i18n';
 import { RoofUtil } from '../roof/RoofUtil';
 import {
+  DEFAULT_LINE_COLOR,
+  DEFAULT_LINE_WIDTH,
   DEFAULT_SOLAR_PANEL_MODEL,
   FINE_GRID_SCALE,
   HALF_PI,
@@ -121,8 +123,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     rightJoints,
     textureType,
     color = 'white',
-    lineColor = 'black',
-    lineWidth = 0.2,
+    lineColor = DEFAULT_LINE_COLOR,
+    lineWidth = DEFAULT_LINE_WIDTH,
     parentId,
     locked = false,
     roofId,

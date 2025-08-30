@@ -62,6 +62,8 @@ import {
   DEFAULT_ADDRESS,
   DEFAULT_LATITUDE,
   DEFAULT_LONGITUDE,
+  DEFAULT_AUDIO_TITLE,
+  DEFAULT_AUDIO_URL,
   DEFAULT_MODEL_MAP_ZOOM,
   DEFAULT_SOLAR_PANEL_MODEL,
   DEFAULT_WIND_TURBINE_BLADE_COLOR,
@@ -110,6 +112,7 @@ import { StoreUtil } from './StoreUtil';
 import { isGroupable } from 'src/models/Groupable';
 import { Filter } from '../Filter';
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
+import { ContentUtil } from 'src/contentUtil';
 
 enableMapSet();
 
@@ -700,8 +703,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           },
 
           notes: [],
-          audioUrl: 'https://intofuture.org/podcast/aladdin.mp3',
-          audioTitle: 'Instruction',
+          audioUrl: DEFAULT_AUDIO_URL,
+          audioTitle: DEFAULT_AUDIO_TITLE,
           language: 'en',
           floatingWindowOpacity: FLOATING_WINDOW_OPACITY,
           selectedFloatingWindow: null,
@@ -768,12 +771,13 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             }
           },
 
-          importContent(content, title) {
+          importContent(c, title) {
+            const content = ContentUtil.expandContent(c);
             immerSet((state: CommonStoreState) => {
               state.version = content.version;
               state.world = content.world;
               state.viewState = content.view;
-              state.graphState = content.graphState ?? new DefaultGraphState();
+              state.graphState = content.graphState;
               state.elements = content.elements;
               state.notes = content.notes ?? [];
               state.audioTitle = content.audioTitle ?? 'Instruction';
@@ -793,13 +797,10 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.localContentToImportAfterCloudFileUpdate = undefined;
               state.fileChanged = !state.fileChanged;
               state.evolutionMethod = content.evolutionMethod ?? EvolutionMethod.GENETIC_ALGORITHM;
-              state.solarPanelArrayLayoutParams =
-                content.solarPanelArrayLayoutParams ?? new DefaultSolarPanelArrayLayoutParams();
-              state.solarPanelArrayLayoutConstraints =
-                content.solarPanelArrayLayoutConstraints ?? new DefaultSolarPanelArrayLayoutConstraints();
-              state.evolutionaryAlgorithmState =
-                content.evolutionaryAlgorithmState ?? new DefaultEvolutionaryAlgorithmState();
-              state.economicsParams = content.economicsParams ?? new DefaultEconomicsParams();
+              state.solarPanelArrayLayoutParams = content.solarPanelArrayLayoutParams;
+              state.solarPanelArrayLayoutConstraints = content.solarPanelArrayLayoutConstraints;
+              state.evolutionaryAlgorithmState = content.evolutionaryAlgorithmState;
+              state.economicsParams = content.economicsParams;
               state.moveStep = content.moveStep ?? 0.5;
               state.minimumNavigationMoveSpeed = content.minimumNavigationMoveSpeed ?? 3;
               state.minimumNavigationTurnSpeed = content.minimumNavigationTurnSpeed ?? 3;
@@ -840,8 +841,9 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             const state = get();
             const date = new Date();
             const elements = JSON.parse(JSON.stringify(state.elements));
+            const world = JSON.parse(JSON.stringify(state.world));
             Util.fixElements(elements);
-            return {
+            const content = {
               docid: short.generate(),
               time: dayjs(date).format('MM/DD/YYYY hh:mm A'),
               timestamp: date.getTime(),
@@ -849,7 +851,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               owner: state.user.signFile ? state.user.displayName : null,
               email: state.user.signFile ? state.user.email : null,
               version: VERSION,
-              world: JSON.parse(JSON.stringify(state.world)),
+              world: world,
               elements: elements,
               sceneRadius: state.sceneRadius,
               view: JSON.parse(JSON.stringify(state.viewState)),
@@ -874,6 +876,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               minimumNavigationTurnSpeed: state.minimumNavigationTurnSpeed,
               customPvModules: JSON.parse(JSON.stringify(state.customPvModules)),
             };
+            ContentUtil.compressContent(content);
+            return content;
           },
           clearContent() {
             immerSet((state: CommonStoreState) => {

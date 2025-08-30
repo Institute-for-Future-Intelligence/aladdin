@@ -2,10 +2,10 @@ import { Cone, Line } from '@react-three/drei';
 import React, { useMemo, useRef } from 'react';
 import { Util } from 'src/Util';
 import {
-  DEFAULT_HEAT_FLUX_COLOR,
+  DEFAULT_VIEW_HEAT_FLUX_COLOR,
   DEFAULT_HEAT_FLUX_DENSITY_FACTOR,
-  DEFAULT_HEAT_FLUX_SCALE_FACTOR,
-  DEFAULT_HEAT_FLUX_WIDTH,
+  DEFAULT_VIEW_HEAT_FLUX_SCALE_FACTOR,
+  DEFAULT_VIEW_HEAT_FLUX_WIDTH,
   HALF_PI,
   UNIT_VECTOR_POS_Y,
   UNIT_VECTOR_POS_Z,
@@ -70,7 +70,7 @@ const WallHeatFlux = ({ wallModel, notBuilding }: HeatFluxProps) => {
     const dx = lx / nx;
     const dz = lz / nz;
     const halfDif = (lz - wallModel.lz) / 2;
-    const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
+    const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_VIEW_HEAT_FLUX_SCALE_FACTOR);
     heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
     heatFluxArrowEuler.current = Util.getEuler(
       UNIT_VECTOR_POS_Z,
@@ -148,8 +148,8 @@ const WallHeatFlux = ({ wallModel, notBuilding }: HeatFluxProps) => {
           <Line
             points={v}
             name={'Heat Flux ' + index}
-            lineWidth={heatFluxWidth ?? DEFAULT_HEAT_FLUX_WIDTH}
-            color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR}
+            lineWidth={heatFluxWidth ?? DEFAULT_VIEW_HEAT_FLUX_WIDTH}
+            color={heatFluxColor ?? DEFAULT_VIEW_HEAT_FLUX_COLOR}
           />
           <Cone
             userData={{ unintersectable: true }}
@@ -160,7 +160,7 @@ const WallHeatFlux = ({ wallModel, notBuilding }: HeatFluxProps) => {
             name={'Normal Vector Arrow Head'}
             rotation={heatFluxArrowEuler.current ?? [0, 0, 0]}
           >
-            <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR} />
+            <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_VIEW_HEAT_FLUX_COLOR} />
           </Cone>
         </React.Fragment>
       ))}

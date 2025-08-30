@@ -21,19 +21,8 @@ import { ParapetArgs, WallStructure } from '../models/WallModel';
 import { WindowType } from 'src/models/WindowModel';
 import { RoofStructure } from '../models/RoofModel';
 import { DoorType } from 'src/models/DoorModel';
-import {
-  DEFAULT_CEILING_R_VALUE,
-  DEFAULT_DOOR_U_VALUE,
-  DEFAULT_GROUND_FLOOR_R_VALUE,
-  DEFAULT_ROOF_R_VALUE,
-  DEFAULT_SOLAR_PANEL_MODEL,
-  DEFAULT_WALL_R_VALUE,
-  DEFAULT_WIND_TURBINE_BLADE_COLOR,
-  DEFAULT_WIND_TURBINE_STRIPE_COLOR,
-  DEFAULT_WINDOW_U_VALUE,
-} from '../constants';
+import * as Constants from '../constants';
 import { DEFAULT_PARAPET_SETTINGS } from 'src/views/wall/parapet';
-import { WATER_TANK_RADIUS } from 'src/views/solarWaterHeater/solarWaterHeater';
 
 export class DefaultActionState implements ActionState {
   // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
@@ -215,7 +204,7 @@ export class DefaultActionState implements ActionState {
     this.foundationTexture = FoundationTexture.NoTexture;
     this.foundationEnableSlope = false;
     this.foundationSlope = 0.2;
-    this.groundFloorRValue = DEFAULT_GROUND_FLOOR_R_VALUE;
+    this.groundFloorRValue = Constants.DEFAULT_GROUND_FLOOR_R_VALUE;
 
     this.rulerHeight = 0.1;
     this.rulerWidth = 1;
@@ -243,28 +232,28 @@ export class DefaultActionState implements ActionState {
     this.wallStructureWidth = 0.1;
     this.wallStructureColor = '#ffffff';
     this.wallOpacity = 0.5;
-    this.wallRValue = DEFAULT_WALL_R_VALUE;
+    this.wallRValue = Constants.DEFAULT_WALL_R_VALUE;
     this.wallAirPermeability = 0;
     this.wallVolumetricHeatCapacity = 0.5;
     this.wallEavesLength = 0.3;
     this.wallParapet = DEFAULT_PARAPET_SETTINGS;
 
-    this.roofColor = '#454769';
-    this.roofSideColor = '#ffffff';
+    this.roofColor = Constants.DEFAULT_ROOF_COLOR;
+    this.roofSideColor = Constants.DEFAULT_ROOF_SIDE_COLOR;
     this.roofTexture = RoofTexture.Default;
-    this.roofThickness = 0.2;
+    this.roofThickness = Constants.DEFAULT_ROOF_THICKNESS;
     this.roofStructure = RoofStructure.Default;
     this.roofGlassOpacity = 0.5;
     this.roofGlassTint = '#73D8FF';
     this.roofRafterWidth = 0.1;
     this.roofRafterSpacing = 1;
     this.roofRafterColor = '#ffffff';
-    this.roofRValue = DEFAULT_ROOF_R_VALUE;
+    this.roofRValue = Constants.DEFAULT_ROOF_R_VALUE;
     this.roofAirPermeability = 0;
     this.roofVolumetricHeatCapacity = 0.5;
     this.roofRise = 2;
     this.roofCeiling = false;
-    this.ceilingRValue = DEFAULT_CEILING_R_VALUE;
+    this.ceilingRValue = Constants.DEFAULT_CEILING_R_VALUE;
 
     this.doorColor = '#ffffff';
     this.doorFrameColor = '#ffffff';
@@ -273,54 +262,54 @@ export class DefaultActionState implements ActionState {
     this.doorArchHeight = 1;
     this.doorFilled = true;
     this.doorInterior = false;
-    this.doorUValue = DEFAULT_DOOR_U_VALUE;
+    this.doorUValue = Constants.DEFAULT_DOOR_U_VALUE;
     this.doorAirPermeability = 0;
     this.doorOpacity = 1;
     this.doorVolumetricHeatCapacity = 0.5;
 
     this.windowWidth = 1;
     this.windowHeight = 1;
-    this.windowColor = '#ffffff';
-    this.windowTint = '#73D8FF';
-    this.windowOpacity = 0.5;
-    this.windowUValue = DEFAULT_WINDOW_U_VALUE;
-    this.windowAirPermeability = 0;
+    this.windowColor = Constants.DEFAULT_WINDOW_COLOR;
+    this.windowTint = Constants.DEFAULT_WINDOW_TINT;
+    this.windowOpacity = Constants.DEFAULT_WINDOW_OPACITY;
+    this.windowUValue = Constants.DEFAULT_WINDOW_U_VALUE;
+    this.windowAirPermeability = Constants.DEFAULT_WINDOW_AIR_PERMEABILITY;
     this.windowHorizontalMullion = true;
     this.windowVerticalMullion = true;
-    this.windowMullionWidth = 0.06;
-    this.windowHorizontalMullionSpacing = 0.5;
-    this.windowVerticalMullionSpacing = 0.5;
-    this.windowMullionColor = '#ffffff';
+    this.windowMullionWidth = Constants.DEFAULT_MULLION_WIDTH;
+    this.windowHorizontalMullionSpacing = Constants.DEFAULT_HORIZONTAL_MULLION_SPACING;
+    this.windowVerticalMullionSpacing = Constants.DEFAULT_VERTICAL_MULLION_SPACING;
+    this.windowMullionColor = Constants.DEFAULT_MULLION_COLOR;
     this.windowFrame = false;
-    this.windowFrameWidth = 0.1;
-    this.windowSillWidth = 0.1;
+    this.windowFrameWidth = Constants.DEFAULT_WINDOW_FRAME_WIDTH;
+    this.windowSillWidth = Constants.DEFAULT_WINDOW_SILL_WIDTH;
     this.windowType = WindowType.Default;
-    this.windowArchHeight = 1;
+    this.windowArchHeight = Constants.DEFAULT_WINDOW_ARCH_HEIGHT;
     // I worry about this using Shutter objects may cause default to be accidentally overwritten.
     this.windowShutterLeft = false;
     this.windowShutterRight = false;
-    this.windowShutterColor = 'gray';
-    this.windowShutterWidth = 0.5;
+    this.windowShutterColor = Constants.DEFAULT_WINDOW_SHUTTER_COLOR;
+    this.windowShutterWidth = Constants.DEFAULT_WINDOW_SHUTTER_WIDTH;
     this.windowEmpty = false;
     this.windowInterior = false;
 
     this.windTurbineBirdSafeDesign = BirdSafeDesign.None;
-    this.windTurbineBladeColor = DEFAULT_WIND_TURBINE_BLADE_COLOR;
-    this.windTurbineStripeColor = DEFAULT_WIND_TURBINE_STRIPE_COLOR;
-    this.windTurbineNumberOfBlades = 3;
-    this.windTurbinePitchAngle = Math.PI / 18;
-    this.windTurbineRelativeYawAngle = 0;
-    this.windTurbineInitialRotorAngle = 0;
-    this.windTurbineTowerHeight = 20;
-    this.windTurbineTowerRadius = 0.5;
-    this.windTurbineBladeRadius = 10;
-    this.windTurbineBladeMaximumChordLength = 1;
-    this.windTurbineBladeMaximumChordRadius = 3;
-    this.windTurbineBladeRootRadius = 0.3;
-    this.windTurbineHubRadius = 0.75;
-    this.windTurbineHubLength = 1.5;
+    this.windTurbineBladeColor = Constants.DEFAULT_WIND_TURBINE_BLADE_COLOR;
+    this.windTurbineStripeColor = Constants.DEFAULT_WIND_TURBINE_STRIPE_COLOR;
+    this.windTurbineNumberOfBlades = Constants.DEFAULT_WIND_TURBINE_NUMBER_OF_BLADES;
+    this.windTurbinePitchAngle = Constants.DEFAULT_WIND_TURBINE_PITCH_ANGLE;
+    this.windTurbineRelativeYawAngle = Constants.DEFAULT_WIND_TURBINE_RELATIVE_YAW_ANGLE;
+    this.windTurbineInitialRotorAngle = Constants.DEFAULT_WIND_TURBINE_INITIAL_ROTOR_ANGLE;
+    this.windTurbineTowerHeight = Constants.DEFAULT_WIND_TURBINE_TOWER_HEIGHT;
+    this.windTurbineTowerRadius = Constants.DEFAULT_WIND_TURBINE_TOWER_RADIUS;
+    this.windTurbineBladeRadius = Constants.DEFAULT_WIND_TURBINE_BLADE_RADIUS;
+    this.windTurbineBladeMaximumChordLength = Constants.DEFAULT_WIND_TURBINE_BLADE_MAXIMUM_CHORD_LENGTH;
+    this.windTurbineBladeMaximumChordRadius = Constants.DEFAULT_WIND_TURBINE_BLADE_MAXIMUM_CHORD_RADIUS;
+    this.windTurbineBladeRootRadius = Constants.DEFAULT_WIND_TURBINE_BLADE_ROOT_RADIUS;
+    this.windTurbineHubRadius = Constants.DEFAULT_WIND_TURBINE_HUB_RADIUS;
+    this.windTurbineHubLength = Constants.DEFAULT_WIND_TURBINE_HUB_LENGTH;
 
-    this.solarPanelModelName = DEFAULT_SOLAR_PANEL_MODEL;
+    this.solarPanelModelName = Constants.DEFAULT_SOLAR_PANEL_MODEL;
     this.solarPanelOrientation = Orientation.landscape;
     this.solarPanelPoleHeight = 1;
     this.solarPanelPoleSpacing = 3;
@@ -331,10 +320,10 @@ export class DefaultActionState implements ActionState {
     this.solarPanelCy = 0;
     this.solarPanelBatteryStorageId = null;
 
-    this.solarWaterHeaterColor = 'grey';
+    this.solarWaterHeaterColor = Constants.DEFAULT_SOLAR_WATER_HEATER_COLOR;
     this.solarWaterHeaterRelativeAzimuth = 0;
-    this.solarWaterHeaterTankRadius = WATER_TANK_RADIUS;
-    this.solarWaterHeaterHeight = 1;
+    this.solarWaterHeaterTankRadius = Constants.DEFAULT_SOLAR_WATER_HEATER_TANK_RADIUS;
+    this.solarWaterHeaterHeight = Constants.DEFAULT_SOLAR_WATER_HEATER_HEIGHT;
 
     this.parabolicDishReflectance = 0.9;
     this.parabolicDishAbsorptance = 0.95;

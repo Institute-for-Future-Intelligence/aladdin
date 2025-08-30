@@ -15,7 +15,7 @@ import Ground from './views/ground';
 import Heliodon from './views/heliodonWrapper';
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from './components/mainMenu/mainMenu';
-import { DEFAULT_FOV, DEFAULT_SHADOW_CAMERA_FAR, VERSION } from './constants';
+import { DEFAULT_FOV, DEFAULT_VIEW_SHADOW_CAMERA_FAR, VERSION } from './constants';
 import { visitHomepage } from './helpers';
 import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
@@ -64,7 +64,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
   const setCommonStore = useStore(Selector.set);
   const changed = usePrimitiveStore(Selector.changed);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
-  const shadowCameraFar = useStore(Selector.viewState.shadowCameraFar) ?? DEFAULT_SHADOW_CAMERA_FAR;
+  const shadowCameraFar = useStore(Selector.viewState.shadowCameraFar) ?? DEFAULT_VIEW_SHADOW_CAMERA_FAR;
   const cloudFile = useStore(Selector.cloudFile);
   const projectView = useStore(Selector.projectView);
   const axes = useStore(Selector.viewState.axes);

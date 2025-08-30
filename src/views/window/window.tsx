@@ -10,7 +10,7 @@ import { useStore } from 'src/stores/common';
 import { MoveHandleType, ObjectType, ResizeHandleType } from 'src/types';
 import * as Selector from 'src/stores/selector';
 import WindowHandleWrapper from './windowHandleWrapper';
-import { DEFAULT_WINDOW_SHININESS, HALF_PI } from 'src/constants';
+import { DEFAULT_VIEW_WINDOW_SHININESS, HALF_PI } from 'src/constants';
 import { ThreeEvent } from '@react-three/fiber';
 import RectangleWindow from './rectangleWindow';
 import ArchedWindow from './archedWindow';
@@ -317,7 +317,7 @@ const Window = (windowModel: WindowModel) => {
     () => (
       <meshPhongMaterial
         specular={new Color('white')}
-        shininess={windowShininess ?? DEFAULT_WINDOW_SHININESS}
+        shininess={windowShininess ?? DEFAULT_VIEW_WINDOW_SHININESS}
         color={tint}
         side={DoubleSide}
         opacity={opacity}

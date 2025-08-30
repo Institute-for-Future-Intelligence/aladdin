@@ -3,7 +3,7 @@
  */
 
 import { useStore } from 'src/stores/common';
-import { DEFAULT_SOLAR_PANEL_SHININESS, SOLAR_PANEL_BLACK_SPECULAR } from 'src/constants';
+import { DEFAULT_VIEW_SOLAR_PANEL_SHININESS, SOLAR_PANEL_BLACK_SPECULAR } from 'src/constants';
 import * as Selector from '../../stores/selector';
 import { Color } from 'three';
 import { barTexture } from './texture';
@@ -20,7 +20,7 @@ const BarMaterial = () => {
     return (
       <meshPhongMaterial
         specular={new Color(SOLAR_PANEL_BLACK_SPECULAR)}
-        shininess={solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS}
+        shininess={solarPanelShininess ?? DEFAULT_VIEW_SOLAR_PANEL_SHININESS}
         map={barTexture}
       />
     );

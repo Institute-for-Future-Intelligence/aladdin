@@ -6,10 +6,10 @@ import { Cone, Line, Plane } from '@react-three/drei';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  DEFAULT_HEAT_FLUX_COLOR,
+  DEFAULT_VIEW_HEAT_FLUX_COLOR,
   DEFAULT_HEAT_FLUX_DENSITY_FACTOR,
-  DEFAULT_HEAT_FLUX_SCALE_FACTOR,
-  DEFAULT_HEAT_FLUX_WIDTH,
+  DEFAULT_VIEW_HEAT_FLUX_SCALE_FACTOR,
+  DEFAULT_VIEW_HEAT_FLUX_WIDTH,
   HALF_PI,
   HALF_PI_Z_EULER,
   TWO_PI,
@@ -803,7 +803,7 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
     }
     const area = Util.getPolygonArea(vertices);
     if (area === 0) return undefined;
-    const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
+    const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_VIEW_HEAT_FLUX_SCALE_FACTOR);
     heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
     heatFluxArrowEuler.current = new Euler(-Math.sign(intensity) * HALF_PI, 0, 0);
     for (let p = 0; p < m; p++) {
@@ -1115,8 +1115,8 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
               <Line
                 points={v}
                 name={'Heat Flux ' + index}
-                lineWidth={heatFluxWidth ?? DEFAULT_HEAT_FLUX_WIDTH}
-                color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR}
+                lineWidth={heatFluxWidth ?? DEFAULT_VIEW_HEAT_FLUX_WIDTH}
+                color={heatFluxColor ?? DEFAULT_VIEW_HEAT_FLUX_COLOR}
               />
               ;
               <Cone
@@ -1130,7 +1130,7 @@ const MansardRoof = ({ roofModel, foundationModel }: MansardRoofProps) => {
                 name={'Normal Vector Arrow Head'}
                 rotation={heatFluxArrowEuler.current ?? [0, 0, 0]}
               >
-                <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR} />
+                <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_VIEW_HEAT_FLUX_COLOR} />
               </Cone>
             </React.Fragment>
           );

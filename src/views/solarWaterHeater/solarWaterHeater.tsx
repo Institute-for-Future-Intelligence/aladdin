@@ -5,7 +5,7 @@
 import { Box, Cylinder, Plane } from '@react-three/drei';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { HALF_PI, Operation, SurfaceType } from 'src/constants';
+import { DEFAULT_SOLAR_WATER_HEATER_TANK_RADIUS, HALF_PI, Operation, SurfaceType } from 'src/constants';
 import { useSelected } from 'src/hooks';
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 import { SolarPanelUtil } from '../solarPanel/SolarPanelUtil';
@@ -34,7 +34,6 @@ import SunBeam, { NormalPointer, SunBeamRefProps } from '../solarPanel/sunBeam';
 
 const MOUNT_LEFT = 'Mount Left';
 const MOUNT_RIGHT = 'Mount Right';
-export const WATER_TANK_RADIUS = 0.3;
 
 /**
  * todos:
@@ -50,7 +49,7 @@ const SolarWaterHeater = React.memo((waterHeater: SolarWaterHeaterModel) => {
     lx,
     ly,
     lz,
-    waterTankRadius = WATER_TANK_RADIUS,
+    waterTankRadius = DEFAULT_SOLAR_WATER_HEATER_TANK_RADIUS,
     rotation,
     normal,
     relativeAzimuth,

@@ -50,8 +50,6 @@ const Sensor = React.memo((sensorModel: SensorModel) => {
     showLabel = false,
     parentId,
     foundationId,
-    light = true,
-    heatFlux = false,
   } = sensorModel;
 
   const setCommonStore = useStore(Selector.set);
