@@ -9,12 +9,16 @@ import {
   DesignProblem,
   Discretization,
   DiurnalTemperatureModel,
+  FlowerType,
   GeneticAlgorithmSelectionMethod,
+  HumanName,
   ObjectiveFunctionType,
   Orientation,
+  ParabolicDishStructureType,
   RowAxis,
   SearchMethod,
   Theme,
+  TreeType,
 } from './types';
 import { Rectangle } from './models/Rectangle';
 import { GroundModel } from './models/GroundModel';
@@ -39,13 +43,14 @@ export const Z_INDEX_FRONT_PANEL = 15;
 
 export const THROTTLE_WAIT = 50;
 
-export const UNDO_SHOW_INFO_DURATION = 0.5;
-export const FLOATING_WINDOW_OPACITY = 0.8;
 export const BLUE = new Color(0, 0, 1);
 export const GREEN = new Color(0, 1, 0);
 export const YELLOW = new Color(1, 1, 0);
 export const RED = new Color(1, 0, 0);
 export const SOLAR_HEATMAP_COLORS = [BLUE, GREEN, YELLOW, RED];
+
+export const UNDO_SHOW_INFO_DURATION = 0.5;
+export const FLOATING_WINDOW_OPACITY = 0.8;
 export const DEFAULT_HEAT_FLUX_DENSITY_FACTOR = 4;
 export const DEFAULT_LEAF_OUT_DAY = 105;
 export const DEFAULT_LEAF_OFF_DAY = 320;
@@ -70,15 +75,22 @@ export const DEFAULT_LABEL_HEIGHT = 0;
 export const DEFAULT_FOUNDATION_LZ = 0.1;
 export const DEFAULT_FOUNDATION_COLOR = '#808080';
 export const DEFAULT_FOUNDATION_SLAB_DEPTH = 1;
+export const DEFAULT_FOUNDATION_SLOPE = 0.2;
+
+export const DEFAULT_CUBOID_COLOR = '#808080';
+export const DEFAULT_CUBOID_TRANSPARENCY = 0;
 
 export const DEFAULT_WALL_COLOR = '#ffffff';
 export const DEFAULT_WALL_EAVES_LENGTH = 0.3;
 export const DEFAULT_WALL_HEIGHT = 5;
+export const DEFAULT_WALL_THICKNESS = 0.3;
 export const DEFAULT_WALL_UNFILLED_HEIGHT = 0.5;
 export const DEFAULT_WALL_OPACITY = 0.5;
 export const DEFAULT_WALL_STRUCTURE_SPACING = 2;
 export const DEFAULT_WALL_STRUCTURE_WIDTH = 0.1;
 export const DEFAULT_WALL_STRUCTURE_COLOR = '#FFFFFF';
+export const DEFAULT_WALL_AIR_PERMEABILITY = 0;
+export const DEFAULT_WALL_VOLUMETRIC_HEAT_CAPACITY = 0.5;
 
 export const DEFAULT_WINDOW_COLOR = '#ffffff';
 export const DEFAULT_WINDOW_TINT = '#73D8FF';
@@ -110,23 +122,8 @@ export const DEFAULT_ROOF_SIDE_COLOR = '#ffffff';
 export const DEFAULT_ROOF_RAFTER_SPACING = 1;
 export const DEFAULT_ROOF_RAFTER_WIDTH = 0.1;
 export const DEFAULT_ROOF_RAFTER_COLOR = '#ffffff';
-export const DEFAULT_ROOF_OPACITY = '#73D8FF';
+export const DEFAULT_ROOF_OPACITY = 0.5;
 export const DEFAULT_ROOF_GLASS_TINT = '#73D8FF';
-
-export const DEFAULT_SOLAR_PANEL_MODEL = 'SPR-X21-335-BLK';
-export const DEFAULT_SOLAR_PANEL_ORIENTATION = Orientation.landscape;
-export const DEFAULT_SOLAR_PANEL_FRAME_COLOR = '#FFFFFF';
-export const DEFAULT_SOLAR_PANEL_BATTERY_STORAGE_ID = null;
-export const DEFAULT_SOLAR_PANEL_POLE_SPACING = 3;
-
-export const DEFAULT_SOLAR_WATER_HEATER_COLOR = 'grey';
-export const DEFAULT_SOLAR_WATER_HEATER_TANK_RADIUS = 0.3;
-export const DEFAULT_SOLAR_WATER_HEATER_HEIGHT = 1;
-
-export const DEFAULT_SOLAR_COLLECTOR_POLE_RADIUS = 0.05;
-export const DEFAULT_SOLAR_COLLECTOR_POLE_HEIGHT = 1;
-export const DEFAULT_SOLAR_COLLECTOR_TILT_ANGLE = 0;
-export const DEFAULT_SOLAR_COLLECTOR_RELATIVE_AZIMUTH = 0;
 
 export const DEFAULT_LIGHT_COLOR = '#ffff99';
 export const DEFAULT_LIGHT_INTENSITY = 3;
@@ -154,6 +151,63 @@ export const DEFAULT_WIND_TURBINE_HUB_LENGTH = 1.5;
 
 export const DEFAULT_BATTERY_STORAGE_COLOR = '#C7BABE';
 export const DEFAULT_BATTERY_STORAGE_EFFICIENCY = 0.95;
+
+export const DEFAULT_SOLAR_WATER_HEATER_COLOR = 'grey';
+export const DEFAULT_SOLAR_WATER_HEATER_TANK_RADIUS = 0.3;
+export const DEFAULT_SOLAR_WATER_HEATER_HEIGHT = 1;
+
+export const DEFAULT_SOLAR_COLLECTOR_TILT_ANGLE = 0;
+export const DEFAULT_SOLAR_COLLECTOR_RELATIVE_AZIMUTH = 0;
+
+export const DEFAULT_SOLAR_PANEL_MODEL = 'SPR-X21-335-BLK';
+export const DEFAULT_SOLAR_PANEL_ORIENTATION = Orientation.landscape;
+export const DEFAULT_SOLAR_PANEL_FRAME_COLOR = '#FFFFFF';
+export const DEFAULT_SOLAR_PANEL_POLE_RADIUS = 0.05;
+export const DEFAULT_SOLAR_PANEL_POLE_HEIGHT = 1;
+export const DEFAULT_SOLAR_PANEL_POLE_SPACING = 3;
+export const DEFAULT_SOLAR_PANEL_BATTERY_STORAGE_ID = null;
+
+export const DEFAULT_PARABOLIC_DISH_REFLECTANCE = 0.9;
+export const DEFAULT_PARABOLIC_DISH_ABSORPTANCE = 0.95;
+export const DEFAULT_PARABOLIC_DISH_OPTICAL_EFFICIENCY = 0.7;
+export const DEFAULT_PARABOLIC_DISH_THERMAL_EFFICIENCY = 0.3;
+export const DEFAULT_PARABOLIC_DISH_RIM_DIAMETER = 4;
+export const DEFAULT_PARABOLIC_DISH_LATUS_RECTUM = 8;
+export const DEFAULT_PARABOLIC_DISH_POLE_HEIGHT = 0.2;
+export const DEFAULT_PARABOLIC_DISH_POLE_RADIUS = 0.1;
+export const DEFAULT_PARABOLIC_DISH_RECEIVER_STRUCTURE = ParabolicDishStructureType.CentralPole;
+export const DEFAULT_PARABOLIC_DISH_RECEIVER_RADIUS = 0.25;
+
+export const DEFAULT_PARABOLIC_TROUGH_REFLECTANCE = 0.9;
+export const DEFAULT_PARABOLIC_TROUGH_ABSORPTANCE = 0.95;
+export const DEFAULT_PARABOLIC_TROUGH_ABSORBER_TUBE_RADIUS = 0.05;
+export const DEFAULT_PARABOLIC_TROUGH_OPTICAL_EFFICIENCY = 0.7;
+export const DEFAULT_PARABOLIC_TROUGH_THERMAL_EFFICIENCY = 0.3;
+export const DEFAULT_PARABOLIC_TROUGH_LATUS_RECTUM = 2;
+export const DEFAULT_PARABOLIC_TROUGH_POLE_HEIGHT = 0.2;
+export const DEFAULT_PARABOLIC_TROUGH_POLE_RADIUS = 0.05;
+export const DEFAULT_PARABOLIC_TROUGH_WIDTH = 2;
+export const DEFAULT_PARABOLIC_TROUGH_MODULE_LENGTH = 3;
+
+export const DEFAULT_FRESNEL_REFLECTOR_RECEIVER = 'None';
+export const DEFAULT_FRESNEL_REFLECTOR_REFLECTANCE = 0.9;
+export const DEFAULT_FRESNEL_REFLECTOR_POLE_HEIGHT = 0.2;
+export const DEFAULT_FRESNEL_REFLECTOR_POLE_RADIUS = 0.05;
+export const DEFAULT_FRESNEL_REFLECTOR_WIDTH = 2;
+export const DEFAULT_FRESNEL_REFLECTOR_MODULE_LENGTH = 3;
+
+export const DEFAULT_HELIOSTAT_TOWER = 'None';
+export const DEFAULT_HELIOSTAT_REFLECTANCE = 0.9;
+export const DEFAULT_HELIOSTAT_POLE_HEIGHT = 0.2;
+export const DEFAULT_HELIOSTAT_POLE_RADIUS = 0.1;
+export const DEFAULT_HELIOSTAT_WIDTH = 4;
+export const DEFAULT_HELIOSTAT_LENGTH = 2;
+
+export const DEFAULT_HUMAN_NAME = HumanName.Jack;
+export const DEFAULT_FLOWER_TYPE = FlowerType.YellowFlower;
+export const DEFAULT_TREE_TYPE = TreeType.Dogwood;
+export const DEFAULT_TREE_SPREAD = 3;
+export const DEFAULT_TREE_HEIGHT = 4;
 
 // world
 export const DEFAULT_LATITUDE = 42.2844063;

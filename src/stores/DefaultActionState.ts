@@ -191,19 +191,19 @@ export class DefaultActionState implements ActionState {
   lightDistance: number;
 
   constructor() {
-    this.humanName = HumanName.Jack;
+    this.humanName = Constants.DEFAULT_HUMAN_NAME;
 
-    this.flowerType = FlowerType.YellowFlower;
+    this.flowerType = Constants.DEFAULT_FLOWER_TYPE;
 
-    this.treeType = TreeType.Dogwood;
-    this.treeSpread = 3;
-    this.treeHeight = 4;
+    this.treeType = Constants.DEFAULT_TREE_TYPE;
+    this.treeSpread = Constants.DEFAULT_TREE_SPREAD;
+    this.treeHeight = Constants.DEFAULT_TREE_HEIGHT;
 
-    this.foundationHeight = 0.1;
-    this.foundationColor = '#808080';
+    this.foundationHeight = Constants.DEFAULT_FOUNDATION_LZ;
+    this.foundationColor = Constants.DEFAULT_FOUNDATION_COLOR;
     this.foundationTexture = FoundationTexture.NoTexture;
     this.foundationEnableSlope = false;
-    this.foundationSlope = 0.2;
+    this.foundationSlope = Constants.DEFAULT_FOUNDATION_SLOPE;
     this.groundFloorRValue = Constants.DEFAULT_GROUND_FLOOR_R_VALUE;
 
     this.rulerHeight = 0.1;
@@ -221,21 +221,21 @@ export class DefaultActionState implements ActionState {
       CuboidTexture.NoTexture,
     ];
     this.cuboidStackable = false;
-    this.cuboidTransparency = 0;
+    this.cuboidTransparency = Constants.DEFAULT_CUBOID_TRANSPARENCY;
 
-    this.wallHeight = 5;
-    this.wallThickness = 0.3;
-    this.wallColor = '#ffffff';
+    this.wallHeight = Constants.DEFAULT_WALL_HEIGHT;
+    this.wallThickness = Constants.DEFAULT_WALL_THICKNESS;
+    this.wallColor = Constants.DEFAULT_WALL_COLOR;
     this.wallTexture = WallTexture.Default;
     this.wallStructure = WallStructure.Default;
-    this.wallStructureSpacing = 2;
-    this.wallStructureWidth = 0.1;
-    this.wallStructureColor = '#ffffff';
-    this.wallOpacity = 0.5;
+    this.wallStructureSpacing = Constants.DEFAULT_WALL_STRUCTURE_SPACING;
+    this.wallStructureWidth = Constants.DEFAULT_WALL_STRUCTURE_WIDTH;
+    this.wallStructureColor = Constants.DEFAULT_WALL_STRUCTURE_COLOR;
+    this.wallOpacity = Constants.DEFAULT_WALL_OPACITY;
     this.wallRValue = Constants.DEFAULT_WALL_R_VALUE;
-    this.wallAirPermeability = 0;
-    this.wallVolumetricHeatCapacity = 0.5;
-    this.wallEavesLength = 0.3;
+    this.wallAirPermeability = Constants.DEFAULT_WALL_AIR_PERMEABILITY;
+    this.wallVolumetricHeatCapacity = Constants.DEFAULT_WALL_VOLUMETRIC_HEAT_CAPACITY;
+    this.wallEavesLength = Constants.DEFAULT_WALL_EAVES_LENGTH;
     this.wallParapet = DEFAULT_PARAPET_SETTINGS;
 
     this.roofColor = Constants.DEFAULT_ROOF_COLOR;
@@ -243,29 +243,29 @@ export class DefaultActionState implements ActionState {
     this.roofTexture = RoofTexture.Default;
     this.roofThickness = Constants.DEFAULT_ROOF_THICKNESS;
     this.roofStructure = RoofStructure.Default;
-    this.roofGlassOpacity = 0.5;
-    this.roofGlassTint = '#73D8FF';
-    this.roofRafterWidth = 0.1;
-    this.roofRafterSpacing = 1;
-    this.roofRafterColor = '#ffffff';
+    this.roofGlassOpacity = Constants.DEFAULT_ROOF_OPACITY;
+    this.roofGlassTint = Constants.DEFAULT_ROOF_GLASS_TINT;
+    this.roofRafterWidth = Constants.DEFAULT_ROOF_RAFTER_WIDTH;
+    this.roofRafterSpacing = Constants.DEFAULT_ROOF_RAFTER_SPACING;
+    this.roofRafterColor = Constants.DEFAULT_ROOF_RAFTER_COLOR;
     this.roofRValue = Constants.DEFAULT_ROOF_R_VALUE;
-    this.roofAirPermeability = 0;
-    this.roofVolumetricHeatCapacity = 0.5;
-    this.roofRise = 2;
+    this.roofAirPermeability = Constants.DEFAULT_ROOF_AIR_PERMEABILITY;
+    this.roofVolumetricHeatCapacity = Constants.DEFAULT_ROOF_VOLUMETRIC_HEAT_CAPACITY;
+    this.roofRise = Constants.DEFAULT_ROOF_RISE;
     this.roofCeiling = false;
     this.ceilingRValue = Constants.DEFAULT_CEILING_R_VALUE;
 
-    this.doorColor = '#ffffff';
-    this.doorFrameColor = '#ffffff';
+    this.doorColor = Constants.DEFAULT_DOOR_COLOR;
+    this.doorFrameColor = Constants.DEFAULT_DOOR_FRAME_COLOR;
     this.doorTexture = DoorTexture.Default;
     this.doorType = DoorType.Default;
-    this.doorArchHeight = 1;
+    this.doorArchHeight = Constants.DEFAULT_DOOR_ARCH_HEIGHT;
     this.doorFilled = true;
     this.doorInterior = false;
     this.doorUValue = Constants.DEFAULT_DOOR_U_VALUE;
-    this.doorAirPermeability = 0;
-    this.doorOpacity = 1;
-    this.doorVolumetricHeatCapacity = 0.5;
+    this.doorAirPermeability = Constants.DEFAULT_DOOR_AIR_PERMEABILITY;
+    this.doorOpacity = Constants.DEFAULT_DOOR_OPACITY;
+    this.doorVolumetricHeatCapacity = Constants.DEFAULT_DOOR_VOLUMETRIC_HEAT_CAPACITY;
 
     this.windowWidth = 1;
     this.windowHeight = 1;
@@ -311,54 +311,54 @@ export class DefaultActionState implements ActionState {
 
     this.solarPanelModelName = Constants.DEFAULT_SOLAR_PANEL_MODEL;
     this.solarPanelOrientation = Orientation.landscape;
-    this.solarPanelPoleHeight = 1;
-    this.solarPanelPoleSpacing = 3;
-    this.solarPanelTiltAngle = 0;
-    this.solarPanelRelativeAzimuth = 0;
-    this.solarPanelFrameColor = '#ffffff';
+    this.solarPanelPoleHeight = Constants.DEFAULT_SOLAR_PANEL_POLE_HEIGHT;
+    this.solarPanelPoleSpacing = Constants.DEFAULT_SOLAR_PANEL_POLE_SPACING;
+    this.solarPanelTiltAngle = Constants.DEFAULT_SOLAR_COLLECTOR_TILT_ANGLE;
+    this.solarPanelRelativeAzimuth = Constants.DEFAULT_SOLAR_COLLECTOR_RELATIVE_AZIMUTH;
+    this.solarPanelFrameColor = Constants.DEFAULT_SOLAR_PANEL_FRAME_COLOR;
     this.solarPanelCx = 0;
     this.solarPanelCy = 0;
-    this.solarPanelBatteryStorageId = null;
+    this.solarPanelBatteryStorageId = Constants.DEFAULT_SOLAR_PANEL_BATTERY_STORAGE_ID;
 
     this.solarWaterHeaterColor = Constants.DEFAULT_SOLAR_WATER_HEATER_COLOR;
-    this.solarWaterHeaterRelativeAzimuth = 0;
+    this.solarWaterHeaterRelativeAzimuth = Constants.DEFAULT_SOLAR_COLLECTOR_RELATIVE_AZIMUTH;
     this.solarWaterHeaterTankRadius = Constants.DEFAULT_SOLAR_WATER_HEATER_TANK_RADIUS;
     this.solarWaterHeaterHeight = Constants.DEFAULT_SOLAR_WATER_HEATER_HEIGHT;
 
-    this.parabolicDishReflectance = 0.9;
-    this.parabolicDishAbsorptance = 0.95;
-    this.parabolicDishOpticalEfficiency = 0.7;
-    this.parabolicDishThermalEfficiency = 0.3;
-    this.parabolicDishRimDiameter = 4;
-    this.parabolicDishLatusRectum = 8;
-    this.parabolicDishPoleHeight = 0.2;
-    this.parabolicDishPoleRadius = 0.1;
-    this.parabolicDishReceiverStructure = ParabolicDishStructureType.CentralPole;
+    this.parabolicDishReflectance = Constants.DEFAULT_PARABOLIC_DISH_REFLECTANCE;
+    this.parabolicDishAbsorptance = Constants.DEFAULT_PARABOLIC_DISH_ABSORPTANCE;
+    this.parabolicDishOpticalEfficiency = Constants.DEFAULT_PARABOLIC_DISH_OPTICAL_EFFICIENCY;
+    this.parabolicDishThermalEfficiency = Constants.DEFAULT_PARABOLIC_DISH_THERMAL_EFFICIENCY;
+    this.parabolicDishRimDiameter = Constants.DEFAULT_PARABOLIC_DISH_RIM_DIAMETER;
+    this.parabolicDishLatusRectum = Constants.DEFAULT_PARABOLIC_DISH_LATUS_RECTUM;
+    this.parabolicDishPoleHeight = Constants.DEFAULT_PARABOLIC_DISH_POLE_HEIGHT;
+    this.parabolicDishPoleRadius = Constants.DEFAULT_PARABOLIC_DISH_POLE_RADIUS;
+    this.parabolicDishReceiverStructure = Constants.DEFAULT_PARABOLIC_DISH_RECEIVER_STRUCTURE;
 
-    this.parabolicTroughReflectance = 0.9;
-    this.parabolicTroughAbsorptance = 0.95;
-    this.parabolicTroughOpticalEfficiency = 0.7;
-    this.parabolicTroughThermalEfficiency = 0.3;
-    this.parabolicTroughLatusRectum = 2;
-    this.parabolicTroughPoleHeight = 0.2;
-    this.parabolicTroughWidth = 2;
-    this.parabolicTroughModuleLength = 3;
+    this.parabolicTroughReflectance = Constants.DEFAULT_PARABOLIC_TROUGH_REFLECTANCE;
+    this.parabolicTroughAbsorptance = Constants.DEFAULT_PARABOLIC_TROUGH_ABSORPTANCE;
+    this.parabolicTroughOpticalEfficiency = Constants.DEFAULT_PARABOLIC_TROUGH_OPTICAL_EFFICIENCY;
+    this.parabolicTroughThermalEfficiency = Constants.DEFAULT_PARABOLIC_TROUGH_THERMAL_EFFICIENCY;
+    this.parabolicTroughLatusRectum = Constants.DEFAULT_PARABOLIC_TROUGH_LATUS_RECTUM;
+    this.parabolicTroughPoleHeight = Constants.DEFAULT_PARABOLIC_TROUGH_POLE_HEIGHT;
+    this.parabolicTroughWidth = Constants.DEFAULT_PARABOLIC_TROUGH_WIDTH;
+    this.parabolicTroughModuleLength = Constants.DEFAULT_PARABOLIC_TROUGH_MODULE_LENGTH;
 
-    this.fresnelReflectorReceiver = 'None';
-    this.fresnelReflectorReflectance = 0.9;
-    this.fresnelReflectorPoleHeight = 0.2;
-    this.fresnelReflectorWidth = 2;
-    this.fresnelReflectorModuleLength = 3;
+    this.fresnelReflectorReceiver = Constants.DEFAULT_FRESNEL_REFLECTOR_RECEIVER;
+    this.fresnelReflectorReflectance = Constants.DEFAULT_FRESNEL_REFLECTOR_REFLECTANCE;
+    this.fresnelReflectorPoleHeight = Constants.DEFAULT_FRESNEL_REFLECTOR_POLE_HEIGHT;
+    this.fresnelReflectorWidth = Constants.DEFAULT_FRESNEL_REFLECTOR_WIDTH;
+    this.fresnelReflectorModuleLength = Constants.DEFAULT_FRESNEL_REFLECTOR_MODULE_LENGTH;
 
-    this.heliostatTower = 'None';
-    this.heliostatReflectance = 0.9;
-    this.heliostatPoleHeight = 0.2;
-    this.heliostatPoleRadius = 0.1;
-    this.heliostatWidth = 4;
-    this.heliostatLength = 2;
+    this.heliostatTower = Constants.DEFAULT_HELIOSTAT_TOWER;
+    this.heliostatReflectance = Constants.DEFAULT_HELIOSTAT_REFLECTANCE;
+    this.heliostatPoleHeight = Constants.DEFAULT_HELIOSTAT_POLE_HEIGHT;
+    this.heliostatPoleRadius = Constants.DEFAULT_HELIOSTAT_POLE_RADIUS;
+    this.heliostatWidth = Constants.DEFAULT_HELIOSTAT_WIDTH;
+    this.heliostatLength = Constants.DEFAULT_HELIOSTAT_LENGTH;
 
-    this.lightColor = '#ffff99';
-    this.lightIntensity = 3;
-    this.lightDistance = 5;
+    this.lightColor = Constants.DEFAULT_LIGHT_COLOR;
+    this.lightIntensity = Constants.DEFAULT_LIGHT_INTENSITY;
+    this.lightDistance = Constants.DEFAULT_LIGHT_DISTANCE;
   }
 }

@@ -1,11 +1,11 @@
 import { Color } from 'three';
 import * as Constants from './constants';
 import { DoorType } from './models/DoorModel';
-import { ElementModel } from './models/ElementModel';
 import { RoofStructure } from './models/RoofModel';
 import { WallFill, WallStructure } from './models/WallModel';
 import { WindowType } from './models/WindowModel';
 import {
+  CuboidTexture,
   DoorTexture,
   EvolutionMethod,
   FoundationTexture,
@@ -115,14 +115,11 @@ export class ContentUtil {
           ContentUtil.compressRoof(e);
           break;
         }
-        case ObjectType.SolarPanel: {
-          ContentUtil.compressSolarPanel(e);
-          break;
-        }
         case ObjectType.SolarWaterHeater: {
           ContentUtil.compressSolarWaterHeater(e);
           break;
         }
+        case ObjectType.SolarPanel:
         case ObjectType.FresnelReflector:
         case ObjectType.ParabolicDish:
         case ObjectType.ParabolicTrough:
@@ -180,14 +177,11 @@ export class ContentUtil {
           ContentUtil.expandRoof(e);
           break;
         }
-        case ObjectType.SolarPanel: {
-          ContentUtil.expandSolarPanel(e);
-          break;
-        }
         case ObjectType.SolarWaterHeater: {
           ContentUtil.expandSolarWaterHeater(e);
           break;
         }
+        case ObjectType.SolarPanel:
         case ObjectType.FresnelReflector:
         case ObjectType.ParabolicDish:
         case ObjectType.ParabolicTrough:
@@ -198,7 +192,7 @@ export class ContentUtil {
         case ObjectType.Human:
         case ObjectType.Tree:
         case ObjectType.Flower: {
-          ContentUtil.expandBillBoard(e);
+          ContentUtil.expandBillBoards(e);
           break;
         }
         case ObjectType.WindTurbine: {
@@ -982,6 +976,8 @@ export class ContentUtil {
     delete e.parentId;
 
     // check if it's default value
+    if (e.color === Constants.DEFAULT_FOUNDATION_COLOR) delete e.color;
+    if (e.slope === Constants.DEFAULT_FOUNDATION_SLOPE) delete e.slope;
     if (e.lz === Constants.DEFAULT_FOUNDATION_LZ) delete e.lz;
     if (e.rotation[2] === 0) delete e.rotation;
     if (e.rValue === Constants.DEFAULT_GROUND_FLOOR_R_VALUE) delete e.rValue;
@@ -1007,6 +1003,7 @@ export class ContentUtil {
     e.normal = [0, 0, 1];
     e.parentId = Constants.GROUND_ID;
 
+    if (e.color === undefined) e.color = Constants.DEFAULT_FOUNDATION_COLOR;
     if (e.lz === undefined) e.lz = Constants.DEFAULT_FOUNDATION_LZ;
     if (e.rotation === undefined) e.rotation = [0, 0, 0];
     if (e.rValue === undefined) e.rValue = Constants.DEFAULT_GROUND_FLOOR_R_VALUE;
@@ -1019,12 +1016,17 @@ export class ContentUtil {
     delete e.normal;
 
     if (!e.stackable) delete e.stackable;
+    if (e.transparency === Constants.DEFAULT_CUBOID_TRANSPARENCY) delete e.transparency;
+    if (e.faceColors.every((color: string) => isSameColor(color, Constants.DEFAULT_CUBOID_COLOR))) delete e.faceColors;
+    if (e.textureTypes.every((t: string) => t === CuboidTexture.NoTexture)) delete e.textureTypes;
   }
 
   static expandCuboid(e: any) {
     e.normal = [0, 0, 1];
 
     if (e.stackable === undefined) e.stackable = false;
+    if (e.faceColors === undefined) e.faceColors = new Array(6).fill(Constants.DEFAULT_CUBOID_COLOR);
+    if (e.textureTypes === undefined) e.faceColors = new Array(6).fill(CuboidTexture.NoTexture);
   }
 
   static compressWall(e: any) {
@@ -1033,6 +1035,8 @@ export class ContentUtil {
     delete e.normal;
     delete e.rotation;
 
+    if (e.airPermeability === Constants.DEFAULT_WALL_AIR_PERMEABILITY) delete e.airPermeability;
+    if (e.volumetricHeatCapacity === Constants.DEFAULT_WALL_VOLUMETRIC_HEAT_CAPACITY) delete e.volumetricHeatCapacity;
     if (e.textureType === WallTexture.Default) delete e.textureType;
     if (isSameColor(e.color, Constants.DEFAULT_WALL_COLOR)) delete e.color;
     if (e.lz === Constants.DEFAULT_WALL_HEIGHT) delete e.lz;
@@ -1056,6 +1060,8 @@ export class ContentUtil {
     e.normal = [0, 0, 1];
     e.rotation = [0, 0, 0];
 
+    if (e.volumetricHeatCapacity === undefined)
+      e.volumetricHeatCapacity = Constants.DEFAULT_WALL_VOLUMETRIC_HEAT_CAPACITY;
     if (e.textureType === undefined) e.textureType = WallTexture.Default;
     if (e.color === undefined) e.color = Constants.DEFAULT_WALL_COLOR;
     if (e.lz === undefined) e.lz = Constants.DEFAULT_WALL_HEIGHT;
@@ -1101,6 +1107,7 @@ export class ContentUtil {
       delete e.rotation;
       delete e.parentType;
     }
+    if (e.airPermeability === Constants.DEFAULT_WINDOW_AIR_PERMEABILITY) delete e.airPermeability;
 
     if (e.horizontalMullion) delete e.horizontalMullion; // default true
     if (e.verticalMullion) delete e.verticalMullion; // default true
@@ -1245,11 +1252,8 @@ export class ContentUtil {
   }
 
   static compressSolarPanel(e: any) {
-    if (e.relativeAzimuth === Constants.DEFAULT_SOLAR_COLLECTOR_RELATIVE_AZIMUTH) delete e.relativeAzimuth;
-    if (e.tiltAngle === Constants.DEFAULT_SOLAR_COLLECTOR_TILT_ANGLE) delete e.tiltAngle;
-    if (e.poleHeight === Constants.DEFAULT_SOLAR_COLLECTOR_POLE_HEIGHT) delete e.poleHeight;
-    if (e.poleRadius === Constants.DEFAULT_SOLAR_COLLECTOR_POLE_RADIUS) delete e.poleRadius;
-
+    if (e.poleHeight === Constants.DEFAULT_SOLAR_PANEL_POLE_HEIGHT) delete e.poleHeight;
+    if (e.poleRadius === Constants.DEFAULT_SOLAR_PANEL_POLE_RADIUS) delete e.poleRadius;
     if (e.pvModelName === Constants.DEFAULT_SOLAR_PANEL_MODEL) delete e.pvModelName;
     if (e.poleSpacing === Constants.DEFAULT_SOLAR_PANEL_POLE_SPACING) delete e.poleSpacing;
     if (e.orientation === Constants.DEFAULT_SOLAR_PANEL_ORIENTATION) delete e.orientation;
@@ -1261,18 +1265,114 @@ export class ContentUtil {
   }
 
   static expandSolarPanel(e: any) {
-    if (e.relativeAzimuth === undefined) e.relativeAzimuth = Constants.DEFAULT_SOLAR_COLLECTOR_RELATIVE_AZIMUTH;
-    if (e.tiltAngle === undefined) e.tiltAngle = Constants.DEFAULT_SOLAR_COLLECTOR_TILT_ANGLE;
-    if (e.poleHeight === undefined) e.poleHeight = Constants.DEFAULT_SOLAR_COLLECTOR_POLE_HEIGHT;
-    if (e.poleRadius === undefined) e.poleRadius = Constants.DEFAULT_SOLAR_COLLECTOR_POLE_RADIUS;
-
     if (e.pvModelName === undefined) e.pvModelName = Constants.DEFAULT_SOLAR_PANEL_MODEL;
     if (e.poleSpacing === undefined) e.poleSpacing = Constants.DEFAULT_SOLAR_PANEL_POLE_SPACING;
     if (e.orientation === undefined) e.orientation = Constants.DEFAULT_SOLAR_PANEL_ORIENTATION;
     if (e.trackerType === undefined) e.trackerType = TrackerType.NO_TRACKER;
     if (e.frameColor === undefined) e.frameColor = Constants.DEFAULT_SOLAR_PANEL_FRAME_COLOR;
+    if (e.poleHeight === undefined) e.poleHeight = Constants.DEFAULT_SOLAR_PANEL_POLE_HEIGHT;
+    if (e.poleRadius === undefined) e.poleRadius = Constants.DEFAULT_SOLAR_PANEL_POLE_RADIUS;
 
     if (e.drawSunBeam === undefined) e.drawSunBeam = false;
+  }
+
+  static compressParabolicDish(e: any) {
+    if (e.reflectance === Constants.DEFAULT_PARABOLIC_DISH_REFLECTANCE) delete e.reflectance;
+
+    if (e.latusRectum === Constants.DEFAULT_PARABOLIC_DISH_LATUS_RECTUM) delete e.latusRectum;
+    if (e.absorptance === Constants.DEFAULT_PARABOLIC_DISH_ABSORPTANCE) delete e.absorptance;
+    if (e.opticalEfficiency === Constants.DEFAULT_PARABOLIC_DISH_OPTICAL_EFFICIENCY) delete e.opticalEfficiency;
+    if (e.thermalEfficiency === Constants.DEFAULT_PARABOLIC_DISH_THERMAL_EFFICIENCY) delete e.thermalEfficiency;
+
+    if (e.structureType === Constants.DEFAULT_PARABOLIC_DISH_RECEIVER_STRUCTURE) delete e.structureType;
+    if (e.receiverRadius === Constants.DEFAULT_PARABOLIC_DISH_RECEIVER_RADIUS) delete e.receiverRadius;
+    if (e.receiverPoleRadius === Constants.DEFAULT_PARABOLIC_DISH_RECEIVER_RADIUS) delete e.receiverPoleRadius;
+
+    if (e.poleHeight === Constants.DEFAULT_PARABOLIC_DISH_POLE_HEIGHT) delete e.poleHeight;
+    if (e.poleRadius === Constants.DEFAULT_PARABOLIC_DISH_POLE_RADIUS) delete e.poleRadius;
+  }
+
+  static expandParabolicDish(e: any) {
+    if (e.reflectance === undefined) e.reflectance = Constants.DEFAULT_PARABOLIC_DISH_REFLECTANCE;
+
+    if (e.latusRectum === undefined) e.latusRectum = Constants.DEFAULT_PARABOLIC_DISH_LATUS_RECTUM;
+    if (e.absorptance === undefined) e.absorptance = Constants.DEFAULT_PARABOLIC_DISH_ABSORPTANCE;
+    if (e.opticalEfficiency === undefined) e.opticalEfficiency = Constants.DEFAULT_PARABOLIC_DISH_OPTICAL_EFFICIENCY;
+    if (e.thermalEfficiency === undefined) e.thermalEfficiency = Constants.DEFAULT_PARABOLIC_DISH_THERMAL_EFFICIENCY;
+
+    if (e.structureType === undefined) e.structureType = Constants.DEFAULT_PARABOLIC_DISH_RECEIVER_STRUCTURE;
+    if (e.receiverRadius === undefined) e.receiverRadius = Constants.DEFAULT_PARABOLIC_DISH_RECEIVER_RADIUS;
+    if (e.receiverPoleRadius === undefined) e.receiverPoleRadius = Constants.DEFAULT_PARABOLIC_DISH_POLE_RADIUS;
+
+    if (e.poleHeight === undefined) e.poleHeight = Constants.DEFAULT_PARABOLIC_DISH_POLE_HEIGHT;
+    if (e.poleRadius === undefined) e.poleRadius = Constants.DEFAULT_PARABOLIC_DISH_POLE_RADIUS;
+  }
+
+  static compressParabolicTrough(e: any) {
+    if (e.reflectance === Constants.DEFAULT_PARABOLIC_TROUGH_REFLECTANCE) delete e.reflectance;
+
+    if (e.latusRectum === Constants.DEFAULT_PARABOLIC_TROUGH_LATUS_RECTUM) delete e.latusRectum;
+    if (e.absorptance === Constants.DEFAULT_PARABOLIC_TROUGH_ABSORPTANCE) delete e.absorptance;
+    if (e.opticalEfficiency === Constants.DEFAULT_PARABOLIC_TROUGH_OPTICAL_EFFICIENCY) delete e.opticalEfficiency;
+    if (e.thermalEfficiency === Constants.DEFAULT_PARABOLIC_TROUGH_THERMAL_EFFICIENCY) delete e.thermalEfficiency;
+
+    if (e.moduleLength === Constants.DEFAULT_PARABOLIC_TROUGH_MODULE_LENGTH) delete e.moduleLength;
+    if (e.absorberTubeRadius === Constants.DEFAULT_PARABOLIC_TROUGH_ABSORBER_TUBE_RADIUS) delete e.absorberTubeRadius;
+
+    if (e.poleHeight === Constants.DEFAULT_PARABOLIC_TROUGH_POLE_HEIGHT) delete e.poleHeight;
+    if (e.poleRadius === Constants.DEFAULT_PARABOLIC_TROUGH_POLE_RADIUS) delete e.poleRadius;
+  }
+
+  static expandParabolicTrough(e: any) {
+    if (e.reflectance === undefined) e.reflectance = Constants.DEFAULT_PARABOLIC_TROUGH_REFLECTANCE;
+
+    if (e.latusRectum === undefined) e.latusRectum = Constants.DEFAULT_PARABOLIC_TROUGH_LATUS_RECTUM;
+    if (e.absorptance === undefined) e.absorptance = Constants.DEFAULT_PARABOLIC_TROUGH_ABSORPTANCE;
+    if (e.opticalEfficiency === undefined) e.opticalEfficiency = Constants.DEFAULT_PARABOLIC_TROUGH_OPTICAL_EFFICIENCY;
+    if (e.thermalEfficiency === undefined) e.thermalEfficiency = Constants.DEFAULT_PARABOLIC_TROUGH_THERMAL_EFFICIENCY;
+
+    if (e.moduleLength === undefined) e.moduleLength = Constants.DEFAULT_PARABOLIC_TROUGH_MODULE_LENGTH;
+    if (e.absorberTubeRadius === undefined)
+      e.absorberTubeRadius = Constants.DEFAULT_PARABOLIC_TROUGH_ABSORBER_TUBE_RADIUS;
+
+    if (e.poleHeight === undefined) e.poleHeight = Constants.DEFAULT_PARABOLIC_TROUGH_POLE_HEIGHT;
+    if (e.poleRadius === undefined) e.poleRadius = Constants.DEFAULT_PARABOLIC_TROUGH_POLE_RADIUS;
+  }
+  static compressFresnelReflector(e: any) {
+    if (e.reflectance === Constants.DEFAULT_FRESNEL_REFLECTOR_REFLECTANCE) delete e.reflectance;
+
+    if (e.moduleLength === Constants.DEFAULT_FRESNEL_REFLECTOR_MODULE_LENGTH) delete e.moduleLength;
+    if (e.receiverId === Constants.DEFAULT_FRESNEL_REFLECTOR_RECEIVER) delete e.receiverId;
+
+    if (e.poleHeight === Constants.DEFAULT_FRESNEL_REFLECTOR_POLE_HEIGHT) delete e.poleHeight;
+    if (e.poleRadius === Constants.DEFAULT_FRESNEL_REFLECTOR_POLE_RADIUS) delete e.poleRadius;
+  }
+
+  static expandFresnelReflector(e: any) {
+    if (e.reflectance === undefined) e.reflectance = Constants.DEFAULT_FRESNEL_REFLECTOR_REFLECTANCE;
+
+    if (e.moduleLength === undefined) e.moduleLength = Constants.DEFAULT_FRESNEL_REFLECTOR_MODULE_LENGTH;
+    if (e.receiverId === undefined) e.receiverId = Constants.DEFAULT_FRESNEL_REFLECTOR_RECEIVER;
+
+    if (e.poleHeight === undefined) e.poleHeight = Constants.DEFAULT_FRESNEL_REFLECTOR_POLE_HEIGHT;
+    if (e.poleRadius === undefined) e.poleRadius = Constants.DEFAULT_FRESNEL_REFLECTOR_POLE_RADIUS;
+  }
+
+  static compressHeliostat(e: any) {
+    if (e.reflectance === Constants.DEFAULT_HELIOSTAT_REFLECTANCE) delete e.reflectance;
+
+    if (e.towerId === Constants.DEFAULT_HELIOSTAT_TOWER) delete e.towerId;
+
+    if (e.poleHeight === Constants.DEFAULT_HELIOSTAT_POLE_HEIGHT) delete e.poleHeight;
+    if (e.poleRadius === Constants.DEFAULT_HELIOSTAT_POLE_RADIUS) delete e.poleRadius;
+  }
+  static expandHeliostat(e: any) {
+    if (e.reflectance === undefined) e.reflectance = Constants.DEFAULT_HELIOSTAT_REFLECTANCE;
+
+    if (e.towerId === undefined) e.towerId = Constants.DEFAULT_HELIOSTAT_TOWER;
+
+    if (e.poleHeight === undefined) e.poleHeight = Constants.DEFAULT_HELIOSTAT_POLE_HEIGHT;
+    if (e.poleRadius === undefined) e.poleRadius = Constants.DEFAULT_HELIOSTAT_POLE_RADIUS;
   }
 
   static compressSolarCollector(e: any) {
@@ -1280,8 +1380,29 @@ export class ContentUtil {
     delete e.rotation;
     if (e.relativeAzimuth === Constants.DEFAULT_SOLAR_COLLECTOR_RELATIVE_AZIMUTH) delete e.relativeAzimuth;
     if (e.tiltAngle === Constants.DEFAULT_SOLAR_COLLECTOR_TILT_ANGLE) delete e.tiltAngle;
-    if (e.poleHeight === Constants.DEFAULT_SOLAR_COLLECTOR_POLE_HEIGHT) delete e.poleHeight;
-    if (e.poleRadius === Constants.DEFAULT_SOLAR_COLLECTOR_POLE_RADIUS) delete e.poleRadius;
+
+    switch (e.type) {
+      case ObjectType.SolarPanel: {
+        ContentUtil.compressSolarPanel(e);
+        break;
+      }
+      case ObjectType.ParabolicDish: {
+        ContentUtil.compressParabolicDish(e);
+        break;
+      }
+      case ObjectType.ParabolicTrough: {
+        ContentUtil.compressParabolicDish(e);
+        break;
+      }
+      case ObjectType.FresnelReflector: {
+        ContentUtil.compressFresnelReflector(e);
+        break;
+      }
+      case ObjectType.Heliostat: {
+        ContentUtil.compressHeliostat(e);
+        break;
+      }
+    }
   }
 
   static expandSolarCollector(e: any) {
@@ -1289,8 +1410,29 @@ export class ContentUtil {
     e.normal = [0, 0, 1];
     if (e.relativeAzimuth === undefined) e.relativeAzimuth = Constants.DEFAULT_SOLAR_COLLECTOR_RELATIVE_AZIMUTH;
     if (e.tiltAngle === undefined) e.tiltAngle = Constants.DEFAULT_SOLAR_COLLECTOR_TILT_ANGLE;
-    if (e.poleHeight === undefined) e.poleHeight = Constants.DEFAULT_SOLAR_COLLECTOR_POLE_HEIGHT;
-    if (e.poleRadius === undefined) e.poleRadius = Constants.DEFAULT_SOLAR_COLLECTOR_POLE_RADIUS;
+
+    switch (e.type) {
+      case ObjectType.SolarPanel: {
+        ContentUtil.expandSolarPanel(e);
+        break;
+      }
+      case ObjectType.ParabolicDish: {
+        ContentUtil.expandParabolicDish(e);
+        break;
+      }
+      case ObjectType.ParabolicTrough: {
+        ContentUtil.expandParabolicDish(e);
+        break;
+      }
+      case ObjectType.FresnelReflector: {
+        ContentUtil.expandFresnelReflector(e);
+        break;
+      }
+      case ObjectType.Heliostat: {
+        ContentUtil.expandHeliostat(e);
+        break;
+      }
+    }
   }
 
   static compressWindTurbine(e: any) {
@@ -1335,11 +1477,43 @@ export class ContentUtil {
     delete e.normal;
     delete e.rotation;
     if (!e.flip) delete e.flip;
+
+    switch (e) {
+      case ObjectType.Human: {
+        if (e.name === Constants.DEFAULT_HUMAN_NAME) delete e.name;
+        if (!e.observer) delete e.observer;
+        break;
+      }
+      case ObjectType.Flower: {
+        if (e.name === Constants.DEFAULT_FLOWER_TYPE) delete e.name;
+        break;
+      }
+      case ObjectType.Tree: {
+        if (e.name === Constants.DEFAULT_TREE_TYPE) delete e.name;
+        if (!e.showModel) delete e.showModel;
+        break;
+      }
+    }
   }
 
-  static expandBillBoard(e: any) {
+  static expandBillBoards(e: any) {
     e.normal = [0, 0, 1];
     e.rotation = [0, 0, 0];
+
+    switch (e) {
+      case ObjectType.Human: {
+        if (e.name === undefined) e.name === Constants.DEFAULT_HUMAN_NAME;
+        break;
+      }
+      case ObjectType.Flower: {
+        if (e.name === undefined) e.name === Constants.DEFAULT_FLOWER_TYPE;
+        break;
+      }
+      case ObjectType.Tree: {
+        if (e.name === undefined) e.name === Constants.DEFAULT_TREE_TYPE;
+        break;
+      }
+    }
   }
 
   static compressLight(e: any) {
