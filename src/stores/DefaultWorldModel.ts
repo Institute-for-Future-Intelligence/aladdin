@@ -10,14 +10,7 @@ import { WorldModel } from '../models/WorldModel';
 import { GroundModel } from '../models/GroundModel';
 import { HumanModel } from '../models/HumanModel';
 import short from 'short-uuid';
-import {
-  DEFAULT_ADDRESS,
-  DEFAULT_LATITUDE,
-  DEFAULT_LEAF_OFF_DAY,
-  DEFAULT_LEAF_OUT_DAY,
-  DEFAULT_LONGITUDE,
-  GROUND_ID,
-} from '../constants';
+import * as Constants from '../constants';
 import { HumanData } from '../HumanData';
 import { immerable } from 'immer';
 
@@ -66,93 +59,90 @@ export class DefaultWorldModel implements WorldModel {
   noAnimationForSolarUpdraftTowerSimulation: boolean;
 
   constructor() {
-    this.latitude = DEFAULT_LATITUDE;
-    this.longitude = DEFAULT_LONGITUDE;
-    this.address = DEFAULT_ADDRESS;
-    this.countryCode = 'US';
+    this.latitude = Constants.DEFAULT_LATITUDE;
+    this.longitude = Constants.DEFAULT_LONGITUDE;
+    this.address = Constants.DEFAULT_ADDRESS;
+    this.countryCode = Constants.DEFAULT_COUNTRY_CODE;
     this.date = new Date(new Date().getFullYear(), 5, 22, 12).toLocaleString('en-US');
 
-    this.name = 'default';
-    this.ground = {
-      albedo: 0.3,
-      thermalDiffusivity: 0.05,
-      snowReflectionFactors: new Array(12).fill(0),
-    } as GroundModel;
+    this.name = Constants.DEFAULT_NAME;
+    this.ground = { ...Constants.DEFAULT_GROUND } as GroundModel;
 
     // The default values are for Natick, MA
-    this.leafDayOfYear1 = DEFAULT_LEAF_OUT_DAY;
-    this.leafDayOfYear2 = DEFAULT_LEAF_OFF_DAY;
+    this.leafDayOfYear1 = Constants.DEFAULT_LEAF_OUT_DAY;
+    this.leafDayOfYear2 = Constants.DEFAULT_LEAF_OFF_DAY;
 
-    this.airAttenuationCoefficient = 0.01;
-    this.airConvectiveCoefficient = 5;
+    this.airAttenuationCoefficient = Constants.DEFAULT_AIR_ATTENUATION_COEFFICIENT;
+    this.airConvectiveCoefficient = Constants.DEFAULT_AIR_CONVECTIVE_COEFFICIENT;
 
-    this.timesPerHour = 1; // how many times per hour to collect data
-    this.daysPerYear = 12; // how many days per year for sampling
-    this.monthlyIrradianceLosses = new Array(12).fill(0.05);
-    this.pvGridCellSize = 0.5;
-    this.discretization = Discretization.APPROXIMATE;
-    this.diurnalTemperatureModel = DiurnalTemperatureModel.Sinusoidal;
-    this.highestTemperatureTimeInMinutes = 900; // assume it is 3pm (at 15*60 minutes)
-    this.applyElectricityConsumptions = false;
-    this.monthlyElectricityConsumptions = new Array(12).fill(600);
+    this.timesPerHour = Constants.DEFAULT_TIMES_PER_HOUR; // how many times per hour to collect data
+    this.daysPerYear = Constants.DEFAULT_DAYS_PER_YEAR; // how many days per year for sampling
+    this.monthlyIrradianceLosses = [...Constants.DEFAULT_MONTHLY_IRRADIANCE_LOSSES];
+    this.pvGridCellSize = Constants.DEFAULT_PV_GRID_CELL_SIZE;
+    this.discretization = Constants.DEFAULT_DISCRETIZATION;
+    this.diurnalTemperatureModel = Constants.DEFAULT_DIURNAL_TEMPERATURE_MODEL;
+    this.highestTemperatureTimeInMinutes = Constants.DEFAULT_HIGHEST_TEMPERATURE_TIME_IN_MINUTES; // assume it is 3pm (at 15*60 minutes)
+    this.applyElectricityConsumptions = Constants.DEFAULT_APPLY_ELECTRICITY_CONSUMPTIONS;
+    this.monthlyElectricityConsumptions = [...Constants.DEFAULT_MONTHLY_ELECTRICITY_CONSUMPTIONS];
 
-    this.solarPanelVisibilityGridCellSize = 0.2;
-    this.solarRadiationHeatmapGridCellSize = 0.5;
+    this.solarPanelVisibilityGridCellSize = Constants.DEFAULT_SOLAR_PANEL_VISIBILITY_GRID_CELL_SIZE;
+    this.solarRadiationHeatmapGridCellSize = Constants.DEFAULT_SOLAR_RADIATION_HEATMAP_GRID_CELL_SIZE;
 
-    this.cspTimesPerHour = 1;
-    this.cspDaysPerYear = 4;
-    this.cspGridCellSize = 0.5;
+    this.cspTimesPerHour = Constants.DEFAULT_CSP_TIMES_PER_HOUR;
+    this.cspDaysPerYear = Constants.DEFAULT_CSP_DAYS_PER_YEAR;
+    this.cspGridCellSize = Constants.DEFAULT_CSP_GRID_CELL_SIZE;
 
-    this.sutTimesPerHour = 1;
-    this.sutDaysPerYear = 4;
-    this.sutGridCellSize = 1;
+    this.sutTimesPerHour = Constants.DEFAULT_SUT_TIMES_PER_HOUR;
+    this.sutDaysPerYear = Constants.DEFAULT_SUT_DAYS_PER_YEAR;
+    this.sutGridCellSize = Constants.DEFAULT_SUT_GRID_CELL_SIZE;
 
-    this.noAnimationForHeatmapSimulation = false;
-    this.noAnimationForThermalSimulation = false;
-    this.noAnimationForSensorDataCollection = false;
-    this.noAnimationForSolarPanelSimulation = false;
-    this.noAnimationForSolarUpdraftTowerSimulation = false;
+    this.noAnimationForHeatmapSimulation = Constants.DEFAULT_NO_ANIMATION_FOR_HEATMAP_SIMULATION;
+    this.noAnimationForThermalSimulation = Constants.DEFAULT_NO_ANIMATION_FOR_THERMAL_SIMULATION;
+    this.noAnimationForSensorDataCollection = Constants.DEFAULT_NO_ANIMATION_FOR_SENSOR_DATA_COLLECTION;
+    this.noAnimationForSolarPanelSimulation = Constants.DEFAULT_NO_ANIMATION_FOR_SOLAR_PANEL_SIMULATION;
+    this.noAnimationForSolarUpdraftTowerSimulation = Constants.DEFAULT_NO_ANIMATION_FOR_SOLAR_UPDRAFT_TOWER_SIMULATION;
   }
 
   static resetWorldModel(worldModel: WorldModel) {
-    worldModel.latitude = DEFAULT_LATITUDE;
-    worldModel.longitude = DEFAULT_LONGITUDE;
-    worldModel.address = DEFAULT_ADDRESS;
-    worldModel.countryCode = 'US';
+    worldModel.latitude = Constants.DEFAULT_LATITUDE;
+    worldModel.longitude = Constants.DEFAULT_LONGITUDE;
+    worldModel.address = Constants.DEFAULT_ADDRESS;
+    worldModel.countryCode = Constants.DEFAULT_COUNTRY_CODE;
     worldModel.date = new Date(new Date().getFullYear(), 5, 22, 12).toLocaleString('en-US');
 
-    worldModel.name = 'default';
-    worldModel.ground.albedo = 0.3;
-    worldModel.ground.thermalDiffusivity = 0.05;
+    worldModel.name = Constants.DEFAULT_NAME;
+    worldModel.ground.albedo = Constants.DEFAULT_GROUND.albedo;
+    worldModel.ground.thermalDiffusivity = Constants.DEFAULT_GROUND.thermalDiffusivity;
     worldModel.ground.snowReflectionFactors.fill(0);
 
-    worldModel.airAttenuationCoefficient = 0.01;
-    worldModel.airConvectiveCoefficient = 5;
+    worldModel.airAttenuationCoefficient = Constants.DEFAULT_AIR_ATTENUATION_COEFFICIENT;
+    worldModel.airConvectiveCoefficient = Constants.DEFAULT_AIR_CONVECTIVE_COEFFICIENT;
 
-    worldModel.timesPerHour = 1; // how many times per hour to collect data
-    worldModel.daysPerYear = 12; // how many days per year for sampling
-    worldModel.monthlyIrradianceLosses = new Array(12).fill(0.05);
-    worldModel.pvGridCellSize = 0.5;
-    worldModel.discretization = Discretization.APPROXIMATE;
-    worldModel.diurnalTemperatureModel = DiurnalTemperatureModel.Sinusoidal;
-    worldModel.highestTemperatureTimeInMinutes = 900;
+    worldModel.timesPerHour = Constants.DEFAULT_TIMES_PER_HOUR; // how many times per hour to collect data
+    worldModel.daysPerYear = Constants.DEFAULT_DAYS_PER_YEAR; // how many days per year for sampling
+    worldModel.monthlyIrradianceLosses = Constants.DEFAULT_MONTHLY_IRRADIANCE_LOSSES;
+    worldModel.pvGridCellSize = Constants.DEFAULT_PV_GRID_CELL_SIZE;
+    worldModel.discretization = Constants.DEFAULT_DISCRETIZATION;
+    worldModel.diurnalTemperatureModel = Constants.DEFAULT_DIURNAL_TEMPERATURE_MODEL;
+    worldModel.highestTemperatureTimeInMinutes = Constants.DEFAULT_HIGHEST_TEMPERATURE_TIME_IN_MINUTES;
 
-    worldModel.solarPanelVisibilityGridCellSize = 0.2;
-    worldModel.solarRadiationHeatmapGridCellSize = 0.5;
+    worldModel.solarPanelVisibilityGridCellSize = Constants.DEFAULT_SOLAR_PANEL_VISIBILITY_GRID_CELL_SIZE;
+    worldModel.solarRadiationHeatmapGridCellSize = Constants.DEFAULT_SOLAR_RADIATION_HEATMAP_GRID_CELL_SIZE;
 
-    worldModel.cspTimesPerHour = 1;
-    worldModel.cspDaysPerYear = 4;
-    worldModel.cspGridCellSize = 0.5;
+    worldModel.cspTimesPerHour = Constants.DEFAULT_CSP_TIMES_PER_HOUR;
+    worldModel.cspDaysPerYear = Constants.DEFAULT_CSP_DAYS_PER_YEAR;
+    worldModel.cspGridCellSize = Constants.DEFAULT_CSP_GRID_CELL_SIZE;
 
-    worldModel.sutTimesPerHour = 1;
-    worldModel.sutDaysPerYear = 4;
-    worldModel.sutGridCellSize = 1;
+    worldModel.sutTimesPerHour = Constants.DEFAULT_SUT_TIMES_PER_HOUR;
+    worldModel.sutDaysPerYear = Constants.DEFAULT_SUT_DAYS_PER_YEAR;
+    worldModel.sutGridCellSize = Constants.DEFAULT_SUT_GRID_CELL_SIZE;
 
-    worldModel.noAnimationForHeatmapSimulation = false;
-    worldModel.noAnimationForThermalSimulation = false;
-    worldModel.noAnimationForSensorDataCollection = false;
-    worldModel.noAnimationForSolarPanelSimulation = false;
-    worldModel.noAnimationForSolarUpdraftTowerSimulation = false;
+    worldModel.noAnimationForHeatmapSimulation = Constants.DEFAULT_NO_ANIMATION_FOR_HEATMAP_SIMULATION;
+    worldModel.noAnimationForThermalSimulation = Constants.DEFAULT_NO_ANIMATION_FOR_THERMAL_SIMULATION;
+    worldModel.noAnimationForSensorDataCollection = Constants.DEFAULT_NO_ANIMATION_FOR_SENSOR_DATA_COLLECTION;
+    worldModel.noAnimationForSolarPanelSimulation = Constants.DEFAULT_NO_ANIMATION_FOR_SOLAR_PANEL_SIMULATION;
+    worldModel.noAnimationForSolarUpdraftTowerSimulation =
+      Constants.DEFAULT_NO_ANIMATION_FOR_SOLAR_UPDRAFT_TOWER_SIMULATION;
   }
 
   getElements() {
@@ -168,7 +158,7 @@ export class DefaultWorldModel implements WorldModel {
       lz: 0.1,
       normal: [0, 0, 1],
       rotation: [0, 0, 0],
-      parentId: GROUND_ID,
+      parentId: Constants.GROUND_ID,
       textureType: FoundationTexture.NoTexture,
       id: short.generate() as string,
     } as FoundationModel;
@@ -201,7 +191,7 @@ export class DefaultWorldModel implements WorldModel {
       lz: HumanData.fetchHeight(HumanName.Jiya),
       normal: [1, 0, 0],
       rotation: [0, 0, 0],
-      parentId: GROUND_ID,
+      parentId: Constants.GROUND_ID,
       id: short.generate() as string,
     } as HumanModel;
     elements.push(woman);

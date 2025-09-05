@@ -11,13 +11,14 @@ import * as Selector from '../../stores/selector';
 import React, { useMemo } from 'react';
 import { EnergyModelingType } from '../../types';
 import { useDataStore } from '../../stores/commonData';
+import { DEFAULT_CSP_DAYS_PER_YEAR, DEFAULT_DAYS_PER_YEAR, DEFAULT_SUT_DAYS_PER_YEAR } from 'src/constants';
 
 const { Option } = Select;
 
 export const SimulationSamplingDaysSelect = React.memo(({ type }: { type: EnergyModelingType }) => {
-  const defaultDaysPerYear = useStore(Selector.world.daysPerYear);
-  const cspDaysPerYear = useStore(Selector.world.cspDaysPerYear);
-  const sutDaysPerYear = useStore(Selector.world.sutDaysPerYear);
+  const defaultDaysPerYear = useStore(Selector.world.daysPerYear) ?? DEFAULT_DAYS_PER_YEAR;
+  const cspDaysPerYear = useStore(Selector.world.cspDaysPerYear) ?? DEFAULT_CSP_DAYS_PER_YEAR;
+  const sutDaysPerYear = useStore(Selector.world.sutDaysPerYear) ?? DEFAULT_SUT_DAYS_PER_YEAR;
 
   const lang = useLanguage();
 
@@ -36,7 +37,7 @@ export const SimulationSamplingDaysSelect = React.memo(({ type }: { type: Energy
     <MenuItem noPadding stayAfterClick>
       <Select
         style={{ marginLeft: '150px', width: '72px' }}
-        value={daysPerYear ?? 6}
+        value={daysPerYear}
         onChange={(value) => {
           switch (type) {
             case EnergyModelingType.BUILDING:

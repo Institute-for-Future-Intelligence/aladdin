@@ -1034,7 +1034,7 @@ export class ContentUtil {
 
     if (e.stackable === undefined) e.stackable = false;
     if (e.faceColors === undefined) e.faceColors = new Array(6).fill(Constants.DEFAULT_CUBOID_COLOR);
-    if (e.textureTypes === undefined) e.faceColors = new Array(6).fill(CuboidTexture.NoTexture);
+    if (e.textureTypes === undefined) e.textureTypes = new Array(6).fill(CuboidTexture.NoTexture);
   }
 
   static compressWall(e: any) {
