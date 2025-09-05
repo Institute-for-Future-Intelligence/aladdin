@@ -141,6 +141,10 @@ export class ContentUtil {
           ContentUtil.compressLight(e);
           break;
         }
+        case ObjectType.Sensor: {
+          ContentUtil.compressSensor(e);
+          break;
+        }
         case ObjectType.BatteryStorage: {
           ContentUtil.compressBatterStorage(e);
           break;
@@ -201,6 +205,10 @@ export class ContentUtil {
         }
         case ObjectType.Light: {
           ContentUtil.expandLight(e);
+          break;
+        }
+        case ObjectType.Sensor: {
+          ContentUtil.expandSensor(e);
           break;
         }
         case ObjectType.BatteryStorage: {
@@ -976,7 +984,7 @@ export class ContentUtil {
     delete e.parentId;
 
     // check if it's default value
-    if (e.color === Constants.DEFAULT_FOUNDATION_COLOR) delete e.color;
+    if (isSameColor(e.color, Constants.DEFAULT_FOUNDATION_COLOR)) delete e.color;
     if (e.slope === Constants.DEFAULT_FOUNDATION_SLOPE) delete e.slope;
     if (e.lz === Constants.DEFAULT_FOUNDATION_LZ) delete e.lz;
     if (e.rotation[2] === 0) delete e.rotation;
@@ -1103,7 +1111,7 @@ export class ContentUtil {
     if (e.sillWidth === Constants.DEFAULT_WINDOW_SILL_WIDTH) delete e.sillWidth;
     if (e.windowType === WindowType.Default) delete e.windowType;
     if (e.archHeight === Constants.DEFAULT_WINDOW_ARCH_HEIGHT) delete e.archHeight;
-    if (e.parentType === ObjectType.Wall) {
+    if (e.parentType === undefined || e.parentType === ObjectType.Wall) {
       delete e.rotation;
       delete e.parentType;
     }
@@ -1176,6 +1184,7 @@ export class ContentUtil {
     if (e.archHeight === Constants.DEFAULT_DOOR_ARCH_HEIGHT) delete e.archHeight;
     if (e.opacity === Constants.DEFAULT_DOOR_OPACITY) delete e.opacity;
     if (isSameColor(e.frameColor, Constants.DEFAULT_DOOR_FRAME_COLOR)) delete e.frameColor;
+    if (isSameColor(e.color, Constants.DEFAULT_DOOR_COLOR)) delete e.color;
 
     if (e.filled) delete e.filled; // default true
     if (!e.frameless) delete e.frameless;
@@ -1186,6 +1195,7 @@ export class ContentUtil {
     e.normal = [0, 1, 0];
     e.rotation = [0, 0, 0];
 
+    if (e.color === undefined) e.color = Constants.DEFAULT_DOOR_COLOR;
     if (e.uValue === undefined) e.uValue = Constants.DEFAULT_DOOR_U_VALUE;
     if (e.airPermeability === undefined) e.airPermeability = Constants.DEFAULT_DOOR_AIR_PERMEABILITY;
     if (e.volumetricHeatCapacity === undefined)
@@ -1252,6 +1262,7 @@ export class ContentUtil {
   }
 
   static compressSolarPanel(e: any) {
+    if (isSameColor(e.color, Constants.DEFAULT_SOLAR_PANEL_COLOR)) delete e.color;
     if (e.poleHeight === Constants.DEFAULT_SOLAR_PANEL_POLE_HEIGHT) delete e.poleHeight;
     if (e.poleRadius === Constants.DEFAULT_SOLAR_PANEL_POLE_RADIUS) delete e.poleRadius;
     if (e.pvModelName === Constants.DEFAULT_SOLAR_PANEL_MODEL) delete e.pvModelName;
@@ -1265,6 +1276,7 @@ export class ContentUtil {
   }
 
   static expandSolarPanel(e: any) {
+    if (e.color === undefined) e.color = Constants.DEFAULT_SOLAR_PANEL_COLOR;
     if (e.pvModelName === undefined) e.pvModelName = Constants.DEFAULT_SOLAR_PANEL_MODEL;
     if (e.poleSpacing === undefined) e.poleSpacing = Constants.DEFAULT_SOLAR_PANEL_POLE_SPACING;
     if (e.orientation === undefined) e.orientation = Constants.DEFAULT_SOLAR_PANEL_ORIENTATION;
@@ -1286,7 +1298,7 @@ export class ContentUtil {
 
     if (e.structureType === Constants.DEFAULT_PARABOLIC_DISH_RECEIVER_STRUCTURE) delete e.structureType;
     if (e.receiverRadius === Constants.DEFAULT_PARABOLIC_DISH_RECEIVER_RADIUS) delete e.receiverRadius;
-    if (e.receiverPoleRadius === Constants.DEFAULT_PARABOLIC_DISH_RECEIVER_RADIUS) delete e.receiverPoleRadius;
+    if (e.receiverPoleRadius === Constants.DEFAULT_PARABOLIC_DISH_RECEIVER_POLE_RADIUS) delete e.receiverPoleRadius;
 
     if (e.poleHeight === Constants.DEFAULT_PARABOLIC_DISH_POLE_HEIGHT) delete e.poleHeight;
     if (e.poleRadius === Constants.DEFAULT_PARABOLIC_DISH_POLE_RADIUS) delete e.poleRadius;
@@ -1338,6 +1350,7 @@ export class ContentUtil {
     if (e.poleHeight === undefined) e.poleHeight = Constants.DEFAULT_PARABOLIC_TROUGH_POLE_HEIGHT;
     if (e.poleRadius === undefined) e.poleRadius = Constants.DEFAULT_PARABOLIC_TROUGH_POLE_RADIUS;
   }
+
   static compressFresnelReflector(e: any) {
     if (e.reflectance === Constants.DEFAULT_FRESNEL_REFLECTOR_REFLECTANCE) delete e.reflectance;
 
@@ -1366,6 +1379,7 @@ export class ContentUtil {
     if (e.poleHeight === Constants.DEFAULT_HELIOSTAT_POLE_HEIGHT) delete e.poleHeight;
     if (e.poleRadius === Constants.DEFAULT_HELIOSTAT_POLE_RADIUS) delete e.poleRadius;
   }
+
   static expandHeliostat(e: any) {
     if (e.reflectance === undefined) e.reflectance = Constants.DEFAULT_HELIOSTAT_REFLECTANCE;
 
@@ -1478,7 +1492,7 @@ export class ContentUtil {
     delete e.rotation;
     if (!e.flip) delete e.flip;
 
-    switch (e) {
+    switch (e.type) {
       case ObjectType.Human: {
         if (e.name === Constants.DEFAULT_HUMAN_NAME) delete e.name;
         if (!e.observer) delete e.observer;
@@ -1490,6 +1504,8 @@ export class ContentUtil {
       }
       case ObjectType.Tree: {
         if (e.name === Constants.DEFAULT_TREE_TYPE) delete e.name;
+        if (e.lz === Constants.DEFAULT_TREE_HEIGHT) delete e.lz;
+        if (e.lx === Constants.DEFAULT_TREE_SPREAD) delete e.lx;
         if (!e.showModel) delete e.showModel;
         break;
       }
@@ -1500,7 +1516,7 @@ export class ContentUtil {
     e.normal = [0, 0, 1];
     e.rotation = [0, 0, 0];
 
-    switch (e) {
+    switch (e.type) {
       case ObjectType.Human: {
         if (e.name === undefined) e.name === Constants.DEFAULT_HUMAN_NAME;
         break;
@@ -1511,12 +1527,30 @@ export class ContentUtil {
       }
       case ObjectType.Tree: {
         if (e.name === undefined) e.name === Constants.DEFAULT_TREE_TYPE;
+        if (e.lz === undefined) e.lz === Constants.DEFAULT_TREE_HEIGHT;
+        if (e.lx === undefined) e.lx === Constants.DEFAULT_TREE_SPREAD;
         break;
       }
     }
   }
 
+  static compressSensor(e: any) {
+    if (e.lx === Constants.DEFAULT_SENSOR_LX) delete e.lx;
+    if (e.ly === Constants.DEFAULT_SENSOR_LY) delete e.ly;
+    if (e.lz === Constants.DEFAULT_SENSOR_LZ) delete e.lz;
+    if (!e.lit) delete e.lit;
+  }
+
+  static expandSensor(e: any) {
+    if (e.lx === undefined) e.lx = Constants.DEFAULT_SENSOR_LX;
+    if (e.ly === undefined) e.ly = Constants.DEFAULT_SENSOR_LY;
+    if (e.lz === undefined) e.lz = Constants.DEFAULT_SENSOR_LZ;
+  }
+
   static compressLight(e: any) {
+    if (e.lx === Constants.DEFAULT_LIGHT_LX) delete e.lx;
+    if (e.ly === Constants.DEFAULT_LIGHT_LY) delete e.ly;
+    if (e.lz === Constants.DEFAULT_LIGHT_LZ) delete e.lz;
     if (isSameColor(e.color, Constants.DEFAULT_LIGHT_COLOR)) delete e.color;
     if (e.intensity === Constants.DEFAULT_LIGHT_INTENSITY) delete e.intensity;
     if (e.distance === Constants.DEFAULT_LIGHT_DISTANCE) delete e.distance;
@@ -1526,6 +1560,9 @@ export class ContentUtil {
   }
 
   static expandLight(e: any) {
+    if (e.lx === undefined) e.lx = Constants.DEFAULT_LIGHT_LX;
+    if (e.ly === undefined) e.ly = Constants.DEFAULT_LIGHT_LY;
+    if (e.lz === undefined) e.lz = Constants.DEFAULT_LIGHT_LZ;
     if (e.color === undefined) e.color = Constants.DEFAULT_LIGHT_COLOR;
     if (e.intensity === undefined) e.intensity = Constants.DEFAULT_LIGHT_INTENSITY;
     if (e.distance === undefined) e.distance = Constants.DEFAULT_LIGHT_DISTANCE;

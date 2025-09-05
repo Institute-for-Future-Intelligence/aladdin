@@ -211,15 +211,8 @@ export class DefaultActionState implements ActionState {
     this.rulerColor = '#D3D3D3';
 
     this.cuboidHeight = 4;
-    this.cuboidFaceColors = ['#808080', '#808080', '#808080', '#808080', '#808080', '#808080'];
-    this.cuboidFaceTextures = [
-      CuboidTexture.NoTexture,
-      CuboidTexture.NoTexture,
-      CuboidTexture.NoTexture,
-      CuboidTexture.NoTexture,
-      CuboidTexture.NoTexture,
-      CuboidTexture.NoTexture,
-    ];
+    this.cuboidFaceColors = new Array(6).fill(Constants.DEFAULT_CUBOID_COLOR);
+    this.cuboidFaceTextures = new Array(6).fill(CuboidTexture.NoTexture);
     this.cuboidStackable = false;
     this.cuboidTransparency = Constants.DEFAULT_CUBOID_TRANSPARENCY;
 
