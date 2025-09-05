@@ -23,7 +23,7 @@ import {
 import { Rectangle } from './models/Rectangle';
 import { GroundModel } from './models/GroundModel';
 
-export const VERSION = '1.8.8';
+export const VERSION = '1.8.9';
 
 // used for check old file that need to update light intensity.
 export const LIGHT_INTENSITY_CHANGED_VERSION = '1.5.0';
@@ -66,6 +66,7 @@ export const DEFAULT_ROOF_R_VALUE = 2;
 export const DEFAULT_CEILING_R_VALUE = 2;
 export const DEFAULT_WINDOW_U_VALUE = 2;
 export const DEFAULT_DOOR_U_VALUE = 1;
+export const DEFAULT_AIR_PERMEABILITY = 3;
 
 export const DEFAULT_LINE_COLOR = BLACK;
 export const DEFAULT_LINE_WIDTH = 0.2;
