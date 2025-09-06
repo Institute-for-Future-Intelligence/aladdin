@@ -772,7 +772,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           },
 
           importContent(c, title) {
-            const content = ContentUtil.expandContent(c);
+            const content = ContentUtil.expandContent(JSON.parse(JSON.stringify(c)));
             immerSet((state: CommonStoreState) => {
               state.version = content.version;
               state.world = content.world;
