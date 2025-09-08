@@ -919,16 +919,12 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
           // when the sun is out
           if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
             const rectangular = (partial ? partialWallVertices.length : frameVertices.length) === 4;
-            const solarPanels = getChildrenOfType(ObjectType.SolarPanel, wall.id);
             const results = SolarRadiation.computeWallSolarRadiationEnergy(
               now,
               world,
               sunDirectionRef.current,
               wall,
               foundation,
-              windows,
-              doors,
-              solarPanels,
               rectangular ? 0 : 1,
               elevation,
               distanceToClosestObject,

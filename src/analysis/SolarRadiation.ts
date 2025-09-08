@@ -268,9 +268,6 @@ export class SolarRadiation {
     sunDirection: Vector3,
     wall: WallModel,
     foundation: FoundationModel,
-    windows: ElementModel[],
-    doors: ElementModel[],
-    solarPanels: ElementModel[],
     margin: number,
     elevation: number,
     distanceToClosestObject: (elementId: string, position: Vector3, sunDirection: Vector3) => number,
@@ -309,7 +306,6 @@ export class SolarRadiation {
     const heatmap: number[][] = Array(nx)
       .fill(0)
       .map(() => Array(nz).fill(0));
-    let isWall;
     for (let kx = 0; kx < nx; kx++) {
       for (let kz = 0; kz < nz; kz++) {
         const kx2 = kx - nx / 2 + 0.5;
@@ -318,76 +314,19 @@ export class SolarRadiation {
         const insidePolygonWithMargin = Util.isPointInside(p.x, p.y, polygonWithMargin);
         if (insidePolygonWithMargin) {
           v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);
-          isWall = true;
-          if (windows && windows.length > 0) {
-            for (const w of windows) {
-              if (w.type !== ObjectType.Window) continue;
-              const cx = w.cx * wall.lx;
-              const cz = w.cz * wall.lz;
-              const hx = (w.lx * wall.lx) / 2;
-              const hz = (w.lz * wall.lz) / 2;
-              const window = w as WindowModel;
-              if (window.windowType === WindowType.Arched) {
-                const absWindowPos = absPos.clone().add(new Vector3(window.cx * wall.lx, 0, window.cz * wall.lz));
-                if (SolarRadiation.pointWithinArch(v, window.lx, window.lz, window.archHeight, absWindowPos)) {
-                  isWall = false;
-                }
-              } else {
-                if (p.x >= cx - hx && p.x < cx + hx && p.y >= cz - hz && p.y < cz + hz) {
-                  isWall = false;
-                  break;
-                }
-              }
+          const insidePolygon = polygon === null ? true : Util.isPointInside(p.x, p.y, polygon);
+          const distance = distanceToClosestObject(wall.id, v, sunDirection);
+          heatmap[kx][kz] += indirectRadiation;
+          if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
+            if (insidePolygon) {
+              intensity[kx][kz] += indirectRadiation;
             }
           }
-          if (doors && doors.length > 0) {
-            for (const d of doors) {
-              if (d.type !== ObjectType.Door) continue;
-              const cx = d.cx * wall.lx;
-              const cz = d.cz * wall.lz;
-              const hx = (d.lx * wall.lx) / 2;
-              const hz = (d.lz * wall.lz) / 2;
-              const door = d as DoorModel;
-              if (door.doorType === DoorType.Arched) {
-                const absDoorPos = absPos.clone().add(new Vector3(door.cx * wall.lx, 0, door.cz * wall.lz));
-                if (SolarRadiation.pointWithinArch(v, door.lx, door.lz, door.archHeight, absDoorPos)) {
-                  isWall = false;
-                }
-              } else {
-                if (p.x >= cx - hx && p.x < cx + hx && p.y >= cz - hz && p.y < cz + hz) {
-                  isWall = false;
-                  break;
-                }
-              }
-            }
-          }
-          if (solarPanels && solarPanels.length > 0) {
-            for (const s of solarPanels) {
-              const cx = s.cx * wall.lx;
-              const cz = s.cz * wall.lz;
-              const hx = s.lx / 2;
-              const hz = s.ly / 2;
-              if (p.x >= cx - hx && p.x < cx + hx && p.y >= cz - hz && p.y < cz + hz) {
-                isWall = false;
-                break;
-              }
-            }
-          }
-          if (isWall) {
-            const insidePolygon = polygon === null ? true : Util.isPointInside(p.x, p.y, polygon);
-            const distance = distanceToClosestObject(wall.id, v, sunDirection);
-            heatmap[kx][kz] += indirectRadiation;
-            if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
-              if (insidePolygon) {
-                intensity[kx][kz] += indirectRadiation;
-              }
-            }
-            if (dot > 0 && distance < 0) {
-              // direct radiation
-              heatmap[kx][kz] += dot * peakRadiation;
-              if (insidePolygon) {
-                intensity[kx][kz] += dot * peakRadiation;
-              }
+          if (dot > 0 && distance < 0) {
+            // direct radiation
+            heatmap[kx][kz] += dot * peakRadiation;
+            if (insidePolygon) {
+              intensity[kx][kz] += dot * peakRadiation;
             }
           }
         }
