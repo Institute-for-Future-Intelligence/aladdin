@@ -524,8 +524,8 @@ const ModelsMapWrapper = React.memo(
             title={i18n.t('message.ListenToPodcastAboutThis', lang)}
             style={{
               position: 'absolute',
-              top: '10px',
-              left: '190px',
+              top: '12px',
+              left: '210px',
               height: '40px',
             }}
             src={'https://intofuture.org/podcast/gis-cad.mp3'}
