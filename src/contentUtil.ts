@@ -1289,6 +1289,8 @@ export class ContentUtil {
   }
 
   static compressParabolicDish(e: any) {
+    delete e.rotation;
+    delete e.normal;
     if (e.reflectance === Constants.DEFAULT_PARABOLIC_DISH_REFLECTANCE) delete e.reflectance;
 
     if (e.latusRectum === Constants.DEFAULT_PARABOLIC_DISH_LATUS_RECTUM) delete e.latusRectum;
@@ -1305,6 +1307,9 @@ export class ContentUtil {
   }
 
   static expandParabolicDish(e: any) {
+    e.rotation = [0, 0, 0];
+    e.normal = [0, 0, 1];
+
     if (e.reflectance === undefined) e.reflectance = Constants.DEFAULT_PARABOLIC_DISH_REFLECTANCE;
 
     if (e.latusRectum === undefined) e.latusRectum = Constants.DEFAULT_PARABOLIC_DISH_LATUS_RECTUM;
@@ -1321,6 +1326,8 @@ export class ContentUtil {
   }
 
   static compressParabolicTrough(e: any) {
+    delete e.rotation;
+    delete e.normal;
     if (e.reflectance === Constants.DEFAULT_PARABOLIC_TROUGH_REFLECTANCE) delete e.reflectance;
 
     if (e.latusRectum === Constants.DEFAULT_PARABOLIC_TROUGH_LATUS_RECTUM) delete e.latusRectum;
@@ -1336,6 +1343,9 @@ export class ContentUtil {
   }
 
   static expandParabolicTrough(e: any) {
+    e.rotation = [0, 0, 0];
+    e.normal = [0, 0, 1];
+
     if (e.reflectance === undefined) e.reflectance = Constants.DEFAULT_PARABOLIC_TROUGH_REFLECTANCE;
 
     if (e.latusRectum === undefined) e.latusRectum = Constants.DEFAULT_PARABOLIC_TROUGH_LATUS_RECTUM;
@@ -1352,6 +1362,8 @@ export class ContentUtil {
   }
 
   static compressFresnelReflector(e: any) {
+    delete e.rotation;
+    delete e.normal;
     if (e.reflectance === Constants.DEFAULT_FRESNEL_REFLECTOR_REFLECTANCE) delete e.reflectance;
 
     if (e.moduleLength === Constants.DEFAULT_FRESNEL_REFLECTOR_MODULE_LENGTH) delete e.moduleLength;
@@ -1362,6 +1374,9 @@ export class ContentUtil {
   }
 
   static expandFresnelReflector(e: any) {
+    e.rotation = [0, 0, 0];
+    e.normal = [0, 0, 1];
+
     if (e.reflectance === undefined) e.reflectance = Constants.DEFAULT_FRESNEL_REFLECTOR_REFLECTANCE;
 
     if (e.moduleLength === undefined) e.moduleLength = Constants.DEFAULT_FRESNEL_REFLECTOR_MODULE_LENGTH;
@@ -1372,6 +1387,8 @@ export class ContentUtil {
   }
 
   static compressHeliostat(e: any) {
+    delete e.rotation;
+    delete e.normal;
     if (e.reflectance === Constants.DEFAULT_HELIOSTAT_REFLECTANCE) delete e.reflectance;
 
     if (e.towerId === Constants.DEFAULT_HELIOSTAT_TOWER) delete e.towerId;
@@ -1381,6 +1398,9 @@ export class ContentUtil {
   }
 
   static expandHeliostat(e: any) {
+    e.rotation = [0, 0, 0];
+    e.normal = [0, 0, 1];
+
     if (e.reflectance === undefined) e.reflectance = Constants.DEFAULT_HELIOSTAT_REFLECTANCE;
 
     if (e.towerId === undefined) e.towerId = Constants.DEFAULT_HELIOSTAT_TOWER;
@@ -1390,8 +1410,6 @@ export class ContentUtil {
   }
 
   static compressSolarCollector(e: any) {
-    delete e.normal;
-    delete e.rotation;
     if (e.relativeAzimuth === Constants.DEFAULT_SOLAR_COLLECTOR_RELATIVE_AZIMUTH) delete e.relativeAzimuth;
     if (e.tiltAngle === Constants.DEFAULT_SOLAR_COLLECTOR_TILT_ANGLE) delete e.tiltAngle;
 
@@ -1405,7 +1423,7 @@ export class ContentUtil {
         break;
       }
       case ObjectType.ParabolicTrough: {
-        ContentUtil.compressParabolicDish(e);
+        ContentUtil.compressParabolicTrough(e);
         break;
       }
       case ObjectType.FresnelReflector: {
@@ -1420,8 +1438,6 @@ export class ContentUtil {
   }
 
   static expandSolarCollector(e: any) {
-    e.rotation = [0, 0, 0];
-    e.normal = [0, 0, 1];
     if (e.relativeAzimuth === undefined) e.relativeAzimuth = Constants.DEFAULT_SOLAR_COLLECTOR_RELATIVE_AZIMUTH;
     if (e.tiltAngle === undefined) e.tiltAngle = Constants.DEFAULT_SOLAR_COLLECTOR_TILT_ANGLE;
 
@@ -1435,7 +1451,7 @@ export class ContentUtil {
         break;
       }
       case ObjectType.ParabolicTrough: {
-        ContentUtil.expandParabolicDish(e);
+        ContentUtil.expandParabolicTrough(e);
         break;
       }
       case ObjectType.FresnelReflector: {
