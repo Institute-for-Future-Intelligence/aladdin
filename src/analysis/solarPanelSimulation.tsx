@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -17,8 +17,11 @@ import { DatumEntry, Discretization, ObjectType, Orientation, ShadeTolerance, Tr
 import { Util } from '../Util';
 import { AirMass, MINUTES_OF_DAY } from './analysisConstants';
 import {
+  DEFAULT_DAYS_PER_YEAR,
   DEFAULT_LEAF_OFF_DAY,
   DEFAULT_LEAF_OUT_DAY,
+  DEFAULT_PV_GRID_CELL_SIZE,
+  DEFAULT_TIMES_PER_HOUR,
   HALF_PI,
   MONTHS_ABBV,
   UNIT_VECTOR_POS_Y,
@@ -83,13 +86,13 @@ const SolarPanelSimulation = React.memo(({ city }: SolarPanelSimulationProps) =>
   const now = new Date(world.date);
 
   const elevation = city ? weather?.elevation : 0;
-  const timesPerHour = world.timesPerHour ?? 4;
+  const timesPerHour = world.timesPerHour ?? DEFAULT_TIMES_PER_HOUR;
   const minuteInterval = 60 / timesPerHour;
-  const daysPerYear = world.daysPerYear ?? 6;
+  const daysPerYear = world.daysPerYear ?? DEFAULT_DAYS_PER_YEAR;
   const monthInterval = 12 / daysPerYear;
   const ray = useMemo(() => new Raycaster(), []);
   const monthlyIrradianceLosses = world.monthlyIrradianceLosses ?? new Array(12).fill(0.05);
-  const cellSize = world.pvGridCellSize ?? 0.25;
+  const cellSize = world.pvGridCellSize ?? DEFAULT_PV_GRID_CELL_SIZE;
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
   const requestRef = useRef<number>(0);

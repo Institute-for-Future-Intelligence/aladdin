@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -23,11 +23,12 @@ import { SolarPanelArrayOptimizerGa } from './algorithm/SolarPanelArrayOptimizer
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import { useLanguage } from '../../hooks';
+import { DEFAULT_DAYS_PER_YEAR } from '../../constants';
 
 const SolarPanelArrayGa = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
-  const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
+  const daysPerYear = useStore(Selector.world.daysPerYear) ?? DEFAULT_DAYS_PER_YEAR;
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const runEvolution = usePrimitiveStore(Selector.runEvolution);
   const pauseEvolution = usePrimitiveStore(Selector.pauseEvolution);

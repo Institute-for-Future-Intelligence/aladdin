@@ -13,7 +13,7 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import React from 'react';
 import { Rectangle } from 'src/models/Rectangle';
 import { styled } from 'styled-components';
-import { FLOATING_WINDOW_OPACITY, MONTHS_ABBV, Z_INDEX_FRONT_PANEL } from 'src/constants';
+import { DEFAULT_DAYS_PER_YEAR, FLOATING_WINDOW_OPACITY, MONTHS_ABBV, Z_INDEX_FRONT_PANEL } from 'src/constants';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { Button, Col, Popover, Row, Space, Switch } from 'antd';
@@ -98,7 +98,7 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
   const [graphLabels, setGraphLabels] = useState<string[]>();
 
   const world = useStore.getState().world;
-  const daysPerYear = world.daysPerYear ?? 6;
+  const daysPerYear = world.daysPerYear ?? DEFAULT_DAYS_PER_YEAR;
   const monthInterval = 12 / daysPerYear;
 
   const weather = useWeather(city);
@@ -170,7 +170,7 @@ const YearlyBatteryStoragePanel = ({ city }: Props) => {
     setGraphLabels(getLabels(monthlyDataSource));
 
     countRef.current++;
-    if (countRef.current === (useStore.getState().world.daysPerYear ?? 6)) {
+    if (countRef.current === (useStore.getState().world.daysPerYear ?? DEFAULT_DAYS_PER_YEAR)) {
       startRef.current = false;
     }
   }, [batteryStorageData, isIndividual]);

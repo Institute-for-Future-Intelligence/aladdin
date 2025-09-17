@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { BuildingCompletionStatus, DatumEntry, Design, DesignProblem, GraphDataType } from '../types';
-import { FLOATING_WINDOW_OPACITY, MONTHS_ABBV, Z_INDEX_FRONT_PANEL } from '../constants';
+import { DEFAULT_DAYS_PER_YEAR, FLOATING_WINDOW_OPACITY, MONTHS_ABBV, Z_INDEX_FRONT_PANEL } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Popover, Space } from 'antd';
 import { CameraOutlined, CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
@@ -107,7 +107,7 @@ const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPane
   const lang = useLanguage();
   const weather = useWeather(city);
   const referenceX = MONTHS_ABBV[now.getMonth()];
-  const daysPerYear = world.daysPerYear ?? 6;
+  const daysPerYear = world.daysPerYear ?? DEFAULT_DAYS_PER_YEAR;
   const monthInterval = 12 / daysPerYear;
   const daysOfMonth = Util.daysInYear(now) / 12;
 

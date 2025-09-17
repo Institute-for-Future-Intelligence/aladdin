@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -16,6 +16,7 @@ import { DatumEntry, ObjectType } from '../types';
 import { Util } from '../Util';
 import { AirMass, MINUTES_OF_DAY } from './analysisConstants';
 import {
+  DEFAULT_TIMES_PER_HOUR,
   MONTHS_ABBV,
   UNIT_VECTOR_NEG_Y_ARRAY,
   UNIT_VECTOR_POS_Z,
@@ -66,7 +67,7 @@ const SensorSimulation = React.memo(({ city }: SensorSimulationProps) => {
   const measuredVerticalRadiation = useMemo(() => getVerticalSolarRadiation(city ?? 'Boston MA, USA'), [city]);
 
   const elevation = city ? weather?.elevation : 0;
-  const timesPerHour = world.timesPerHour ?? 4;
+  const timesPerHour = world.timesPerHour ?? DEFAULT_TIMES_PER_HOUR;
   const minuteInterval = 60 / timesPerHour;
   const ray = useMemo(() => new Raycaster(), []);
   const objectsRef = useRef<Object3D[]>([]);

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { Select, Space } from 'antd';
@@ -10,6 +10,7 @@ import { useLanguage } from 'src/hooks';
 import React, { useMemo } from 'react';
 import { EnergyModelingType } from '../../types';
 import * as Selector from '../../stores/selector';
+import { DEFAULT_TIMES_PER_HOUR } from '../../constants';
 
 const { Option } = Select;
 
@@ -36,7 +37,7 @@ export const SamplingFrequencySelect = React.memo(({ type }: { type: EnergyModel
       <Space style={{ width: '150px' }}>{i18n.t('menu.option.SamplingFrequency', lang) + ':'}</Space>
       <Select
         style={{ width: '72px' }}
-        value={timesPerHour ?? 4}
+        value={timesPerHour ?? DEFAULT_TIMES_PER_HOUR}
         onChange={(value) => {
           useStore.getState().set((state) => {
             switch (type) {

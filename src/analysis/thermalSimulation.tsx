@@ -34,12 +34,14 @@ import { Intersection, Object3D, Raycaster, Vector3 } from 'three';
 import { SolarRadiation } from './SolarRadiation';
 import {
   DEFAULT_CEILING_R_VALUE,
+  DEFAULT_DAYS_PER_YEAR,
   DEFAULT_DOOR_U_VALUE,
   DEFAULT_FOUNDATION_SLAB_DEPTH,
   DEFAULT_GROUND_FLOOR_R_VALUE,
   DEFAULT_LEAF_OFF_DAY,
   DEFAULT_LEAF_OUT_DAY,
   DEFAULT_ROOF_R_VALUE,
+  DEFAULT_TIMES_PER_HOUR,
   DEFAULT_WALL_R_VALUE,
   DEFAULT_WINDOW_U_VALUE,
   ZERO_TOLERANCE,
@@ -114,9 +116,9 @@ const ThermalSimulation = React.memo(({ city }: ThermalSimulationProps) => {
 
   const elevation = city ? weather?.elevation : 0;
   const monthlyIrradianceLosses = world.monthlyIrradianceLosses ?? new Array(12).fill(0.05);
-  const timesPerHour = world.timesPerHour ?? 4;
+  const timesPerHour = world.timesPerHour ?? DEFAULT_TIMES_PER_HOUR;
   const minuteInterval = 60 / timesPerHour;
-  const daysPerYear = world.daysPerYear ?? 6;
+  const daysPerYear = world.daysPerYear ?? DEFAULT_DAYS_PER_YEAR;
   const monthInterval = 12 / daysPerYear;
   const { scene } = useThree();
   const ray = useMemo(() => new Raycaster(), []);

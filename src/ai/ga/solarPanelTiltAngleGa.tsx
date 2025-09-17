@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -11,7 +11,7 @@ import { DatumEntry, DesignProblem, EvolutionMethod, ObjectiveFunctionType, Obje
 import { SolarPanelModel } from '../../models/SolarPanelModel';
 import { SolarPanelTiltAngleOptimizerGa } from './algorithm/SolarPanelTiltAngleOptimizerGa';
 import { FoundationModel } from '../../models/FoundationModel';
-import { HALF_PI } from '../../constants';
+import { DEFAULT_DAYS_PER_YEAR, HALF_PI } from '../../constants';
 import { Util } from '../../Util';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
@@ -20,7 +20,7 @@ import { useLanguage } from '../../hooks';
 const SolarPanelTiltAngleGa = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
-  const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
+  const daysPerYear = useStore(Selector.world.daysPerYear) ?? DEFAULT_DAYS_PER_YEAR;
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const runEvolution = usePrimitiveStore(Selector.runEvolution);
   const pauseEvolution = usePrimitiveStore(Selector.pauseEvolution);

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -11,7 +11,14 @@ import * as Selector from 'src/stores/selector';
 import { DatumEntry, ObjectType } from '../types';
 import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
-import { MONTHS_ABBV, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
+import {
+  DEFAULT_CSP_DAYS_PER_YEAR,
+  DEFAULT_CSP_GRID_CELL_SIZE,
+  DEFAULT_CSP_TIMES_PER_HOUR,
+  MONTHS_ABBV,
+  UNIT_VECTOR_POS_Z,
+  ZERO_TOLERANCE,
+} from '../constants';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { ParabolicDishModel } from '../models/ParabolicDishModel';
@@ -51,13 +58,13 @@ const ParabolicDishSimulation = React.memo(({ city }: ParabolicDishSimulationPro
   const now = new Date(world.date);
 
   const elevation = city ? weather?.elevation : 0;
-  const timesPerHour = world.cspTimesPerHour ?? 4;
+  const timesPerHour = world.cspTimesPerHour ?? DEFAULT_CSP_TIMES_PER_HOUR;
   const minuteInterval = 60 / timesPerHour;
-  const daysPerYear = world.cspDaysPerYear ?? 6;
+  const daysPerYear = world.cspDaysPerYear ?? DEFAULT_CSP_DAYS_PER_YEAR;
   const monthInterval = 12 / daysPerYear;
   const ray = useMemo(() => new Raycaster(), []);
   const monthlyIrradianceLosses = world.monthlyIrradianceLosses ?? new Array(12).fill(0.05);
-  const cellSize = world.cspGridCellSize ?? 0.5;
+  const cellSize = world.cspGridCellSize ?? DEFAULT_CSP_GRID_CELL_SIZE;
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
   const requestRef = useRef<number>(0);

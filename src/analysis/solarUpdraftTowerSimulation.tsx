@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -23,7 +23,14 @@ import {
   MINUTES_OF_DAY,
   STEFAN_BOLTZMANN_CONSTANT,
 } from './analysisConstants';
-import { MONTHS_ABBV, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
+import {
+  DEFAULT_SUT_DAYS_PER_YEAR,
+  DEFAULT_SUT_GRID_CELL_SIZE,
+  DEFAULT_SUT_TIMES_PER_HOUR,
+  MONTHS_ABBV,
+  UNIT_VECTOR_POS_Z,
+  ZERO_TOLERANCE,
+} from '../constants';
 import * as Selector from '../stores/selector';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
@@ -55,7 +62,7 @@ const SolarUpdraftTowerSimulation = React.memo(({ city }: SolarUpdraftTowerSimul
   const showDailyUpdraftTowerPanel = useStore(Selector.viewState.showDailyUpdraftTowerYieldPanel);
   const noAnimation = useStore(Selector.world.noAnimationForSolarUpdraftTowerSimulation);
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
-  const cellSize = world.sutGridCellSize ?? 1;
+  const cellSize = world.sutGridCellSize ?? DEFAULT_SUT_GRID_CELL_SIZE;
 
   const { scene } = useThree();
   const lang = useLanguage();
@@ -63,9 +70,9 @@ const SolarUpdraftTowerSimulation = React.memo(({ city }: SolarUpdraftTowerSimul
   const now = new Date(world.date);
 
   const elevation = weather ? weather.elevation : 0;
-  const timesPerHour = world.sutTimesPerHour ?? 4;
+  const timesPerHour = world.sutTimesPerHour ?? DEFAULT_SUT_TIMES_PER_HOUR;
   const minuteInterval = 60 / timesPerHour;
-  const daysPerYear = world.sutDaysPerYear ?? 6;
+  const daysPerYear = world.sutDaysPerYear ?? DEFAULT_SUT_DAYS_PER_YEAR;
   const monthInterval = 12 / daysPerYear;
   const ray = useMemo(() => new Raycaster(), []);
   const objectsRef = useRef<Object3D[]>([]);
