@@ -1889,7 +1889,8 @@ const Ground = React.memo(() => {
       type === ObjectType.Cuboid ||
       type === ObjectType.Tree ||
       type === ObjectType.Flower ||
-      type === ObjectType.Human
+      type === ObjectType.Human ||
+      type === ObjectType.Protractor
     );
   };
 

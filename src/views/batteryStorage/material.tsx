@@ -3,7 +3,7 @@ import { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { HALF_PI } from 'src/constants';
 import { CanvasTexture, FrontSide, RepeatWrapping } from 'three';
 
-export interface BatteryStroageMaterialRef {
+export interface BatteryStorageMaterialRef {
   update: (lx: number, ly: number, lz: number) => void;
 }
 
@@ -89,7 +89,7 @@ const drawSparkTexture = (width: number, height: number) => {
 };
 
 const Material = React.memo(
-  forwardRef<BatteryStroageMaterialRef, Props>(({ lx, ly, lz, color }, ref) => {
+  forwardRef<BatteryStorageMaterialRef, Props>(({ lx, ly, lz, color }, ref) => {
     const lineTexture = useMemo(() => {
       const t = drawLineTexture();
       t.wrapS = RepeatWrapping;

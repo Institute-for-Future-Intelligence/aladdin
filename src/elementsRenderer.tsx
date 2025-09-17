@@ -38,6 +38,8 @@ import WindTurbine from './views/windTurbine';
 import { WindTurbineModel } from './models/WindTurbineModel';
 import { RulerModel } from './models/RulerModel';
 import RulerWrapper from './views/ruler/rulerWrapper';
+import Protractor from './views/protractor/protractor';
+import { ProtractorModel } from './models/ProtractorModel';
 
 const ElementsRenderer: React.FC = React.memo(() => {
   const elements = useStore(Selector.elements);
@@ -60,6 +62,8 @@ const ElementsRenderer: React.FC = React.memo(() => {
     <group ref={groupRef} name={'Content'}>
       {elements.map((e) => {
         switch (e.type) {
+          case ObjectType.Protractor:
+            return <Protractor key={e.id} {...(e as ProtractorModel)} />;
           case ObjectType.Ruler:
             return <RulerWrapper key={e.id} {...(e as RulerModel)} />;
           case ObjectType.Foundation:

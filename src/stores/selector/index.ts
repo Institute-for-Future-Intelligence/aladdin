@@ -374,6 +374,10 @@ export const rulerActionScope = (state: CommonStoreState) => state.rulerActionSc
 
 export const setRulerActionScope = (state: CommonStoreState) => state.setRulerActionScope;
 
+export const protractorActionScope = (state: CommonStoreState) => state.protractorActionScope;
+
+export const setProtractorActionScope = (state: CommonStoreState) => state.setProtractorActionScope;
+
 export const solarPanelActionScope = (state: CommonStoreState) => state.solarPanelActionScope;
 
 export const setSolarPanelActionScope = (state: CommonStoreState) => state.setSolarPanelActionScope;

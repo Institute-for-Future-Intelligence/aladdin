@@ -74,6 +74,7 @@ const legalToPaste = () => {
     e.type === ObjectType.Flower ||
     e.type === ObjectType.Cuboid ||
     e.type === ObjectType.Ruler ||
+    e.type === ObjectType.Protractor ||
     e.type === ObjectType.Foundation
   );
 };

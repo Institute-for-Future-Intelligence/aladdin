@@ -12,7 +12,7 @@ export class RulerUtil {
   static GroundSnapDistance = 1;
   static VerticalSnapDistance = 0.5;
 
-  static getGroudPointer(raycaster: Raycaster, scene: Scene, camera: Camera) {
+  static getGroundPointer(raycaster: Raycaster, scene: Scene, camera: Camera) {
     const pointer = useRefStore.getState().pointer;
     raycaster.setFromCamera(pointer, camera);
     const intersections = raycaster.intersectObjects(scene.children);
@@ -127,7 +127,11 @@ export class RulerUtil {
   static getGroundSnappedPoint(p: Vector3, snapPointsArray: RulerGroundSnapPoint[]) {
     let snappedPoint: RulerGroundSnapPoint | null = null;
 
-    if (snapPointsArray.length === 0) return { pointer: p, snappedPoint };
+    if (snapPointsArray.length === 0) {
+      p.setX(Math.round(p.x * 2) / 2);
+      p.setY(Math.round(p.y * 2) / 2);
+      return { pointer: p, snappedPoint };
+    }
 
     let minDist = Infinity;
     for (const snapPoint of snapPointsArray) {

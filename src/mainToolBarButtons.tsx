@@ -7,6 +7,7 @@ import SelectImage from './assets/select.png';
 import FoundationImage from './assets/foundation.png';
 import CuboidImage from './assets/cuboid.png';
 import RulerImage from './assets/ruler.png';
+import ProtractorImage from './assets/protractor.png';
 import SensorImage from './assets/sensor.png';
 import SolarPanelImage from './assets/solar-panel.png';
 import WallImage from './assets/wall.png';
@@ -362,6 +363,10 @@ const MainToolBarButtons = React.memo(() => {
       label: <ToolBarMenuItem objectType={ObjectType.Ruler} srcImg={RulerImage} setFlag={setCategory1Flag} />,
     },
     {
+      key: 'add-protractor',
+      label: <ToolBarMenuItem objectType={ObjectType.Protractor} srcImg={ProtractorImage} setFlag={setCategory1Flag} />,
+    },
+    {
       key: 'add-tree',
       label: <ToolBarMenuItem objectType={ObjectType.Tree} srcImg={TreeImage} setFlag={setCategory1Flag} />,
     },
@@ -506,6 +511,8 @@ const MainToolBarButtons = React.memo(() => {
         return buttonImg(objectType, CuboidImage, useStore.getState().addedCuboidId);
       case ObjectType.Ruler:
         return buttonImg(objectType, RulerImage, useStore.getState().addedRulerId);
+      case ObjectType.Protractor:
+        return buttonImg(objectType, ProtractorImage);
       case ObjectType.Tree:
         return buttonImg(objectType, TreeImage);
       case ObjectType.Flower:

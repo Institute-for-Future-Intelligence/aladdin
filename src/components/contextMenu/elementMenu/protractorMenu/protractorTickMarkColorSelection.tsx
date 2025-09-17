@@ -14,26 +14,27 @@ import { useSelectedElement } from '../menuHooks';
 import Dialog from '../../dialog';
 import { useLanguage } from 'src/hooks';
 import { CompactPicker } from 'react-color';
-import { RulerModel } from 'src/models/RulerModel';
+import { ProtractorModel } from 'src/models/ProtractorModel';
+import { DEFAULT_PROTRACTOR_TICK_MARK_COLOR } from 'src/constants';
 
-const RulerTickColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const ProtractorTickMarkColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const getElementById = useStore(Selector.getElementById);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
-  const actionScope = useStore(Selector.rulerActionScope);
-  const setActionScope = useStore(Selector.setRulerActionScope);
+  const actionScope = useStore(Selector.protractorActionScope);
+  const setActionScope = useStore(Selector.setProtractorActionScope);
 
-  const ruler = useSelectedElement(ObjectType.Ruler) as RulerModel | undefined;
+  const protractor = useSelectedElement(ObjectType.Protractor) as ProtractorModel | undefined;
 
-  const [selectedColor, setSelectedColor] = useState(ruler?.tickColor ?? '#000000');
+  const [selectedColor, setSelectedColor] = useState(protractor?.tickMarkColor ?? DEFAULT_PROTRACTOR_TICK_MARK_COLOR);
 
   const lang = useLanguage();
 
-  const updateTickColorById = (id: string, color: string) => {
+  const updateTickMarkColorById = (id: string, color: string) => {
     useStore.getState().set((state) => {
-      const r = state.elements.find((e) => e.id === id && e.type === ObjectType.Ruler) as RulerModel;
+      const r = state.elements.find((e) => e.id === id && e.type === ObjectType.Protractor) as ProtractorModel;
       if (r) {
-        r.tickColor = color;
+        r.tickMarkColor = color;
       }
     });
   };
@@ -46,8 +47,8 @@ const RulerTickColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
         for (const e of useStore.getState().elements) {
-          if (e.type === ObjectType.Ruler && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
-            if (color !== (e as RulerModel).tickColor) {
+          if (e.type === ObjectType.Protractor && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+            if (color !== (e as ProtractorModel).tickMarkColor) {
               return true;
             }
           }
@@ -56,15 +57,15 @@ const RulerTickColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
       }
       case Scope.AllObjectsOfThisType:
         for (const e of useStore.getState().elements) {
-          if (e.type === ObjectType.Ruler && !e.locked) {
-            if (color !== (e as RulerModel).tickColor) {
+          if (e.type === ObjectType.Protractor && !e.locked) {
+            if (color !== (e as ProtractorModel).tickMarkColor) {
               return true;
             }
           }
         }
         break;
       default:
-        if (color !== ruler?.tickColor) {
+        if (color !== protractor?.tickMarkColor) {
           return true;
         }
     }
@@ -74,13 +75,13 @@ const RulerTickColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
   const updateInMap = (map: Map<string, string>, value?: string) => {
     useStore.getState().set((state) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.Ruler && map.has(e.id)) {
+        if (e.type === ObjectType.Protractor && map.has(e.id)) {
           if (value !== undefined) {
-            (e as RulerModel).tickColor = value;
+            (e as ProtractorModel).tickMarkColor = value;
           } else {
             const color = map.get(e.id);
             if (color !== undefined) {
-              (e as RulerModel).tickColor = color;
+              (e as ProtractorModel).tickMarkColor = color;
             }
           }
         }
@@ -89,18 +90,22 @@ const RulerTickColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
   };
 
   const updateColor = (value: string) => {
-    if (!ruler) return;
+    if (!protractor) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
         const oldColorsSelected = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
-          if (elem.type === ObjectType.Ruler && useStore.getState().selectedElementIdSet.has(elem.id) && !elem.locked) {
-            oldColorsSelected.set(elem.id, elem.color ?? '#000000');
+          if (
+            elem.type === ObjectType.Protractor &&
+            useStore.getState().selectedElementIdSet.has(elem.id) &&
+            !elem.locked
+          ) {
+            oldColorsSelected.set(elem.id, elem.color ?? DEFAULT_PROTRACTOR_TICK_MARK_COLOR);
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Tick Color for Selected Rulers',
+          name: 'Set Tick Mark Color for Selected Protractors',
           timestamp: Date.now(),
           oldValues: oldColorsSelected,
           newValue: value,
@@ -122,12 +127,12 @@ const RulerTickColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
       case Scope.AllObjectsOfThisType: {
         const oldColorsAll = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
-          if (elem.type === ObjectType.Ruler && !elem.locked) {
-            oldColorsAll.set(elem.id, (elem as RulerModel).tickColor ?? '#000000');
+          if (elem.type === ObjectType.Protractor && !elem.locked) {
+            oldColorsAll.set(elem.id, (elem as ProtractorModel).tickMarkColor ?? DEFAULT_PROTRACTOR_TICK_MARK_COLOR);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Tick Color for All Rulers',
+          name: 'Set Tick Mark Color for All Protractors',
           timestamp: Date.now(),
           oldValues: oldColorsAll,
           newValue: value,
@@ -144,28 +149,31 @@ const RulerTickColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
         break;
       }
       default: {
-        const f = getElementById(ruler.id);
-        const oldColor = f ? (f as RulerModel).tickColor : ruler.tickColor;
+        const f = getElementById(protractor.id);
+        const oldColor = f ? (f as ProtractorModel).tickMarkColor : protractor.tickMarkColor;
         const undoableChange = {
-          name: 'Set Tick Color of Selected Ruler',
+          name: 'Set Tick Mark Color of Selected Protractors',
           timestamp: Date.now(),
           oldValue: oldColor,
           newValue: value,
-          changedElementId: ruler.id,
-          changedElementType: ruler.type,
+          changedElementId: protractor.id,
+          changedElementType: protractor.type,
           undo: () => {
-            updateTickColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
+            updateTickMarkColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
           },
           redo: () => {
-            updateTickColorById(undoableChange.changedElementId, undoableChange.newValue as string);
+            updateTickMarkColorById(undoableChange.changedElementId, undoableChange.newValue as string);
           },
         } as UndoableChange;
         addUndoable(undoableChange);
-        updateTickColorById(ruler.id, value);
+        updateTickMarkColorById(protractor.id, value);
         setApplyCount(useStore.getState().applyCount + 1);
         break;
       }
     }
+    useStore.getState().set((state) => {
+      state.actionState.protractorTickMarkColor = value;
+    });
   };
 
   const apply = () => {
@@ -194,13 +202,13 @@ const RulerTickColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
               <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
-                {i18n.t('rulerMenu.OnlyThisRuler', lang)}
+                {i18n.t('protractorMenu.OnlyThisProtractor', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
-                {i18n.t('rulerMenu.AllSelectedRulers', lang)}
+                {i18n.t('protractorMenu.AllSelectedProtractors', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
-                {i18n.t('rulerMenu.AllRulers', lang)}
+                {i18n.t('protractorMenu.AllProtractors', lang)}
               </Radio>
             </Space>
           </Radio.Group>
@@ -210,4 +218,4 @@ const RulerTickColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
   );
 };
 
-export default RulerTickColorSelection;
+export default ProtractorTickMarkColorSelection;

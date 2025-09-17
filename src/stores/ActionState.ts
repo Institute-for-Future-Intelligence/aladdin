@@ -40,6 +40,10 @@ export interface ActionState {
   rulerHeight: number;
   rulerColor: string;
 
+  protractorLz: number;
+  protractorColor: string;
+  protractorTickMarkColor: string;
+
   cuboidHeight: number;
   cuboidFaceColors: string[];
   cuboidFaceTextures: CuboidTexture[];

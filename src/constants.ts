@@ -222,6 +222,10 @@ export const DEFAULT_TREE_TYPE = TreeType.Dogwood;
 export const DEFAULT_TREE_SPREAD = 3;
 export const DEFAULT_TREE_HEIGHT = 4;
 
+export const DEFAULT_PROTRACTOR_LZ = 0.1;
+export const DEFAULT_PROTRACTOR_COLOR = GREY;
+export const DEFAULT_PROTRACTOR_TICK_MARK_COLOR = BLACK;
+
 // world
 export const DEFAULT_LATITUDE = 42.2844063;
 export const DEFAULT_LONGITUDE = -71.3488548;

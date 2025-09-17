@@ -24,7 +24,7 @@ import PolarGrid, { PolarGridRefProps } from '../solarPanel/polarGrid';
 import Label from './label';
 import Wireframe from 'src/components/wireframe';
 import { TEXT_SPRITE_NAME } from './horizontalRuler';
-import Material, { BatteryStroageMaterialRef } from './material';
+import Material, { BatteryStorageMaterialRef } from './material';
 import { FoundationModel } from 'src/models/FoundationModel';
 
 /**
@@ -61,7 +61,7 @@ const BatteryStorage = (batteryStorage: BatteryStorageModel) => {
   const handlesGroupRef = useRef<HandlesGroupRefProps>(null!);
   const polarGridGroupRef = useRef<Group>(null!);
   const polarGridRef = useRef<PolarGridRefProps>(null!);
-  const materialRef = useRef<BatteryStroageMaterialRef>(null!);
+  const materialRef = useRef<BatteryStorageMaterialRef>(null!);
 
   // common state
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);

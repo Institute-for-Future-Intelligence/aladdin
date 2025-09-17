@@ -904,6 +904,12 @@ export const i18n_zh_tw = {
       AllRulers: '所有尺子',
     },
 
+    protractorMenu: {
+      OnlyThisProtractor: '只這個量角器',
+      AllSelectedProtractors: '所有選中的量角器',
+      AllProtractors: '所有量角器',
+    },
+
     batteryStorageMenu: {
       BatteryStorage: '蓄電池',
       ChargingEfficiency: '充電效率',
@@ -1793,6 +1799,7 @@ export const i18n_zh_tw = {
       Select: '選擇',
       AddFoundation: '添加地基',
       AddRuler: '添加尺子',
+      AddProtractor: '添加量角器',
       AddWall: '添加牆體',
       AddWindow: '添加窗戶',
       AddDoor: '添加門',

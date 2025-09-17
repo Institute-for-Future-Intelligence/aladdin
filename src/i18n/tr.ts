@@ -923,6 +923,12 @@ export const i18n_tr = {
       AllRulers: 'All Rulers',
     },
 
+    protractorMenu: {
+      OnlyThisProtractor: 'Only This Protractor',
+      AllSelectedProtractors: 'All Selected Protractors',
+      AllProtractors: 'All Protractors',
+    },
+
     batteryStorageMenu: {
       BatteryStorage: 'Battery Storage',
       ChargingEfficiency: 'Charging Efficiency',
@@ -1821,6 +1827,7 @@ export const i18n_tr = {
       CloudFile: 'Bulut Dosyası',
       Select: 'Seç',
       AddRuler: 'Add Ruler',
+      AddProtractor: 'Add Protractor',
       AddFoundation: 'Temel Ekle',
       AddWall: 'Duvar Ekle',
       AddWindow: 'Pencere Ekle',

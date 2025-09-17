@@ -328,7 +328,7 @@ const HorizontalRuler = (ruler: RulerModel) => {
   useFrame(({ camera, scene, raycaster }) => {
     if (operationRef.current === null) return;
 
-    const point = RulerUtil.getGroudPointer(raycaster, scene, camera);
+    const point = RulerUtil.getGroundPointer(raycaster, scene, camera);
     if (!point) return;
 
     if (operationRef.current === MoveHandleType.Left || operationRef.current === MoveHandleType.Right) {

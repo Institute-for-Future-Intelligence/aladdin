@@ -47,6 +47,10 @@ export class DefaultActionState implements ActionState {
   rulerWidth: number;
   rulerColor: string;
 
+  protractorLz: number;
+  protractorColor: string;
+  protractorTickMarkColor: string;
+
   cuboidHeight: number;
   cuboidFaceColors: string[];
   cuboidFaceTextures: CuboidTexture[];
@@ -209,6 +213,10 @@ export class DefaultActionState implements ActionState {
     this.rulerHeight = 0.1;
     this.rulerWidth = 1;
     this.rulerColor = '#D3D3D3';
+
+    this.protractorLz = Constants.DEFAULT_PROTRACTOR_LZ;
+    this.protractorColor = Constants.DEFAULT_PROTRACTOR_COLOR;
+    this.protractorTickMarkColor = Constants.DEFAULT_PROTRACTOR_TICK_MARK_COLOR;
 
     this.cuboidHeight = 4;
     this.cuboidFaceColors = new Array(6).fill(Constants.DEFAULT_CUBOID_COLOR);

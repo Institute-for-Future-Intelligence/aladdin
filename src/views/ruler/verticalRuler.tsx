@@ -213,7 +213,7 @@ const VerticalRuler = (ruler: RulerModel) => {
     if (operationRef.current === null) return;
 
     if (operationRef.current === 'move') {
-      const point = RulerUtil.getGroudPointer(raycaster, scene, camera);
+      const point = RulerUtil.getGroundPointer(raycaster, scene, camera);
       if (!point) return;
 
       const { pointer, snappedPoint } = RulerUtil.getGroundSnappedPoint(point, snapPointsOnGroundRef.current);

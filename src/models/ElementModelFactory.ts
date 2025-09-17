@@ -58,6 +58,7 @@ import { RoofUtil } from '../views/roof/RoofUtil';
 import { BatteryStorageModel } from './BatteryStorageModel';
 import { SolarWaterHeaterModel } from './SolarWaterHeaterModel';
 import { RulerModel } from './RulerModel';
+import { ProtractorModel } from './ProtractorModel';
 
 export class ElementModelFactory {
   static makeHuman(name: HumanName, parentId: string, x: number, y: number, z?: number) {
@@ -282,6 +283,23 @@ export class ElementModelFactory {
       rightEndPoint: { position: [point.x, point.y, point.z] },
       id: short.generate() as string,
     } as RulerModel;
+  }
+
+  static makeProtractor(point: Vector3) {
+    return {
+      cx: point.x,
+      cy: point.y,
+      lz: useStore.getState().actionState.protractorLz ?? Constants.DEFAULT_PROTRACTOR_LZ,
+      type: ObjectType.Protractor,
+      parentId: Constants.GROUND_ID,
+      rotation: [0, 0, 0],
+      color: useStore.getState().actionState.protractorColor ?? Constants.DEFAULT_PROTRACTOR_COLOR,
+      tickMarkColor:
+        useStore.getState().actionState.protractorTickMarkColor ?? Constants.DEFAULT_PROTRACTOR_TICK_MARK_COLOR,
+      startArmEndPoint: { position: [...point.clone().add(new Vector3(3, 0, 0))] },
+      endArmEndPoint: { position: [...point.clone().add(new Vector3(0, 3, 0))] },
+      id: short.generate() as string,
+    } as ProtractorModel;
   }
 
   static makeParabolicTrough(

@@ -926,6 +926,12 @@ export const i18n_ua = {
       AllRulers: 'All Rulers',
     },
 
+    protractorMenu: {
+      OnlyThisProtractor: 'Only This Protractor',
+      AllSelectedProtractors: 'All Selected Protractors',
+      AllProtractors: 'All Protractors',
+    },
+
     batteryStorageMenu: {
       BatteryStorage: 'Акумуляторна система зберігання енергії',
       ChargingEfficiency: 'Коефіцієнт ефективності заряджання',
@@ -1825,6 +1831,7 @@ export const i18n_ua = {
       Select: 'Вибрати',
       AddFoundation: 'Додати фундамент',
       AddRuler: 'Add Ruler',
+      AddProtractor: 'Add Protractor',
       AddWall: 'Додати стіну',
       AddWindow: 'Додати вікно',
       AddDoor: 'Додати двері',

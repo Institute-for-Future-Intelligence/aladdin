@@ -337,6 +337,7 @@ export enum ObjectType {
   Light = 'Light',
   BatteryStorage = 'Battery Storage',
   Ruler = 'Ruler',
+  Protractor = 'Protractor',
   None = 'None',
 }
 
@@ -375,6 +376,8 @@ export enum MoveHandleType {
   Right = 'Move Handle Right',
   Top = 'Move Handle Top',
   Mid = 'Move Handle Mid',
+  Start = 'Move Handle Start',
+  End = 'Move Handle End',
 }
 
 export enum MoveDirection {

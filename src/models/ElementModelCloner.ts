@@ -40,6 +40,7 @@ import { SolarWaterHeaterModel } from './SolarWaterHeaterModel';
 import { BatteryStorageModel } from './BatteryStorageModel';
 import { RulerModel } from './RulerModel';
 import { RulerUtil } from 'src/views/ruler/RulerUtil';
+import { ProtractorModel } from './ProtractorModel';
 
 export class ElementModelCloner {
   static clone(
@@ -54,6 +55,9 @@ export class ElementModelCloner {
   ) {
     let clone = null;
     switch (e.type) {
+      case ObjectType.Protractor:
+        clone = ElementModelCloner.cloneProtractor(e as ProtractorModel, x, y);
+        break;
       case ObjectType.Ruler:
         clone = ElementModelCloner.cloneRuler(e as RulerModel, x, y);
         break;
@@ -250,6 +254,26 @@ export class ElementModelCloner {
       rightEndPoint: { position: [...newRightPoint.toArray()] },
       id: short.generate() as string,
     } as RulerModel;
+  }
+
+  private static cloneProtractor(protractor: ProtractorModel, x: number, y: number) {
+    const oldCenter = new Vector3(protractor.cx, protractor.cy);
+    const newCenter = new Vector3(x, y);
+    const newStartPoint = new Vector3().fromArray(protractor.startArmEndPoint.position).sub(oldCenter).add(newCenter);
+    const newEndPoint = new Vector3().fromArray(protractor.endArmEndPoint.position).sub(oldCenter).add(newCenter);
+    return {
+      type: ObjectType.Protractor,
+      rotation: [0, 0, 0],
+      lz: protractor.lz,
+      cx: x,
+      cy: y,
+      startArmEndPoint: { position: [...newStartPoint] },
+      endArmEndPoint: { position: [...newEndPoint] },
+      color: protractor.color,
+      tickMarkColor: protractor.tickMarkColor,
+      parentId: 'Ground',
+      id: short.generate() as string,
+    } as ProtractorModel;
   }
 
   private static clonePolygon(

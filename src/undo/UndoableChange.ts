@@ -73,3 +73,20 @@ export interface UndoableChangeRulerType extends Undoable {
   oldRightPoint: number[];
   newRightPoint: number[];
 }
+
+export interface UndoableChangeProtractor extends Undoable {
+  id: string;
+  oldStartPointPosition: number[];
+  oldEndPointPosition: number[];
+  oldStartSnappedHandle?: RulerSnappedHandle;
+  oldEndSnappedHandle?: RulerSnappedHandle;
+  oldCenterPosition: number[];
+  oldCenterSnappedHandle?: RulerSnappedHandle;
+
+  newStartPointPosition: number[];
+  newEndPointPosition: number[];
+  newStartSnappedHandle?: RulerSnappedHandle;
+  newEndSnappedHandle?: RulerSnappedHandle;
+  newCenterPosition: number[];
+  newCenterSnappedHandle?: RulerSnappedHandle;
+}

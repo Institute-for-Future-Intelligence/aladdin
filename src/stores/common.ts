@@ -113,6 +113,7 @@ import { isGroupable } from 'src/models/Groupable';
 import { Filter } from '../Filter';
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 import { ContentUtil } from 'src/contentUtil';
+import { ProtractorModel } from 'src/models/ProtractorModel';
 
 enableMapSet();
 
@@ -388,6 +389,10 @@ export interface CommonStoreState {
   // for ruler
   rulerActionScope: Scope;
   setRulerActionScope: (scope: Scope) => void;
+
+  // for protractor
+  protractorActionScope: Scope;
+  setProtractorActionScope: (scope: Scope) => void;
 
   // for polygons
   polygonActionScope: Scope;
@@ -2190,6 +2195,14 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             });
           },
 
+          // for protractor
+          protractorActionScope: Scope.OnlyThisObject,
+          setProtractorActionScope(scope) {
+            immerSet((state: CommonStoreState) => {
+              state.protractorActionScope = scope;
+            });
+          },
+
           // for polygons
           polygonActionScope: Scope.OnlyThisObject,
           setPolygonActionScope(scope) {
@@ -2936,6 +2949,13 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                   const ruler = ElementModelFactory.makeRuler(p);
                   model = ruler;
                   state.elements.push(ruler);
+                  break;
+                }
+                case ObjectType.Protractor: {
+                  const protractor = ElementModelFactory.makeProtractor(p);
+                  model = protractor;
+                  state.elements.push(protractor);
+                  break;
                 }
               }
               if (model) {
@@ -5032,6 +5052,20 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
                       state.elements.push(e);
                       state.elementsToPaste = [e];
                       approved = true;
+                      break;
+                    }
+                    case ObjectType.Protractor: {
+                      const p = e as ProtractorModel;
+                      p.cx += 1;
+                      p.cy += 1;
+                      p.startArmEndPoint.position[0] += 1;
+                      p.startArmEndPoint.position[1] += 1;
+                      p.endArmEndPoint.position[0] += 1;
+                      p.endArmEndPoint.position[1] += 1;
+                      state.elements.push(e);
+                      state.elementsToPaste = [e];
+                      approved = true;
+                      break;
                     }
                   }
                   if (state.elementsToPaste.length === 1 && approved) {

@@ -923,6 +923,12 @@ export const i18n_es = {
       AllRulers: 'All Rulers',
     },
 
+    protractorMenu: {
+      OnlyThisProtractor: 'Only This Protractor',
+      AllSelectedProtractors: 'All Selected Protractors',
+      AllProtractors: 'All Protractors',
+    },
+
     batteryStorageMenu: {
       BatteryStorage: 'Battery Storage',
       ChargingEfficiency: 'Charging Efficiency',
@@ -1820,6 +1826,7 @@ export const i18n_es = {
       CloudFile: 'Archivo en la nube',
       Select: 'Seleccionar',
       AddRuler: 'Add Ruler',
+      AddProtractor: 'Add Protractor',
       AddFoundation: 'Añadir base',
       AddWall: 'Añadir pared',
       AddWindow: 'Añadir ventana',
