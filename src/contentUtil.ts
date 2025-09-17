@@ -1289,7 +1289,6 @@ export class ContentUtil {
   }
 
   static compressParabolicDish(e: any) {
-    delete e.rotation;
     delete e.normal;
     if (e.reflectance === Constants.DEFAULT_PARABOLIC_DISH_REFLECTANCE) delete e.reflectance;
 
@@ -1307,7 +1306,6 @@ export class ContentUtil {
   }
 
   static expandParabolicDish(e: any) {
-    e.rotation = [0, 0, 0];
     e.normal = [0, 0, 1];
 
     if (e.reflectance === undefined) e.reflectance = Constants.DEFAULT_PARABOLIC_DISH_REFLECTANCE;
@@ -1326,7 +1324,6 @@ export class ContentUtil {
   }
 
   static compressParabolicTrough(e: any) {
-    delete e.rotation;
     delete e.normal;
     if (e.reflectance === Constants.DEFAULT_PARABOLIC_TROUGH_REFLECTANCE) delete e.reflectance;
 
@@ -1343,7 +1340,6 @@ export class ContentUtil {
   }
 
   static expandParabolicTrough(e: any) {
-    e.rotation = [0, 0, 0];
     e.normal = [0, 0, 1];
 
     if (e.reflectance === undefined) e.reflectance = Constants.DEFAULT_PARABOLIC_TROUGH_REFLECTANCE;
@@ -1362,7 +1358,6 @@ export class ContentUtil {
   }
 
   static compressFresnelReflector(e: any) {
-    delete e.rotation;
     delete e.normal;
     if (e.reflectance === Constants.DEFAULT_FRESNEL_REFLECTOR_REFLECTANCE) delete e.reflectance;
 
@@ -1374,7 +1369,6 @@ export class ContentUtil {
   }
 
   static expandFresnelReflector(e: any) {
-    e.rotation = [0, 0, 0];
     e.normal = [0, 0, 1];
 
     if (e.reflectance === undefined) e.reflectance = Constants.DEFAULT_FRESNEL_REFLECTOR_REFLECTANCE;
@@ -1387,7 +1381,6 @@ export class ContentUtil {
   }
 
   static compressHeliostat(e: any) {
-    delete e.rotation;
     delete e.normal;
     if (e.reflectance === Constants.DEFAULT_HELIOSTAT_REFLECTANCE) delete e.reflectance;
 
@@ -1398,7 +1391,6 @@ export class ContentUtil {
   }
 
   static expandHeliostat(e: any) {
-    e.rotation = [0, 0, 0];
     e.normal = [0, 0, 1];
 
     if (e.reflectance === undefined) e.reflectance = Constants.DEFAULT_HELIOSTAT_REFLECTANCE;
