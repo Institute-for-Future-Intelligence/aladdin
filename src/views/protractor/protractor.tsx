@@ -14,6 +14,7 @@ import { RulerUtil } from '../ruler/RulerUtil';
 import { RulerGroundSnapPoint, RulerSnappedHandle } from 'src/models/RulerModel';
 import {
   DEFAULT_PROTRACTOR_COLOR,
+  DEFAULT_PROTRACTOR_LY,
   DEFAULT_PROTRACTOR_LZ,
   DEFAULT_PROTRACTOR_TICK_MARK_COLOR as DEFAULT_PROTRACTOR_TICK_MARK_COLOR,
   HALF_PI,
@@ -24,13 +25,15 @@ import { FontLoader, TextGeometryParameters } from 'three/examples/jsm/Addons';
 import helvetikerFont from '../../assets/helvetiker_regular.typeface.fnt';
 import { Util } from 'src/Util';
 import { UndoableChangeProtractor } from 'src/undo/UndoableChange';
+import { useHandleSize } from '../wall/hooks';
 
 const Protractor = (protractor: ProtractorModel) => {
   const {
     id,
     cx,
     cy,
-    lz = DEFAULT_PROTRACTOR_LZ,
+    ly,
+    lz,
     startArmEndPoint,
     endArmEndPoint,
     centerSnappedHandle,
@@ -70,6 +73,7 @@ const Protractor = (protractor: ProtractorModel) => {
 
   const selected = useSelected(id);
   const { gl, set } = useThree();
+  const handleSize = useHandleSize(0.5);
 
   const copySnappedHandle = (snappedHandle?: RulerSnappedHandle) => {
     if (!snappedHandle) return undefined;
@@ -364,6 +368,7 @@ const Protractor = (protractor: ProtractorModel) => {
           endY={startArmEndPointY}
           color={color}
           tickMarkColor={tickMarkColor}
+          ly={ly}
           lz={lz}
         />
 
@@ -374,6 +379,7 @@ const Protractor = (protractor: ProtractorModel) => {
           startY={_cy}
           endX={endArmEndPointX}
           endY={endArmEndPointY}
+          ly={ly}
           lz={lz}
           color={color}
         />
@@ -385,21 +391,21 @@ const Protractor = (protractor: ProtractorModel) => {
           <MoveHandle
             handleType={MoveHandleType.Start}
             position={[startArmEndPointX, startArmEndPointY, 0]} // todo: p
-            size={0.5}
+            size={handleSize}
             onPointerOver={hoverHandle}
             onPointerOut={noHoverHandle}
           />
           <MoveHandle
             handleType={MoveHandleType.End}
             position={[endArmEndPointX, endArmEndPointY, 0]} // todo: p
-            size={0.5}
+            size={handleSize}
             onPointerOver={hoverHandle}
             onPointerOut={noHoverHandle}
           />
           <MoveHandle
             handleType={MoveHandleType.Mid}
             position={[_cx, _cy, 0]} // todo: p
-            size={0.5}
+            size={handleSize}
             onPointerOver={hoverHandle}
             onPointerOut={noHoverHandle}
           />
@@ -413,6 +419,7 @@ const Protractor = (protractor: ProtractorModel) => {
           endAngle={Math.atan2(endArmEndPointY - _cy, endArmEndPointX - _cx)}
           cx={_cx}
           cy={_cy}
+          ly={ly}
         />
       </group>
     </group>
@@ -427,6 +434,7 @@ interface ArmProps {
   endX: number;
   endY: number;
   color: string;
+  ly: number;
   lz: number;
   tickMarkColor?: string;
 }
@@ -439,6 +447,7 @@ interface ArmRef {
 interface ReadingProps {
   cx: number;
   cy: number;
+  ly: number;
   startAngle: number;
   endAngle: number;
 }
@@ -509,6 +518,7 @@ const StartArm = forwardRef<ArmRef, ArmProps>(
       color,
       tickMarkColor = DEFAULT_PROTRACTOR_TICK_MARK_COLOR,
       lz = DEFAULT_PROTRACTOR_LZ,
+      ly = DEFAULT_PROTRACTOR_LY,
     },
     ref,
   ) => {
@@ -532,10 +542,10 @@ const StartArm = forwardRef<ArmRef, ArmProps>(
       },
     }));
 
-    const radius = 1.5;
+    const radius = ly * 5;
     return (
       <group ref={groupRef} position={[startX, startY, lz / 2]} rotation={[0, 0, angle]}>
-        <Box ref={boxRef} position={[length / 2, 0.125, 0]} scale={[length, 0.25, lz]}>
+        <Box ref={boxRef} position={[length / 2, ly / 2, 0]} scale={[length, ly, lz]}>
           <meshStandardMaterial color={color} />
         </Box>
 
@@ -553,17 +563,17 @@ const StartArm = forwardRef<ArmRef, ArmProps>(
   },
 );
 
-const EndArm = forwardRef<ArmRef, ArmProps>(({ startX, startY, endX, endY, lz }, ref) => {
+const EndArm = forwardRef<ArmRef, ArmProps>(({ startX, startY, endX, endY, ly, lz }, ref) => {
   const length = Math.hypot(endX - startX, endY - startY);
   const angle = Math.atan2(endY - startY, endX - startX);
 
   const shape = useMemo(() => {
     const s = new Shape();
-    s.lineTo(-1, 0);
-    s.lineTo(0, -0.125);
+    s.lineTo(-ly * 5, 0);
+    s.lineTo(0, -ly / 2);
     s.closePath();
     return s;
-  }, []);
+  }, [ly]);
 
   const groupRef = useRef<Group>(null!);
   const boxRef = useRef<Mesh>(null!);
@@ -582,9 +592,10 @@ const EndArm = forwardRef<ArmRef, ArmProps>(({ startX, startY, endX, endY, lz },
     },
   }));
 
+  const thickness = 0.1;
   return (
     <group ref={groupRef} position={[startX, startY, lz]} rotation={[0, 0, angle]}>
-      <Box ref={boxRef} scale={[length, 0.25, 0.1]} position={[length / 2, -0.125, 0]}>
+      <Box ref={boxRef} scale={[length, ly, thickness]} position={[length / 2, -ly / 2, 0]}>
         <meshStandardMaterial color={'lightgrey'} />
       </Box>
       {/* pointer */}
@@ -595,7 +606,7 @@ const EndArm = forwardRef<ArmRef, ArmProps>(({ startX, startY, endX, endY, lz },
   );
 });
 
-const Reading = forwardRef<ReadingRef, ReadingProps>(({ startAngle, endAngle, cx, cy }, ref) => {
+const Reading = forwardRef<ReadingRef, ReadingProps>(({ startAngle, endAngle, cx, cy, ly }, ref) => {
   const groupRef = useRef<Group>(null!);
   const textRef = useRef<SpriteText>(null!);
 
@@ -635,9 +646,9 @@ const Reading = forwardRef<ReadingRef, ReadingProps>(({ startAngle, endAngle, cx
         ref={textRef}
         userData={{ unintersectable: true }}
         backgroundColor={'darkorchid'}
-        fontSize={Math.max(30, length)}
+        fontSize={30}
         fontFace={'Times Roman'}
-        textHeight={Math.max(0.5, length / 60)}
+        textHeight={ly * 1.5}
         text={reading.toFixed(1) + '°'}
         position={[0, 0.5, 0.1]}
       />

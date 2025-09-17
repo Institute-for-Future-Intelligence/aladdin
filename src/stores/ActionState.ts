@@ -40,6 +40,7 @@ export interface ActionState {
   rulerHeight: number;
   rulerColor: string;
 
+  protractorLy: number;
   protractorLz: number;
   protractorColor: string;
   protractorTickMarkColor: string;

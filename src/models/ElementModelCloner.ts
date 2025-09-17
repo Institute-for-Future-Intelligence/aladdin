@@ -264,6 +264,7 @@ export class ElementModelCloner {
     return {
       type: ObjectType.Protractor,
       rotation: [0, 0, 0],
+      ly: protractor.ly,
       lz: protractor.lz,
       cx: x,
       cy: y,

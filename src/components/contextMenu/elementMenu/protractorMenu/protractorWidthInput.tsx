@@ -10,22 +10,22 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { RulerModel } from 'src/models/RulerModel';
-import { ZERO_TOLERANCE } from 'src/constants';
+import { ProtractorModel } from 'src/models/ProtractorModel';
+import { DEFAULT_PROTRACTOR_LY, ZERO_TOLERANCE } from 'src/constants';
 import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
-const RulerWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const ProtractorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.rulerActionScope);
   const setActionScope = useStore(Selector.setRulerActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const ruler = useSelectedElement(ObjectType.Ruler) as RulerModel | undefined;
+  const protractor = useSelectedElement(ObjectType.Protractor) as ProtractorModel | undefined;
 
-  const [inputValue, setInputValue] = useState<number>(ruler?.ly ?? 1);
+  const [inputValue, setInputValue] = useState<number>(protractor?.ly ?? DEFAULT_PROTRACTOR_LY);
 
   const lang = useLanguage();
 
@@ -34,11 +34,11 @@ const RulerWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const needChange = (ly: number) => {
-    if (!ruler) return;
+    if (!protractor) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
         for (const e of useStore.getState().elements) {
-          if (e.type === ObjectType.Ruler && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
+          if (e.type === ObjectType.Protractor && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
             if (Math.abs(e.ly - ly) > ZERO_TOLERANCE) {
               return true;
             }
@@ -48,7 +48,7 @@ const RulerWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       }
       case Scope.AllObjectsOfThisType: {
         for (const e of useStore.getState().elements) {
-          if (e.type === ObjectType.Ruler && !e.locked) {
+          if (e.type === ObjectType.Protractor && !e.locked) {
             if (Math.abs(e.ly - ly) > ZERO_TOLERANCE) {
               return true;
             }
@@ -57,7 +57,7 @@ const RulerWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         break;
       }
       default: {
-        if (Math.abs(ruler?.ly - ly) > ZERO_TOLERANCE) {
+        if (Math.abs(protractor?.ly - ly) > ZERO_TOLERANCE) {
           return true;
         }
         break;
@@ -69,7 +69,7 @@ const RulerWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const updateInMap = (map: Map<string, number>, value?: number) => {
     useStore.getState().set((state) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.Ruler && map.has(e.id)) {
+        if (e.type === ObjectType.Protractor && map.has(e.id)) {
           if (value !== undefined) {
             e.ly = value;
           } else {
@@ -93,18 +93,22 @@ const RulerWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const setLy = (value: number) => {
-    if (!ruler) return;
+    if (!protractor) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
         const oldLzSelected = new Map<string, number>();
         for (const elem of useStore.getState().elements) {
-          if (elem.type === ObjectType.Ruler && !elem.locked && useStore.getState().selectedElementIdSet.has(elem.id)) {
+          if (
+            elem.type === ObjectType.Protractor &&
+            !elem.locked &&
+            useStore.getState().selectedElementIdSet.has(elem.id)
+          ) {
             oldLzSelected.set(elem.id, elem.ly);
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Ly for Selected Rulers',
+          name: 'Set Ly for Selected Protractors',
           timestamp: Date.now(),
           oldValues: oldLzSelected,
           newValue: value,
@@ -126,12 +130,12 @@ const RulerWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       case Scope.AllObjectsOfThisType: {
         const oldLzAll = new Map<string, number>();
         for (const elem of useStore.getState().elements) {
-          if (elem.type === ObjectType.Ruler && !elem.locked) {
+          if (elem.type === ObjectType.Protractor && !elem.locked) {
             oldLzAll.set(elem.id, elem.ly);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Ly for All Rulers',
+          name: 'Set Ly for All Protractors',
           timestamp: Date.now(),
           oldValues: oldLzAll,
           newValue: value,
@@ -149,12 +153,12 @@ const RulerWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       }
       default: {
         const undoableChange = {
-          name: 'Set Ruler Ly',
+          name: 'Set Protractor Ly',
           timestamp: Date.now(),
-          oldValue: ruler.ly,
+          oldValue: protractor.ly,
           newValue: value,
-          changedElementId: ruler.id,
-          changedElementType: ruler.type,
+          changedElementId: protractor.id,
+          changedElementType: protractor.type,
           undo: () => {
             updateLzById(undoableChange.changedElementId, undoableChange.oldValue as number);
           },
@@ -163,7 +167,7 @@ const RulerWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           },
         } as UndoableChange;
         addUndoable(undoableChange);
-        updateLzById(ruler.id, value);
+        updateLzById(protractor.id, value);
         setApplyCount(applyCount + 1);
         break;
       }
@@ -186,7 +190,7 @@ const RulerWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       <Row gutter={6}>
         <Col span={6}>
           <InputNumber
-            min={0.5}
+            min={0.1}
             max={2}
             style={{ width: 120 }}
             step={0.1}
@@ -211,13 +215,13 @@ const RulerWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           <Radio.Group onChange={onScopeChange} value={actionScope}>
             <Space direction="vertical">
               <Radio style={{ width: '100%' }} value={Scope.OnlyThisObject}>
-                {i18n.t('rulerMenu.OnlyThisRuler', lang)}
+                {i18n.t('protractorMenu.OnlyThisProtractor', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllSelectedObjectsOfThisType}>
-                {i18n.t('rulerMenu.AllSelectedRulers', lang)}
+                {i18n.t('protractorMenu.AllSelectedProtractors', lang)}
               </Radio>
               <Radio style={{ width: '100%' }} value={Scope.AllObjectsOfThisType}>
-                {i18n.t('rulerMenu.AllRulers', lang)}
+                {i18n.t('protractorMenu.AllProtractors', lang)}
               </Radio>
             </Space>
           </Radio.Group>
@@ -227,4 +231,4 @@ const RulerWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   );
 };
 
-export default RulerWidthInput;
+export default ProtractorWidthInput;

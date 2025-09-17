@@ -289,6 +289,7 @@ export class ElementModelFactory {
     return {
       cx: point.x,
       cy: point.y,
+      ly: useStore.getState().actionState.protractorLy ?? Constants.DEFAULT_PROTRACTOR_LY,
       lz: useStore.getState().actionState.protractorLz ?? Constants.DEFAULT_PROTRACTOR_LZ,
       type: ObjectType.Protractor,
       parentId: Constants.GROUND_ID,

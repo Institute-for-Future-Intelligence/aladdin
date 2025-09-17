@@ -8,6 +8,7 @@ import i18n from 'src/i18n/i18n';
 import ProtractorColorSelection from './protractorColorSelection';
 import ProtractorTickMarkColorSelection from './protractorTickMarkColorSelection';
 import ProtractorThicknessInput from './protractorThicknessInput';
+import ProtractorWidthInput from './protractorWidthInput';
 
 export const createProtractorMenu = (selectedElement: ElementModel) => {
   const items: MenuProps['items'] = [];
@@ -41,6 +42,10 @@ export const createProtractorMenu = (selectedElement: ElementModel) => {
     items.push({
       key: 'protractor-thickness',
       label: <DialogItem Dialog={ProtractorThicknessInput}>{i18n.t('word.Thickness', lang)} ...</DialogItem>,
+    });
+    items.push({
+      key: 'protractor-width',
+      label: <DialogItem Dialog={ProtractorWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
     });
     items.push({
       key: 'protractor-color',
