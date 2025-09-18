@@ -266,6 +266,7 @@ export class ElementModelCloner {
       rotation: [0, 0, 0],
       ly: protractor.ly,
       lz: protractor.lz,
+      radius: protractor.radius,
       cx: x,
       cy: y,
       startArmEndPoint: { position: [...newStartPoint] },

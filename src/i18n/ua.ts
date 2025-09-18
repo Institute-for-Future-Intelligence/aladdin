@@ -930,6 +930,7 @@ export const i18n_ua = {
       OnlyThisProtractor: 'Only This Protractor',
       AllSelectedProtractors: 'All Selected Protractors',
       AllProtractors: 'All Protractors',
+      Radius: 'Radius',
     },
 
     batteryStorageMenu: {

@@ -5,7 +5,7 @@ import { ProtractorModel } from 'src/models/ProtractorModel';
 import { useStore } from 'src/stores/common';
 import { MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from 'src/types';
 import { useRulerGroundEndPointPosition } from '../ruler/hooks';
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { forwardRef, ReactNode, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import MoveHandle from 'src/components/moveHandle';
 import { useRefStore } from 'src/stores/commonRef';
@@ -16,6 +16,7 @@ import {
   DEFAULT_PROTRACTOR_COLOR,
   DEFAULT_PROTRACTOR_LY,
   DEFAULT_PROTRACTOR_LZ,
+  DEFAULT_PROTRACTOR_RADIUS,
   DEFAULT_PROTRACTOR_TICK_MARK_COLOR as DEFAULT_PROTRACTOR_TICK_MARK_COLOR,
   HALF_PI,
 } from 'src/constants';
@@ -26,6 +27,7 @@ import helvetikerFont from '../../assets/helvetiker_regular.typeface.fnt';
 import { Util } from 'src/Util';
 import { UndoableChangeProtractor } from 'src/undo/UndoableChange';
 import { useHandleSize } from '../wall/hooks';
+import ResizeHandle from 'src/components/resizeHandle';
 
 const Protractor = (protractor: ProtractorModel) => {
   const {
@@ -39,15 +41,17 @@ const Protractor = (protractor: ProtractorModel) => {
     centerSnappedHandle,
     locked,
     color = DEFAULT_PROTRACTOR_COLOR,
-    tickMarkColor,
+    tickMarkColor = DEFAULT_PROTRACTOR_TICK_MARK_COLOR,
+    radius,
   } = protractor;
 
   const handlesGroupRef = useRef<Group>(null!);
   const armsGroupRef = useRef<Group>(null!);
-  const startArmRef = useRef<ArmRef>(null!);
-  const endArmRef = useRef<ArmRef>(null!);
+  const startArmRef = useRef<StartArmRef>(null!);
+  const endArmRef = useRef<EndArmRef>(null!);
   const readingRef = useRef<ReadingRef>(null!);
 
+  const radiusRef = useRef<number | null>(null);
   const operationRef = useRef<string | null>(null);
   const snapPointsRef = useRef<RulerGroundSnapPoint[]>([]);
   const snappedPointsRef = useRef<{
@@ -197,7 +201,14 @@ const Protractor = (protractor: ProtractorModel) => {
     }
   };
 
-  const onHandlesPointDown = (event: ThreeEvent<PointerEvent>) => {
+  const onMoveHandlesPointDown = (event: ThreeEvent<PointerEvent>) => {
+    if (event.intersections.length == 0 || event.intersections[0].object !== event.object) return;
+    set({ frameloop: 'always' });
+    useRefStore.getState().setEnableOrbitController(false);
+    operationRef.current = event.object.name;
+  };
+
+  const onResizeHandlePointerDown = (event: ThreeEvent<PointerEvent>) => {
     if (event.intersections.length == 0 || event.intersections[0].object !== event.object) return;
     set({ frameloop: 'always' });
     useRefStore.getState().setEnableOrbitController(false);
@@ -245,6 +256,7 @@ const Protractor = (protractor: ProtractorModel) => {
         if (!protractor) return;
 
         if (handlesGroupRef.current) {
+          /** handle sequence matters here */
           const startArmEndPosition = handlesGroupRef.current.children[0].position;
           const endArmEndPosition = handlesGroupRef.current.children[1].position;
           const center = handlesGroupRef.current.children[2].position;
@@ -253,6 +265,9 @@ const Protractor = (protractor: ProtractorModel) => {
           protractor.cy = center.y;
           protractor.startArmEndPoint.position = startArmEndPosition.toArray();
           protractor.endArmEndPoint.position = endArmEndPosition.toArray();
+          if (radiusRef.current !== null) {
+            protractor.radius = radiusRef.current;
+          }
 
           if (snappedPointsRef.current) {
             const { start, end, center } = snappedPointsRef.current;
@@ -315,6 +330,7 @@ const Protractor = (protractor: ProtractorModel) => {
     operationRef.current = null;
     snappedPointsRef.current = { start: null, end: null, center: null };
     snapPointsRef.current = [];
+    radiusRef.current = null;
   };
 
   // pointer up
@@ -352,6 +368,10 @@ const Protractor = (protractor: ProtractorModel) => {
       startArmRef.current.updatePosition(pointer.x, pointer.y);
       endArmRef.current.updatePosition(pointer.x, pointer.y);
       readingRef.current.updatePosition(pointer.x, pointer.y);
+    } else if (operationRef.current === ResizeHandleType.Default) {
+      const r = Math.max(0.5, point.distanceTo(new Vector3(cx, cy)));
+      startArmRef.current.updateRadius(r);
+      radiusRef.current = r;
     }
   });
 
@@ -367,10 +387,23 @@ const Protractor = (protractor: ProtractorModel) => {
           endX={startArmEndPointX}
           endY={startArmEndPointY}
           color={color}
-          tickMarkColor={tickMarkColor}
           ly={ly}
           lz={lz}
-        />
+          radius={radius}
+          tickMarkColor={tickMarkColor}
+        >
+          {selected && !locked && (
+            <group onPointerDown={onResizeHandlePointerDown}>
+              <ResizeHandle
+                handleType={ResizeHandleType.Default}
+                position={[0, 0, 0]}
+                size={handleSize * 0.35}
+                onPointerOver={hoverHandle}
+                onPointerOut={noHoverHandle}
+              />
+            </group>
+          )}
+        </StartArm>
 
         {/* end arm  */}
         <EndArm
@@ -387,24 +420,25 @@ const Protractor = (protractor: ProtractorModel) => {
 
       {/* handles */}
       {selected && !locked && (
-        <group ref={handlesGroupRef} onPointerDown={onHandlesPointDown}>
+        <group ref={handlesGroupRef} onPointerDown={onMoveHandlesPointDown}>
+          {/* Don't change the sequence of the handles! search: "handle sequence" in this file */}
           <MoveHandle
             handleType={MoveHandleType.Start}
-            position={[startArmEndPointX, startArmEndPointY, 0]} // todo: p
+            position={[startArmEndPointX, startArmEndPointY, 0]}
             size={handleSize}
             onPointerOver={hoverHandle}
             onPointerOut={noHoverHandle}
           />
           <MoveHandle
             handleType={MoveHandleType.End}
-            position={[endArmEndPointX, endArmEndPointY, 0]} // todo: p
+            position={[endArmEndPointX, endArmEndPointY, 0]}
             size={handleSize}
             onPointerOver={hoverHandle}
             onPointerOut={noHoverHandle}
           />
           <MoveHandle
             handleType={MoveHandleType.Mid}
-            position={[_cx, _cy, 0]} // todo: p
+            position={[_cx, _cy, 0]}
             size={handleSize}
             onPointerOver={hoverHandle}
             onPointerOut={noHoverHandle}
@@ -428,7 +462,7 @@ const Protractor = (protractor: ProtractorModel) => {
 
 export default Protractor;
 
-interface ArmProps {
+interface StartArmProps {
   startX: number;
   startY: number;
   endX: number;
@@ -436,10 +470,29 @@ interface ArmProps {
   color: string;
   ly: number;
   lz: number;
-  tickMarkColor?: string;
+  radius: number;
+  tickMarkColor: string;
+  children?: ReactNode;
 }
 
-interface ArmRef {
+interface StartArmRef {
+  updatePosition: (px: number, py: number) => void;
+  updateEndPoint: (px: number, py: number) => void;
+  updateRadius: (r: number) => void;
+}
+
+interface EndArmProps {
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
+  color: string;
+  ly: number;
+  lz: number;
+  children?: ReactNode;
+}
+
+interface EndArmRef {
   updatePosition: (px: number, py: number) => void;
   updateEndPoint: (px: number, py: number) => void;
 }
@@ -508,7 +561,7 @@ const TickMark = ({ color, lz, radius }: { radius: number; color: string; lz: nu
   );
 };
 
-const StartArm = forwardRef<ArmRef, ArmProps>(
+const StartArm = forwardRef<StartArmRef, StartArmProps>(
   (
     {
       startX,
@@ -516,9 +569,11 @@ const StartArm = forwardRef<ArmRef, ArmProps>(
       endX,
       endY,
       color,
-      tickMarkColor = DEFAULT_PROTRACTOR_TICK_MARK_COLOR,
       lz = DEFAULT_PROTRACTOR_LZ,
       ly = DEFAULT_PROTRACTOR_LY,
+      radius = DEFAULT_PROTRACTOR_RADIUS,
+      tickMarkColor = DEFAULT_PROTRACTOR_TICK_MARK_COLOR,
+      children,
     },
     ref,
   ) => {
@@ -528,6 +583,12 @@ const StartArm = forwardRef<ArmRef, ArmProps>(
     const groupRef = useRef<Group>(null!);
     const cylinderGroupRef = useRef<Group>(null!);
     const boxRef = useRef<Mesh>(null!);
+
+    const [_radius, setRadius] = useState(radius);
+
+    useEffect(() => {
+      setRadius(radius);
+    }, [radius]);
 
     useImperativeHandle(ref, () => ({
       updateEndPoint(px, py) {
@@ -540,9 +601,11 @@ const StartArm = forwardRef<ArmRef, ArmProps>(
         groupRef.current.position.x = px;
         groupRef.current.position.y = py;
       },
+      updateRadius(r) {
+        setRadius(r);
+      },
     }));
 
-    const radius = ly * 5;
     return (
       <group ref={groupRef} position={[startX, startY, lz / 2]} rotation={[0, 0, angle]}>
         <Box ref={boxRef} position={[length / 2, ly / 2, 0]} scale={[length, ly, lz]}>
@@ -550,20 +613,23 @@ const StartArm = forwardRef<ArmRef, ArmProps>(
         </Box>
 
         <group ref={cylinderGroupRef} rotation={[HALF_PI, 0, 0]}>
-          <Cylinder args={[radius, radius, lz, 32, 1, false, HALF_PI, Math.PI]}>
+          <Cylinder args={[_radius, _radius, lz, 32, 1, false, HALF_PI, Math.PI]}>
             <meshStandardMaterial color={color} />
           </Cylinder>
-          <Plane args={[radius * 2, lz]}>
+          <Plane args={[_radius * 2, lz]}>
             <meshStandardMaterial color={color} />
           </Plane>
-          <TickMark color={tickMarkColor} lz={lz} radius={radius} />
+
+          <group position={[_radius, 0.05, 0]}>{children}</group>
+
+          <TickMark color={tickMarkColor} lz={lz} radius={_radius} />
         </group>
       </group>
     );
   },
 );
 
-const EndArm = forwardRef<ArmRef, ArmProps>(({ startX, startY, endX, endY, ly, lz }, ref) => {
+const EndArm = forwardRef<EndArmRef, EndArmProps>(({ startX, startY, endX, endY, ly, lz }, ref) => {
   const length = Math.hypot(endX - startX, endY - startY);
   const angle = Math.atan2(endY - startY, endX - startX);
 

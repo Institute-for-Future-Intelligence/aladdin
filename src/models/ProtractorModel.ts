@@ -7,4 +7,5 @@ export interface ProtractorModel extends ElementModel {
   endArmEndPoint: RulerEndPoint;
   centerSnappedHandle?: RulerSnappedHandle;
   tickMarkColor?: string;
+  radius: number;
 }

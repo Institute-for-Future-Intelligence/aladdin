@@ -49,6 +49,7 @@ export class DefaultActionState implements ActionState {
 
   protractorLy: number;
   protractorLz: number;
+  protractorRadius: number;
   protractorColor: string;
   protractorTickMarkColor: string;
 
@@ -217,6 +218,7 @@ export class DefaultActionState implements ActionState {
 
     this.protractorLy = Constants.DEFAULT_PROTRACTOR_LY;
     this.protractorLz = Constants.DEFAULT_PROTRACTOR_LZ;
+    this.protractorRadius = Constants.DEFAULT_PROTRACTOR_RADIUS;
     this.protractorColor = Constants.DEFAULT_PROTRACTOR_COLOR;
     this.protractorTickMarkColor = Constants.DEFAULT_PROTRACTOR_TICK_MARK_COLOR;
 

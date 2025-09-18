@@ -291,6 +291,7 @@ export class ElementModelFactory {
       cy: point.y,
       ly: useStore.getState().actionState.protractorLy ?? Constants.DEFAULT_PROTRACTOR_LY,
       lz: useStore.getState().actionState.protractorLz ?? Constants.DEFAULT_PROTRACTOR_LZ,
+      radius: useStore.getState().actionState.protractorRadius ?? Constants.DEFAULT_PROTRACTOR_RADIUS,
       type: ObjectType.Protractor,
       parentId: Constants.GROUND_ID,
       rotation: [0, 0, 0],
