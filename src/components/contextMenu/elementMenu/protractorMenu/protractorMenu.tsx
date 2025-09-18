@@ -9,6 +9,7 @@ import ProtractorColorSelection from './protractorColorSelection';
 import ProtractorTickMarkColorSelection from './protractorTickMarkColorSelection';
 import ProtractorThicknessInput from './protractorThicknessInput';
 import ProtractorWidthInput from './protractorWidthInput';
+import ProtractorRadiusInput from './protractorRadiusInput';
 
 export const createProtractorMenu = (selectedElement: ElementModel) => {
   const items: MenuProps['items'] = [];
@@ -46,6 +47,10 @@ export const createProtractorMenu = (selectedElement: ElementModel) => {
     items.push({
       key: 'protractor-width',
       label: <DialogItem Dialog={ProtractorWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
+    });
+    items.push({
+      key: 'protractor-radius',
+      label: <DialogItem Dialog={ProtractorRadiusInput}>{i18n.t('protractorMenu.Radius', lang)} ...</DialogItem>,
     });
     items.push({
       key: 'protractor-color',

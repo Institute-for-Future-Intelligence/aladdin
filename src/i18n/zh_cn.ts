@@ -907,6 +907,7 @@ export const i18n_zh_cn = {
       OnlyThisProtractor: '只这个量角器',
       AllSelectedProtractors: '所有选中的量角器',
       AllProtractors: '所有量角器',
+      Radius: '半径',
     },
 
     batteryStorageMenu: {

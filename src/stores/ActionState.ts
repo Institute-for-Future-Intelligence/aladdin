@@ -42,6 +42,7 @@ export interface ActionState {
 
   protractorLy: number;
   protractorLz: number;
+  protractorRadius: number;
   protractorColor: string;
   protractorTickMarkColor: string;
 

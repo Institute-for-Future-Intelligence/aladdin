@@ -11,12 +11,12 @@ import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { ProtractorModel } from 'src/models/ProtractorModel';
-import { DEFAULT_PROTRACTOR_LZ, ZERO_TOLERANCE } from 'src/constants';
+import { DEFAULT_PROTRACTOR_RADIUS, ZERO_TOLERANCE } from 'src/constants';
 import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
 
-const ProtractorThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const ProtractorRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.rulerActionScope);
   const setActionScope = useStore(Selector.setRulerActionScope);
@@ -25,7 +25,7 @@ const ProtractorThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: 
 
   const protractor = useSelectedElement(ObjectType.Protractor) as ProtractorModel | undefined;
 
-  const [inputValue, setInputValue] = useState<number>(protractor?.lz ?? DEFAULT_PROTRACTOR_LZ);
+  const [inputValue, setInputValue] = useState<number>(protractor?.radius ?? DEFAULT_PROTRACTOR_RADIUS);
 
   const lang = useLanguage();
 
@@ -33,13 +33,13 @@ const ProtractorThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: 
     setActionScope(e.target.value);
   };
 
-  const needChange = (lz: number) => {
+  const needChange = (r: number) => {
     if (!protractor) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
         for (const e of useStore.getState().elements) {
           if (e.type === ObjectType.Protractor && !e.locked && useStore.getState().selectedElementIdSet.has(e.id)) {
-            if (Math.abs(e.lz - lz) > ZERO_TOLERANCE) {
+            if (Math.abs((e as ProtractorModel).radius - r) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -49,7 +49,7 @@ const ProtractorThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: 
       case Scope.AllObjectsOfThisType: {
         for (const e of useStore.getState().elements) {
           if (e.type === ObjectType.Protractor && !e.locked) {
-            if (Math.abs(e.lz - lz) > ZERO_TOLERANCE) {
+            if (Math.abs((e as ProtractorModel).radius - r) > ZERO_TOLERANCE) {
               return true;
             }
           }
@@ -57,7 +57,7 @@ const ProtractorThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: 
         break;
       }
       default: {
-        if (Math.abs(protractor?.lz - lz) > ZERO_TOLERANCE) {
+        if (Math.abs(protractor?.radius - r) > ZERO_TOLERANCE) {
           return true;
         }
         break;
@@ -71,11 +71,11 @@ const ProtractorThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: 
       for (const e of state.elements) {
         if (e.type === ObjectType.Protractor && map.has(e.id)) {
           if (value !== undefined) {
-            e.lz = value;
+            (e as ProtractorModel).radius = value;
           } else {
             const val = map.get(e.id);
             if (val !== undefined) {
-              e.lz = val;
+              (e as ProtractorModel).radius = val;
             }
           }
         }
@@ -83,34 +83,34 @@ const ProtractorThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: 
     });
   };
 
-  const updateLzById = (id: string, val: number) => {
+  const updateRadiusById = (id: string, val: number) => {
     useStore.getState().set((state) => {
-      const bs = state.elements.find((e) => e.id === id);
-      if (bs) {
-        bs.lz = val;
+      const p = state.elements.find((e) => e.id === id);
+      if (p) {
+        (p as ProtractorModel).radius = val;
       }
     });
   };
 
-  const setLz = (value: number) => {
+  const setRadius = (value: number) => {
     if (!protractor) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllSelectedObjectsOfThisType: {
-        const oldLzSelected = new Map<string, number>();
+        const oldRadiusSelected = new Map<string, number>();
         for (const elem of useStore.getState().elements) {
           if (
             elem.type === ObjectType.Protractor &&
             !elem.locked &&
             useStore.getState().selectedElementIdSet.has(elem.id)
           ) {
-            oldLzSelected.set(elem.id, elem.lz);
+            oldRadiusSelected.set(elem.id, (elem as ProtractorModel).radius);
           }
         }
         const undoableChangeSelected = {
-          name: 'Set Lz for Selected Protractors',
+          name: 'Set Radius for Selected Protractors',
           timestamp: Date.now(),
-          oldValues: oldLzSelected,
+          oldValues: oldRadiusSelected,
           newValue: value,
           undo: () => {
             updateInMap(undoableChangeSelected.oldValues as Map<string, number>);
@@ -123,21 +123,21 @@ const ProtractorThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeSelected);
-        updateInMap(oldLzSelected, value);
+        updateInMap(oldRadiusSelected, value);
         setApplyCount(applyCount + 1);
         break;
       }
       case Scope.AllObjectsOfThisType: {
-        const oldLzAll = new Map<string, number>();
+        const oldRadiusAll = new Map<string, number>();
         for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Protractor && !elem.locked) {
-            oldLzAll.set(elem.id, elem.lz);
+            oldRadiusAll.set(elem.id, (elem as ProtractorModel).radius);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Lz for All Protractors',
+          name: 'Set Radius for All Protractors',
           timestamp: Date.now(),
-          oldValues: oldLzAll,
+          oldValues: oldRadiusAll,
           newValue: value,
           undo: () => {
             updateInMap(undoableChangeAll.oldValues as Map<string, number>);
@@ -147,33 +147,33 @@ const ProtractorThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateInMap(oldLzAll, value);
+        updateInMap(oldRadiusAll, value);
         setApplyCount(applyCount + 1);
         break;
       }
       default: {
         const undoableChange = {
-          name: 'Set Protractor Lz',
+          name: 'Set Protractor Radius',
           timestamp: Date.now(),
-          oldValue: protractor.lz,
+          oldValue: protractor.radius,
           newValue: value,
           changedElementId: protractor.id,
           changedElementType: protractor.type,
           undo: () => {
-            updateLzById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            updateRadiusById(undoableChange.changedElementId, undoableChange.oldValue as number);
           },
           redo: () => {
-            updateLzById(undoableChange.changedElementId, undoableChange.newValue as number);
+            updateRadiusById(undoableChange.changedElementId, undoableChange.newValue as number);
           },
         } as UndoableChange;
         addUndoable(undoableChange);
-        updateLzById(protractor.id, value);
+        updateRadiusById(protractor.id, value);
         setApplyCount(applyCount + 1);
         break;
       }
     }
     useStore.getState().set((state) => {
-      state.actionState.protractorLz = value;
+      state.actionState.protractorRadius = value;
     });
   };
 
@@ -182,16 +182,16 @@ const ProtractorThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: 
   };
 
   const apply = () => {
-    setLz(inputValue);
+    setRadius(inputValue);
   };
 
   return (
-    <Dialog width={550} title={i18n.t('word.Thickness', lang)} onApply={apply} onClose={close}>
+    <Dialog width={550} title={i18n.t('protractorMenu.Radius', lang)} onApply={apply} onClose={close}>
       <Row gutter={6}>
         <Col span={6}>
           <InputNumber
-            min={0.1}
-            max={0.5}
+            min={0.5}
+            max={5}
             style={{ width: 120 }}
             step={0.1}
             precision={2}
@@ -202,7 +202,7 @@ const ProtractorThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: 
             }}
           />
           <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-            {i18n.t('word.Range', lang)}: [0.1, 0.5] {i18n.t('word.MeterAbbreviation', lang)}
+            {i18n.t('word.Range', lang)}: [0.5, 5] {i18n.t('word.MeterAbbreviation', lang)}
           </div>
         </Col>
         <Col span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
@@ -231,4 +231,4 @@ const ProtractorThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: 
   );
 };
 
-export default ProtractorThicknessInput;
+export default ProtractorRadiusInput;
