@@ -56,6 +56,8 @@ export const Auxiliary = React.memo(() => {
     if (!element) return false;
     const type = element.type;
     return (
+      type === ObjectType.Ruler ||
+      type === ObjectType.Protractor ||
       type === ObjectType.Foundation ||
       type === ObjectType.Cuboid ||
       (type === ObjectType.Tree && element.parentId === ObjectType.Ground) ||

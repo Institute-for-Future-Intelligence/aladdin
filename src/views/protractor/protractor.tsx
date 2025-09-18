@@ -206,6 +206,12 @@ const Protractor = (protractor: ProtractorModel) => {
     set({ frameloop: 'always' });
     useRefStore.getState().setEnableOrbitController(false);
     operationRef.current = event.object.name;
+    // prepare for snap
+    snapPointsRef.current = RulerUtil.getGroundSnapPointsArray();
+
+    useStore.getState().set((state) => {
+      state.moveHandleType = MoveHandleType.Default;
+    });
   };
 
   const onResizeHandlePointerDown = (event: ThreeEvent<PointerEvent>) => {
@@ -228,7 +234,7 @@ const Protractor = (protractor: ProtractorModel) => {
         if (intersected) {
           gl.domElement.style.cursor = 'pointer';
           useStore.getState().set((state) => {
-            state.hoveredHandle = handle;
+            state.hoveredHandle = MoveHandleType.Default;
           });
         }
       }
@@ -317,6 +323,8 @@ const Protractor = (protractor: ProtractorModel) => {
             }
           }
         }
+
+        state.moveHandleType = null;
       });
 
       const newProtractor = useStore

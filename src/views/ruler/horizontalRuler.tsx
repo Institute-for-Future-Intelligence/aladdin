@@ -236,6 +236,10 @@ const HorizontalRuler = (ruler: RulerModel) => {
     useRefStore.getState().setEnableOrbitController(false);
     operationRef.current = event.object.name;
 
+    useStore.getState().set((state) => {
+      state.moveHandleType = MoveHandleType.Default;
+    });
+
     // prepare for snap
     snapPointsRef.current = RulerUtil.getGroundSnapPointsArray();
   };
@@ -297,6 +301,8 @@ const HorizontalRuler = (ruler: RulerModel) => {
               }
             }
           }
+
+          state.moveHandleType = null;
         }
       });
 
