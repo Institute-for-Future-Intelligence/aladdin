@@ -373,10 +373,10 @@ export class SolarRadiation {
               }
             }
           }
+
+          const distance = distanceToClosestObject(wall.id, v, sunDirection);
           if (isWall) {
             const insidePolygon = polygon === null ? true : Util.isPointInside(p.x, p.y, polygon);
-            const distance = distanceToClosestObject(wall.id, v, sunDirection);
-            // heatmap[kx][kz] += indirectRadiation;
             if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
               if (insidePolygon) {
                 intensity[kx][kz] += indirectRadiation;
@@ -384,11 +384,16 @@ export class SolarRadiation {
             }
             if (dot > 0 && distance < 0) {
               // direct radiation
-              // heatmap[kx][kz] += dot * peakRadiation;
               if (insidePolygon) {
                 intensity[kx][kz] += dot * peakRadiation;
               }
             }
+          }
+
+          heatmap[kx][kz] += indirectRadiation;
+          if (dot > 0 && distance < 0) {
+            // direct radiation
+            heatmap[kx][kz] += dot * peakRadiation;
           }
         }
       }
