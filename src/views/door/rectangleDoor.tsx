@@ -2,7 +2,7 @@
  * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useRef } from 'react';
+import React, { ReactNode, useMemo, useRef } from 'react';
 import { Box, Cone, Line } from '@react-three/drei';
 import {
   DEFAULT_VIEW_HEAT_FLUX_COLOR,
@@ -29,11 +29,11 @@ interface RectangleDoorProps {
   frameColor: string;
   selected: boolean;
   locked: boolean;
-  material: Material;
   filled: boolean;
   showHeatFluxes: boolean;
   area: number;
   foundation: FoundationModel | null;
+  children?: ReactNode;
 }
 
 interface DoorWireFrameProps {
@@ -104,11 +104,11 @@ const RectangleDoor = React.memo(
     frameless,
     selected,
     locked,
-    material,
     filled,
     area,
     showHeatFluxes,
     foundation,
+    children,
   }: RectangleDoorProps) => {
     const world = useStore.getState().world;
     const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
@@ -189,15 +189,17 @@ const RectangleDoor = React.memo(
 
     return (
       <group name={'Rectangle door group'} position={[0, -0.01, 0]}>
-        <mesh
-          name={'Rectangular Door Mesh'}
-          rotation={[HALF_PI, 0, 0]}
-          material={material}
-          castShadow={shadowEnabled && filled}
-          receiveShadow={shadowEnabled && filled}
-        >
-          <shapeGeometry args={[doorShape]} />
-        </mesh>
+        {filled && (
+          <mesh
+            name={'Rectangular Door Mesh'}
+            rotation={[HALF_PI, 0, 0]}
+            castShadow={shadowEnabled && filled}
+            receiveShadow={shadowEnabled && filled}
+          >
+            <shapeGeometry args={[doorShape]} />
+            {children}
+          </mesh>
+        )}
 
         {filled && (
           <mesh
@@ -219,11 +221,11 @@ const RectangleDoor = React.memo(
             name={`Door plane inside`}
             position={[0, 0.1, 0]}
             rotation={[-HALF_PI, 0, Math.PI]}
-            material={material}
             castShadow={shadowEnabled && filled}
             receiveShadow={shadowEnabled && filled}
           >
             <shapeGeometry args={[doorShape]} />
+            {children}
           </mesh>
         )}
 

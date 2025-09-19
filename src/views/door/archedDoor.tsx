@@ -2,7 +2,7 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useRef } from 'react';
+import React, { ReactNode, useMemo, useRef } from 'react';
 import {
   DEFAULT_VIEW_HEAT_FLUX_COLOR,
   DEFAULT_HEAT_FLUX_DENSITY_FACTOR,
@@ -29,11 +29,11 @@ interface ArchedDoorProps {
   frameColor: string;
   selected: boolean;
   locked: boolean;
-  material: Material;
   filled: boolean;
   showHeatFluxes: boolean;
   area: number;
   foundation: FoundationModel | null;
+  children?: ReactNode;
 }
 
 const ArchedDoor = React.memo(
@@ -44,11 +44,11 @@ const ArchedDoor = React.memo(
     frameColor,
     selected,
     locked,
-    material,
     filled,
     showHeatFluxes,
     area,
     foundation,
+    children,
   }: ArchedDoorProps) => {
     const world = useStore.getState().world;
     const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -177,21 +177,22 @@ const ArchedDoor = React.memo(
 
     return (
       <group name={'Arched door group'}>
-        <mesh
-          name={'Arched Door Mesh'}
-          rotation={[HALF_PI, 0, 0]}
-          material={material}
-          castShadow={shadowEnabled && filled}
-          receiveShadow={shadowEnabled && filled}
-        >
-          <shapeGeometry args={[doorShape]} />
-        </mesh>
+        {filled && (
+          <mesh
+            name={'Arched Door Mesh'}
+            rotation={[HALF_PI, 0, 0]}
+            castShadow={shadowEnabled && filled}
+            receiveShadow={shadowEnabled && filled}
+          >
+            <shapeGeometry args={[doorShape]} />
+            {children}
+          </mesh>
+        )}
 
         {filled && (
           <mesh
             name={'Arched Door Simulation Mesh'}
             rotation={[HALF_PI, 0, 0]}
-            material={material}
             uuid={id}
             userData={{ simulation: true }}
             castShadow={false}
@@ -208,11 +209,11 @@ const ArchedDoor = React.memo(
             name={'Door plane mesh inside'}
             position={[0, 0.1, 0]}
             rotation={[-HALF_PI, 0, Math.PI]}
-            material={material}
             castShadow={shadowEnabled && filled}
             receiveShadow={shadowEnabled && filled}
           >
             <shapeGeometry args={[doorShape]} />
+            {children}
           </mesh>
         )}
 

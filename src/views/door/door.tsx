@@ -280,12 +280,13 @@ const Door = (doorModel: DoorModel) => {
             frameless={frameless}
             selected={selected}
             locked={locked}
-            material={doorMaterial}
             filled={filled}
             showHeatFluxes={showHeatFluxes}
             area={Util.getDoorArea(doorModel)}
             foundation={getFoundation(doorModel)}
-          />
+          >
+            {doorMaterial}
+          </RectangleDoor>
         );
       case DoorType.Arched:
         return (
@@ -296,12 +297,13 @@ const Door = (doorModel: DoorModel) => {
             frameColor={frameColor}
             selected={selected}
             locked={locked}
-            material={doorMaterial}
             filled={filled}
             showHeatFluxes={showHeatFluxes}
             area={Util.getDoorArea(doorModel)}
             foundation={getFoundation(doorModel)}
-          />
+          >
+            {doorMaterial}
+          </ArchedDoor>
         );
     }
   };
@@ -328,41 +330,37 @@ const Door = (doorModel: DoorModel) => {
   const dimensionData = useMemo(() => [lx, ly, lz, archHeight], [lx, ly, lz, archHeight]);
 
   const doorMaterial = useMemo(() => {
-    if (showSolarRadiationHeatmap && heatmapTexture && doorModel.filled) {
-      return new MeshBasicMaterial({
-        color: color,
-        map: heatmapTexture,
-        side: FrontSide,
-      });
+    if (showSolarRadiationHeatmap && heatmapTexture && filled) {
+      return <meshBasicMaterial color={color} map={heatmapTexture} side={FrontSide} />;
     }
     if (!filled) {
-      return new MeshStandardMaterial({
-        opacity: color === INVALID_ELEMENT_COLOR ? 0.5 : 0,
-        color: color,
-        transparent: true,
-        side: DoubleSide,
-      });
+      return (
+        <meshStandardMaterial
+          opacity={color === INVALID_ELEMENT_COLOR ? 0.5 : 0}
+          color={color}
+          transparent
+          side={DoubleSide}
+        />
+      );
     }
     if (textureType === DoorTexture.Default || textureType === DoorTexture.NoTexture) {
       if (opacity < 1) {
-        return new MeshPhongMaterial({
-          specular: 'white',
-          shininess: windowShininess ?? DEFAULT_VIEW_WINDOW_SHININESS,
-          color: color,
-          side: FrontSide,
-          opacity: opacity,
-          transparent: true,
-        });
+        return (
+          <meshPhongMaterial
+            specular="white"
+            shininess={windowShininess ?? DEFAULT_VIEW_WINDOW_SHININESS}
+            color={color}
+            opacity={opacity}
+            transparent
+            side={FrontSide}
+          />
+        );
       } else {
-        return new MeshStandardMaterial({
-          map: texture,
-          color: color,
-          side: FrontSide,
-        });
+        return <meshStandardMaterial map={texture} color={color} side={FrontSide} />;
       }
     }
-    return new MeshStandardMaterial({ map: texture, side: FrontSide });
-  }, [showSolarRadiationHeatmap, heatmapTexture, color, textureType, texture, filled, opacity]);
+    return <meshStandardMaterial map={texture} side={FrontSide} />;
+  }, [showSolarRadiationHeatmap, heatmapTexture, filled, color, textureType, texture, opacity, windowShininess]);
 
   return (
     <group name={GROUP_NAME} position={[cx, 0, cz]} onPointerDown={handlePointerDown} onContextMenu={handleContextMenu}>
