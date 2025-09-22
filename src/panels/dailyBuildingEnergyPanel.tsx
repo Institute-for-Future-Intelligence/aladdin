@@ -441,19 +441,21 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
   const summarySection = () => {
     if (summaryMap.size === 0) return null;
     else if (summaryMap.size === 1) {
-      for (const [key, val] of summaryMap) {
-        if (key.slice(0, 3) === 'Net') {
-          return (
-            <Space style={{ cursor: 'default' }}>
-              {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + val.toFixed(1)}
-            </Space>
-          );
-        } else if (key.slice(0, 4) === 'Grid') {
-          return (
-            <Space style={{ cursor: 'default' }}>
-              {i18n.t('buildingEnergyPanel.Grid', lang) + ': ' + val.toFixed(1)}
-            </Space>
-          );
+      if (heaterSum !== 0 && acSum !== 0) {
+        for (const [key, val] of summaryMap) {
+          if (key.slice(0, 3) === 'Net') {
+            return (
+              <Space style={{ cursor: 'default' }}>
+                {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + val.toFixed(1)}
+              </Space>
+            );
+          } else if (key.slice(0, 4) === 'Grid') {
+            return (
+              <Space style={{ cursor: 'default' }}>
+                {i18n.t('buildingEnergyPanel.Grid', lang) + ': ' + val.toFixed(1)}
+              </Space>
+            );
+          }
         }
       }
     } else {
@@ -465,10 +467,14 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
       const content: string[] = [];
       for (const [key, val] of summaryMap) {
         if (key.slice(0, 3) === 'Net') {
-          netSum += val;
+          if (heaterSum !== 0 && acSum !== 0) {
+            netSum += val;
+          }
           isAllGrid = false;
         } else if (key.slice(0, 4) === 'Grid') {
-          gridSum += val;
+          if (heaterSum !== 0 && acSum !== 0) {
+            gridSum += val;
+          }
           isAllNet = false;
         }
         content.push(key + ': ' + val.toFixed(2) + ' ' + i18n.t('word.kWh', lang));
