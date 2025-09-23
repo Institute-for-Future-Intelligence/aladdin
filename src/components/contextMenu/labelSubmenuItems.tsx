@@ -106,6 +106,8 @@ export const LabelHeightInput = ({ element }: LabelSubmenuItemProps) => {
   const setLabelHeight = useLabelHeight(element);
   const lang = useLanguage();
 
+  const _el = useStore((state) => state.elements.find((e) => e.id === element.id));
+
   return (
     <MenuItem stayAfterClick noPadding>
       <InputNumber
@@ -114,7 +116,7 @@ export const LabelHeightInput = ({ element }: LabelSubmenuItemProps) => {
         max={100}
         step={1}
         precision={1}
-        value={element.labelHeight ?? 0.2}
+        value={_el?.labelHeight ?? 0.2}
         onChange={(value) => setLabelHeight(value!)}
       />
     </MenuItem>
@@ -125,6 +127,8 @@ export const LabelFontSizeInput = ({ element }: LabelSubmenuItemProps) => {
   const setLabelFontSize = useLabelFontSize(element);
   const lang = useLanguage();
 
+  const _el = useStore((state) => state.elements.find((e) => e.id === element.id));
+
   return (
     <MenuItem stayAfterClick noPadding>
       <InputNumber
@@ -133,7 +137,7 @@ export const LabelFontSizeInput = ({ element }: LabelSubmenuItemProps) => {
         max={100}
         step={1}
         precision={0}
-        value={element.labelFontSize ?? 20}
+        value={_el?.labelFontSize ?? 20}
         onChange={(value) => setLabelFontSize(value!)}
       />
     </MenuItem>
@@ -144,6 +148,8 @@ export const LabelSizeInput = ({ element }: LabelSubmenuItemProps) => {
   const setLabelSize = useLabelSize(element);
   const lang = useLanguage();
 
+  const _el = useStore((state) => state.elements.find((e) => e.id === element.id));
+
   return (
     <MenuItem stayAfterClick noPadding>
       <InputNumber
@@ -152,7 +158,7 @@ export const LabelSizeInput = ({ element }: LabelSubmenuItemProps) => {
         max={5}
         step={0.1}
         precision={1}
-        value={element.labelSize ?? 0.2}
+        value={_el?.labelSize ?? 0.2}
         onChange={(value) => setLabelSize(value!)}
       />
     </MenuItem>
@@ -163,11 +169,13 @@ export const LabelColorInput = ({ element }: LabelSubmenuItemProps) => {
   const setLabelColor = useLabelColor(element);
   const lang = useLanguage();
 
+  const _el = useStore((state) => state.elements.find((e) => e.id === element.id));
+
   return (
     <MenuItem stayAfterClick noPadding>
       <Input
         addonBefore={<LabelAddonBefore>{i18n.t('labelSubMenu.LabelColor', lang) + ':'}</LabelAddonBefore>}
-        value={element.labelColor ?? '#ffffff'}
+        value={_el?.labelColor ?? '#ffffff'}
         onChange={(e) => setLabelColor(e.target.value)}
       />
     </MenuItem>
