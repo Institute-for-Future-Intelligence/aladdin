@@ -441,7 +441,7 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
   const summarySection = () => {
     if (summaryMap.size === 0) return null;
     else if (summaryMap.size === 1) {
-      if (heaterSum !== 0 && acSum !== 0) {
+      if (heaterSum !== 0 || acSum !== 0) {
         for (const [key, val] of summaryMap) {
           if (key.slice(0, 3) === 'Net') {
             return (
@@ -467,12 +467,12 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
       const content: string[] = [];
       for (const [key, val] of summaryMap) {
         if (key.slice(0, 3) === 'Net') {
-          if (heaterSum !== 0 && acSum !== 0) {
+          if (heaterSum !== 0 || acSum !== 0) {
             netSum += val;
           }
           isAllGrid = false;
         } else if (key.slice(0, 4) === 'Grid') {
-          if (heaterSum !== 0 && acSum !== 0) {
+          if (heaterSum !== 0 || acSum !== 0) {
             gridSum += val;
           }
           isAllNet = false;
