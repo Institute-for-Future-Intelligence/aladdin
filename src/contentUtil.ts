@@ -1276,6 +1276,8 @@ export class ContentUtil {
   }
 
   static expandSolarPanel(e: any) {
+    if (e.normal === undefined) e.normal = [0, 0, 1];
+    if (e.rotation === undefined) e.rotation = [0, 0, 0];
     if (e.color === undefined) e.color = Constants.DEFAULT_SOLAR_PANEL_COLOR;
     if (e.pvModelName === undefined) e.pvModelName = Constants.DEFAULT_SOLAR_PANEL_MODEL;
     if (e.poleSpacing === undefined) e.poleSpacing = Constants.DEFAULT_SOLAR_PANEL_POLE_SPACING;
