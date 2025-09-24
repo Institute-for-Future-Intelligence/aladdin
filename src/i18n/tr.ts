@@ -541,8 +541,7 @@ export const i18n_tr = {
         VerticalBifacialSolarPanels: 'Vertical Bifacial Solar Panels',
         CompareMonofacialAndBifacialSolarPanels: 'Monofacial vs. Bifacial Solar Panels',
         SolarTrackers: 'Güneş İzleyiciler',
-        CoveringGroundWithSolarPanels:
-          'Sadece güneş panellerini kullanarak yüzeyi kaplamak neden iyi bir fikir değildir?',
+        CoveringGroundWithSolarPanels: 'Ground Cover vs. Tilted Array',
         InterRowSpacingOfSolarPanelArray: 'Güneş Paneli Dizi Arası Boşluk Etkisi',
         EffectOfOrientationOfSolarPanels: 'Güneş Panelleri Yön Etkisi',
         SolarPanelArrayAutomaticLayout: 'Solar Panel Array Automatic Layout',

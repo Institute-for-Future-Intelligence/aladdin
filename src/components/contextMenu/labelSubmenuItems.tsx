@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import { Checkbox, Input, InputNumber, Space, Switch } from 'antd';
@@ -40,8 +40,10 @@ export const ShowLabelCheckbox = ({ element, forModelTree }: LabelSubmenuItemPro
   const showLabel = useLabelShow(element);
   const lang = useLanguage();
 
+  const _el = useStore((state) => state.elements.find((e) => e.id === element.id)) ?? element;
+
   // Menu item does not update when clicked. I have to set an internal state to fix this
-  const [show, setShow] = useState(element.showLabel);
+  const [show, setShow] = useState(_el.showLabel);
   const onChange = () => {
     showLabel(!show);
     setShow(!show);
@@ -49,8 +51,8 @@ export const ShowLabelCheckbox = ({ element, forModelTree }: LabelSubmenuItemPro
 
   // for sync model tree and context menu
   useEffect(() => {
-    setShow(element.showLabel);
-  }, [element.showLabel]);
+    setShow(_el.showLabel);
+  }, [_el.showLabel]);
 
   return forModelTree ? (
     <Space>

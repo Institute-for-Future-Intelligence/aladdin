@@ -223,7 +223,7 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
               label: 'menu.photovoltaicSolarPowerTutorials.CoveringGroundWithSolarPanels',
             },
             {
-              key: 'inter_row_spacing_2',
+              key: 'inter_row_spacing',
               label: 'menu.photovoltaicSolarPowerTutorials.InterRowSpacingOfSolarPanelArray',
             },
             {
@@ -419,7 +419,7 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
           ),
         },
         {
-          key: 'inter_row_spacing',
+          key: 'interrow_spacing',
           label: (
             <MenuItem noPadding onClick={() => loadProject('Inter-Row Spacing', 0)}>
               {i18n.t('menu.generativeDesignTutorials.SolarPanelArrayInterRowSpacing', lang)}

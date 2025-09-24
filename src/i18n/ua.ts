@@ -546,7 +546,7 @@ export const i18n_ua = {
         VerticalBifacialSolarPanels: 'Вертикальні двосторонні сонячні панелі',
         CompareMonofacialAndBifacialSolarPanels: 'Односторонні vs. двосторонні сонячні панелі',
         SolarTrackers: 'Сонячні трекери',
-        CoveringGroundWithSolarPanels: 'Чому просто покриття землі сонячними панелями - не найкраща ідея',
+        CoveringGroundWithSolarPanels: 'Ground Cover vs. Tilted Array',
         InterRowSpacingOfSolarPanelArray: 'Вплив міжрядного простору в масиві сонячних панелей',
         EffectOfOrientationOfSolarPanels: 'Вплив орієнтації сонячних панелей',
         SolarPanelArrayAutomaticLayout: 'Автоматичне розміщення масиву сонячних панелей',

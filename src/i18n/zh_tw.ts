@@ -539,7 +539,7 @@ export const i18n_zh_tw = {
         VerticalBifacialSolarPanels: '豎直的雙面光伏板',
         CompareMonofacialAndBifacialSolarPanels: '單面光伏板和雙面光伏板的對比',
         SolarTrackers: '自動追日器',
-        CoveringGroundWithSolarPanels: '為什麼我們不簡單地用光伏板覆蓋地面',
+        CoveringGroundWithSolarPanels: '地面覆蓋和傾斜陣列的對比',
         InterRowSpacingOfSolarPanelArray: '光伏板陣列行間距對發電量的影響',
         EffectOfOrientationOfSolarPanels: '光伏板排列方向對發電量的影響',
         SolarPanelArrayAutomaticLayout: '光伏板自動排列',

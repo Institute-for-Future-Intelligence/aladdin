@@ -542,7 +542,7 @@ export const i18n_en = {
         VerticalBifacialSolarPanels: 'Vertical Bifacial Solar Panels',
         CompareMonofacialAndBifacialSolarPanels: 'Monofacial vs. Bifacial Solar Panels',
         SolarTrackers: 'Solar Trackers',
-        CoveringGroundWithSolarPanels: 'Why Just Covering the Ground with Solar Panels is not a Good Idea',
+        CoveringGroundWithSolarPanels: 'Ground Cover vs. Tilted Array',
         InterRowSpacingOfSolarPanelArray: 'Effect of Inter-Row Spacing in a Solar Panel Array',
         EffectOfOrientationOfSolarPanels: 'Effect of Orientation of Solar Panels',
         SolarPanelArrayAutomaticLayout: 'Solar Panel Array Automatic Layout',
