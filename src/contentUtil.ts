@@ -1156,7 +1156,7 @@ export class ContentUtil {
       e.shutterWidth = e.shutter.width;
       delete e.shutter;
     }
-    if (e.mullion) {
+    if (e.mullion !== undefined) {
       e.horizontalMullion = e.mullion;
       e.verticalMullion = e.mullion;
       delete e.mullion;
