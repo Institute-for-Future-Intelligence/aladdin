@@ -1270,7 +1270,10 @@ export class ContentUtil {
     if (e.orientation === Constants.DEFAULT_SOLAR_PANEL_ORIENTATION) delete e.orientation;
     if (e.trackerType === TrackerType.NO_TRACKER) delete e.trackerType;
     if (isSameColor(e.frameColor, Constants.DEFAULT_SOLAR_PANEL_FRAME_COLOR)) delete e.frameColor;
-
+    if (e.normal && e.normal.length == 3 && e.normal[0] === 0 && e.normal[1] === 0 && e.normal[2] === 1)
+      delete e.normal;
+    if (e.rotation && e.rotation.length == 3 && e.rotation[0] === 0 && e.rotation[1] === 0 && e.rotation[2] === 0)
+      delete e.rotation;
     if (!e.drawSunBeam) delete e.drawSunBeam;
     if (e.batteryStorageId === null) delete e.batteryStorageId;
   }
