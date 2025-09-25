@@ -87,7 +87,7 @@ const SiteInfoPanel = React.memo(() => {
       setCurrentTemperature(c);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dateString, weatherModel]);
+  }, [dateString, weatherModel, diurnalTemperatureModel]);
 
   const sunMinutes = useMemo(() => {
     return computeSunriseAndSunsetInMinutes(now, latitude);

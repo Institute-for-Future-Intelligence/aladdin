@@ -1116,7 +1116,6 @@ export class ContentUtil {
       delete e.parentType;
     }
     if (e.airPermeability === Constants.DEFAULT_WINDOW_AIR_PERMEABILITY) delete e.airPermeability;
-
     if (e.horizontalMullion) delete e.horizontalMullion; // default true
     if (e.verticalMullion) delete e.verticalMullion; // default true
     if (!e.leftShutter) delete e.leftShutter;
@@ -1125,7 +1124,6 @@ export class ContentUtil {
     if (!e.empty) delete e.empty;
     if (!e.interior) delete e.interior;
     if (!e.setback) delete e.setback;
-    if (e !== undefined && e.airPermeability === Constants.DEFAULT_WINDOW_AIR_PERMEABILITY) delete e.airPermeability;
   }
 
   static expandWindow(e: any) {
@@ -1148,9 +1146,7 @@ export class ContentUtil {
     if (e.archHeight === undefined) e.archHeight = Constants.DEFAULT_WINDOW_ARCH_HEIGHT;
     if (e.horizontalMullion === undefined) e.horizontalMullion = true;
     if (e.verticalMullion === undefined) e.verticalMullion = true;
-    if (e.parentType === undefined) {
-      e.rotation = [0, 0, 0];
-    }
+    if (e.parentType === undefined) e.rotation = [0, 0, 0];
 
     // old files may contain those parameters
     if (e.shutter) {
@@ -1531,17 +1527,17 @@ export class ContentUtil {
 
     switch (e.type) {
       case ObjectType.Human: {
-        if (e.name === undefined) e.name === Constants.DEFAULT_HUMAN_NAME;
+        if (e.name === undefined) e.name = Constants.DEFAULT_HUMAN_NAME;
         break;
       }
       case ObjectType.Flower: {
-        if (e.name === undefined) e.name === Constants.DEFAULT_FLOWER_TYPE;
+        if (e.name === undefined) e.name = Constants.DEFAULT_FLOWER_TYPE;
         break;
       }
       case ObjectType.Tree: {
-        if (e.name === undefined) e.name === Constants.DEFAULT_TREE_TYPE;
-        if (e.lz === undefined) e.lz === Constants.DEFAULT_TREE_HEIGHT;
-        if (e.lx === undefined) e.lx === Constants.DEFAULT_TREE_SPREAD;
+        if (e.name === undefined) e.name = Constants.DEFAULT_TREE_TYPE;
+        if (e.lz === undefined) e.lz = Constants.DEFAULT_TREE_HEIGHT;
+        if (e.lx === undefined) e.lx = Constants.DEFAULT_TREE_SPREAD;
         break;
       }
     }
