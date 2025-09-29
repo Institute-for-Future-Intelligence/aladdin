@@ -23,7 +23,7 @@ import {
 import { Rectangle } from './models/Rectangle';
 import { GroundModel } from './models/GroundModel';
 
-export const VERSION = '1.8.9';
+export const VERSION = '1.9.0';
 
 // used for check old file that need to update light intensity.
 export const LIGHT_INTENSITY_CHANGED_VERSION = '1.5.0';
@@ -96,7 +96,7 @@ export const DEFAULT_WALL_STRUCTURE_COLOR = WHITE;
 export const DEFAULT_WALL_AIR_PERMEABILITY = 0;
 export const DEFAULT_WALL_VOLUMETRIC_HEAT_CAPACITY = 0.5;
 
-export const DEFAULT_WINDOW_COLOR = WHITE;
+export const DEFAULT_WINDOW_COLOR = WHITE; // frame color
 export const DEFAULT_WINDOW_TINT = '#73D8FF';
 export const DEFAULT_WINDOW_OPACITY = 0.5;
 export const DEFAULT_WINDOW_SHUTTER_COLOR = GREY;

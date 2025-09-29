@@ -32,7 +32,7 @@ If wall A is connected to wall B, then wall B is also connected to wall A.
 "overhang" is the roof eaves overhang length, with a default value of 0.3 meter.
 Default color is white. Default ly is 0.1 meter.
 Note that "leftConnectId" can only be connected to other wall's "rightConnectId", and vise versa.
-Each wall has a normal direction represented by the normal vector from leftpoint to rightpoint, rotated clockwise by 90 degree.
+Each wall has a normal direction represented by the normal vector from "leftPoint" to "rightPoint", rotated clockwise by 90 degree.
 Each wall has a property "rValue" in the unit of m²·℃/W, which defaults to 2.
 
 - Roof: When a wall is connected to other walls and the connection forms a loop, a "Roof" can be built on that wall.
@@ -55,6 +55,8 @@ Door has a property "uValue" in the unit of W/(m²·℃), which defaults to 1.
 Window size [lx, ly], lx is width, ly is height.
 Window position [cx, cz]. cx is relative to center of the parent wall, cz is height calculated from the bottom of the wall.
 Window has a property "uValue" in the unit of W/(m²·℃), which defaults to 2.
+Window has a property "color" in HTML hex color code, which defaults to "#FFFFFF".
+Window has a property "tint" in HTML hex color code, which defaults to "#73D8FF".
 
 When building a house, first draw a rectangle on the foundation, which defines the positions of walls, then put a wall on each side of the rectangle.
 The endpoints of the walls should be the same as the vertices of the rectangle.
@@ -243,8 +245,10 @@ export const callAzureOpenAI = async (
                       center: { type: 'array', items: { type: 'number' } },
                       size: { type: 'array', items: { type: 'number' } },
                       uValue: { type: 'string' },
+                      color: { type: 'string' },
+                      tint: { type: 'string' },
                     },
-                    required: ['type', 'id', 'pId', 'fId', 'center', 'size', 'uValue'],
+                    required: ['type', 'id', 'pId', 'fId', 'center', 'size', 'uValue', 'color', 'tint'],
                     additionalProperties: false,
                   },
                 ],

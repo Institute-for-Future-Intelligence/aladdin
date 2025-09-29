@@ -80,7 +80,7 @@ import { FidgetSpinner } from 'react-loader-spinner';
 import GenerateBuildingModal from 'src/components/generateBuildingModal';
 import SparkImage from 'src/assets/spark.png';
 import { firestore } from 'src/firebase';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import i18n from 'src/i18n/i18n';
 
 const { TextArea } = Input;

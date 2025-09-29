@@ -9,7 +9,6 @@ import {
   DEFAULT_HVAC_SYSTEM,
   DEFAULT_ROOF_R_VALUE,
   DEFAULT_WALL_R_VALUE,
-  DEFAULT_WINDOW_U_VALUE,
   GROUND_ID,
   TWO_PI,
 } from 'src/constants';
@@ -128,34 +127,32 @@ export class GenAIUtil {
         }
 
         // check collision with door
-        {
-          let isOverlap = false;
-          const doors = jsonElements.filter((e) => e.type === ObjectType.Door && e.pId === pId);
-          if (doors.length > 0) {
-            for (const door of doors) {
-              const [dLx, dLz] = door.size;
-              const [dCx, dCz] = [door.center, dLz / 2];
-              if (Util.isRectOverlap([dCx, dCz, dLx, dLz], [cx, cz, lx, lz])) {
-                console.log('overlap with door', center, size, door);
-                isOverlap = true;
-                break;
-              }
+        let overlapWithDoors = false;
+        const doors = jsonElements.filter((e) => e.type === ObjectType.Door && e.pId === pId);
+        if (doors.length > 0) {
+          for (const door of doors) {
+            const [dLx, dLz] = door.size;
+            const [dCx, dCz] = [door.center, dLz / 2];
+            if (Util.isRectOverlap([dCx, dCz, dLx, dLz], [cx, cz, lx, lz])) {
+              console.log('overlap with door', center, size, door);
+              overlapWithDoors = true;
+              break;
             }
           }
-          if (isOverlap) continue;
         }
+        if (overlapWithDoors) continue;
 
         const siblings = correctedElements.filter((e) => e.type === ObjectType.Window && e.id !== id && e.pId === pId);
         if (siblings.length > 0) {
-          let isOverlap = false;
+          let overlapWithWindows = false;
           for (const sib of siblings) {
             if (Util.isRectOverlap([cx, cz, lx, lz], [...sib.center, ...sib.size])) {
-              isOverlap = true;
+              overlapWithWindows = true;
               console.log('overlap with sib', center, size, sib);
               break;
             }
           }
-          if (!isOverlap) {
+          if (!overlapWithWindows) {
             correctedElements.push(e);
           }
         } else {
@@ -191,7 +188,7 @@ export class GenAIUtil {
       solarUpdraftTower: {},
       solarAbsorberPipe: {},
       solarPowerTower: {},
-      hvacSystem: { ...DEFAULT_HVAC_SYSTEM, id: 'A' },
+      hvacSystem: { ...DEFAULT_HVAC_SYSTEM, id: 'HVAC ' + id },
       id: id,
     } as FoundationModel;
   }
@@ -300,7 +297,16 @@ export class GenAIUtil {
     } as DoorModel;
   }
 
-  static makeWindow(id: string, pId: string, fId: string, center: number[], size: number[], uValue: number) {
+  static makeWindow(
+    id: string,
+    pId: string,
+    fId: string,
+    center: number[],
+    size: number[],
+    uValue: number,
+    color: string,
+    tint: string,
+  ) {
     const actionState = useStore.getState().actionState;
     const [cx, cz] = center;
     const [lx, lz] = size;
@@ -332,11 +338,11 @@ export class GenAIUtil {
       lineWidth: 0.2,
       lineColor: '#000000',
       showLabel: false,
-      color: '#73D8FF', // frame color
-      tint: actionState.windowTint ?? '#73D8FF', // glass color
-      opacity: actionState.windowOpacity !== undefined ? actionState.windowOpacity : 0.5,
-      uValue: uValue ?? actionState.windowUValue ?? DEFAULT_WINDOW_U_VALUE,
-      airPermeability: DEFAULT_AIR_PERMEABILITY,
+      color: color ?? actionState.windowColor, // frame color
+      tint: tint ?? actionState.windowTint, // glass color
+      opacity: actionState.windowOpacity,
+      uValue: uValue ?? actionState.windowUValue,
+      airPermeability: actionState.windowAirPermeability,
       normal: [0, -1, 0],
       rotation: [0, 0, 0],
       parentId: pId,

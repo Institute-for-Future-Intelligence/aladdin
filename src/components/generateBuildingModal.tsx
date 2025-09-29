@@ -138,12 +138,12 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
               break;
             }
             case ObjectType.Window: {
-              const { id, pId, fId, center, size, uValue } = e;
+              const { id, pId, fId, center, size, uValue, color, tint } = e;
               const wall = state.elements.find((e) => e.id === pId);
               if (wall) {
                 const _size = [size[0] / wall.lx, size[1] / wall.lz];
                 const _center = [center[0] / wall.lx, (center[1] - wall.lz / 2) / wall.lz];
-                const w = GenAIUtil.makeWindow(id, pId, fId, _center, _size, uValue);
+                const w = GenAIUtil.makeWindow(id, pId, fId, _center, _size, uValue, color, tint);
                 state.elements.push(w);
               }
               break;
@@ -294,11 +294,12 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
     setCommonStore((state) => {
       state.projectState.generateBuildingPrompt = prompt;
     });
-    handleGenerativeAI();
-    setChanged(true);
-    const userid = useStore.getState().user.uid;
-    const projectTitle = useStore.getState().projectState.title;
-    if (userid && projectTitle) await updateGenerateBuildingPrompt(userid, projectTitle, prompt);
+    handleGenerativeAI().then(() => {
+      setChanged(true);
+      const userid = useStore.getState().user.uid;
+      const projectTitle = useStore.getState().projectState.title;
+      if (userid && projectTitle) updateGenerateBuildingPrompt(userid, projectTitle, prompt);
+    });
     close();
   };
 
