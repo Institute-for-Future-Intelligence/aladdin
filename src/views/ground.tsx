@@ -1647,6 +1647,33 @@ const Ground = React.memo(() => {
     }
   }, [objectTypeToAdd, selectButtonClicked]);
 
+  const handleGroundPointerOut = () => {
+    const addedFoundationID = useStore.getState().addedFoundationId;
+    const addedCuboidID = useStore.getState().addedCuboidId;
+    if (addedFoundationID) {
+      removeElementById(addedFoundationID, false);
+      setCommonStore((state) => {
+        state.objectTypeToAdd = ObjectType.Foundation;
+        state.addedFoundationId = null;
+      });
+      useRefStore.getState().setEnableOrbitController(true);
+      grabRef.current = null;
+      isSettingFoundationStartPointRef.current = false;
+      isSettingFoundationEndPointRef.current = false;
+    }
+    if (addedCuboidID) {
+      removeElementById(addedCuboidID, false);
+      setCommonStore((state) => {
+        state.objectTypeToAdd = ObjectType.Cuboid;
+        state.addedCuboidId = null;
+      });
+      useRefStore.getState().setEnableOrbitController(true);
+      grabRef.current = null;
+      isSettingCuboidStartPointRef.current = false;
+      isSettingCuboidEndPointRef.current = false;
+    }
+  };
+
   const handleGroundPointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (grabRef.current && grabRef.current.type && !grabRef.current.locked) {
       setRayCast(e);
@@ -2624,7 +2651,7 @@ const Ground = React.memo(() => {
         onContextMenu={handleContextMenu}
         onPointerDown={handlePointerDown}
         onPointerMove={throttle(handleGroundPointerMove, THROTTLE_WAIT, { trailing: false })}
-        // onPointerOut={handleGroundPointerOut}
+        onPointerOut={handleGroundPointerOut}
       >
         {showSolarRadiationHeatmap && !waterSurface ? (
           <meshBasicMaterial color={groundColor} />
