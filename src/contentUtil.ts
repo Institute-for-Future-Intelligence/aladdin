@@ -516,6 +516,10 @@ export class ContentUtil {
     if (v.showEvolutionPanel === undefined) v.showEvolutionPanel = Constants.DEFAULT_VIEW_SHOW_EVOLUTION_PANEL;
     if (v.autoRotate === undefined) v.autoRotate = Constants.DEFAULT_VIEW_AUTO_ROTATE;
 
+    if (v.mapZoom === undefined) v.mapZoom = Constants.DEFAULT_VIEW_MAP_ZOOM;
+    if (v.mapType === undefined) v.mapType = Constants.DEFAULT_VIEW_MAP_TYPE;
+    if (v.mapTilt === undefined) v.mapTilt = Constants.DEFAULT_VIEW_MAP_TILT;
+
     if (v.heliodonPanelX === undefined) v.heliodonPanelX = Constants.DEFAULT_HELIODON_PANEL_X;
     if (v.heliodonPanelY === undefined) v.heliodonPanelY = Constants.DEFAULT_HELIODON_PANEL_Y;
     if (v.mapPanelX === undefined) v.mapPanelX = Constants.DEFAULT_MAP_PANEL_X;
