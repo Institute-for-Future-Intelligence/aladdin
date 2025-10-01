@@ -524,6 +524,8 @@ export class ContentUtil {
     if (v.heliodonPanelY === undefined) v.heliodonPanelY = Constants.DEFAULT_HELIODON_PANEL_Y;
     if (v.mapPanelX === undefined) v.mapPanelX = Constants.DEFAULT_MAP_PANEL_X;
     if (v.mapPanelY === undefined) v.mapPanelY = Constants.DEFAULT_MAP_PANEL_Y;
+
+    if (v.weatherPanelRect === undefined) v.weatherPanelRect = { ...Constants.DEFAULT_VIEW_WEATHER_PANEL_RECT };
     if (v.diurnalTemperaturePanelRect === undefined)
       v.diurnalTemperaturePanelRect = { ...Constants.DEFAULT_VIEW_DIURNAL_TEMPERATURE_PANEL_RECT };
     if (v.stickyNotePanelRect === undefined)

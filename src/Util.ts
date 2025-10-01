@@ -1168,15 +1168,6 @@ export class Util {
     }
   }
 
-  static fixViewStateLight(viewState: ViewState) {
-    if (viewState.ambientLightIntensity) {
-      viewState.ambientLightIntensity *= 2;
-    }
-    if (viewState.directLightIntensity) {
-      viewState.directLightIntensity *= 3.5;
-    }
-  }
-
   static isResizingVertical(handle: ResizeHandleType | null): boolean {
     switch (handle) {
       case ResizeHandleType.LowerLeftTop:
