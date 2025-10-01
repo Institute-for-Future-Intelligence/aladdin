@@ -181,7 +181,7 @@ export class DefaultWorldModel implements WorldModel {
     } as SensorModel;
     elements.push(sensor);
 
-    const woman = {
+    const person = {
       type: ObjectType.Human,
       name: HumanName.Judd,
       cx: 1,
@@ -194,7 +194,7 @@ export class DefaultWorldModel implements WorldModel {
       parentId: Constants.GROUND_ID,
       id: short.generate() as string,
     } as HumanModel;
-    elements.push(woman);
+    elements.push(person);
 
     return elements;
   }

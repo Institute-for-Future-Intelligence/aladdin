@@ -1605,6 +1605,9 @@ const isObjectExistAndEmpty = (obj: any) => {
 const isObjectShallowEqual = (obj1: any, obj2: any) => {
   if (obj1 === obj2) return true;
 
+  if (obj1 === undefined && obj2 === undefined) return true;
+  if (obj1 === undefined || obj2 === undefined) return false;
+
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
 
