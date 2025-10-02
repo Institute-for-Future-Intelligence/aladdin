@@ -7,7 +7,7 @@
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@koale/useworker": "^4.0.2",
-    "@react-google-maps/api": "^2.20.3",
+    "@react-google-maps/api": "^2.20.7",
     "@react-three/drei": "^9.88.10",
     "@react-three/fiber": "^8.15.9",
     "@react-three/postprocessing": "^2.16.3",

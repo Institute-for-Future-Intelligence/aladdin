@@ -14,7 +14,6 @@ import { GoogleMap, Marker, GoogleMapProps, InfoWindow, MarkerClusterer } from '
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
-import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { DEFAULT_MODEL_MAP_ZOOM, HOME_URL, LAT_LNG_FRACTION_DIGITS } from '../constants';
 import { showError, showSuccess } from '../helpers';
 import i18n from '../i18n/i18n';

@@ -26,7 +26,7 @@ import {
   RoofType,
 } from 'src/models/RoofModel';
 import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
-import { WindowModel } from 'src/models/WindowModel';
+import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { useStore } from 'src/stores/common';
 import { useDataStore } from 'src/stores/commonData';
 import { Design, DoorTexture, FoundationTexture, ObjectType, RoofTexture, WallTexture } from 'src/types';
@@ -306,6 +306,10 @@ export class GenAIUtil {
     uValue: number,
     color: string,
     tint: string,
+    windowType: WindowType,
+    shutter: boolean,
+    shutterColor: string,
+    shutterWidth: number,
   ) {
     const actionState = useStore.getState().actionState;
     const [cx, cz] = center;
@@ -318,10 +322,10 @@ export class GenAIUtil {
       lx: lx,
       ly: 0.3,
       lz: lz,
-      leftShutter: actionState.windowShutterLeft,
-      rightShutter: actionState.windowShutterRight,
-      shutterColor: actionState.windowShutterColor,
-      shutterWidth: actionState.windowShutterWidth,
+      leftShutter: shutter !== undefined ? shutter : actionState.windowShutterLeft,
+      rightShutter: shutter !== undefined ? shutter : actionState.windowShutterRight,
+      shutterColor: shutterColor ?? actionState.windowShutterColor,
+      shutterWidth: shutterWidth !== undefined ? shutterWidth : actionState.windowShutterWidth,
       horizontalMullion: actionState.windowHorizontalMullion,
       verticalMullion: actionState.windowVerticalMullion,
       mullionWidth: actionState.windowMullionWidth,
@@ -331,7 +335,7 @@ export class GenAIUtil {
       frame: true,
       frameWidth: actionState.windowFrameWidth,
       sillWidth: RoofUtil.isTypeRoof(ObjectType.Wall) ? 0 : actionState.windowSillWidth,
-      windowType: actionState.windowType,
+      windowType: windowType ?? actionState.windowType,
       empty: actionState.windowEmpty,
       interior: actionState.windowInterior,
       archHeight: actionState.windowArchHeight,

@@ -54,9 +54,13 @@ Door has a property "uValue" in the unit of W/(m²·℃), which defaults to 1.
 - Window: is built on a wall. "pId" is the id of the wall on which it is built. "fId" is the id of the foundation on which it is built.
 Window size [lx, ly], lx is width, ly is height.
 Window position [cx, cz]. cx is relative to center of the parent wall, cz is height calculated from the bottom of the wall.
-Window has a property "uValue" in the unit of W/(m²·℃), which defaults to 2.
-Window has a property "color" in HTML hex color code, which defaults to "#FFFFFF".
-Window has a property "tint" in HTML hex color code, which defaults to "#73D8FF".
+Window has a number property "uValue" in the unit of W/(m²·℃), which defaults to 2.
+Window has a string property "color" in HTML hex color code, which defaults to "#FFFFFF".
+Window has a string property "tint" in HTML hex color code, which defaults to "#73D8FF".
+Window has a string property "windowType" that can be either "Default" or "Arched", which defaults to "Default".
+Window has a boolean property "shutter", which defaults to false.
+Window has a string property "shutterColor", which defaults to "#808080".
+Window has a number property "shutterWidth", which defaults to 0.5 (relative to the width of window).
 
 When building a house, first draw a rectangle on the foundation, which defines the positions of walls, then put a wall on each side of the rectangle.
 The endpoints of the walls should be the same as the vertices of the rectangle.
@@ -247,8 +251,26 @@ export const callAzureOpenAI = async (
                       uValue: { type: 'string' },
                       color: { type: 'string' },
                       tint: { type: 'string' },
+                      windowType: { type: 'string' },
+                      shutter: { type: 'boolean' },
+                      shutterColor: { type: 'string' },
+                      shutterWidth: { type: 'number' },
                     },
-                    required: ['type', 'id', 'pId', 'fId', 'center', 'size', 'uValue', 'color', 'tint'],
+                    required: [
+                      'type',
+                      'id',
+                      'pId',
+                      'fId',
+                      'center',
+                      'size',
+                      'uValue',
+                      'color',
+                      'tint',
+                      'windowType',
+                      'shutter',
+                      'shutterColor',
+                      'shutterWidth',
+                    ],
                     additionalProperties: false,
                   },
                 ],

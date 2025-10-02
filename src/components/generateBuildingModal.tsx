@@ -138,12 +138,38 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
               break;
             }
             case ObjectType.Window: {
-              const { id, pId, fId, center, size, uValue, color, tint } = e;
+              const {
+                id,
+                pId,
+                fId,
+                center,
+                size,
+                uValue,
+                color,
+                tint,
+                windowType,
+                shutter,
+                shutterColor,
+                shutterWidth,
+              } = e;
               const wall = state.elements.find((e) => e.id === pId);
               if (wall) {
                 const _size = [size[0] / wall.lx, size[1] / wall.lz];
                 const _center = [center[0] / wall.lx, (center[1] - wall.lz / 2) / wall.lz];
-                const w = GenAIUtil.makeWindow(id, pId, fId, _center, _size, uValue, color, tint);
+                const w = GenAIUtil.makeWindow(
+                  id,
+                  pId,
+                  fId,
+                  _center,
+                  _size,
+                  uValue,
+                  color,
+                  tint,
+                  windowType,
+                  shutter,
+                  shutterColor,
+                  shutterWidth,
+                );
                 state.elements.push(w);
               }
               break;
