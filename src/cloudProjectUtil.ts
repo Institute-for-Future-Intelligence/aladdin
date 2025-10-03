@@ -11,7 +11,7 @@ import { usePrimitiveStore } from './stores/commonPrimitive';
 import { Filter } from './Filter';
 import { arrayRemove, arrayUnion, deleteDoc, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { firestore } from './firebase';
-import { GenAIUtil } from './panels/genAIUtil';
+import { GenAIUtil } from './panels/GenAIUtil';
 
 export const doesProjectExist = async (uid: string, projectName: string, callbackOnError: (error: string) => void) => {
   try {

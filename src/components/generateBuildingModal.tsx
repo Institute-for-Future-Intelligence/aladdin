@@ -19,11 +19,16 @@ import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
 import { callAzureOpenAI } from 'functions/src/callAzureOpenAI';
 import { ObjectType } from 'src/types';
-import { GenAIUtil } from 'src/panels/genAIUtil';
+import { GenAIUtil } from 'src/panels/GenAIUtil';
 import { RoofType } from 'src/models/RoofModel';
 import { updateGenerateBuildingPrompt } from 'src/cloudProjectUtil';
 import { Util } from '../Util';
-import { DEFAULT_LATITUDE, DEFAULT_LONGITUDE } from '../constants';
+import {
+  DEFAULT_LATITUDE,
+  DEFAULT_LONGITUDE,
+  DEFAULT_VIEW_AMBIENT_LIGHT_INTENSITY,
+  DEFAULT_VIEW_DIRECT_LIGHT_INTENSITY,
+} from '../constants';
 
 export interface GenerateBuildingModalProps {
   setDialogVisible: (visible: boolean) => void;
@@ -87,6 +92,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
     console.log('raw:', JSON.parse(text).elements);
 
     const jsonWorld = json.world;
+    const jsonView = json.view;
     const jsonElements = json.elements ? GenAIUtil.arrayCorrection(json.elements) : [];
 
     console.log('validated:', jsonElements);
@@ -98,6 +104,10 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
         state.world.address = jsonWorld.address ?? 'Natick, MA';
         state.world.latitude = jsonWorld.latitude === undefined ? DEFAULT_LATITUDE : jsonWorld.latitude;
         state.world.longitude = jsonWorld.longitude === undefined ? DEFAULT_LONGITUDE : jsonWorld.longitude;
+      }
+      if (jsonView) {
+        state.viewState.directLightIntensity = jsonView.directLightIntensity ?? DEFAULT_VIEW_DIRECT_LIGHT_INTENSITY;
+        state.viewState.ambientLightIntensity = jsonView.ambientLightIntensity ?? DEFAULT_VIEW_AMBIENT_LIGHT_INTENSITY;
       }
       if (jsonElements.length > 0) {
         state.elements = [];
@@ -144,6 +154,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
                 fId,
                 center,
                 size,
+                opacity,
                 uValue,
                 color,
                 tint,
@@ -168,6 +179,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
                   fId,
                   _center,
                   _size,
+                  opacity,
                   uValue,
                   color,
                   tint,

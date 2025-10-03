@@ -369,6 +369,7 @@ export class GenAIUtil {
     fId: string,
     center: number[],
     size: number[],
+    opacity: number,
     uValue: number,
     color: string,
     tint: string,
@@ -418,7 +419,7 @@ export class GenAIUtil {
       showLabel: false,
       color: color ?? actionState.windowColor, // frame color
       tint: tint ?? actionState.windowTint, // glass color
-      opacity: actionState.windowOpacity,
+      opacity: opacity !== undefined ? opacity : actionState.windowOpacity,
       uValue: uValue ?? actionState.windowUValue,
       airPermeability: actionState.windowAirPermeability,
       normal: [0, -1, 0],

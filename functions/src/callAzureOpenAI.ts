@@ -16,6 +16,8 @@ There should be an address for the location of houses. If not specified, the def
 Provide the latitude and longitude of the location.
 
 Date and time should be set as a string in a format MM/dd/yyyy, hh:mm:ss a. If not specified, set the default date and time to 06/22/2025, 12:00:00 PM.
+Direct light intensity is a number with the default value 3.5.
+Ambient light intensity is a number with the default value 0.2.
 
 There are some basic elements for building houses. Each element should have a unique id.
 
@@ -54,6 +56,8 @@ Door has a property "uValue" in the unit of W/(m²·℃), which defaults to 1.
 - Window: is built on a wall. "pId" is the id of the wall on which it is built. "fId" is the id of the foundation on which it is built.
 Window size [lx, ly], lx is width, ly is height.
 Window position [cx, cz]. cx is relative to center of the parent wall, cz is height calculated from the bottom of the wall.
+Window has a number property "opacity", which defaults to 0.5.
+When solar heat gain coefficient (SHGC) is specified for a window, its opacity is calculated by subtracting SHGC from 1. SHGC must be a number between 0 and 1.
 Window has a number property "uValue" in the unit of W/(m²·℃), which defaults to 2.
 Window has a number property "airPermeability" in the unit of m³/(h·m²), which defaults to 0.
 Window has a string property "color" in HTML hex color code, which defaults to "#FFFFFF".
@@ -166,6 +170,15 @@ export const callAzureOpenAI = async (
               required: ['date', 'address', 'latitude', 'longitude'],
               additionalProperties: false,
             },
+            view: {
+              type: 'object',
+              properties: {
+                directLightIntensity: { type: 'number' },
+                ambientLightIntensity: { type: 'number' },
+              },
+              required: ['directLightIntensity', 'ambientLightIntensity'],
+              additionalProperties: false,
+            },
             elements: {
               type: 'array',
               items: {
@@ -255,6 +268,7 @@ export const callAzureOpenAI = async (
                       fId: { type: 'string' },
                       center: { type: 'array', items: { type: 'number' } },
                       size: { type: 'array', items: { type: 'number' } },
+                      opacity: { type: 'number' },
                       uValue: { type: 'number' },
                       airPermeability: { type: 'number' },
                       color: { type: 'string' },
@@ -277,6 +291,7 @@ export const callAzureOpenAI = async (
                       'fId',
                       'center',
                       'size',
+                      'opacity',
                       'uValue',
                       'airPermeability',
                       'color',
@@ -298,7 +313,7 @@ export const callAzureOpenAI = async (
               },
             },
           },
-          required: ['world', 'elements', 'thinking'],
+          required: ['world', 'view', 'elements', 'thinking'],
           additionalProperties: false,
         },
       },

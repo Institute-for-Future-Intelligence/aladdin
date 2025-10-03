@@ -14,7 +14,11 @@ import type { RadioChangeEvent } from 'antd';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { computeSunriseAndSunsetInMinutes } from 'src/analysis/sunTools';
 import { useMemo } from 'react';
-import { themes } from '../../../../constants';
+import {
+  DEFAULT_VIEW_AMBIENT_LIGHT_INTENSITY,
+  DEFAULT_VIEW_DIRECT_LIGHT_INTENSITY,
+  themes,
+} from '../../../../constants';
 
 export const AxesCheckbox = ({ forModelTree }: { forModelTree?: boolean }) => {
   const axes = useStore(Selector.viewState.axes);
@@ -230,7 +234,7 @@ export const ShowZenithAngleCheckbox = ({ forModelTree }: { forModelTree?: boole
 };
 
 export const DirectLightIntensityInput = ({ forModelTree }: { forModelTree?: boolean }) => {
-  const directLightIntensity = useStore(Selector.viewState.directLightIntensity) ?? 3.5;
+  const directLightIntensity = useStore(Selector.viewState.directLightIntensity) ?? DEFAULT_VIEW_DIRECT_LIGHT_INTENSITY;
   const lang = useLanguage();
 
   const setDirectLightIntensity = (value: number) => {
@@ -274,7 +278,8 @@ export const DirectLightIntensityInput = ({ forModelTree }: { forModelTree?: boo
 };
 
 export const AmbientLightIntensityInput = ({ forModelTree }: { forModelTree?: boolean }) => {
-  const ambientLightIntensity = useStore(Selector.viewState.ambientLightIntensity) ?? 0.2;
+  const ambientLightIntensity =
+    useStore(Selector.viewState.ambientLightIntensity) ?? DEFAULT_VIEW_AMBIENT_LIGHT_INTENSITY;
   const lang = useLanguage();
 
   const setAmbientLightIntensity = (value: number) => {

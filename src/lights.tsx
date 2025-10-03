@@ -1,18 +1,25 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { DirectionalLight } from 'three';
-import { DEFAULT_VIEW_SHADOW_CAMERA_FAR, STARLIGHT_INTENSITY, UNIT_VECTOR_POS_Z } from './constants';
+import {
+  DEFAULT_VIEW_AMBIENT_LIGHT_INTENSITY,
+  DEFAULT_VIEW_DIRECT_LIGHT_INTENSITY,
+  DEFAULT_VIEW_SHADOW_CAMERA_FAR,
+  STARLIGHT_INTENSITY,
+  UNIT_VECTOR_POS_Z,
+} from './constants';
 import { Util } from './Util';
 import BloomEffect from './bloomEffect';
 
 const Lights = React.memo(() => {
-  const directLightIntensity = useStore(Selector.viewState.directLightIntensity) ?? 3.5;
-  const ambientLightIntensity = useStore(Selector.viewState.ambientLightIntensity) ?? 0.2;
+  const directLightIntensity = useStore(Selector.viewState.directLightIntensity) ?? DEFAULT_VIEW_DIRECT_LIGHT_INTENSITY;
+  const ambientLightIntensity =
+    useStore(Selector.viewState.ambientLightIntensity) ?? DEFAULT_VIEW_AMBIENT_LIGHT_INTENSITY;
   const shadowCameraFar = useStore(Selector.viewState.shadowCameraFar) ?? DEFAULT_VIEW_SHADOW_CAMERA_FAR;
   const shadowMapSize = Util.getShadowMapSize();
   const sunlightDirection = useStore(Selector.sunlightDirection);
