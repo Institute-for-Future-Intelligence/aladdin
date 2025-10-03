@@ -151,6 +151,12 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
                 shutter,
                 shutterColor,
                 shutterWidth,
+                horizontalMullion,
+                horizontalMullionSpacing,
+                verticalMullion,
+                verticalMullionSpacing,
+                mullionColor,
+                mullionWidth,
               } = e;
               const wall = state.elements.find((e) => e.id === pId);
               if (wall) {
@@ -169,6 +175,12 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
                   shutter,
                   shutterColor,
                   shutterWidth,
+                  horizontalMullion,
+                  horizontalMullionSpacing,
+                  verticalMullion,
+                  verticalMullionSpacing,
+                  mullionColor,
+                  mullionWidth,
                 );
                 state.elements.push(w);
               }

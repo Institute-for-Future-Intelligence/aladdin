@@ -297,65 +297,6 @@ export class GenAIUtil {
     } as DoorModel;
   }
 
-  static makeWindow(
-    id: string,
-    pId: string,
-    fId: string,
-    center: number[],
-    size: number[],
-    uValue: number,
-    color: string,
-    tint: string,
-    windowType: WindowType,
-    shutter: boolean,
-    shutterColor: string,
-    shutterWidth: number,
-  ) {
-    const actionState = useStore.getState().actionState;
-    const [cx, cz] = center;
-    const [lx, lz] = size;
-    return {
-      type: ObjectType.Window,
-      cx: cx,
-      cy: 0.3,
-      cz: cz,
-      lx: lx,
-      ly: 0.3,
-      lz: lz,
-      leftShutter: shutter !== undefined ? shutter : actionState.windowShutterLeft,
-      rightShutter: shutter !== undefined ? shutter : actionState.windowShutterRight,
-      shutterColor: shutterColor ?? actionState.windowShutterColor,
-      shutterWidth: shutterWidth !== undefined ? shutterWidth : actionState.windowShutterWidth,
-      horizontalMullion: actionState.windowHorizontalMullion,
-      verticalMullion: actionState.windowVerticalMullion,
-      mullionWidth: actionState.windowMullionWidth,
-      horizontalMullionSpacing: actionState.windowHorizontalMullionSpacing,
-      verticalMullionSpacing: actionState.windowVerticalMullionSpacing,
-      mullionColor: actionState.windowMullionColor,
-      frame: true,
-      frameWidth: actionState.windowFrameWidth,
-      sillWidth: RoofUtil.isTypeRoof(ObjectType.Wall) ? 0 : actionState.windowSillWidth,
-      windowType: windowType ?? actionState.windowType,
-      empty: actionState.windowEmpty,
-      interior: actionState.windowInterior,
-      archHeight: actionState.windowArchHeight,
-      lineWidth: 0.2,
-      lineColor: '#000000',
-      showLabel: false,
-      color: color ?? actionState.windowColor, // frame color
-      tint: tint ?? actionState.windowTint, // glass color
-      opacity: actionState.windowOpacity,
-      uValue: uValue ?? actionState.windowUValue,
-      airPermeability: actionState.windowAirPermeability,
-      normal: [0, -1, 0],
-      rotation: [0, 0, 0],
-      parentId: pId,
-      parentType: ObjectType.Wall,
-      foundationId: fId,
-      id: id,
-    } as WindowModel;
-  }
-
   static makeGableRoof(id: string, fId: string, wId: string, rise: number, color: string, rValue: number) {
     const actionState = useStore.getState().actionState;
     return {
@@ -420,6 +361,73 @@ export class GenAIUtil {
       foundationId: fId,
       id: id,
     } as PyramidRoofModel;
+  }
+
+  static makeWindow(
+    id: string,
+    pId: string,
+    fId: string,
+    center: number[],
+    size: number[],
+    uValue: number,
+    color: string,
+    tint: string,
+    windowType: WindowType,
+    shutter: boolean,
+    shutterColor: string,
+    shutterWidth: number,
+    horizontalMullion: boolean,
+    horizontalMullionSpacing: number,
+    verticalMullion: boolean,
+    verticalMullionSpacing: number,
+    mullionColor: string,
+    mullionWidth: number,
+  ) {
+    const actionState = useStore.getState().actionState;
+    const [cx, cz] = center;
+    const [lx, lz] = size;
+    return {
+      type: ObjectType.Window,
+      cx: cx,
+      cy: 0.3,
+      cz: cz,
+      lx: lx,
+      ly: 0.3,
+      lz: lz,
+      leftShutter: shutter !== undefined ? shutter : actionState.windowShutterLeft,
+      rightShutter: shutter !== undefined ? shutter : actionState.windowShutterRight,
+      shutterColor: shutterColor ?? actionState.windowShutterColor,
+      shutterWidth: shutterWidth !== undefined ? shutterWidth : actionState.windowShutterWidth,
+      horizontalMullion: horizontalMullion !== undefined ? horizontalMullion : actionState.windowHorizontalMullion,
+      verticalMullion: verticalMullion !== undefined ? verticalMullion : actionState.windowVerticalMullion,
+      mullionWidth: mullionWidth !== undefined ? mullionWidth : actionState.windowMullionWidth,
+      horizontalMullionSpacing:
+        horizontalMullionSpacing !== undefined ? horizontalMullionSpacing : actionState.windowHorizontalMullionSpacing,
+      verticalMullionSpacing:
+        verticalMullionSpacing !== undefined ? verticalMullionSpacing : actionState.windowVerticalMullionSpacing,
+      mullionColor: mullionColor ?? actionState.windowMullionColor,
+      frame: true,
+      frameWidth: actionState.windowFrameWidth,
+      sillWidth: RoofUtil.isTypeRoof(ObjectType.Wall) ? 0 : actionState.windowSillWidth,
+      windowType: windowType ?? actionState.windowType,
+      empty: actionState.windowEmpty,
+      interior: actionState.windowInterior,
+      archHeight: actionState.windowArchHeight,
+      lineWidth: 0.2,
+      lineColor: '#000000',
+      showLabel: false,
+      color: color ?? actionState.windowColor, // frame color
+      tint: tint ?? actionState.windowTint, // glass color
+      opacity: actionState.windowOpacity,
+      uValue: uValue ?? actionState.windowUValue,
+      airPermeability: actionState.windowAirPermeability,
+      normal: [0, -1, 0],
+      rotation: [0, 0, 0],
+      parentId: pId,
+      parentType: ObjectType.Wall,
+      foundationId: fId,
+      id: id,
+    } as WindowModel;
   }
 
   static makeMansardRoof(

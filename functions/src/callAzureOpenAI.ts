@@ -55,12 +55,19 @@ Door has a property "uValue" in the unit of W/(m²·℃), which defaults to 1.
 Window size [lx, ly], lx is width, ly is height.
 Window position [cx, cz]. cx is relative to center of the parent wall, cz is height calculated from the bottom of the wall.
 Window has a number property "uValue" in the unit of W/(m²·℃), which defaults to 2.
+Window has a number property "airPermeability" in the unit of m³/(h·m²), which defaults to 0.
 Window has a string property "color" in HTML hex color code, which defaults to "#FFFFFF".
 Window has a string property "tint" in HTML hex color code, which defaults to "#73D8FF".
 Window has a string property "windowType" that can be either "Default" or "Arched", which defaults to "Default".
 Window has a boolean property "shutter", which defaults to false.
 Window has a string property "shutterColor", which defaults to "#808080".
 Window has a number property "shutterWidth", which defaults to 0.5 (relative to the width of window).
+Window has a boolean property "horizontalMullion", which defaults to true.
+Window has a number property "horizontalMullionSpacing", which defaults to 0.5 meter.
+Window has a boolean property "verticalMullion", which defaults to true.
+Window has a number property "verticalMullionSpacing", which defaults to 0.5 meter.
+Window has a string property "mullionColor", which defaults to "#ffffff".
+Window has a number property "mullionWidth", which defaults to 0.06 meter.
 
 When building a house, first draw a rectangle on the foundation, which defines the positions of walls, then put a wall on each side of the rectangle.
 The endpoints of the walls should be the same as the vertices of the rectangle.
@@ -172,7 +179,7 @@ export const callAzureOpenAI = async (
                       center: { type: 'array', items: { type: 'number' } },
                       size: { type: 'array', items: { type: 'number' } },
                       color: { type: 'string' },
-                      rValue: { type: 'string' },
+                      rValue: { type: 'number' },
                       rotation: { type: 'number' },
                     },
                     required: ['type', 'id', 'center', 'size', 'color', 'rotation', 'rValue'],
@@ -186,7 +193,7 @@ export const callAzureOpenAI = async (
                       pId: { type: 'string' },
                       size: { type: 'array', items: { type: 'number' } },
                       color: { type: 'string' },
-                      rValue: { type: 'string' },
+                      rValue: { type: 'number' },
                       leftPoint: { type: 'array', items: { type: 'number' } },
                       rightPoint: { type: 'array', items: { type: 'number' } },
                       leftConnectId: { type: 'string' },
@@ -218,7 +225,7 @@ export const callAzureOpenAI = async (
                       roofType: { type: 'string', enum: ['Gable', 'Pyramid', 'Hip', 'Mansard', 'Gambrel'] },
                       rise: { type: 'number' },
                       color: { type: 'string' },
-                      rValue: { type: 'string' },
+                      rValue: { type: 'number' },
                       ridgeLength: { type: 'number' },
                     },
                     required: ['type', 'id', 'fId', 'wId', 'roofType', 'rise', 'color', 'ridgeLength', 'rValue'],
@@ -234,7 +241,7 @@ export const callAzureOpenAI = async (
                       center: { type: 'array', items: { type: 'number' } },
                       size: { type: 'array', items: { type: 'number' } },
                       color: { type: 'string' },
-                      uValue: { type: 'string' },
+                      uValue: { type: 'number' },
                     },
                     required: ['type', 'id', 'pId', 'fId', 'center', 'size', 'color', 'uValue'],
                     additionalProperties: false,
@@ -248,13 +255,20 @@ export const callAzureOpenAI = async (
                       fId: { type: 'string' },
                       center: { type: 'array', items: { type: 'number' } },
                       size: { type: 'array', items: { type: 'number' } },
-                      uValue: { type: 'string' },
+                      uValue: { type: 'number' },
+                      airPermeability: { type: 'number' },
                       color: { type: 'string' },
                       tint: { type: 'string' },
                       windowType: { type: 'string' },
                       shutter: { type: 'boolean' },
                       shutterColor: { type: 'string' },
                       shutterWidth: { type: 'number' },
+                      horizontalMullion: { type: 'boolean' },
+                      horizontalMullionSpacing: { type: 'number' },
+                      verticalMullion: { type: 'boolean' },
+                      verticalMullionSpacing: { type: 'number' },
+                      mullionColor: { type: 'string' },
+                      mullionWidth: { type: 'number' },
                     },
                     required: [
                       'type',
@@ -264,12 +278,19 @@ export const callAzureOpenAI = async (
                       'center',
                       'size',
                       'uValue',
+                      'airPermeability',
                       'color',
                       'tint',
                       'windowType',
                       'shutter',
                       'shutterColor',
                       'shutterWidth',
+                      'horizontalMullion',
+                      'horizontalMullionSpacing',
+                      'verticalMullion',
+                      'verticalMullionSpacing',
+                      'mullionColor',
+                      'mullionWidth',
                     ],
                     additionalProperties: false,
                   },

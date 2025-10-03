@@ -9,8 +9,12 @@ export interface WindowModel extends ElementModel {
   // solar heat gain coefficient (https://en.wikipedia.org/wiki/Solar_gain) = 1 - opacity
   opacity: number;
   tint: string;
+
+  // U-value and air permeability are two different things.
+  // perhaps we should require the latter to be defined with a non-zero value
   uValue: number;
   airPermeability?: number;
+
   setback?: number;
 
   leftShutter?: boolean;
