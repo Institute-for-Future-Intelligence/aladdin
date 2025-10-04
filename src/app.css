@@ -75,3 +75,8 @@
   width: calc(100% - var(--percentWidth));
   position: relative;
 }
+
+.ant-checkbox-wrapper {
+  line-height: normal;
+}
+

@@ -3,7 +3,6 @@
  */
 
 import { Select, Space } from 'antd';
-import { MenuItem } from '../contextMenu/menuItems';
 import i18n from 'src/i18n/i18n';
 import { useStore } from 'src/stores/common';
 import { useLanguage } from 'src/hooks';
@@ -12,6 +11,7 @@ import React, { useMemo } from 'react';
 import { EnergyModelingType } from '../../types';
 import { useDataStore } from '../../stores/commonData';
 import { DEFAULT_CSP_DAYS_PER_YEAR, DEFAULT_DAYS_PER_YEAR, DEFAULT_SUT_DAYS_PER_YEAR } from 'src/constants';
+import { MainMenuItem } from './mainMenuItems';
 
 const { Option } = Select;
 
@@ -34,7 +34,7 @@ export const SimulationSamplingDaysSelect = React.memo(({ type }: { type: Energy
   }, [type, defaultDaysPerYear, cspDaysPerYear, sutDaysPerYear]);
 
   return (
-    <MenuItem noPadding stayAfterClick>
+    <MainMenuItem stayAfterClick>
       <Select
         style={{ marginLeft: '150px', width: '72px' }}
         value={daysPerYear}
@@ -89,6 +89,6 @@ export const SimulationSamplingDaysSelect = React.memo(({ type }: { type: Energy
         </Option>
       </Select>
       <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.option.DaysPerYear', lang)}</Space>
-    </MenuItem>
+    </MainMenuItem>
   );
 });

@@ -2,7 +2,6 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { MenuItem } from '../contextMenu/menuItems';
 import { useStore } from 'src/stores/common';
 import i18n from 'src/i18n/i18n';
 import { showInfo } from 'src/helpers';
@@ -10,6 +9,7 @@ import ModelSiteDialog from '../contextMenu/elementMenu/modelSiteDialog';
 import { useLanguage } from 'src/hooks';
 import React, { useState } from 'react';
 import * as Selector from '../../stores/selector';
+import { MainMenuItem } from './mainMenuItems';
 
 export const PublishOnModelMapItem = React.memo(() => {
   const lang = useLanguage();
@@ -37,9 +37,7 @@ export const PublishOnModelMapItem = React.memo(() => {
 
   return (
     <>
-      <MenuItem noPadding onClick={handleClick}>
-        {i18n.t('menu.file.PublishOnModelsMap', lang)}...
-      </MenuItem>
+      <MainMenuItem onClick={handleClick}>{i18n.t('menu.file.PublishOnModelsMap', lang)}...</MainMenuItem>
       {modelSiteDialogVisible && <ModelSiteDialog setDialogVisible={setModelSiteDialogVisible} />}
     </>
   );

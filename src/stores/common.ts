@@ -143,6 +143,9 @@ export interface CommonStoreState {
   audioTitle: string;
   user: User;
   language: string;
+  lang: {
+    lng: string;
+  };
   floatingWindowOpacity: number;
   selectedFloatingWindow: string | null;
   cloudFile: string | undefined;
@@ -711,6 +714,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           audioUrl: DEFAULT_AUDIO_URL,
           audioTitle: DEFAULT_AUDIO_TITLE,
           language: 'en',
+          lang: { lng: 'en' },
           floatingWindowOpacity: FLOATING_WINDOW_OPACITY,
           selectedFloatingWindow: null,
           cloudFile: undefined,
@@ -5408,6 +5412,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
         skipHydration: Util.isOpenFromURL(),
         partialize: (state) => ({
           language: state.language,
+          lang: state.lang,
           animate24Hours: state.animate24Hours,
           floatingWindowOpacity: state.floatingWindowOpacity,
           selectedFloatingWindow: state.selectedFloatingWindow,

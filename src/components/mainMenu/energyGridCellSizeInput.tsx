@@ -3,13 +3,13 @@
  */
 
 import { InputNumber, Space } from 'antd';
-import { MenuItem } from '../contextMenu/menuItems';
 import i18n from 'src/i18n/i18n';
 import { useStore } from 'src/stores/common';
 import { useLanguage } from 'src/hooks';
 import * as Selector from '../../stores/selector';
 import React, { useMemo } from 'react';
 import { EnergyModelingType } from '../../types';
+import { MainMenuItem } from './mainMenuItems';
 
 export const EnergyGridCellSizeInput = React.memo(({ type }: { type: EnergyModelingType }) => {
   const radiationCellSize = useStore(Selector.world.solarRadiationHeatmapGridCellSize);
@@ -33,7 +33,7 @@ export const EnergyGridCellSizeInput = React.memo(({ type }: { type: EnergyModel
   }, [type, pvGridCellSize, cspGridCellSize, sutGridCellSize, radiationCellSize]);
 
   return (
-    <MenuItem noPadding stayAfterClick>
+    <MainMenuItem stayAfterClick>
       <Space style={{ width: '150px' }}>{i18n.t('menu.option.GridCellSize', lang) + ':'}</Space>
       <InputNumber
         min={0.1}
@@ -63,6 +63,6 @@ export const EnergyGridCellSizeInput = React.memo(({ type }: { type: EnergyModel
         }}
       />
       <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
-    </MenuItem>
+    </MainMenuItem>
   );
 });

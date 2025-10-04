@@ -2,14 +2,20 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import { MenuProps } from 'antd';
 import { useStore } from 'src/stores/common';
-import { MenuItem } from '../contextMenu/menuItems';
 import i18n from 'src/i18n/i18n';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
+import { useLanguage } from 'src/hooks';
+import { MainMenuItem, MainSubMenu } from './mainMenuItems';
 
-export const createPublicMenu = (uid: string | null, viewOnly: boolean, openModelsMap: boolean) => {
-  const lang = { lng: useStore.getState().language };
+interface Props {
+  uid: string | null;
+  viewOnly: boolean;
+  openModelsMap: boolean;
+}
+
+const PublicMenu = ({ uid, viewOnly, openModelsMap }: Props) => {
+  const lang = useLanguage();
 
   const handleClickMyModels = () => {
     usePrimitiveStore.getState().set((state) => {
@@ -36,31 +42,19 @@ export const createPublicMenu = (uid: string | null, viewOnly: boolean, openMode
     }
   };
 
-  const items: MenuProps['items'] = [];
+  return (
+    <MainSubMenu label={i18n.t('menu.publicSubMenu', lang)}>
+      {/* my models */}
+      {uid && !viewOnly && (
+        <MainMenuItem onClick={handleClickMyModels}>{i18n.t('menu.ModelsGallery', lang)}...</MainMenuItem>
+      )}
 
-  // my-models
-  if (uid && !viewOnly) {
-    items.push({
-      key: 'my-models',
-      label: (
-        <MenuItem noPadding onClick={handleClickMyModels}>
-          {i18n.t('menu.ModelsGallery', lang)}...
-        </MenuItem>
-      ),
-    });
-  }
-
-  // models-map
-  if (!openModelsMap) {
-    items.push({
-      key: 'models-map',
-      label: (
-        <MenuItem noPadding onClick={handleClickModelsMap}>
-          {i18n.t('menu.ModelsMap', lang)}...
-        </MenuItem>
-      ),
-    });
-  }
-
-  return items;
+      {/* models map */}
+      {!openModelsMap && (
+        <MainMenuItem onClick={handleClickModelsMap}>{i18n.t('menu.ModelsMap', lang)}...</MainMenuItem>
+      )}
+    </MainSubMenu>
+  );
 };
+
+export default PublicMenu;

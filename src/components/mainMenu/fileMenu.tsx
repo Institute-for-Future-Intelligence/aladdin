@@ -2,19 +2,25 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { MenuProps } from 'antd';
-import { MenuItem } from '../contextMenu/menuItems';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { HOME_URL } from 'src/constants';
 import i18n from 'src/i18n/i18n';
 import { saveImage } from 'src/helpers';
-import { LabelMark } from './mainMenuItems';
+import { LabelMark, MainMenuItem, MainSubMenu } from './mainMenuItems';
 import { PublishOnModelMapItem } from './publishOnModelMapItem';
+import { useLanguage } from 'src/hooks';
+import { t } from 'i18next';
 
-export const createFileMenu = (viewOnly: boolean, isMac: boolean, canvas?: HTMLCanvasElement | null) => {
-  const lang = { lng: useStore.getState().language };
+interface FileMenuProps {
+  viewOnly: boolean;
+  isMac: boolean;
+  canvas?: HTMLCanvasElement | null;
+}
+
+const FileMenu = ({ viewOnly, isMac, canvas }: FileMenuProps) => {
+  const lang = useLanguage();
   const user = useStore.getState().user;
   const cloudFile = useStore.getState().cloudFile;
   const cloudFileBelongToProject = useStore.getState().cloudFileBelongToProject;
@@ -137,100 +143,64 @@ export const createFileMenu = (viewOnly: boolean, isMac: boolean, canvas?: HTMLC
     }
   };
 
-  const items: MenuProps['items'] = [];
+  const openCloudFile = !!(user.uid && !viewOnly);
+  const saveCloudFile = !!(user.uid && cloudFile && !viewOnly && !cloudFileBelongToProject());
+  const saveAsCloudFile = openCloudFile;
 
-  // create-new-file
-  if (!viewOnly) {
-    items.push({
-      key: 'create-new-file',
-      label: (
-        <MenuItem noPadding onClick={handleCreateNewFile}>
+  return (
+    <MainSubMenu label={t('menu.fileSubMenu', lang)}>
+      {/* create new file */}
+      {!viewOnly && (
+        <MainMenuItem onClick={handleCreateNewFile}>
           {i18n.t('menu.file.CreateNewFile', lang)}
-          <LabelMark>({isMac ? '⌘' : 'Ctrl'}+F)</LabelMark>
-        </MenuItem>
-      ),
-    });
-  }
+          <LabelMark>({isMac ? '⌘' : 'Ctrl'}+F)</LabelMark>...
+        </MainMenuItem>
+      )}
 
-  // open-local-file
-  if (!viewOnly) {
-    items.push({
-      key: 'open-local-file',
-      label: (
-        <MenuItem noPadding onClick={handleOpenLocalFile}>
+      {/* open local file */}
+      {!viewOnly && (
+        <MainMenuItem onClick={handleOpenLocalFile}>
           {i18n.t('menu.file.OpenLocalFile', lang)}
           <LabelMark>({isMac ? '⌘' : 'Ctrl'}+O)</LabelMark>...
-        </MenuItem>
-      ),
-    });
-  }
+        </MainMenuItem>
+      )}
 
-  // save-local-file
-  items.push({
-    key: 'save-local-file',
-    label: (
-      <MenuItem noPadding onClick={handleSaveLocalFile}>
-        {i18n.t('menu.file.SaveAsLocalFile', lang)}
-        <LabelMark>({isMac ? '⌘' : 'Ctrl'}+S)</LabelMark>...
-      </MenuItem>
-    ),
-  });
+      {/* save as local file */}
+      {
+        <MainMenuItem onClick={handleSaveLocalFile}>
+          {i18n.t('menu.file.SaveAsLocalFile', lang)}
+          <LabelMark>({isMac ? '⌘' : 'Ctrl'}+S)</LabelMark>...
+        </MainMenuItem>
+      }
 
-  // open-cloud-file
-  if (user.uid && !viewOnly) {
-    items.push({
-      key: 'open-cloud-file',
-      label: (
-        <MenuItem noPadding onClick={handleOpenCloudFile}>
+      {/* open cloud file */}
+      {openCloudFile && (
+        <MainMenuItem onClick={handleOpenCloudFile}>
           {i18n.t('menu.file.OpenCloudFile', lang)}
           <LabelMark>({isMac ? '⌘' : 'Ctrl'}+Shift+O)</LabelMark>...
-        </MenuItem>
-      ),
-    });
-  }
+        </MainMenuItem>
+      )}
 
-  // save-cloud-file
-  if (user.uid && cloudFile && !viewOnly && !cloudFileBelongToProject()) {
-    items.push({
-      key: 'save-cloud-file',
-      label: (
-        <MenuItem noPadding onClick={handleSaveCloudFile}>
+      {/* save cloud file */}
+      {saveCloudFile && (
+        <MainMenuItem onClick={handleSaveCloudFile}>
           {i18n.t('menu.file.SaveCloudFile', lang)}
           <LabelMark>({isMac ? '⌘' : 'Ctrl'}+Shift+S)</LabelMark>...
-        </MenuItem>
-      ),
-    });
-  }
+        </MainMenuItem>
+      )}
 
-  // save-as-cloud-file
-  if (user.uid && !viewOnly) {
-    items.push({
-      key: 'save-as-cloud-file',
-      label: (
-        <MenuItem noPadding onClick={handleSaveAsCloudFile}>
-          {i18n.t('menu.file.SaveAsCloudFile', lang)}
-        </MenuItem>
-      ),
-    });
-  }
+      {/* save as cloud file */}
+      {saveAsCloudFile && (
+        <MainMenuItem onClick={handleSaveAsCloudFile}>{i18n.t('menu.file.SaveAsCloudFile', lang)}...</MainMenuItem>
+      )}
 
-  // publish-on-model-map
-  if (!viewOnly) {
-    items.push({
-      key: 'publish-on-model-map',
-      label: <PublishOnModelMapItem />,
-    });
-  }
+      {/* publish on model map */}
+      {!viewOnly && <PublishOnModelMapItem />}
 
-  // screen-shot
-  items.push({
-    key: 'take-screen-shot',
-    label: (
-      <MenuItem noPadding onClick={handleTakeScreenShot}>
-        {i18n.t('menu.file.TakeScreenshot', lang)}
-      </MenuItem>
-    ),
-  });
-
-  return items;
+      {/* take screen shot */}
+      {<MainMenuItem onClick={handleTakeScreenShot}>{i18n.t('menu.file.TakeScreenshot', lang)}</MainMenuItem>}
+    </MainSubMenu>
+  );
 };
+
+export default FileMenu;

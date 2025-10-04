@@ -3,19 +3,19 @@
  */
 
 import { Space, Switch } from 'antd';
-import { MenuItem } from '../contextMenu/menuItems';
 import i18n from 'src/i18n/i18n';
 import { useStore } from 'src/stores/common';
 import * as Selector from '../../stores/selector';
 import { useLanguage } from 'src/hooks';
 import React from 'react';
+import { MainMenuItem } from './mainMenuItems';
 
 export const SolarPanelNoAnimationSwitch = React.memo(() => {
   const lang = useLanguage();
   const noAnimationForSolarPanelSimulation = useStore(Selector.world.noAnimationForSolarPanelSimulation);
 
   return (
-    <MenuItem noPadding stayAfterClick>
+    <MainMenuItem stayAfterClick>
       <Space style={{ width: '280px' }}>{i18n.t('menu.solarPanel.SolarPanelSimulationNoAnimation', lang) + ':'}</Space>
       <Switch
         checked={noAnimationForSolarPanelSimulation}
@@ -25,6 +25,6 @@ export const SolarPanelNoAnimationSwitch = React.memo(() => {
           });
         }}
       />
-    </MenuItem>
+    </MainMenuItem>
   );
 });

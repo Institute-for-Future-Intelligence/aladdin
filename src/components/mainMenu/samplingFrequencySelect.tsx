@@ -3,7 +3,6 @@
  */
 
 import { Select, Space } from 'antd';
-import { MenuItem } from '../contextMenu/menuItems';
 import i18n from 'src/i18n/i18n';
 import { useStore } from 'src/stores/common';
 import { useLanguage } from 'src/hooks';
@@ -11,6 +10,7 @@ import React, { useMemo } from 'react';
 import { EnergyModelingType } from '../../types';
 import * as Selector from '../../stores/selector';
 import { DEFAULT_TIMES_PER_HOUR } from '../../constants';
+import { MainMenuItem } from './mainMenuItems';
 
 const { Option } = Select;
 
@@ -33,7 +33,7 @@ export const SamplingFrequencySelect = React.memo(({ type }: { type: EnergyModel
   }, [type, defaultTimesPerHour, cspTimesPerHour, sutTimesPerHour]);
 
   return (
-    <MenuItem noPadding stayAfterClick>
+    <MainMenuItem stayAfterClick>
       <Space style={{ width: '150px' }}>{i18n.t('menu.option.SamplingFrequency', lang) + ':'}</Space>
       <Select
         style={{ width: '72px' }}
@@ -78,6 +78,6 @@ export const SamplingFrequencySelect = React.memo(({ type }: { type: EnergyModel
         </Option>
       </Select>
       <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.option.TimesPerHour', lang)}</Space>
-    </MenuItem>
+    </MainMenuItem>
   );
 });

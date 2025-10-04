@@ -2,13 +2,9 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { MenuProps } from 'antd';
-import { MenuItem } from '../contextMenu/menuItems';
 import { useStore } from 'src/stores/common';
-import { ElementModel } from 'src/models/ElementModel';
-import { UndoManager } from 'src/undo/UndoManager';
 import i18n from 'src/i18n/i18n';
-import { LabelMark } from './mainMenuItems';
+import { LabelMark, MainMenuItem, MainSubMenu } from './mainMenuItems';
 import { ActionInfo, ObjectType } from 'src/types';
 import { showInfo } from 'src/helpers';
 import { Util } from 'src/Util';
@@ -18,33 +14,26 @@ import { WallModel } from 'src/models/WallModel';
 import { UndoableDelete } from 'src/undo/UndoableDelete';
 import { UndoablePaste } from 'src/undo/UndoablePaste';
 import { UNDO_SHOW_INFO_DURATION } from 'src/constants';
+import { t } from 'i18next';
+import { useLanguage } from 'src/hooks';
+import * as Selector from '../../stores/selector';
 
-export const createEditMenu = (
-  selectedElement: ElementModel | null,
-  readyToPaste: boolean,
-  undoManager: UndoManager,
-  isMac: boolean,
-) => {
-  const lang = { lng: useStore.getState().language };
+interface Props {
+  isMac: boolean;
+}
+const EditMenu = ({ isMac }: Props) => {
+  const lang = useLanguage();
+  const elementsToPaste = useStore(Selector.elementsToPaste);
+  const selectedElement = useStore(Selector.selectedElement);
+  const undoManager = useStore(Selector.undoManager);
+
+  const readyToPaste = elementsToPaste && elementsToPaste.length > 0;
+
+  if (!(selectedElement || readyToPaste || undoManager.hasUndo() || undoManager.hasRedo())) return null;
+
   const loggable = useStore.getState().loggable;
 
   const setCommonStore = useStore.getState().set;
-
-  const copySelectedElement = () => {
-    if (selectedElement) {
-      useStore.getState().copyElementById(selectedElement.id);
-      if (loggable) {
-        setCommonStore((state) => {
-          state.actionInfo = {
-            name: 'Copy',
-            timestamp: new Date().getTime(),
-            elementId: selectedElement.id,
-            elementType: selectedElement.type,
-          } as ActionInfo;
-        });
-      }
-    }
-  };
 
   const cutSelectedElement = () => {
     if (!selectedElement || selectedElement.type === ObjectType.Roof) return;
@@ -108,6 +97,22 @@ export const createEditMenu = (
     }
   };
 
+  const copySelectedElement = () => {
+    if (selectedElement) {
+      useStore.getState().copyElementById(selectedElement.id);
+      if (loggable) {
+        setCommonStore((state) => {
+          state.actionInfo = {
+            name: 'Copy',
+            timestamp: new Date().getTime(),
+            elementId: selectedElement.id,
+            elementType: selectedElement.type,
+          } as ActionInfo;
+        });
+      }
+    }
+  };
+
   const pasteSelectedElement = () => {
     const elementsToPaste = useStore.getState().elementsToPaste;
 
@@ -165,72 +170,49 @@ export const createEditMenu = (
     }
   };
 
-  const items: MenuProps['items'] = [];
-
-  // cut
-  if (selectedElement) {
-    items.push({
-      key: 'cut',
-      label: (
-        <MenuItem noPadding onClick={cutSelectedElement}>
+  return (
+    <MainSubMenu label={t('menu.editSubMenu', lang)}>
+      {/* cut */}
+      {selectedElement && (
+        <MainMenuItem onClick={cutSelectedElement}>
           {i18n.t('word.Cut', lang)}
           <LabelMark>({isMac ? '⌘' : 'Ctrl'}+X)</LabelMark>
-        </MenuItem>
-      ),
-    });
-  }
+        </MainMenuItem>
+      )}
 
-  // copy
-  if (selectedElement) {
-    items.push({
-      key: 'copy',
-      label: (
-        <MenuItem noPadding onClick={copySelectedElement}>
+      {/* copy */}
+      {selectedElement && (
+        <MainMenuItem onClick={copySelectedElement}>
           {i18n.t('word.Copy', lang)}
           <LabelMark>({isMac ? '⌘' : 'Ctrl'}+C)</LabelMark>
-        </MenuItem>
-      ),
-    });
-  }
+        </MainMenuItem>
+      )}
 
-  // paste
-  if (readyToPaste) {
-    items.push({
-      key: 'paste',
-      label: (
-        <MenuItem noPadding onClick={pasteSelectedElement}>
+      {/* paste */}
+      {readyToPaste && (
+        <MainMenuItem onClick={pasteSelectedElement}>
           {i18n.t('word.Paste', lang)}
           <LabelMark>({isMac ? '⌘' : 'Ctrl'}+V)</LabelMark>
-        </MenuItem>
-      ),
-    });
-  }
+        </MainMenuItem>
+      )}
 
-  // undo
-  if (undoManager.hasUndo()) {
-    items.push({
-      key: 'undo',
-      label: (
-        <MenuItem noPadding onClick={handleUndo}>
+      {/* undo */}
+      {undoManager.hasUndo() && (
+        <MainMenuItem stayAfterClick onClick={handleUndo}>
           {i18n.t('menu.edit.Undo', lang) + ': ' + undoManager.getLastUndoName()}
           <LabelMark>({isMac ? '⌘' : 'Ctrl'}+Z)</LabelMark>
-        </MenuItem>
-      ),
-    });
-  }
+        </MainMenuItem>
+      )}
 
-  // redo
-  if (undoManager.hasRedo()) {
-    items.push({
-      key: 'redo',
-      label: (
-        <MenuItem noPadding onClick={handleRedo}>
+      {/* redo */}
+      {undoManager.hasRedo() && (
+        <MainMenuItem stayAfterClick onClick={handleRedo}>
           {i18n.t('menu.edit.Redo', lang) + ': ' + undoManager.getLastRedoName()}
           <LabelMark>({isMac ? '⌘' : 'Ctrl'}+Y)</LabelMark>
-        </MenuItem>
-      ),
-    });
-  }
-
-  return items;
+        </MainMenuItem>
+      )}
+    </MainSubMenu>
+  );
 };
+
+export default EditMenu;

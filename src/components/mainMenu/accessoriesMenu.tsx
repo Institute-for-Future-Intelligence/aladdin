@@ -2,16 +2,16 @@
  * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
-import { MenuProps } from 'antd';
 import { useStore } from 'src/stores/common';
 import i18n from 'src/i18n/i18n';
-import { MainMenuCheckbox } from './mainMenuItems';
+import { MainMenuCheckbox, MainSubMenu } from './mainMenuItems';
 import * as Selector from '../../stores/selector';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
+import { useLanguage } from 'src/hooks';
 
-export const createAccessoriesMenu = () => {
-  const lang = { lng: useStore.getState().language };
+const AccessoriesMenu = () => {
+  const lang = useLanguage();
 
   const setCommonStore = useStore.getState().set;
   const addUndoable = useStore.getState().addUndoable;
@@ -153,62 +153,39 @@ export const createAccessoriesMenu = () => {
     });
   };
 
-  const items: MenuProps['items'] = [
-    // site-info-panel-check-box
-    {
-      key: 'site-info-panel-check-box',
-      label: (
-        <MainMenuCheckbox selector={Selector.viewState.showSiteInfoPanel} onChange={toggleSiteInfoPanel}>
-          {i18n.t('menu.view.accessories.SiteInformation', lang)}
-        </MainMenuCheckbox>
-      ),
-    },
-    // design-info-panel-check-box
-    {
-      key: 'design-info-panel-check-box',
-      label: (
-        <MainMenuCheckbox selector={Selector.viewState.showDesignInfoPanel} onChange={toggleDesignInfoPanel}>
-          {i18n.t('menu.view.accessories.DesignInformation', lang)}
-        </MainMenuCheckbox>
-      ),
-    },
-    // instruction-panel-check-box
-    {
-      key: 'instruction-panel-check-box',
-      label: (
-        <MainMenuCheckbox selector={Selector.viewState.showInstructionPanel} onChange={toggleInstructionPanel}>
-          {i18n.t('menu.view.accessories.Instruction', lang)}
-        </MainMenuCheckbox>
-      ),
-    },
-    // sticky-note-panel-check-box
-    {
-      key: 'sticky-note-panel-check-box',
-      label: (
-        <MainMenuCheckbox selector={Selector.viewState.showStickyNotePanel} onChange={toggleStickyNote}>
-          {i18n.t('menu.view.accessories.StickyNote', lang)}
-        </MainMenuCheckbox>
-      ),
-    },
-    // audio-player-panel-check-box
-    {
-      key: 'audio-player-panel-check-box',
-      label: (
-        <MainMenuCheckbox selector={Selector.viewState.showAudioPlayerPanel} onChange={toggleAudioPlayer}>
-          {i18n.t('menu.view.accessories.AudioPlayer', lang)}
-        </MainMenuCheckbox>
-      ),
-    },
-    // share-links-check-box
-    {
-      key: 'share-links-check-box',
-      label: (
-        <MainMenuCheckbox selector={Selector.viewState.hideShareLinks} onChange={toggleShareLinks} negate>
-          {i18n.t('menu.view.accessories.ShareLinks', lang)}
-        </MainMenuCheckbox>
-      ),
-    },
-  ];
+  return (
+    <MainSubMenu label={i18n.t('menu.view.accessoriesSubMenu', lang)}>
+      {/* site info panel check box */}
+      <MainMenuCheckbox selector={Selector.viewState.showSiteInfoPanel} onChange={toggleSiteInfoPanel}>
+        {i18n.t('menu.view.accessories.SiteInformation', lang)}
+      </MainMenuCheckbox>
 
-  return items;
+      {/* design info panel check box */}
+      <MainMenuCheckbox selector={Selector.viewState.showDesignInfoPanel} onChange={toggleDesignInfoPanel}>
+        {i18n.t('menu.view.accessories.DesignInformation', lang)}
+      </MainMenuCheckbox>
+
+      {/* instruction panel check box */}
+      <MainMenuCheckbox selector={Selector.viewState.showInstructionPanel} onChange={toggleInstructionPanel}>
+        {i18n.t('menu.view.accessories.Instruction', lang)}
+      </MainMenuCheckbox>
+
+      {/* sticky note panel check box */}
+      <MainMenuCheckbox selector={Selector.viewState.showStickyNotePanel} onChange={toggleStickyNote}>
+        {i18n.t('menu.view.accessories.StickyNote', lang)}
+      </MainMenuCheckbox>
+
+      {/* audio player panel check box */}
+      <MainMenuCheckbox selector={Selector.viewState.showAudioPlayerPanel} onChange={toggleAudioPlayer}>
+        {i18n.t('menu.view.accessories.AudioPlayer', lang)}
+      </MainMenuCheckbox>
+
+      {/* share links check box */}
+      <MainMenuCheckbox selector={Selector.viewState.hideShareLinks} onChange={toggleShareLinks} negate>
+        {i18n.t('menu.view.accessories.ShareLinks', lang)}
+      </MainMenuCheckbox>
+    </MainSubMenu>
+  );
 };
+
+export default AccessoriesMenu;

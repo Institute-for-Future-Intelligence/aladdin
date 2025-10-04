@@ -1,0 +1,15 @@
+/* submenu items */
+.szh-menu__submenu > .szh-menu__item {
+  padding-left: 12px;
+  padding-right: 1.5rem !important;
+}
+
+.szh-menu__submenu > .szh-menu__item::after {
+  content: '❯';
+  position: absolute;
+  right: 0.5rem !important;
+}
+
+.szh-menu {
+  user-select: auto !important;
+}

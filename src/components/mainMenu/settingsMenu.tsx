@@ -2,15 +2,15 @@
  * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
-import { MenuProps } from 'antd';
 import { useStore } from 'src/stores/common';
-import { MenuItem } from '../contextMenu/menuItems';
 import i18n from 'src/i18n/i18n';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { Undoable } from 'src/undo/Undoable';
+import { useLanguage } from 'src/hooks';
+import { MainMenuItem, MainSubMenu } from './mainMenuItems';
 
-export const createSettingsMenu = () => {
-  const lang = { lng: useStore.getState().language };
+const SettingsMenu = () => {
+  const lang = useLanguage();
 
   const setCommonStore = useStore.getState().set;
   const addUndoable = useStore.getState().addUndoable;
@@ -183,115 +183,62 @@ export const createSettingsMenu = () => {
     }
   };
 
-  const items: MenuProps['items'] = [];
+  return (
+    <MainSubMenu label={i18n.t('menu.settingsSubMenu', lang)}>
+      {/* sun time */}
+      {!showHeliodonPanel && (
+        <MainMenuItem onClick={openHeliodonPanel}>{i18n.t('menu.settings.SunAndTime', lang)}...</MainMenuItem>
+      )}
 
-  // sun-time
-  if (!showHeliodonPanel) {
-    items.push({
-      key: 'sun-time',
-      label: (
-        <MenuItem noPadding onClick={openHeliodonPanel}>
-          {i18n.t('menu.settings.SunAndTime', lang)}...
-        </MenuItem>
-      ),
-    });
-  }
+      {/* show map panel */}
+      {!showMapPanel && <MainMenuItem onClick={openMapPanel}>{i18n.t('word.Location', lang)}...</MainMenuItem>}
 
-  // show-map-panel
-  if (!showMapPanel) {
-    items.push({
-      key: 'show-map-panel',
-      label: (
-        <MenuItem noPadding onClick={openMapPanel}>
-          {i18n.t('word.Location', lang)}...
-        </MenuItem>
-      ),
-    });
-  }
+      {/* weather panel */}
+      {!showWeatherPanel && (
+        <MainMenuItem onClick={openWeatherPanel}>{i18n.t('menu.settings.WeatherData', lang)}...</MainMenuItem>
+      )}
 
-  // weather-panel
-  if (!showWeatherPanel) {
-    items.push({
-      key: 'weather-panel',
-      label: (
-        <MenuItem noPadding onClick={openWeatherPanel}>
-          {i18n.t('menu.settings.WeatherData', lang)}...
-        </MenuItem>
-      ),
-    });
-  }
-
-  // diurnal-temperature-panel
-  if (!showDiurnalTemperaturePanel) {
-    items.push({
-      key: 'diurnal-temperature-panel',
-      label: (
-        <MenuItem noPadding onClick={openDiurnalTemperaturePanel}>
+      {/* diurnal temperature panel */}
+      {!showDiurnalTemperaturePanel && (
+        <MainMenuItem onClick={openDiurnalTemperaturePanel}>
           {i18n.t('menu.settings.DiurnalTemperature', lang)}...
-        </MenuItem>
-      ),
-    });
-  }
+        </MainMenuItem>
+      )}
 
-  // solar-panel-customization
-  if (!showSolarPanelCustomizationPanel) {
-    items.push({
-      key: 'solar-panel-customization',
-      label: (
-        <MenuItem noPadding onClick={openSolarPanelCustomizationPanel}>
+      {/* solar panel customization */}
+      {!showSolarPanelCustomizationPanel && (
+        <MainMenuItem onClick={openSolarPanelCustomizationPanel}>
           {i18n.t('menu.settings.CustomSolarPanels', lang)}...
-        </MenuItem>
-      ),
-    });
-  }
+        </MainMenuItem>
+      )}
 
-  // economics-panel
-  if (!showEconomicsPanel) {
-    items.push({
-      key: 'economics-panel',
-      label: (
-        <MenuItem noPadding onClick={openEconomicsPanel}>
+      {/* economics panel */}
+      {!showEconomicsPanel && (
+        <MainMenuItem onClick={openEconomicsPanel}>
           {i18n.t('economicsPanel.EconomicsParameters', lang)}...
-        </MenuItem>
-      ),
-    });
-  }
+        </MainMenuItem>
+      )}
 
-  // editor-panel
-  if (!showEditorPanel) {
-    items.push({
-      key: 'editor-panel',
-      label: (
-        <MenuItem noPadding onClick={openEditorPanel}>
-          {i18n.t('editorPanel.EditorParameters', lang)}...
-        </MenuItem>
-      ),
-    });
-  }
+      {/* editor panel */}
+      {!showEditorPanel && (
+        <MainMenuItem onClick={openEditorPanel}>{i18n.t('editorPanel.EditorParameters', lang)}...</MainMenuItem>
+      )}
 
-  // navigation-panel
-  if (!showNavigationPanel) {
-    items.push({
-      key: 'navigation-panel',
-      label: (
-        <MenuItem noPadding onClick={openNavigationPanel}>
+      {/* navigation panel */}
+      {!showNavigationPanel && (
+        <MainMenuItem onClick={openNavigationPanel}>
           {i18n.t('navigationPanel.NavigationParameters', lang)}...
-        </MenuItem>
-      ),
-    });
-  }
+        </MainMenuItem>
+      )}
 
-  // shadow-settings
-  if (!showShadowSettings) {
-    items.push({
-      key: 'shadow-settings',
-      label: (
-        <MenuItem noPadding onClick={openShadowSettings}>
+      {/* shadow settings */}
+      {!showShadowSettings && (
+        <MainMenuItem onClick={openShadowSettings}>
           {i18n.t('shadowSettingsPanel.ShadowSettings', lang)}...
-        </MenuItem>
-      ),
-    });
-  }
-
-  return items;
+        </MainMenuItem>
+      )}
+    </MainSubMenu>
+  );
 };
+
+export default SettingsMenu;

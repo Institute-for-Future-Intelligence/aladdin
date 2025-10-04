@@ -1,8 +1,6 @@
 /*
  * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
-import { MenuProps } from 'antd';
-import { MenuItem } from '../contextMenu/menuItems';
 import i18n from 'src/i18n/i18n';
 import { useStore } from 'src/stores/common';
 import { ProjectState } from 'src/types';
@@ -10,14 +8,12 @@ import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { fetchProject } from 'src/cloudProjectUtil';
 import { loadCloudFile } from 'src/cloudFileUtil';
 import { HOME_URL } from 'src/constants';
+import { useLanguage } from 'src/hooks';
+import { ExampleMenuItem, MainMenuItem, MainSubMenu } from './mainMenuItems';
 
-const mapFunction = ({ key, label }: { key: string; label: string }) => ({
-  key,
-  label: <MenuItem noPadding>{i18n.t(label, { lng: useStore.getState().language })}</MenuItem>,
-});
+const TutorialsMenu = () => {
+  const lang = useLanguage();
 
-export const createTutorialsMenu = (viewOnly: boolean) => {
-  const lang = { lng: useStore.getState().language };
   const setCommonStore = useStore.getState().set;
 
   const setProjectState = (projectState: ProjectState) => {
@@ -37,6 +33,8 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
   const loadProject = (title: string, designIndex: number) => {
     const owner = import.meta.env.VITE_EXAMPLE_PROJECT_OWNER;
     if (title && owner) {
+      const params = new URLSearchParams(window.location.search);
+      const viewOnly = params.get('viewonly') === 'true';
       fetchProject(owner, title, setProjectState).then(() => {
         loadCloudFile(owner, title + ' ' + designIndex, true, true, viewOnly).then(() => {
           setCommonStore((state) => {
@@ -63,396 +61,275 @@ export const createTutorialsMenu = (viewOnly: boolean) => {
     }
   };
 
-  const items: MenuProps['items'] = [
-    {
-      key: 'solar-energy-science',
-      label: <MenuItem noPadding>{i18n.t('menu.solarEnergyScienceSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'sun_angles',
-          label: 'menu.solarEnergyScienceTutorials.SunAngles',
-        },
-        {
-          key: 'insolation_and_climate',
-          label: 'menu.solarEnergyScienceTutorials.InsolationAndClimate',
-        },
-        {
-          key: 'solar_radiation_to_box',
-          label: 'menu.solarEnergyScienceTutorials.SolarRadiationToBox',
-        },
-        {
-          key: 'sun_beam_at_center',
-          label: 'menu.solarEnergyExamples.SunBeamAndHeliodon',
-        },
-      ].map(mapFunction),
-    },
-    {
-      key: 'building-science',
-      label: <MenuItem noPadding>{i18n.t('menu.buildingScienceSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'thermal_vs_building_envelope',
-          label: 'menu.buildingScienceTutorials.ThermalEnvelopeVsBuildingEnvelope',
-        },
-        {
-          key: 'effect_house_size',
-          label: 'menu.buildingScienceTutorials.EffectOfSizeOnBuildingEnergy',
-        },
-        {
-          key: 'effect_house_orientation',
-          label: 'menu.buildingScienceTutorials.EffectOfOrientationOnBuildingEnergy',
-        },
-        {
-          key: 'effect_wall_roof_insulation',
-          label: 'menu.buildingScienceTutorials.EffectOfInsulationOnBuildingEnergy',
-        },
-        {
-          key: 'effect_window_airtightness',
-          label: 'menu.buildingScienceTutorials.EffectOfAirtightnessOnBuildingEnergy',
-        },
-        {
-          key: 'effect_roof_color',
-          label: 'menu.buildingScienceTutorials.EffectOfRoofColorOnBuildingEnergy',
-        },
-        {
-          key: 'effect_eaves_overhang_length',
-          label: 'menu.buildingScienceTutorials.EffectOfEavesOverhangLengthOnBuildingEnergy',
-        },
-        {
-          key: 'effect_window_shgc',
-          label: 'menu.buildingScienceTutorials.EffectOfWindowSHGCOnBuildingEnergy',
-        },
-        {
-          key: 'effect_thermostat_setpoint',
-          label: 'menu.buildingScienceTutorials.EffectOfThermostatSetpointOnBuildingEnergy',
-        },
-        {
-          key: 'effect_programmable_thermostat',
-          label: 'menu.buildingScienceTutorials.EffectOfProgrammableThermostatOnBuildingEnergy',
-        },
-        {
-          key: 'effect_solar_panels',
-          label: 'menu.buildingScienceTutorials.EffectOfSolarPanelsOnBuildingEnergy',
-        },
-        {
-          key: 'effect_ground_temperature',
-          label: 'menu.buildingScienceTutorials.EffectOfGroundTemperatureOnBuildingEnergy',
-        },
-        {
-          key: 'effect_trees',
-          label: 'menu.buildingScienceTutorials.EffectOfTreesOnBuildingEnergy',
-        },
-      ].map(mapFunction),
-    },
-    {
-      key: 'building-design',
-      label: <MenuItem noPadding>{i18n.t('menu.buildingDesignSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'gable_roof_vs_hip_roof',
-          label: 'menu.buildingDesignTutorials.GableRoofVsHipRoof',
-        },
-        {
-          key: 'colonial_vs_saltbox',
-          label: 'menu.buildingDesignTutorials.ColonialVsSaltbox',
-        },
-        {
-          key: 'gambrel_roof_vs_mansard_roof',
-          label: 'menu.buildingDesignTutorials.GambrelRoofVsMansardRoof',
-        },
-        {
-          key: 'combination_roof_vs_bonnet_roof',
-          label: 'menu.buildingDesignTutorials.CombinationRoofVsBonnetRoof',
-        },
-        {
-          key: 'dutch_gable_roof',
-          label: 'menu.buildingDesignTutorials.DutchGableRoof',
-        },
-        {
-          key: 'raised_ranch',
-          label: 'menu.buildingDesignTutorials.RaisedRanch',
-        },
-        {
-          key: 'overhang_floor',
-          label: 'menu.buildingDesignTutorials.OverhangFloor',
-        },
-        {
-          key: 'gable_and_valley_roof',
-          label: 'menu.buildingDesignTutorials.GableAndValleyRoof',
-        },
-        {
-          key: 'clerestory_roof',
-          label: 'menu.buildingDesignTutorials.ClerestoryRoof',
-        },
-        {
-          key: 'monitor_roof',
-          label: 'menu.buildingDesignTutorials.MonitorRoof',
-        },
-        {
-          key: 'a_frame_house',
-          label: 'menu.buildingDesignTutorials.AFrameHouse',
-        },
-        {
-          key: 'half_timbered_house',
-          label: 'menu.buildingDesignTutorials.HalfTimberedHouse',
-        },
-        {
-          key: 'all_roof_types',
-          label: 'menu.buildingDesignTutorials.AllBasicRoofTypes',
-        },
-      ].map(mapFunction),
-    },
-    {
-      key: 'photovoltaic-solar-power',
-      label: <MenuItem noPadding>{i18n.t('menu.photovoltaicSolarPowerSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'photovoltaic-solar-power-basic',
-          label: <MenuItem noPadding>{i18n.t('word.BasicTopics', lang)}</MenuItem>,
-          children: [
-            {
-              key: 'effect_tilt_angle_solar_panel',
-              label: 'menu.photovoltaicSolarPowerTutorials.EffectOfTiltAngleOfSolarPanel',
-            },
-            {
-              key: 'effect_azimuth_solar_panel',
-              label: 'menu.photovoltaicSolarPowerTutorials.EffectOfAzimuthOfSolarPanel',
-            },
-            {
-              key: 'why_solar_array',
-              label: 'menu.photovoltaicSolarPowerTutorials.CoveringGroundWithSolarPanels',
-            },
-            {
-              key: 'inter_row_spacing',
-              label: 'menu.photovoltaicSolarPowerTutorials.InterRowSpacingOfSolarPanelArray',
-            },
-            {
-              key: 'effect_orientation_solar_panel',
-              label: 'menu.photovoltaicSolarPowerTutorials.EffectOfOrientationOfSolarPanels',
-            },
-            {
-              key: 'solar_panel_types',
-              label: 'menu.photovoltaicSolarPowerTutorials.SolarPanelTypes',
-            },
-            {
-              key: 'solar_panel_array_auto_layout',
-              label: 'menu.photovoltaicSolarPowerTutorials.SolarPanelArrayAutomaticLayout',
-            },
-          ].map(mapFunction),
-        },
-        {
-          key: 'photovoltaic-solar-power-advanced',
-          label: <MenuItem noPadding>{i18n.t('word.AdvancedTopics', lang)}</MenuItem>,
-          children: [
-            {
-              key: 'custom_solar_panels',
-              label: 'menu.photovoltaicSolarPowerTutorials.DefineYourOwnSolarPanels',
-            },
-            {
-              key: 'vertical_bifacial_solar_panels',
-              label: 'menu.photovoltaicSolarPowerTutorials.VerticalBifacialSolarPanels',
-            },
-            {
-              key: 'compare_monofacial_bifacial_solar_panels',
-              label: 'menu.photovoltaicSolarPowerTutorials.CompareMonofacialAndBifacialSolarPanels',
-            },
-            {
-              key: 'solar_trackers',
-              label: 'menu.photovoltaicSolarPowerTutorials.SolarTrackers',
-            },
-            {
-              key: 'solar_panel_array_slope',
-              label: 'menu.photovoltaicSolarPowerTutorials.SolarPanelArrayOnSlope',
-            },
-            {
-              key: 'rooftop_solar_panels',
-              label: 'menu.solarEnergyExamples.RooftopSolarPanels',
-            },
-            {
-              key: 'compare_generation_consumption',
-              label: 'menu.solarEnergyExamples.CompareGenerationConsumption',
-            },
-            {
-              key: 'solar_canopy_form_factors',
-              label: 'menu.solarEnergyExamples.SolarCanopyFormFactors',
-            },
-            {
-              key: 'bipv_01',
-              label: 'menu.solarEnergyExamples.BuildingIntegratedPhotovoltaics',
-            },
-            {
-              key: 'vegetative_buffer_01',
-              label: 'menu.solarEnergyExamples.VegetativeBuffer',
-            },
-          ].map(mapFunction),
-        },
-      ],
-    },
-    {
-      key: 'concentrated-solar-power',
-      label: <MenuItem noPadding>{i18n.t('menu.concentratedSolarPowerSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'parabolic_dish_focus_sunlight',
-          label: 'menu.concentratedSolarPowerTutorials.FocusSunlightWithParabolicDish',
-        },
-        {
-          key: 'effect_azimuth_parabolic_trough',
-          label: 'menu.concentratedSolarPowerTutorials.EffectOfAzimuthOfParabolicTrough',
-        },
-        {
-          key: 'effect_latus_rectum_parabolic_trough',
-          label: 'menu.concentratedSolarPowerTutorials.EffectOfLatusRectumOfParabolicTrough',
-        },
-        {
-          key: 'linear_fresnel_reflectors',
-          label: 'menu.concentratedSolarPowerTutorials.LinearFresnelReflectors',
-        },
-        {
-          key: 'effect_absorber_pipe_height',
-          label: 'menu.concentratedSolarPowerTutorials.EffectOfAbsorberPipeHeightForLinearFresnelReflectors',
-        },
-        {
-          key: 'effect_azimuth_fresnel_reflector',
-          label: 'menu.concentratedSolarPowerTutorials.EffectOfAzimuthOfLinearFresnelReflectors',
-        },
-        {
-          key: 'linear_fresnel_reflectors_two_absorbers',
-          label: 'menu.concentratedSolarPowerTutorials.LinearFresnelReflectorsWithTwoAbsorbers',
-        },
-        {
-          key: 'building_integrated_fresnel_reflectors',
-          label: 'menu.concentratedSolarPowerTutorials.BuildingIntegratedFresnelReflectors',
-        },
-        {
-          key: 'solar_power_tower',
-          label: 'menu.concentratedSolarPowerTutorials.SolarPowerTower',
-        },
-        {
-          key: 'cosine_efficiency_heliostats',
-          label: 'menu.concentratedSolarPowerTutorials.CosineEfficiencyOfHeliostats',
-        },
-        {
-          key: 'shadowing_blocking_heliostats',
-          label: 'menu.concentratedSolarPowerTutorials.ShadowingAndBlockingOfHeliostats',
-        },
-        {
-          key: 'effect_solar_power_tower_height',
-          label: 'menu.concentratedSolarPowerTutorials.EffectSolarPowerTowerHeight',
-        },
-      ].map(mapFunction),
-    },
-    {
-      key: 'other-types-of-solar-power',
-      label: <MenuItem noPadding>{i18n.t('menu.otherTypesOfSolarPowerSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'solar_water_heaters',
-          label: 'menu.otherTypesOfSolarPowerTutorials.SolarWaterHeaters',
-        },
-        {
-          key: 'solar_updraft_tower',
-          label: 'menu.otherTypesOfSolarPowerTutorials.SolarUpdraftTower',
-        },
-      ].map(mapFunction),
-    },
-    {
-      key: 'wind-power',
-      label: <MenuItem noPadding>{i18n.t('menu.windPowerSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'effect_blade_number',
-          label: 'menu.windPowerTutorials.EffectOfBladeNumberOfWindTurbine',
-        },
-        {
-          key: 'effect_pitch_angle',
-          label: 'menu.windPowerTutorials.EffectOfPitchAngleOfWindTurbineBlades',
-        },
-        {
-          key: 'bird_safe_blade_design',
-          label: 'menu.windPowerTutorials.BirdSafeBladeDesign',
-        },
-        {
-          key: 'offshore_wind_farm',
-          label: 'menu.windPowerTutorials.OffshoreWindFarm',
-        },
-      ].map(mapFunction),
-    },
-    {
-      key: 'storage',
-      label: <MenuItem noPadding>{i18n.t('menu.storageSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'home_solar_energy_storage',
-          label: 'menu.storageTutorials.HomeSolarEnergyStorage',
-        },
-      ].map(mapFunction),
-    },
-    {
-      key: 'colocation',
-      label: <MenuItem noPadding>{i18n.t('menu.colocationSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'agriculture_solar_wind_colocation',
-          label: 'menu.colocationTutorials.AgricultureSolarWindColocation',
-        },
-      ].map(mapFunction),
-    },
-    {
-      key: 'generative-design',
-      label: <MenuItem noPadding>{i18n.t('menu.generativeDesignSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'tilt_angle',
-          label: (
-            <MenuItem noPadding onClick={() => loadProject('Tilt Angle', 48)}>
-              {i18n.t('menu.generativeDesignTutorials.MonofacialSolarPanelArrayTiltAngle', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'bifacial_tilt_angle',
-          label: (
-            <MenuItem noPadding onClick={() => loadProject('Bifacial Tilt Angle', 50)}>
-              {i18n.t('menu.generativeDesignTutorials.BifacialSolarPanelArrayTiltAngle', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'interrow_spacing',
-          label: (
-            <MenuItem noPadding onClick={() => loadProject('Inter-Row Spacing', 0)}>
-              {i18n.t('menu.generativeDesignTutorials.SolarPanelArrayInterRowSpacing', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'Latitude',
-          label: (
-            <MenuItem noPadding onClick={() => loadProject('Latitude', 0)}>
-              {i18n.t('menu.generativeDesignTutorials.OutputOfSolarPanelArrayInDifferentPlaces', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'pareto_front',
-          label: (
-            <MenuItem noPadding onClick={() => loadProject('Pareto Front', 0)}>
-              {i18n.t('menu.generativeDesignTutorials.SimpleSolarFarmParetoFront', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'llm-sim',
-          label: (
-            <MenuItem noPadding onClick={() => loadProject('LLM and Sim', 11)}>
-              {i18n.t('menu.generativeDesignTutorials.GenerativeOptimizationEnergyEfficientHouse', lang)}
-            </MenuItem>
-          ),
-        },
-      ],
-    },
-  ];
+  return (
+    <MainSubMenu label={i18n.t('menu.tutorialsSubMenu', lang)}>
+      {/* solar energy science */}
+      <MainSubMenu label={i18n.t('menu.solarEnergyScienceSubMenu', lang)}>
+        <ExampleMenuItem fileName="sun_angles">
+          {i18n.t('menu.solarEnergyScienceTutorials.SunAngles', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="insolation_and_climate">
+          {i18n.t('menu.solarEnergyScienceTutorials.InsolationAndClimate', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="solar_radiation_to_box">
+          {i18n.t('menu.solarEnergyScienceTutorials.SolarRadiationToBox', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="sun_beam_at_center">
+          {i18n.t('menu.solarEnergyExamples.SunBeamAndHeliodon', lang)}
+        </ExampleMenuItem>
+      </MainSubMenu>
 
-  return items;
+      {/* building science */}
+      <MainSubMenu label={i18n.t('menu.buildingScienceSubMenu', lang)}>
+        <ExampleMenuItem fileName="thermal_vs_building_envelope">
+          {i18n.t('menu.buildingScienceTutorials.ThermalEnvelopeVsBuildingEnvelope', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_house_size">
+          {i18n.t('menu.buildingScienceTutorials.EffectOfSizeOnBuildingEnergy', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_house_orientation">
+          {i18n.t('menu.buildingScienceTutorials.EffectOfOrientationOnBuildingEnergy', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_wall_roof_insulation">
+          {i18n.t('menu.buildingScienceTutorials.EffectOfInsulationOnBuildingEnergy', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_window_airtightness">
+          {i18n.t('menu.buildingScienceTutorials.EffectOfAirtightnessOnBuildingEnergy', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_roof_color">
+          {i18n.t('menu.buildingScienceTutorials.EffectOfRoofColorOnBuildingEnergy', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_eaves_overhang_length">
+          {i18n.t('menu.buildingScienceTutorials.EffectOfEavesOverhangLengthOnBuildingEnergy', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_window_shgc">
+          {i18n.t('menu.buildingScienceTutorials.EffectOfWindowSHGCOnBuildingEnergy', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_thermostat_setpoint">
+          {i18n.t('menu.buildingScienceTutorials.EffectOfThermostatSetpointOnBuildingEnergy', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_programmable_thermostat">
+          {i18n.t('menu.buildingScienceTutorials.EffectOfProgrammableThermostatOnBuildingEnergy', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_solar_panels">
+          {i18n.t('menu.buildingScienceTutorials.EffectOfSolarPanelsOnBuildingEnergy', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_ground_temperature">
+          {i18n.t('menu.buildingScienceTutorials.EffectOfGroundTemperatureOnBuildingEnergy', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_trees">
+          {i18n.t('menu.buildingScienceTutorials.EffectOfTreesOnBuildingEnergy', lang)}
+        </ExampleMenuItem>
+      </MainSubMenu>
+
+      {/* building design */}
+      <MainSubMenu label={i18n.t('menu.buildingDesignSubMenu', lang)}>
+        <ExampleMenuItem fileName="gable_roof_vs_hip_roof">
+          {i18n.t('menu.buildingDesignTutorials.GableRoofVsHipRoof', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="colonial_vs_saltbox">
+          {i18n.t('menu.buildingDesignTutorials.ColonialVsSaltbox', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="gambrel_roof_vs_mansard_roof">
+          {i18n.t('menu.buildingDesignTutorials.GambrelRoofVsMansardRoof', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="combination_roof_vs_bonnet_roof">
+          {i18n.t('menu.buildingDesignTutorials.CombinationRoofVsBonnetRoof', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="dutch_gable_roof">
+          {i18n.t('menu.buildingDesignTutorials.DutchGableRoof', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="raised_ranch">
+          {i18n.t('menu.buildingDesignTutorials.RaisedRanch', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="overhang_floor">
+          {i18n.t('menu.buildingDesignTutorials.OverhangFloor', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="gable_and_valley_roof">
+          {i18n.t('menu.buildingDesignTutorials.GableAndValleyRoof', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="clerestory_roof">
+          {i18n.t('menu.buildingDesignTutorials.ClerestoryRoof', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="monitor_roof">
+          {i18n.t('menu.buildingDesignTutorials.MonitorRoof', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="a_frame_house">
+          {i18n.t('menu.buildingDesignTutorials.AFrameHouse', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="half_timbered_house">
+          {i18n.t('menu.buildingDesignTutorials.HalfTimberedHouse', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="all_roof_types">
+          {i18n.t('menu.buildingDesignTutorials.AllBasicRoofTypes', lang)}
+        </ExampleMenuItem>
+      </MainSubMenu>
+
+      {/* photovoltaic solar power */}
+      <MainSubMenu label={i18n.t('menu.photovoltaicSolarPowerSubMenu', lang)}>
+        {/* basic topics */}
+        <MainSubMenu label={i18n.t('word.BasicTopics', lang)}>
+          <ExampleMenuItem fileName="effect_tilt_angle_solar_panel">
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.EffectOfTiltAngleOfSolarPanel', lang)}
+          </ExampleMenuItem>
+          <ExampleMenuItem fileName="effect_azimuth_solar_panel">
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.EffectOfAzimuthOfSolarPanel', lang)}
+          </ExampleMenuItem>
+          <ExampleMenuItem fileName="why_solar_array">
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.CoveringGroundWithSolarPanels', lang)}
+          </ExampleMenuItem>
+          <ExampleMenuItem fileName="inter_row_spacing">
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.InterRowSpacingOfSolarPanelArray', lang)}
+          </ExampleMenuItem>
+          <ExampleMenuItem fileName="effect_orientation_solar_panel">
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.EffectOfOrientationOfSolarPanels', lang)}
+          </ExampleMenuItem>
+          <ExampleMenuItem fileName="solar_panel_types">
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.SolarPanelTypes', lang)}
+          </ExampleMenuItem>
+          <ExampleMenuItem fileName="solar_panel_array_auto_layout">
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.SolarPanelArrayAutomaticLayout', lang)}
+          </ExampleMenuItem>
+        </MainSubMenu>
+
+        {/* advanced topics */}
+        <MainSubMenu label={i18n.t('word.AdvancedTopics', lang)}>
+          <ExampleMenuItem fileName="custom_solar_panels">
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.DefineYourOwnSolarPanels', lang)}
+          </ExampleMenuItem>
+          <ExampleMenuItem fileName="vertical_bifacial_solar_panels">
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.VerticalBifacialSolarPanels', lang)}
+          </ExampleMenuItem>
+          <ExampleMenuItem fileName="compare_monofacial_bifacial_solar_panels">
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.CompareMonofacialAndBifacialSolarPanels', lang)}
+          </ExampleMenuItem>
+          <ExampleMenuItem fileName="solar_trackers">
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.SolarTrackers', lang)}
+          </ExampleMenuItem>
+          <ExampleMenuItem fileName="solar_panel_array_slope">
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.SolarPanelArrayOnSlope', lang)}
+          </ExampleMenuItem>
+          <ExampleMenuItem fileName="rooftop_solar_panels">
+            {i18n.t('menu.solarEnergyExamples.RooftopSolarPanels', lang)}
+          </ExampleMenuItem>
+          <ExampleMenuItem fileName="compare_generation_consumption">
+            {i18n.t('menu.solarEnergyExamples.CompareGenerationConsumption', lang)}
+          </ExampleMenuItem>
+          <ExampleMenuItem fileName="solar_canopy_form_factors">
+            {i18n.t('menu.solarEnergyExamples.SolarCanopyFormFactors', lang)}
+          </ExampleMenuItem>
+          <ExampleMenuItem fileName="bipv_01">
+            {i18n.t('menu.solarEnergyExamples.BuildingIntegratedPhotovoltaics', lang)}
+          </ExampleMenuItem>
+          <ExampleMenuItem fileName="vegetative_buffer_01">
+            {i18n.t('menu.solarEnergyExamples.VegetativeBuffer', lang)}
+          </ExampleMenuItem>
+        </MainSubMenu>
+      </MainSubMenu>
+
+      {/* concentrated solar power */}
+      <MainSubMenu label={i18n.t('menu.concentratedSolarPowerSubMenu', lang)}>
+        <ExampleMenuItem fileName="parabolic_dish_focus_sunlight">
+          {i18n.t('menu.concentratedSolarPowerTutorials.FocusSunlightWithParabolicDish', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_azimuth_parabolic_trough">
+          {i18n.t('menu.concentratedSolarPowerTutorials.EffectOfAzimuthOfParabolicTrough', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_latus_rectum_parabolic_trough">
+          {i18n.t('menu.concentratedSolarPowerTutorials.EffectOfLatusRectumOfParabolicTrough', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="linear_fresnel_reflectors">
+          {i18n.t('menu.concentratedSolarPowerTutorials.LinearFresnelReflectors', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_absorber_pipe_height">
+          {i18n.t('menu.concentratedSolarPowerTutorials.EffectOfAbsorberPipeHeightForLinearFresnelReflectors', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_azimuth_fresnel_reflector">
+          {i18n.t('menu.concentratedSolarPowerTutorials.EffectOfAzimuthOfLinearFresnelReflectors', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="linear_fresnel_reflectors_two_absorbers">
+          {i18n.t('menu.concentratedSolarPowerTutorials.LinearFresnelReflectorsWithTwoAbsorbers', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="building_integrated_fresnel_reflectors">
+          {i18n.t('menu.concentratedSolarPowerTutorials.BuildingIntegratedFresnelReflectors', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="solar_power_tower">
+          {i18n.t('menu.concentratedSolarPowerTutorials.SolarPowerTower', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="cosine_efficiency_heliostats">
+          {i18n.t('menu.concentratedSolarPowerTutorials.CosineEfficiencyOfHeliostats', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="shadowing_blocking_heliostats">
+          {i18n.t('menu.concentratedSolarPowerTutorials.ShadowingAndBlockingOfHeliostats', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_solar_power_tower_height">
+          {i18n.t('menu.concentratedSolarPowerTutorials.EffectSolarPowerTowerHeight', lang)}
+        </ExampleMenuItem>
+      </MainSubMenu>
+
+      {/* other types of solar power */}
+      <MainSubMenu label={i18n.t('menu.otherTypesOfSolarPowerSubMenu', lang)}>
+        <ExampleMenuItem fileName="solar_water_heaters">
+          {i18n.t('menu.otherTypesOfSolarPowerTutorials.SolarWaterHeaters', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="solar_updraft_tower">
+          {i18n.t('menu.otherTypesOfSolarPowerTutorials.SolarUpdraftTower', lang)}
+        </ExampleMenuItem>
+      </MainSubMenu>
+
+      {/* wind power */}
+      <MainSubMenu label={i18n.t('menu.windPowerSubMenu', lang)}>
+        <ExampleMenuItem fileName="effect_blade_number">
+          {i18n.t('menu.windPowerTutorials.EffectOfBladeNumberOfWindTurbine', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="effect_pitch_angle">
+          {i18n.t('menu.windPowerTutorials.EffectOfPitchAngleOfWindTurbineBlades', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="bird_safe_blade_design">
+          {i18n.t('menu.windPowerTutorials.BirdSafeBladeDesign', lang)}
+        </ExampleMenuItem>
+        <ExampleMenuItem fileName="offshore_wind_farm">
+          {i18n.t('menu.windPowerTutorials.OffshoreWindFarm', lang)}
+        </ExampleMenuItem>
+      </MainSubMenu>
+
+      {/* storage */}
+      <MainSubMenu label={i18n.t('menu.storageSubMenu', lang)}>
+        <ExampleMenuItem fileName="home_solar_energy_storage">
+          {i18n.t('menu.storageTutorials.HomeSolarEnergyStorage', lang)}
+        </ExampleMenuItem>
+      </MainSubMenu>
+
+      {/* colocation */}
+      <MainSubMenu label={i18n.t('menu.colocationSubMenu', lang)}>
+        <ExampleMenuItem fileName="agriculture_solar_wind_colocation">
+          {i18n.t('menu.colocationTutorials.AgricultureSolarWindColocation', lang)}
+        </ExampleMenuItem>
+      </MainSubMenu>
+
+      {/* generative design */}
+      <MainSubMenu label={i18n.t('menu.generativeDesignSubMenu', lang)}>
+        <MainMenuItem onClick={() => loadProject('Tilt Angle', 48)}>
+          {i18n.t('menu.generativeDesignTutorials.MonofacialSolarPanelArrayTiltAngle', lang)}
+        </MainMenuItem>
+        <MainMenuItem onClick={() => loadProject('Bifacial Tilt Angle', 50)}>
+          {i18n.t('menu.generativeDesignTutorials.BifacialSolarPanelArrayTiltAngle', lang)}
+        </MainMenuItem>
+        <MainMenuItem onClick={() => loadProject('Inter-Row Spacing', 0)}>
+          {i18n.t('menu.generativeDesignTutorials.SolarPanelArrayInterRowSpacing', lang)}
+        </MainMenuItem>
+        <MainMenuItem onClick={() => loadProject('Latitude', 0)}>
+          {i18n.t('menu.generativeDesignTutorials.OutputOfSolarPanelArrayInDifferentPlaces', lang)}
+        </MainMenuItem>
+        <MainMenuItem onClick={() => loadProject('Pareto Front', 0)}>
+          {i18n.t('menu.generativeDesignTutorials.SimpleSolarFarmParetoFront', lang)}
+        </MainMenuItem>
+        <MainMenuItem onClick={() => loadProject('LLM and Sim', 11)}>
+          {i18n.t('menu.generativeDesignTutorials.GenerativeOptimizationEnergyEfficientHouse', lang)}
+        </MainMenuItem>
+      </MainSubMenu>
+    </MainSubMenu>
+  );
 };
+
+export default TutorialsMenu;

@@ -4,17 +4,14 @@
 
 import { useStore } from 'src/stores/common';
 import * as Selector from './stores/selector';
-import { useMemo } from 'react';
 
 export const useSelected = (id: string) => {
   return useStore((state) => state.selectedElementIdSet.has(id) && !state.groupActionMode);
 };
 
 export const useLanguage = () => {
-  const language = useStore(Selector.language);
-  return useMemo(() => {
-    return { lng: language };
-  }, [language]);
+  const lang = useStore(Selector.lang);
+  return lang;
 };
 
 export const useWeather = (city: string | null) => {

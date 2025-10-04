@@ -2,33 +2,36 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { MenuProps, Modal } from 'antd';
+import { Modal } from 'antd';
 import { useStore } from 'src/stores/common';
-import { MenuItem } from '../contextMenu/menuItems';
 import i18n from 'src/i18n/i18n';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import * as Selector from '../../stores/selector';
 import { Util } from 'src/Util';
 import { showError, showInfo, showWarning } from 'src/helpers';
-import { MainMenuSwitch } from './mainMenuItems';
+import { MainMenuItem, MainMenuSwitch, MainSubMenu } from './mainMenuItems';
 import { ElementCounter } from 'src/stores/ElementCounter';
 import { BuildingCompletionStatus, EnergyModelingType, ObjectType, SolarStructure } from 'src/types';
 import { checkBuilding, CheckStatus } from 'src/analysis/heatTools';
-import { buildingEnergySimulationSettingsSubmenu } from './buildingEnergySimulationSettings';
-import { pvSimulationSettings } from './pvSimulationSettings';
-import { cspSimulationSettings } from './cspSimulationSettings';
+import PvSimulationSettings from './pvSimulationSettings';
+import CspSimulationSettings from './cspSimulationSettings';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import React from 'react';
 import { MAXIMUM_HEATMAP_CELLS } from '../../constants';
 import { SolarRadiationHeatmapMaxValueInput } from './solarRadiationHeatmapMaxValueInput';
 import { SensorSimulationSamplingFrequencyInput } from './sensorSimulationSamplingFrequencyInput';
 import { SolarPanelVisibilityGridCellSizeInput } from './solarPanelVisibilityGridCellSizeInput';
 import { EnergyGridCellSizeInput } from './energyGridCellSizeInput';
-import { sutSimulationSettings } from './sutSimulationSettings';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
+import { useLanguage } from 'src/hooks';
+import { SamplingFrequencySelect } from './samplingFrequencySelect';
+import { SimulationSamplingDaysSelect } from './simulationSamplingDaysSelect';
 
-export const createAnalysisMenu = (elementCounter: ElementCounter) => {
-  const lang = { lng: useStore.getState().language };
+const AnalysisMenu = () => {
+  const lang = useLanguage();
+  const elements = useStore(Selector.elements);
+  const elementCounter: ElementCounter = useStore.getState().countAllElementsByType();
+
+  if (!elementCounter.gotSome()) return null;
 
   const setPrimitiveStore = usePrimitiveStore.getState().setPrimitiveStore;
   const setCommonStore = useStore.getState().set;
@@ -39,12 +42,9 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
   const runDynamicSimulation = usePrimitiveStore.getState().runDynamicSimulation;
   const runStaticSimulation = usePrimitiveStore.getState().runStaticSimulation;
   const noAnimationForHeatmapSimulation = useStore.getState().world.noAnimationForHeatmapSimulation;
-  const elements = useStore.getState().elements;
   const loggable = useStore.getState().loggable;
 
   const hasMovingParts = Util.hasMovingParts(elements);
-
-  const items: MenuProps['items'] = [];
 
   const toggleStaticSolarRadiationHeatmap = () => {
     if (!runStaticSimulation) {
@@ -112,6 +112,24 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
     } else {
       toggleStaticSolarRadiationHeatmap();
     }
+  };
+
+  const toggleSolarRadiationHeatmapReflectionOnly = (checked: boolean) => {
+    useStore.getState().set((state) => {
+      state.viewState.solarRadiationHeatMapReflectionOnly = checked;
+    });
+  };
+
+  const toggleNoAnimationForHeatmapSimulation = (checked: boolean) => {
+    useStore.getState().set((state) => {
+      state.world.noAnimationForHeatmapSimulation = checked;
+    });
+  };
+
+  const toggleNoAnimationForSensorDataCollection = (checked: boolean) => {
+    useStore.getState().set((state) => {
+      state.world.noAnimationForSensorDataCollection = checked;
+    });
   };
 
   const collectSensorDailyData = () => {
@@ -642,397 +660,223 @@ export const createAnalysisMenu = (elementCounter: ElementCounter) => {
     }, 100);
   };
 
-  // === physics-submenu ===
-  const physicsOptionsItems: MenuProps['items'] = [];
+  return (
+    <MainSubMenu label={i18n.t('menu.analysisSubMenu', lang)}>
+      {/* physics submenu */}
+      <MainSubMenu label={i18n.t('menu.physicsSubMenu', lang)}>
+        {/* daily solar radiation heatmap */}
+        <MainMenuItem onClick={handleDailySolarRadiationHeatmap}>
+          {i18n.t('menu.physics.DailySolarRadiationHeatmap', lang)}
+        </MainMenuItem>
+        {/* solar radiation heatmap options */}
+        <MainSubMenu label={i18n.t('menu.physics.SolarRadiationHeatmapOptions', lang)}>
+          {/* solar-radiation-heatmap-grid-cell-size */}
+          <EnergyGridCellSizeInput type={EnergyModelingType.BUILDING} />
+          {/* solar-radiation-heatmap-max-value */}
+          <SolarRadiationHeatmapMaxValueInput />
+          {/* solar-radiation-heatmap-reflection-only */}
+          {Util.hasHeliostatOrFresnelReflectors(elements) && (
+            <MainMenuSwitch
+              selector={Selector.viewState.solarRadiationHeatmapReflectionOnly}
+              onChange={toggleSolarRadiationHeatmapReflectionOnly}
+            >
+              {i18n.t('menu.physics.ReflectionHeatmap', lang) + ':'}
+            </MainMenuSwitch>
+          )}
+          {/* solar-radiation-heatmap-no-animation */}
+          {!hasMovingParts && (
+            <MainMenuSwitch
+              selector={Selector.world.noAnimationForHeatmapSimulation}
+              onChange={toggleNoAnimationForHeatmapSimulation}
+            >
+              {i18n.t('menu.physics.SolarRadiationHeatmapNoAnimation', lang) + ':'}
+            </MainMenuSwitch>
+          )}
+        </MainSubMenu>
+      </MainSubMenu>
 
-  // solar-radiation-heatmap-grid-cell-size
-  physicsOptionsItems.push({
-    key: 'solar-radiation-heatmap-grid-cell-size',
-    label: <EnergyGridCellSizeInput type={EnergyModelingType.BUILDING} />,
-  });
+      {/* sensor submenu */}
+      {elementCounter.sensorCount > 0 && (
+        <MainSubMenu label={i18n.t('menu.sensorSubMenu', lang)}>
+          {/* sensor-collect-daily-data */}
+          <MainMenuItem onClick={collectSensorDailyData}>{i18n.t('menu.sensor.CollectDailyData', lang)}</MainMenuItem>
+          {/* sensor-collect-yearly-data */}
+          <MainMenuItem onClick={collectSensorYearlyData}>{i18n.t('menu.sensor.CollectYearlyData', lang)}</MainMenuItem>
+          {/* sensor-simulation-options-submenu-2 */}
+          <MainSubMenu label={i18n.t('word.Options', lang)}>
+            {/* sensor-simulation-sampling-frequency */}
+            <SensorSimulationSamplingFrequencyInput />
+            {/* sensor-simulation-no-animation */}
+            {!hasMovingParts && (
+              <MainMenuSwitch
+                selector={Selector.world.noAnimationForSensorDataCollection}
+                onChange={toggleNoAnimationForSensorDataCollection}
+              >
+                {i18n.t('menu.sensor.SensorSimulationNoAnimation', lang) + ':'}
+              </MainMenuSwitch>
+            )}
+          </MainSubMenu>
+        </MainSubMenu>
+      )}
 
-  // solar-radiation-heatmap-max-value
-  physicsOptionsItems.push({
-    key: 'solar-radiation-heatmap-max-value',
-    label: <SolarRadiationHeatmapMaxValueInput />,
-  });
+      {/* building submenu */}
+      {elementCounter.wallCount > 0 && (
+        <MainSubMenu label={i18n.t('menu.buildingSubMenu', lang)}>
+          {/* building-energy-daily-data */}
+          <MainMenuItem onClick={handleBuildingEnergyDailyData}>
+            {i18n.t('menu.building.AnalyzeDailyBuildingEnergy', lang)}
+          </MainMenuItem>
+          {/* building-energy-yearly-data */}
+          <MainMenuItem onClick={handleBuildingEnergyYearlyData}>
+            {i18n.t('menu.building.AnalyzeYearlyBuildingEnergy', lang)}
+          </MainMenuItem>
+          {/* building-energy-analysis-options-submenu */}
+          <MainSubMenu label={i18n.t('menu.building.EnergyAnalysisOptions', lang)}>
+            <SamplingFrequencySelect type={EnergyModelingType.BUILDING} />
+            <SimulationSamplingDaysSelect type={EnergyModelingType.BUILDING} />
+            <EnergyGridCellSizeInput type={EnergyModelingType.BUILDING} />
+          </MainSubMenu>
+        </MainSubMenu>
+      )}
 
-  // solar-radiation-heatmap-reflection-only
-  if (Util.hasHeliostatOrFresnelReflectors(elements)) {
-    physicsOptionsItems.push({
-      key: 'solar-radiation-heatmap-reflection-only',
-      label: (
-        <MainMenuSwitch
-          selector={Selector.viewState.solarRadiationHeatmapReflectionOnly}
-          onChange={(checked) => {
-            useStore.getState().set((state) => {
-              state.world.noAnimationForHeatmapSimulation = checked;
-            });
-          }}
-        >
-          {i18n.t('menu.physics.ReflectionHeatmap', lang) + ':'}
-        </MainMenuSwitch>
-      ),
-    });
-  }
+      {/* battery storage submenu */}
+      {elementCounter.batteryStorageCount > 0 && atLeastOneConnectedBatteryStorage() && (
+        <MainSubMenu label={i18n.t('batteryStorageMenu.BatteryStorage', lang)}>
+          <MainMenuItem onClick={analyzeBatteryStorageDailyYield}>
+            {i18n.t('menu.storage.AnalyzeDailyChargeDischarge', lang)}
+          </MainMenuItem>
+          <MainMenuItem onClick={analyzeBatteryStorageYearlyYield}>
+            {i18n.t('menu.storage.AnalyzeYearlyStorage', lang)}
+          </MainMenuItem>
+        </MainSubMenu>
+      )}
 
-  // solar-radiation-heatmap-no-animation
-  if (!hasMovingParts) {
-    physicsOptionsItems.push({
-      key: 'solar-radiation-heatmap-no-animation',
-      label: (
-        <MainMenuSwitch
-          selector={Selector.world.noAnimationForHeatmapSimulation}
-          onChange={(checked) => {
-            useStore.getState().set((state) => {
-              state.world.noAnimationForHeatmapSimulation = checked;
-            });
-          }}
-        >
-          {i18n.t('menu.physics.SolarRadiationHeatmapNoAnimation', lang) + ':'}
-        </MainMenuSwitch>
-      ),
-    });
-  }
+      {/* solar panels submenu */}
+      {elementCounter.solarPanelCount > 0 && (
+        <MainSubMenu label={i18n.t('menu.solarPanelSubMenu', lang)}>
+          {/* solar panel daily yield */}
+          <MainMenuItem onClick={analyzeSolarPanelDailyYield}>
+            {i18n.t('menu.solarPanel.AnalyzeDailyYield', lang)}
+          </MainMenuItem>
 
-  items.push({
-    key: 'physics-submenu',
-    label: <MenuItem noPadding>{i18n.t('menu.physicsSubMenu', lang)}</MenuItem>,
-    children: [
-      {
-        key: 'daily-solar-radiation-heatmap',
-        label: (
-          <MenuItem noPadding onClick={handleDailySolarRadiationHeatmap}>
-            {i18n.t('menu.physics.DailySolarRadiationHeatmap', lang)}
-          </MenuItem>
-        ),
-      },
-      {
-        key: 'solar-radiation-heatmap-options',
-        label: <MenuItem noPadding>{i18n.t('menu.physics.SolarRadiationHeatmapOptions', lang)}</MenuItem>,
-        children: physicsOptionsItems,
-      },
-    ],
-  });
+          {/* solar panel yearly yield */}
+          <MainMenuItem onClick={analyzeSolarPanelYearlyYield}>
+            {i18n.t('menu.solarPanel.AnalyzeYearlyYield', lang)}
+          </MainMenuItem>
 
-  // === sensor-submenu ===
-  const sensorSimulationOptionsItems: MenuProps['items'] = [];
+          {/* solar-panel-energy-analysis-options */}
+          <PvSimulationSettings hasMovingParts={hasMovingParts} />
 
-  // sensor-simulation-sampling-frequency
-  sensorSimulationOptionsItems.push({
-    key: 'sensor-simulation-sampling-frequency',
-    label: <SensorSimulationSamplingFrequencyInput />,
-  });
+          {/* solar-panel-visibility */}
+          <MainMenuItem onClick={solarPanelVisibility}>
+            {i18n.t('menu.solarPanel.AnalyzeVisibility', lang)}
+          </MainMenuItem>
 
-  // sensor-simulation-no-animation
-  if (!hasMovingParts) {
-    sensorSimulationOptionsItems.push({
-      key: 'sensor-simulation-no-animation',
-      label: (
-        <MainMenuSwitch
-          selector={Selector.world.noAnimationForSensorDataCollection}
-          onChange={(checked) => {
-            useStore.getState().set((state) => {
-              state.world.noAnimationForSensorDataCollection = checked;
-            });
-          }}
-        >
-          {i18n.t('menu.sensor.SensorSimulationNoAnimation', lang) + ':'}
-        </MainMenuSwitch>
-      ),
-    });
-  }
+          {/* solar-panel-visibility-analysis-options */}
+          <MainSubMenu label={i18n.t('menu.solarPanel.VisibilityAnalysisOptions', lang)}>
+            <SolarPanelVisibilityGridCellSizeInput />
+          </MainSubMenu>
+        </MainSubMenu>
+      )}
 
-  if (elementCounter.sensorCount > 0) {
-    items.push({
-      key: 'sensor-submenu',
-      label: <MenuItem noPadding>{i18n.t('menu.sensorSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'sensor-collect-daily-data',
-          label: (
-            <MenuItem noPadding onClick={collectSensorDailyData}>
-              {i18n.t('menu.sensor.CollectDailyData', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'sensor-collect-yearly-data',
-          label: (
-            <MenuItem noPadding onClick={collectSensorYearlyData}>
-              {i18n.t('menu.sensor.CollectYearlyData', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'sensor-simulation-options-submenu-2',
-          label: <MenuItem noPadding>{i18n.t('word.Options', lang)}</MenuItem>,
-          children: sensorSimulationOptionsItems,
-        },
-      ],
-    });
-  }
+      {/* parabolic troughs submenu */}
+      {elementCounter.parabolicTroughCount > 0 && (
+        <MainSubMenu label={i18n.t('menu.parabolicTroughSubMenu', lang)}>
+          {/* parabolic-trough-daily-yield */}
+          <MainMenuItem onClick={analyzeParabolicTroughDailyYield}>
+            {i18n.t('menu.parabolicTrough.AnalyzeDailyYield', lang)}
+          </MainMenuItem>
+          {/* parabolic-trough-yearly-yield */}
+          <MainMenuItem onClick={analyzeParabolicTroughYearlyYield}>
+            {i18n.t('menu.parabolicTrough.AnalyzeYearlyYield', lang)}
+          </MainMenuItem>
+          {/* parabolic-trough-analysis-options */}
+          <CspSimulationSettings />
+        </MainSubMenu>
+      )}
 
-  // === buildings-submenu ===
-  if (elementCounter.wallCount > 0) {
-    items.push({
-      key: 'buildings-submenu',
-      label: <MenuItem noPadding>{i18n.t('menu.buildingSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'building-energy-daily-data',
-          label: (
-            <MenuItem noPadding onClick={handleBuildingEnergyDailyData}>
-              {i18n.t('menu.building.AnalyzeDailyBuildingEnergy', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'building-energy-yearly-data',
-          label: (
-            <MenuItem noPadding onClick={handleBuildingEnergyYearlyData}>
-              {i18n.t('menu.building.AnalyzeYearlyBuildingEnergy', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'building-energy-analysis-options-submenu',
-          label: <MenuItem noPadding>{i18n.t('menu.building.EnergyAnalysisOptions', lang)}</MenuItem>,
-          children: buildingEnergySimulationSettingsSubmenu(),
-        },
-      ],
-    });
-  }
+      {/* parabolic dishes submenu */}
+      {elementCounter.parabolicDishCount > 0 && (
+        <MainSubMenu label={i18n.t('menu.parabolicDishSubMenu', lang)}>
+          {/* parabolic dish daily yield */}
+          <MainMenuItem onClick={analyzeParabolicDishDailyYield}>
+            {i18n.t('menu.parabolicDish.AnalyzeDailyYield', lang)}
+          </MainMenuItem>
 
-  // === battery-storage-submenu ===
-  if (elementCounter.batteryStorageCount > 0 && atLeastOneConnectedBatteryStorage()) {
-    items.push({
-      key: 'battery-storage-submenu',
-      label: <MenuItem noPadding>{i18n.t('batteryStorageMenu.BatteryStorage', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'daily-charge-discharge',
-          label: (
-            <MenuItem noPadding onClick={analyzeBatteryStorageDailyYield}>
-              {i18n.t('menu.storage.AnalyzeDailyChargeDischarge', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'yearly-storage',
-          label: (
-            <MenuItem noPadding onClick={analyzeBatteryStorageYearlyYield}>
-              {i18n.t('menu.storage.AnalyzeYearlyStorage', lang)}
-            </MenuItem>
-          ),
-        },
-      ],
-    });
-  }
+          {/* parabolic dish yearly yield */}
+          <MainMenuItem onClick={analyzeParabolicDishYearlyYield}>
+            {i18n.t('menu.parabolicDish.AnalyzeYearlyYield', lang)}
+          </MainMenuItem>
 
-  // === solar-panels-submenu ===
-  if (elementCounter.solarPanelCount > 0) {
-    items.push({
-      key: 'solar-panels-submenu',
-      label: <MenuItem noPadding>{i18n.t('menu.solarPanelSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'solar-panel-daily-yield',
-          label: (
-            <MenuItem noPadding onClick={analyzeSolarPanelDailyYield}>
-              {i18n.t('menu.solarPanel.AnalyzeDailyYield', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'solar-panel-yearly-yield',
-          label: (
-            <MenuItem noPadding onClick={analyzeSolarPanelYearlyYield}>
-              {i18n.t('menu.solarPanel.AnalyzeYearlyYield', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'solar-panel-energy-analysis-options',
-          label: <MenuItem noPadding>{i18n.t('menu.solarPanel.EnergyAnalysisOptions', lang)}</MenuItem>,
-          children: pvSimulationSettings(hasMovingParts),
-        },
-        {
-          key: 'solar-panel-visibility',
-          label: (
-            <MenuItem noPadding onClick={solarPanelVisibility}>
-              {i18n.t('menu.solarPanel.AnalyzeVisibility', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'solar-panel-visibility-analysis-options',
-          label: <MenuItem noPadding>{i18n.t('menu.solarPanel.VisibilityAnalysisOptions', lang)}</MenuItem>,
-          children: [
-            {
-              key: 'solar-panel-visibility-grid-cell-size',
-              label: <SolarPanelVisibilityGridCellSizeInput />,
-            },
-          ],
-        },
-      ],
-    });
-  }
+          {/* parabolic dish analysis options */}
+          <CspSimulationSettings />
+        </MainSubMenu>
+      )}
 
-  // === parabolic-troughs-submenu ===
-  if (elementCounter.parabolicTroughCount > 0) {
-    items.push({
-      key: 'parabolic-troughs-submenu',
-      label: <MenuItem noPadding>{i18n.t('menu.parabolicTroughSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'parabolic-trough-daily-yield',
-          label: (
-            <MenuItem noPadding onClick={analyzeParabolicTroughDailyYield}>
-              {i18n.t('menu.parabolicTrough.AnalyzeDailyYield', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'parabolic-trough-yearly-yield',
-          label: (
-            <MenuItem noPadding onClick={analyzeParabolicTroughYearlyYield}>
-              {i18n.t('menu.parabolicTrough.AnalyzeYearlyYield', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'parabolic-trough-analysis-options',
-          label: <MenuItem noPadding>{i18n.t('menu.AnalysisOptions', lang)}</MenuItem>,
-          children: cspSimulationSettings('parabolic-trough'),
-        },
-      ],
-    });
-  }
+      {/* fresnel reflector submenu */}
+      {elementCounter.fresnelReflectorCount > 0 && (
+        <MainSubMenu label={i18n.t('menu.fresnelReflectorSubMenu', lang)}>
+          {/* fresnel reflector daily yield */}
+          <MainMenuItem onClick={analyzeFresnelReflectorDailyYield}>
+            {i18n.t('menu.fresnelReflector.AnalyzeDailyYield', lang)}
+          </MainMenuItem>
 
-  // === parabolic-dishes-submenu ===
-  if (elementCounter.parabolicDishCount > 0) {
-    items.push({
-      key: 'parabolic-dishes-submenu',
-      label: <MenuItem noPadding>{i18n.t('menu.parabolicDishSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'parabolic-dish-daily-yield',
-          label: (
-            <MenuItem noPadding onClick={analyzeParabolicDishDailyYield}>
-              {i18n.t('menu.parabolicDish.AnalyzeDailyYield', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'parabolic-dish-yearly-yield',
-          label: (
-            <MenuItem noPadding onClick={analyzeParabolicDishYearlyYield}>
-              {i18n.t('menu.parabolicDish.AnalyzeYearlyYield', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'parabolic-dish-analysis-options',
-          label: <MenuItem noPadding>{i18n.t('menu.AnalysisOptions', lang)}</MenuItem>,
-          children: cspSimulationSettings('parabolic-dish'),
-        },
-      ],
-    });
-  }
+          {/* fresnel reflector yearly yield */}
+          <MainMenuItem onClick={analyzeFresnelReflectorYearlyYield}>
+            {i18n.t('menu.fresnelReflector.AnalyzeYearlyYield', lang)}
+          </MainMenuItem>
 
-  // === fresnel-reflector-submenu ===
-  if (elementCounter.fresnelReflectorCount > 0) {
-    items.push({
-      key: 'fresnel-reflector-submenu',
-      label: <MenuItem noPadding>{i18n.t('menu.fresnelReflectorSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'fresnel-reflector-daily-yield',
-          label: (
-            <MenuItem noPadding onClick={analyzeFresnelReflectorDailyYield}>
-              {i18n.t('menu.fresnelReflector.AnalyzeDailyYield', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'fresnel-reflector-yearly-yield',
-          label: (
-            <MenuItem noPadding onClick={analyzeFresnelReflectorYearlyYield}>
-              {i18n.t('menu.fresnelReflector.AnalyzeYearlyYield', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'fresnel-reflector-analysis-options',
-          label: <MenuItem noPadding>{i18n.t('menu.AnalysisOptions', lang)}</MenuItem>,
-          children: cspSimulationSettings('fresnel-reflector'),
-        },
-      ],
-    });
-  }
+          {/* fresnel-reflector-analysis-options */}
+          <CspSimulationSettings />
+        </MainSubMenu>
+      )}
 
-  // === heliostat-submenu ===
-  if (elementCounter.heliostatCount > 0) {
-    items.push({
-      key: 'heliostat-submenu',
-      label: <MenuItem noPadding>{i18n.t('menu.heliostatSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'heliostat-daily-yield',
-          label: (
-            <MenuItem noPadding onClick={analyzeHeliostatDailyYield}>
-              {i18n.t('menu.heliostat.AnalyzeDailyYield', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'heliostat-yearly-yield',
-          label: (
-            <MenuItem noPadding onClick={analyzeHeliostatYearlyYield}>
-              {i18n.t('menu.heliostat.AnalyzeYearlyYield', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'heliostat-analysis-options',
-          label: <MenuItem noPadding>{i18n.t('menu.AnalysisOptions', lang)}</MenuItem>,
-          children: cspSimulationSettings('heliostat-analysis'),
-        },
-      ],
-    });
-  }
+      {/* heliostat submenu */}
+      {elementCounter.heliostatCount > 0 && (
+        <MainSubMenu label={i18n.t('menu.heliostatSubMenu', lang)}>
+          {/* heliostat daily yield */}
+          <MainMenuItem onClick={analyzeHeliostatDailyYield}>
+            {i18n.t('menu.heliostat.AnalyzeDailyYield', lang)}
+          </MainMenuItem>
 
-  // === solar-updraft-tower-submenu ===
-  if (elementCounter.solarUpdraftTowerCount > 0) {
-    items.push({
-      key: 'solar-updraft-tower-submenu',
-      label: <MenuItem noPadding>{i18n.t('menu.solarUpdraftTowerSubMenu', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'solar-updraft-tower-daily-yield',
-          label: (
-            <MenuItem noPadding onClick={analyzeSolarUpdraftTowerDailyYield}>
-              {i18n.t('menu.solarUpdraftTower.AnalyzeDailyYield', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'solar-updraft-tower-yearly-yield',
-          label: (
-            <MenuItem noPadding onClick={analyzeSolarUpdraftTowerYearlyYield}>
-              {i18n.t('menu.solarUpdraftTower.AnalyzeYearlyYield', lang)}
-            </MenuItem>
-          ),
-        },
-        {
-          key: 'solar-updraft-tower-analysis-options',
-          label: <MenuItem noPadding>{i18n.t('menu.AnalysisOptions', lang)}</MenuItem>,
-          children: sutSimulationSettings(),
-        },
-      ],
-    });
-  }
+          {/* heliostat yearly yield */}
+          <MainMenuItem onClick={analyzeHeliostatYearlyYield}>
+            {i18n.t('menu.heliostat.AnalyzeYearlyYield', lang)}
+          </MainMenuItem>
 
-  return items;
+          {/* heliostat-analysis-options */}
+          <CspSimulationSettings />
+        </MainSubMenu>
+      )}
+
+      {/* solar updraft tower submenu */}
+      {elementCounter.solarUpdraftTowerCount > 0 && (
+        <MainSubMenu label={i18n.t('menu.solarUpdraftTowerSubMenu', lang)}>
+          {/* solar updraft tower daily yield */}
+          <MainMenuItem onClick={analyzeSolarUpdraftTowerDailyYield}>
+            {i18n.t('menu.solarUpdraftTower.AnalyzeDailyYield', lang)}
+          </MainMenuItem>
+
+          {/* solar updraft tower yearly yield */}
+          <MainMenuItem onClick={analyzeSolarUpdraftTowerYearlyYield}>
+            {i18n.t('menu.solarUpdraftTower.AnalyzeYearlyYield', lang)}
+          </MainMenuItem>
+
+          {/* solar-updraft-tower-analysis-options */}
+          <MainSubMenu label={i18n.t('menu.AnalysisOptions', lang)}>
+            {/* SUT simulation sampling frequency */}
+            <SamplingFrequencySelect type={EnergyModelingType.SUT} />
+
+            {/* SUT simulation sampling days */}
+            <SimulationSamplingDaysSelect type={EnergyModelingType.SUT} />
+
+            {/* SUT simulation grid cell size */}
+            <EnergyGridCellSizeInput type={EnergyModelingType.SUT} />
+          </MainSubMenu>
+        </MainSubMenu>
+      )}
+    </MainSubMenu>
+  );
 };
+
+export default AnalysisMenu;

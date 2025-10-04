@@ -115,6 +115,8 @@ export const selectedFloatingWindow = (state: CommonStoreState) => state.selecte
 
 export const language = (state: CommonStoreState) => state.language;
 
+export const lang = (state: CommonStoreState) => state.lang;
+
 export const locale = (state: CommonStoreState) => state.locale;
 
 export const loggable = (state: CommonStoreState) => state.loggable;

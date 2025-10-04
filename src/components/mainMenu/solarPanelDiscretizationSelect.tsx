@@ -3,13 +3,13 @@
  */
 
 import { Select, Space } from 'antd';
-import { MenuItem } from '../contextMenu/menuItems';
 import i18n from 'src/i18n/i18n';
 import { useStore } from 'src/stores/common';
 import { Discretization } from 'src/types';
 import * as Selector from '../../stores/selector';
 import { useLanguage } from 'src/hooks';
 import React from 'react';
+import { MainMenuItem } from './mainMenuItems';
 
 const { Option } = Select;
 
@@ -18,7 +18,7 @@ export const SolarPanelDiscretizationSelect = React.memo(() => {
   const discretization = useStore(Selector.world.discretization);
 
   return (
-    <MenuItem noPadding stayAfterClick>
+    <MainMenuItem stayAfterClick>
       <Space style={{ width: '150px' }}>{i18n.t('menu.solarPanel.PanelDiscretization', lang) + ':'}</Space>
       <Select
         style={{ width: '165px' }}
@@ -36,6 +36,6 @@ export const SolarPanelDiscretizationSelect = React.memo(() => {
           {i18n.t('menu.solarPanel.Approximate', lang)}
         </Option>
       </Select>
-    </MenuItem>
+    </MainMenuItem>
   );
 });

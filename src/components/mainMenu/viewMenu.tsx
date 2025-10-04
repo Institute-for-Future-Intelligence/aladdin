@@ -2,11 +2,9 @@
  * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
-import { MenuProps } from 'antd';
 import { useStore } from 'src/stores/common';
-import { MenuItem } from '../contextMenu/menuItems';
 import i18n from 'src/i18n/i18n';
-import { MainMenuCheckbox, LabelMark } from './mainMenuItems';
+import { MainMenuCheckbox, LabelMark, MainMenuItem, MainSubMenu } from './mainMenuItems';
 import { useRefStore } from 'src/stores/commonRef';
 import { ObjectType } from 'src/types';
 import { UndoableResetView } from 'src/undo/UndoableResetView';
@@ -16,6 +14,9 @@ import { DEFAULT_VIEW_SOLAR_PANEL_SHININESS, FLOATING_WINDOW_OPACITY, KeyCtrl } 
 import { UndoableChange } from 'src/undo/UndoableChange';
 import * as Selector from '../../stores/selector';
 import { UndoableCameraChange } from '../../undo/UndoableCameraChange';
+import { useLanguage } from 'src/hooks';
+import { useMemo } from 'react';
+import { Util } from 'src/Util';
 
 export const resetView = () => {
   const orbitControlsRef = useRefStore.getState().orbitControlsRef;
@@ -104,11 +105,28 @@ export const zoomView = (scale: number) => {
   }
 };
 
-export const createViewMenu = (keyHome: string, isMac: boolean) => {
-  const lang = { lng: useStore.getState().language };
-  const orthographic = useStore.getState().viewState.orthographic;
-  const cameraPosition = useStore.getState().viewState.cameraPosition;
-  const panCenter = useStore.getState().viewState.panCenter;
+interface Props {
+  isMac: boolean;
+}
+
+const ViewMenu = ({ isMac }: Props) => {
+  const lang = useLanguage();
+  const orthographic = useStore(Selector.viewState.orthographic);
+  const cameraPosition = useStore(Selector.viewState.cameraPosition);
+  const panCenter = useStore(Selector.viewState.panCenter);
+
+  const keyHome = useMemo(() => {
+    const os = Util.getOS();
+    if (os) {
+      if (os.includes('OS X')) {
+        return 'Ctrl+Alt+H';
+      }
+      if (os.includes('Chrome')) {
+        return 'Ctrl+Alt+H';
+      }
+    }
+    return 'Ctrl+Home';
+  }, []);
 
   const viewAlreadyReset =
     cameraPosition[0] === cameraPosition[1] &&
@@ -371,112 +389,62 @@ export const createViewMenu = (keyHome: string, isMac: boolean) => {
     });
   };
 
-  const items: MenuProps['items'] = [];
-
-  // reset-view
-  if (!orthographic && !viewAlreadyReset) {
-    items.push({
-      key: 'reset-view',
-      label: (
-        <MenuItem onClick={handleResetView}>
+  return (
+    <MainSubMenu label={i18n.t('menu.viewSubMenu', lang)}>
+      {/* reset view */}
+      {!orthographic && !viewAlreadyReset && (
+        <MainMenuItem stayAfterClick hasPadding onClick={handleResetView}>
           {i18n.t('menu.view.ResetView', lang)}
           <LabelMark>({keyHome})</LabelMark>
-        </MenuItem>
-      ),
-    });
-  }
+        </MainMenuItem>
+      )}
 
-  // zoom-out-view
-  items.push({
-    key: 'zoom-out-view',
-    label: (
-      <MenuItem onClick={handleZoomOut}>
+      {/* zoom out view */}
+      <MainMenuItem stayAfterClick hasPadding onClick={handleZoomOut}>
         {i18n.t('menu.view.ZoomOut', lang)}
         <LabelMark>({isMac ? '⌘' : 'Ctrl'}+])</LabelMark>
-      </MenuItem>
-    ),
-  });
+      </MainMenuItem>
 
-  // zoom-in-view
-  items.push({
-    key: 'zoom-in-view',
-    label: (
-      <MenuItem onClick={handleZoomIn}>
+      {/* zoom in view */}
+      <MainMenuItem stayAfterClick hasPadding onClick={handleZoomIn}>
         {i18n.t('menu.view.ZoomIn', lang)}
         <LabelMark>({isMac ? '⌘' : 'Ctrl'}+[)</LabelMark>
-      </MenuItem>
-    ),
-  });
+      </MainMenuItem>
 
-  // model-tree-check-box
-  items.push({
-    key: 'model-tree-check-box',
-    label: (
+      {/* model tree check box */}
       <MainMenuCheckbox selector={Selector.viewState.showModelTree} onChange={toggleModelTree}>
         {i18n.t('menu.view.ModelTree', lang)}
       </MainMenuCheckbox>
-    ),
-  });
 
-  // navigation-view-check-box
-  items.push({
-    key: 'navigation-view-check-box',
-    label: (
+      {/* navigation view check box */}
       <MainMenuCheckbox selector={Selector.viewState.navigationView} onChange={toggleNavigationView}>
         {i18n.t('menu.view.NavigationView', lang)}
         <LabelMark>({KeyCtrl}+Q)</LabelMark>
       </MainMenuCheckbox>
-    ),
-  });
 
-  // orthographic-check-box
-  items.push({
-    key: 'orthographic-check-box',
-    label: (
+      {/* orthographic check box */}
       <MainMenuCheckbox selector={Selector.viewState.orthographic} onChange={toggle2DView}>
         {i18n.t('menu.view.TwoDimensionalView', lang)}
         <LabelMark>({KeyCtrl}+B)</LabelMark>
       </MainMenuCheckbox>
-    ),
-  });
 
-  // auto-rotate-check-box
-  if (!orthographic) {
-    items.push({
-      key: 'auto-rotate-check-box',
-      label: (
-        <MainMenuCheckbox selector={Selector.viewState.autoRotate} onChange={toggleAutoRotate}>
-          {i18n.t('menu.view.AutoRotate', lang)}
-          <LabelMark>({KeyCtrl}+M)</LabelMark>
-        </MainMenuCheckbox>
-      ),
-    });
-  }
+      {/* auto rotate check box */}
+      <MainMenuCheckbox selector={Selector.viewState.autoRotate} onChange={toggleAutoRotate}>
+        {i18n.t('menu.view.AutoRotate', lang)}
+        <LabelMark>({KeyCtrl}+M)</LabelMark>
+      </MainMenuCheckbox>
 
-  // axes-check-box
-  items.push({
-    key: 'axes-check-box',
-    label: (
+      {/* axes check box */}
       <MainMenuCheckbox selector={Selector.viewState.axes} onChange={toggleAxes}>
         {i18n.t('skyMenu.Axes', lang)}
       </MainMenuCheckbox>
-    ),
-  });
 
-  // shadow-check-box
-  items.push({
-    key: 'shadow-check-box',
-    label: (
+      {/* shadow check box */}
       <MainMenuCheckbox selector={Selector.viewState.shadowEnabled} onChange={toggleShadow}>
         {i18n.t('menu.view.ShowShadow', lang)}
       </MainMenuCheckbox>
-    ),
-  });
 
-  // shininess-check-box
-  items.push({
-    key: 'shininess-check-box',
-    label: (
+      {/* shininess check box */}
       <MainMenuCheckbox
         selector={(state) =>
           state.viewState.solarPanelShininess === undefined || state.viewState.solarPanelShininess > 0
@@ -485,18 +453,13 @@ export const createViewMenu = (keyHome: string, isMac: boolean) => {
       >
         {i18n.t('menu.view.ShowSurfaceShininess', lang)}
       </MainMenuCheckbox>
-    ),
-  });
 
-  // translucency-check-box
-  items.push({
-    key: 'translucency-check-box',
-    label: (
+      {/* translucency check box */}
       <MainMenuCheckbox selector={(state) => state.floatingWindowOpacity < 1} onChange={toggleTranslucency}>
         {i18n.t('menu.view.TranslucentFloatingWindows', lang)}
       </MainMenuCheckbox>
-    ),
-  });
-
-  return items;
+    </MainSubMenu>
+  );
 };
+
+export default ViewMenu;
