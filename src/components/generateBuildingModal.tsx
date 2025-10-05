@@ -248,7 +248,6 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
     try {
       const functions = getFunctions(app, 'us-east4');
       const callAzure = httpsCallable(functions, 'callAzure', { timeout: 300000 });
-
       const input = createInput();
       console.log('calling...', input); // for debugging
       const res = (await callAzure({
@@ -273,6 +272,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
       return result;
     } catch (e) {
       console.log(e);
+      showError('' + e, 10);
       return null;
     }
   };
@@ -428,7 +428,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
                   onClick={() => {
                     setListening(true);
                     startSpeechToText().catch((e) => {
-                      showError('error', e.toString());
+                      showError('Error: ' + e.toString());
                     });
                   }}
                 />
