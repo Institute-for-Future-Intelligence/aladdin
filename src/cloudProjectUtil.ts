@@ -438,8 +438,7 @@ export const updateDesign = async (
               const cooling = updatedDesigns[index].cooling;
               const solar = updatedDesigns[index].solar;
               const net = updatedDesigns[index].net;
-              const changed = updatedDesigns[index].modelChanged;
-
+              const changed = !!updatedDesigns[index].modelChanged;
               updatedDesigns[index] = createDesign(projectType, designTitle, thumbnail);
               if (prompt && data) {
                 updatedDesigns[index].prompt = prompt;
@@ -456,7 +455,6 @@ export const updateDesign = async (
             // Finally, upload the updated design array back to Firestore
             try {
               const projectDocRef = doc(firestore, 'users', userid, 'projects', projectTitle);
-
               await updateDoc(projectDocRef, { designs: updatedDesigns });
             } catch (error) {
               showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
