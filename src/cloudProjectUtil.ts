@@ -69,9 +69,13 @@ export const removeDesignFromProject = async (userid: string, projectTitle: stri
   const lang = { lng: useStore.getState().language };
   try {
     const projectRef = doc(firestore, 'users', userid, 'projects', projectTitle);
-    await updateDoc(projectRef, {
-      designs: arrayRemove(design),
-    });
+    const snapshot = await getDoc(projectRef);
+    if (!snapshot.exists()) throw new Error(`Can't find project.`);
+
+    const data = snapshot.data();
+    const newDesigns = (data.designs || []).filter((d: Design) => d.title !== design.title);
+
+    await updateDoc(projectRef, { designs: newDesigns });
 
     usePrimitiveStore.getState().set((state) => {
       state.updateProjectsFlag = true;
@@ -90,9 +94,11 @@ export const removeDesignFromProject = async (userid: string, projectTitle: stri
       showInfo(i18n.t('message.DesignRemovedFromProject', lang) + '.');
     } catch (error) {
       showError(i18n.t('message.CannotDeleteCloudFile', lang) + ': ' + error);
+      throw new Error((error as Error).message);
     }
   } catch (error) {
     showError(i18n.t('message.CannotRemoveDesignFromProject', lang) + ': ' + error);
+    throw new Error((error as Error).message);
   }
 };
 

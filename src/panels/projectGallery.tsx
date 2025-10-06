@@ -326,30 +326,34 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
 
   const removeSelectedDesign = () => {
     if (user.uid && projectTitle && selectedDesign) {
-      removeDesignFromProject(user.uid, projectTitle, selectedDesign).then(() => {
-        // delete the local copy as well
-        setCommonStore((state) => {
-          if (state.projectState.designs) {
-            let index = -1;
-            for (const [i, e] of state.projectState.designs.entries()) {
-              if (e.title === selectedDesign.title) {
-                index = i;
-                break;
+      removeDesignFromProject(user.uid, projectTitle, selectedDesign)
+        .then(() => {
+          // delete the local copy as well
+          setCommonStore((state) => {
+            if (state.projectState.designs) {
+              let index = -1;
+              for (const [i, e] of state.projectState.designs.entries()) {
+                if (e.title === selectedDesign.title) {
+                  index = i;
+                  break;
+                }
+              }
+              if (index >= 0) {
+                state.projectState.designs.splice(index, 1);
+                if (loggable) {
+                  state.actionInfo = {
+                    name: 'Remove Selected Design',
+                    timestamp: new Date().getTime(),
+                    details: selectedDesign.title,
+                  };
+                }
               }
             }
-            if (index >= 0) {
-              state.projectState.designs.splice(index, 1);
-              if (loggable) {
-                state.actionInfo = {
-                  name: 'Remove Selected Design',
-                  timestamp: new Date().getTime(),
-                  details: selectedDesign.title,
-                };
-              }
-            }
-          }
+          });
+        })
+        .catch((e) => {
+          console.log(e);
         });
-      });
     }
   };
 
