@@ -799,9 +799,9 @@ export class ContentUtil {
   }
 
   static expandEconomicsParams(content: any) {
-    const p = content.economicParams;
+    const p = content.economicsParams;
     if (!p) {
-      content.economicParams = new DefaultEconomicsParams();
+      content.economicsParams = new DefaultEconomicsParams();
       return;
     }
     if (p.projectLifeSpan === undefined) p.projectLifeSpan = Constants.DEFAULT_ECONOMICS_PARAMS.projectLifeSpan;

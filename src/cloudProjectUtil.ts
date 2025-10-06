@@ -263,9 +263,9 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
       const panelCount = Util.countAllSolarPanels();
       const dailyYield = Util.countAllSolarPanelDailyYields();
       const yearlyYield = Util.countAllSolarPanelYearlyYields();
-      const economicParams = useStore.getState().economicsParams;
-      const unitCost = economicParams.operationalCostPerUnit;
-      const sellingPrice = economicParams.electricitySellingPrice;
+      const economicsParams = useStore.getState().economicsParams;
+      const unitCost = economicsParams.operationalCostPerUnit;
+      const sellingPrice = economicsParams.electricitySellingPrice;
       design = {
         latitude,
         unitCost,
