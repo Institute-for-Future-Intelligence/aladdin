@@ -262,7 +262,7 @@ export class DefaultActionState implements ActionState {
 
     this.doorColor = Constants.DEFAULT_DOOR_COLOR;
     this.doorFrameColor = Constants.DEFAULT_DOOR_FRAME_COLOR;
-    this.doorTexture = DoorTexture.Default;
+    this.doorTexture = DoorTexture.Texture01;
     this.doorType = DoorType.Default;
     this.doorArchHeight = Constants.DEFAULT_DOOR_ARCH_HEIGHT;
     this.doorFilled = true;

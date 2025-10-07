@@ -52,6 +52,16 @@ Door center position [cx] is relative to the wall's center.
 Door has default color white.
 Door should preferably be built at the center of the wall that faces south.
 Door has a property "uValue" in the unit of W/(m²·℃), which defaults to 1.
+Door has a number property "airPermeability" in the unit of m³/(h·m²), which defaults to 0.
+Door has a string property "doorType" that can be either "Default" or "Arched", which defaults to "Default".
+Door has a string property "textureType" that can be "Door Texture #1", "Door Texture #2", ..., "Door Texture #17", which defaults to "Door Texture #1".
+If it is a white, paneled front door with a semicircular window at the top featuring a sunburst-style grid design, then "textureType" is "Door Texture #1".
+If it is a wooden Craftsman-style door featuring a grid of six small square windows at the top and three vertical recessed panels below a decorative ledge, then "textureType" is "Door Texture #2".
+If it is a wooden door with a dark brown finish, two vertical panels, and a small decorative glass window at the top, then "textureType" is "Door Texture #3".
+If it is a dark brown wooden door featuring two vertical panels and a rectangular decorative glass window near the top, then "textureType" is "Door Texture #4".
+If it is a dark wooden door with decorative diamond-patterned glass panels, including matching sidelights and a transom window, then "textureType" is "Door Texture #5".
+If it is a white door with a large, decorative leaded glass panel flanked by two matching sidelights, then "textureType" is "Door Texture #6".
+If it is a brown wood-grain door with a central arched decorative glass panel flanked by two matching sidelights, then "textureType" is "Door Texture #7".
 
 - Window: is built on a wall. "pId" is the id of the wall on which it is built. "fId" is the id of the foundation on which it is built.
 Window size [lx, ly], lx is width, ly is height.
@@ -83,7 +93,7 @@ Here are some examples:
 - A colonial style house has four walls connected with each other in a loop. Each wall is a 5-meter high.
 The walls form a rectangular area with the size of 10 by 12 meters.
 All walls should have normal facing outside. There is a gable roof with a rise of 2.4 meters.
-Add a door on the wall facing south with a size of 1.6 by 2.1 meters.
+Add a door on the wall facing south with a size of 1.6 by 2.5 meters.
 On each wall, there should be a set of two windows eventually distributed in the vertical direction
 and the set should be repeated in every four meters in the horizontal direction.
 
@@ -255,8 +265,23 @@ export const callAzureOpenAI = async (
                       size: { type: 'array', items: { type: 'number' } },
                       color: { type: 'string' },
                       uValue: { type: 'number' },
+                      airPermeability: { type: 'number' },
+                      doorType: { type: 'string' },
+                      textureType: { type: 'string' },
                     },
-                    required: ['type', 'id', 'pId', 'fId', 'center', 'size', 'color', 'uValue'],
+                    required: [
+                      'type',
+                      'id',
+                      'pId',
+                      'fId',
+                      'center',
+                      'size',
+                      'color',
+                      'uValue',
+                      'airPermeability',
+                      'doorType',
+                      'textureType',
+                    ],
                     additionalProperties: false,
                   },
                   {

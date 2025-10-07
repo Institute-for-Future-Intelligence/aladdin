@@ -137,12 +137,23 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
               break;
             }
             case ObjectType.Door: {
-              const { id, pId, fId, center, size, color, uValue } = e;
+              const { id, pId, fId, center, size, color, uValue, airPermeability, doorType, textureType } = e;
               const wall = state.elements.find((e) => e.id === pId);
               if (wall) {
                 const _center = [center[0] / wall.lx, (-wall.lz / 2 + size[1] / 2) / wall.lz];
                 const _size = [size[0] / wall.lx, size[1] / wall.lz];
-                const d = GenAIUtil.makeDoor(id, pId, fId, _center, _size, color, uValue);
+                const d = GenAIUtil.makeDoor(
+                  id,
+                  pId,
+                  fId,
+                  _center,
+                  _size,
+                  color,
+                  uValue,
+                  airPermeability,
+                  doorType,
+                  textureType,
+                );
                 state.elements.push(d);
               }
               break;
@@ -257,6 +268,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
       return res.data.text;
     } catch (e) {
       console.log(e);
+      showError('' + e, 10);
       return null;
     }
   };

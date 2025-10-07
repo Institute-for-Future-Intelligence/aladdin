@@ -266,6 +266,9 @@ export class GenAIUtil {
     size: number[],
     color: string,
     uValue: number,
+    airPermeability: number,
+    doorType: string,
+    textureType: string,
   ) {
     const actionState = useStore.getState().actionState;
     const [cx, cz] = center;
@@ -278,14 +281,14 @@ export class GenAIUtil {
       lx: lx,
       ly: 0,
       lz: lz,
-      doorType: actionState.doorType,
+      doorType: doorType ?? actionState.doorType,
       filled: actionState.doorFilled,
       interior: actionState.doorInterior,
       archHeight: actionState.doorArchHeight,
-      textureType: DoorTexture.Texture04,
+      textureType: textureType ?? actionState.doorTexture,
       color: color,
-      uValue: uValue ?? actionState.doorUValue ?? DEFAULT_DOOR_U_VALUE,
-      airPermeability: DEFAULT_AIR_PERMEABILITY,
+      uValue: uValue ?? actionState.doorUValue,
+      airPermeability: airPermeability ?? actionState.doorAirPermeability,
       lineWidth: 0.2,
       lineColor: '#000000',
       showLabel: false,
