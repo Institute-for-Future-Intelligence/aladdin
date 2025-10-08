@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { DoorModel } from '../models/DoorModel';
+import { DEFAULT_DOOR_FRAME_COLOR } from '../constants';
 
 const DoorFrameColorInput = ({ door, defaultColor }: { door: DoorModel; defaultColor?: string }) => {
   const addUndoable = useStore(Selector.addUndoable);
@@ -36,7 +37,7 @@ const DoorFrameColorInput = ({ door, defaultColor }: { door: DoorModel; defaultC
       <ColorPicker
         showText
         size={'small'}
-        value={door.frameColor ?? defaultColor ?? 'white'}
+        value={door.frameColor ?? defaultColor ?? DEFAULT_DOOR_FRAME_COLOR}
         disabled={door.locked}
         onChange={(e) => {
           const oldColor = door.color;

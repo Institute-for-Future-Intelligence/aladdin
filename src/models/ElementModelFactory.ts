@@ -828,6 +828,7 @@ export class ElementModelFactory {
       archHeight: actionState.doorArchHeight,
       textureType: actionState.doorTexture ?? DoorTexture.Default,
       color: actionState.doorColor ?? Constants.DEFAULT_DOOR_COLOR,
+      frameColor: actionState.doorFrameColor ?? Constants.DEFAULT_DOOR_FRAME_COLOR,
       uValue: actionState.doorUValue ?? Constants.DEFAULT_DOOR_U_VALUE,
       lineWidth: 0.2,
       lineColor: '#000000',

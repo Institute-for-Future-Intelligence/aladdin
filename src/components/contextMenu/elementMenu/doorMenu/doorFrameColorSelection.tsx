@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -15,6 +15,7 @@ import { DoorModel } from 'src/models/DoorModel';
 import { useSelectedElement } from '../menuHooks';
 import { useLanguage } from 'src/hooks';
 import Dialog from '../../dialog';
+import { DEFAULT_DOOR_FRAME_COLOR } from '../../../../constants';
 
 const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -27,7 +28,7 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
 
   const door = useSelectedElement(ObjectType.Door) as DoorModel | undefined;
 
-  const [selectedColor, setSelectedColor] = useState<string>(door?.frameColor ?? '#ffffff');
+  const [selectedColor, setSelectedColor] = useState<string>(door?.frameColor ?? DEFAULT_DOOR_FRAME_COLOR);
 
   const lang = useLanguage();
 
@@ -111,7 +112,7 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
         const oldColorsSelected = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Door && !elem.locked && useStore.getState().selectedElementIdSet.has(elem.id)) {
-            oldColorsSelected.set(elem.id, (elem as DoorModel).frameColor ?? '#ffffff');
+            oldColorsSelected.set(elem.id, (elem as DoorModel).frameColor ?? DEFAULT_DOOR_FRAME_COLOR);
           }
         }
         const undoableChangeSelected = {
@@ -138,7 +139,7 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
         const oldColorsAll = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Door && !elem.locked) {
-            oldColorsAll.set(elem.id, (elem as DoorModel).frameColor ?? '#ffffff');
+            oldColorsAll.set(elem.id, (elem as DoorModel).frameColor ?? DEFAULT_DOOR_FRAME_COLOR);
           }
         }
         const undoableChangeAll = {
@@ -163,7 +164,7 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
           const oldColorsAboveFoundation = new Map<string, string>();
           for (const elem of useStore.getState().elements) {
             if (elem.type === ObjectType.Door && elem.foundationId === door.foundationId && !door.locked) {
-              oldColorsAboveFoundation.set(elem.id, (elem as DoorModel).frameColor ?? '#ffffff');
+              oldColorsAboveFoundation.set(elem.id, (elem as DoorModel).frameColor ?? DEFAULT_DOOR_FRAME_COLOR);
             }
           }
           const undoableChangeAboveFoundation = {
@@ -194,7 +195,7 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
           const oldColorsOnSameWall = new Map<string, string>();
           for (const elem of useStore.getState().elements) {
             if (elem.type === ObjectType.Door && elem.parentId === door.parentId && !door.locked) {
-              oldColorsOnSameWall.set(elem.id, (elem as DoorModel).frameColor ?? '#ffffff');
+              oldColorsOnSameWall.set(elem.id, (elem as DoorModel).frameColor ?? DEFAULT_DOOR_FRAME_COLOR);
             }
           }
           const undoableChangeOnSameWall = {
@@ -223,7 +224,7 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
       default:
         if (door) {
           const updatedDoor = getElementById(door.id) as DoorModel;
-          const oldColor = (updatedDoor ? updatedDoor.frameColor : door.frameColor) ?? '#ffffff';
+          const oldColor = (updatedDoor ? updatedDoor.frameColor : door.frameColor) ?? DEFAULT_DOOR_FRAME_COLOR;
           const undoableChange = {
             name: 'Set Color of Selected Door',
             timestamp: Date.now(),
@@ -261,7 +262,7 @@ const DoorFrameColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
       <Row gutter={6}>
         <Col span={11}>
           <CompactPicker
-            color={selectedColor ?? door?.frameColor ?? '#ffffff'}
+            color={selectedColor ?? door?.frameColor ?? DEFAULT_DOOR_FRAME_COLOR}
             onChangeComplete={(colorResult) => {
               setSelectedColor(colorResult.hex);
             }}

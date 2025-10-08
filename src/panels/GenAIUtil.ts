@@ -4,9 +4,7 @@
 
 import {
   DEFAULT_AIR_PERMEABILITY,
-  DEFAULT_DOOR_U_VALUE,
   DEFAULT_GROUND_FLOOR_R_VALUE,
-  DEFAULT_HVAC_SYSTEM,
   DEFAULT_ROOF_R_VALUE,
   DEFAULT_WALL_R_VALUE,
   GROUND_ID,
@@ -29,9 +27,10 @@ import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { useStore } from 'src/stores/common';
 import { useDataStore } from 'src/stores/commonData';
-import { Design, DoorTexture, FoundationTexture, ObjectType, RoofTexture, WallTexture } from 'src/types';
+import { Design, FoundationTexture, ObjectType, RoofTexture, WallTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { RoofUtil } from 'src/views/roof/RoofUtil';
+import { HvacSystem } from '../models/HvacSystem';
 
 export class GenAIUtil {
   static arrayCorrection(jsonElements: any[]) {
@@ -167,29 +166,45 @@ export class GenAIUtil {
     return correctedElements;
   }
 
-  static makeFoundation(id: string, center: number[], size: number[], r: number, color: string, rValue: number) {
+  static makeFoundation(
+    id: string,
+    center: number[],
+    size: number[],
+    r: number,
+    color: string,
+    rValue: number,
+    heatingSetpoint: number,
+    coolingSetpoint: number,
+    coefficientOfPerformanceAC: number,
+  ) {
     const [cx = 0, cy = 0] = center;
     const [lx = 10, ly = 10, lz = 0.1] = size;
     const actionState = useStore.getState().actionState;
     return {
+      id,
       type: ObjectType.Foundation,
-      cx: cx,
-      cy: cy,
+      cx,
+      cy,
       cz: lz / 2,
       lx: lx + 0.5,
       ly: ly + 0.5,
-      lz: lz,
+      lz,
       normal: [0, 0, 1],
       rotation: [0, 0, ((((r + 180) % 360) + 360) % 360) - 180],
       parentId: GROUND_ID,
-      color: color,
+      color,
       textureType: FoundationTexture.NoTexture,
       rValue: rValue ?? actionState.groundFloorRValue ?? DEFAULT_GROUND_FLOOR_R_VALUE,
       solarUpdraftTower: {},
       solarAbsorberPipe: {},
       solarPowerTower: {},
-      hvacSystem: { ...DEFAULT_HVAC_SYSTEM, id: 'HVAC ' + id },
-      id: id,
+      hvacSystem: {
+        id: 'HVAC ' + id,
+        heatingSetpoint: heatingSetpoint ?? 20,
+        coolingSetpoint: coolingSetpoint ?? 25,
+        temperatureThreshold: 3,
+        coefficientOfPerformanceAC: coefficientOfPerformanceAC ?? 4,
+      } as HvacSystem,
     } as FoundationModel;
   }
 
@@ -200,6 +215,7 @@ export class GenAIUtil {
     color: string,
     overhang = 0.3,
     rValue = 2,
+    airPermeability = 0,
     leftPoint: number[],
     rightPoint: number[],
     leftConnectId?: string,
@@ -225,9 +241,9 @@ export class GenAIUtil {
       ly: ly,
       lz: lz,
       parapet: actionState.wallParapet,
-      eavesLength: overhang,
+      eavesLength: overhang ?? actionState.wallEavesLength,
       rValue: rValue ?? actionState.wallRValue ?? DEFAULT_WALL_R_VALUE,
-      airPermeability: DEFAULT_AIR_PERMEABILITY,
+      airPermeability: airPermeability ?? actionState.wallAirPermeability ?? DEFAULT_AIR_PERMEABILITY,
       fill: WallFill.Full,
       leftUnfilledHeight: 0.5,
       rightUnfilledHeight: 0.5,
@@ -264,7 +280,9 @@ export class GenAIUtil {
     fId: string,
     center: number[],
     size: number[],
+    filled: boolean,
     color: string,
+    frameColor: string,
     uValue: number,
     airPermeability: number,
     doorType: string,
@@ -282,11 +300,12 @@ export class GenAIUtil {
       ly: 0,
       lz: lz,
       doorType: doorType ?? actionState.doorType,
-      filled: actionState.doorFilled,
+      filled: filled ?? actionState.doorFilled,
       interior: actionState.doorInterior,
       archHeight: actionState.doorArchHeight,
       textureType: textureType ?? actionState.doorTexture,
-      color: color,
+      color: color ?? actionState.doorColor,
+      frameColor: frameColor ?? actionState.doorFrameColor,
       uValue: uValue ?? actionState.doorUValue,
       airPermeability: airPermeability ?? actionState.doorAirPermeability,
       lineWidth: 0.2,

@@ -114,13 +114,45 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
         for (const e of jsonElements) {
           switch (e.type) {
             case ObjectType.Foundation: {
-              const { id, center, size, color, rotation, rValue } = e;
-              const f = GenAIUtil.makeFoundation(id, center, size, Util.toRadians(rotation), color, rValue);
+              const {
+                id,
+                center,
+                size,
+                color,
+                rotation,
+                rValue,
+                heatingSetpoint,
+                coolingSetpoint,
+                coefficienctOfPerformanceAC,
+              } = e;
+              const f = GenAIUtil.makeFoundation(
+                id,
+                center,
+                size,
+                Util.toRadians(rotation),
+                color,
+                rValue,
+                heatingSetpoint,
+                coolingSetpoint,
+                coefficienctOfPerformanceAC,
+              );
               state.elements.push(f);
               break;
             }
             case ObjectType.Wall: {
-              const { id, pId, size, leftPoint, rightPoint, color, overhang, rValue } = e;
+              const {
+                id,
+                pId,
+                size,
+                leftPoint,
+                rightPoint,
+                color,
+                overhang,
+                rValue,
+                airPermeability,
+                leftConnectId,
+                rightConnectId,
+              } = e;
               const w = GenAIUtil.makeWall(
                 id,
                 pId,
@@ -128,16 +160,30 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
                 color,
                 overhang,
                 rValue,
+                airPermeability,
                 leftPoint,
                 rightPoint,
-                e.leftConnectId,
-                e.rightConnectId,
+                leftConnectId,
+                rightConnectId,
               );
               state.elements.push(w);
               break;
             }
             case ObjectType.Door: {
-              const { id, pId, fId, center, size, color, uValue, airPermeability, doorType, textureType } = e;
+              const {
+                id,
+                pId,
+                fId,
+                center,
+                size,
+                filled,
+                color,
+                frameColor,
+                uValue,
+                airPermeability,
+                doorType,
+                textureType,
+              } = e;
               const wall = state.elements.find((e) => e.id === pId);
               if (wall) {
                 const _center = [center[0] / wall.lx, (-wall.lz / 2 + size[1] / 2) / wall.lz];
@@ -148,7 +194,9 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
                   fId,
                   _center,
                   _size,
+                  filled,
                   color,
+                  frameColor,
                   uValue,
                   airPermeability,
                   doorType,
