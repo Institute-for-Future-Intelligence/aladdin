@@ -123,7 +123,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
                 rValue,
                 heatingSetpoint,
                 coolingSetpoint,
-                coefficienctOfPerformanceAC,
+                coefficientOfPerformanceAC,
               } = e;
               const f = GenAIUtil.makeFoundation(
                 id,
@@ -134,7 +134,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
                 rValue,
                 heatingSetpoint,
                 coolingSetpoint,
-                coefficienctOfPerformanceAC,
+                coefficientOfPerformanceAC,
               );
               state.elements.push(f);
               break;

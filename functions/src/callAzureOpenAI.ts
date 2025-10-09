@@ -53,21 +53,31 @@ For Hip roof type, it has a ridgeLength, which by default should be half of the 
 - Door: is built on a wall. "pId" is the id of the wall on which it is built. "fId" is the id of the foundation on which it is built.
 Door size [lx, ly], lx is width, ly is height.
 Door center position [cx] is relative to the wall's center.
-Door has default color white.
-Door has default frame color white.
 Door should preferably be built at the center of the wall that faces south.
 Door has a boolean property "filled", which defaults to true.
 Door has a property "uValue" in the unit of W/(m²·℃), which defaults to 1.
 Door has a number property "airPermeability" in the unit of m³/(h·m²), which defaults to 0.
 Door has a string property "doorType" that can be either "Default" or "Arched", which defaults to "Default".
-Door has a string property "textureType" that can be "Door Texture #1", "Door Texture #2", ..., "Door Texture #17", which defaults to "Door Texture #1".
-If it is a white, paneled front door with a semicircular window at the top featuring a sunburst-style grid design, then "textureType" is "Door Texture #1".
-If it is a wooden Craftsman-style door featuring a grid of six small square windows at the top and three vertical recessed panels below a decorative ledge, then "textureType" is "Door Texture #2".
-If it is a wooden door with a dark brown finish, two vertical panels, and a small decorative glass window at the top, then "textureType" is "Door Texture #3".
-If it is a dark brown wooden door featuring two vertical panels and a rectangular decorative glass window near the top, then "textureType" is "Door Texture #4".
-If it is a dark wooden door with decorative diamond-patterned glass panels, including matching sidelights and a transom window, then "textureType" is "Door Texture #5".
-If it is a white door with a large, decorative leaded glass panel flanked by two matching sidelights, then "textureType" is "Door Texture #6".
-If it is a brown wood-grain door with a central arched decorative glass panel flanked by two matching sidelights, then "textureType" is "Door Texture #7".
+Door has a string property "textureType" that can be "Door Texture #1", "Door Texture #2", ..., "Door Texture #17", "Door Texture Default", and "No Door Texture", which defaults to "Door Texture #1".
+"Door Texture #1" is a white, paneled front door with a semicircular window at the top featuring a sunburst-style grid design.
+"Door Texture #2" is a wooden Craftsman-style door featuring a grid of six small square windows at the top and three vertical recessed panels below a decorative ledge.
+"Door Texture #3" is a wooden door with a dark brown finish, two vertical panels, and a small decorative glass window at the top.
+"Door Texture #4" is a dark brown wooden door featuring two vertical panels and a rectangular decorative glass window near the top.
+"Door Texture #5" is a dark wooden door with decorative diamond-patterned glass panels, including matching sidelights and a transom window.
+"Door Texture #6" is a white door with a large, decorative leaded glass panel flanked by two matching sidelights.
+"Door Texture #7" is a brown wood-grain door with a central arched decorative glass panel flanked by two matching sidelights.
+"Door Texture #8" is a pair of ornate double doors made of dark metal or wood with iron scrollwork panels over glass.
+"Door Texture #9" is a white, traditional-style sectional garage door with raised panels and a row of four rectangular windows across the top.
+"Door Texture #10" is a white, carriage-house style garage door featuring vertically grooved panels, a top row of four 4-lite windows, and decorative black handles.
+"Door Texture #11" is a white, carriage-house style garage door featuring decorative black handles and a top section with two arched, multi-pane windows.
+"Door Texture #12" is a white, carriage-house style garage door with decorative black handles and two arched top windows featuring ornate black scrollwork inserts.
+"Door Texture #13" is a pair of natural wood double doors with large glass panels divided into small squares and ornate brass handles, set within a decorative wooden frame.
+"Door Texture #14" is a single natural wood door with a tall glass panel divided into squares and a vertical wooden panel beneath it, all set within an ornate wooden frame.
+"Door Texture #15" is a dark double door with gold hardware and a semicircular transom window featuring a fanlight design above it, all framed by light-colored molding.
+"Door Texture #16" is a panelized green single door with two vertical glass windows featuring a decorative circular design, topped by a semicircular fanlight transom, and set within a light-colored arched entryway.
+"Door Texture #17" is a panelized coral single door featuring a multi-pane glass window in the upper section and a semicircular fanlight transom above, all framed by light-colored pilasters and a pink arch.
+When "textureType" is "Door Texture Default" or "No Door Texture", set door's color (default to white). Otherwise, set the texture color.
+Door has default frame color white.
 
 - Window: is built on a wall. "pId" is the id of the wall on which it is built. "fId" is the id of the foundation on which it is built.
 Window size [lx, ly], lx is width, ly is height.
