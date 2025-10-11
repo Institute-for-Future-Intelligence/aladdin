@@ -3,74 +3,61 @@
  */
 
 import i18n from 'src/i18n/i18n';
-import { useStore } from 'src/stores/common';
-import type { MenuProps } from 'antd';
 import { RoofModel, RoofStructure } from 'src/models/RoofModel';
 import { RoofStructureRadioGroup } from './roofMenuItems';
-import { DialogItem } from '../../menuItems';
+import { ContextSubMenu, DialogItem } from '../../menuItems';
 import RoofRafterColorSelection from './roofRafterColorSelection';
 import RoofRafterSpacingInput from './roofRafterSpacingInput';
 import RoofRafterWidthInput from './roofRafterWidthInput';
 import GlassTintSelection from './glassTintSelection';
+import { useLanguage } from 'src/hooks';
+import { MenuDivider } from '@szhsin/react-menu';
 
-export const createRoofStructureSubmenu = (roof: RoofModel) => {
-  const lang = { lng: useStore.getState().language };
+interface Props {
+  roof: RoofModel;
+}
 
-  const items: MenuProps['items'] = [];
+const RoofStructureSubmenu = ({ roof }: Props) => {
+  const lang = useLanguage();
 
-  items.push({
-    key: 'roof-structure-radio-group',
-    label: <RoofStructureRadioGroup roof={roof} />,
-    style: { backgroundColor: 'white' },
-  });
+  return (
+    <ContextSubMenu label={i18n.t('roofMenu.RoofStructure', lang)}>
+      {/* roof-structure-radio-group */}
+      <RoofStructureRadioGroup roof={roof} />
 
-  if (roof.roofStructure === RoofStructure.Rafter) {
-    items.push(
-      {
-        type: 'divider',
-      },
-      {
-        key: 'roof-rafter-spacing',
-        label: (
+      {roof.roofStructure === RoofStructure.Rafter && (
+        <>
+          {/* divider */}
+          <MenuDivider />
+
+          {/* roof-rafter-spacing */}
           <DialogItem noPadding Dialog={RoofRafterSpacingInput}>
             {i18n.t('roofMenu.RafterSpacing', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'roof-rafter-width',
-        label: (
+
+          {/* roof-rafter-width */}
           <DialogItem noPadding Dialog={RoofRafterWidthInput}>
             {i18n.t('roofMenu.RafterWidth', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'roof-rafter-color',
-        label: (
+
+          {/* roof-rafter-color */}
           <DialogItem noPadding Dialog={RoofRafterColorSelection}>
             {i18n.t('roofMenu.RafterColor', lang)} ...
           </DialogItem>
-        ),
-      },
-    );
-  }
+        </>
+      )}
 
-  if (roof.roofStructure === RoofStructure.Glass) {
-    items.push(
-      {
-        type: 'divider',
-      },
-      {
-        key: 'roof-glass-tint-selection',
-        label: (
+      {/* {roof.roofStructure === RoofStructure.Glass && (
+        <>
+          <MenuDivider />
+
           <DialogItem noPadding Dialog={GlassTintSelection}>
             {i18n.t('roofMenu.GlassTint', lang)} ...
           </DialogItem>
-        ),
-      },
-    );
-  }
-
-  return items;
+        </>
+      )} */}
+    </ContextSubMenu>
+  );
 };
+
+export default RoofStructureSubmenu;

@@ -2,11 +2,8 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import type { MenuProps } from 'antd';
-import { ElementModel } from 'src/models/ElementModel';
-import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { Copy, Cut, DialogItem, Lock, MenuItem, SolarCollectorSunBeamCheckbox } from '../../menuItems';
+import { Copy, Cut, DialogItem, Lock, SolarCollectorSunBeamCheckbox } from '../../menuItems';
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 import i18n from 'src/i18n/i18n';
 import SolarWaterHeaterLengthInput from './solarWaterHeaterLengthInput';
@@ -16,81 +13,59 @@ import { UNIT_VECTOR_POS_Z_ARRAY } from 'src/constants';
 import SolarWaterHeaterRelativeAzimuthInput from './solarWaterHeaterRelativeAzimuthInput';
 import SolarWaterHeaterHeightInput from './solarWaterHeaterHeightInput';
 import SolarWaterHeaterColorSelection from './solarWaterHeaterColorSelection';
-import { createLabelSubmenu } from '../../labelSubmenuItems';
+import LabelSubmenu from '../../labelSubmenuItems';
+import { useLanguage } from 'src/hooks';
+import { useContextMenuElement } from '../menuHooks';
 
-export const createSolarWaterHeaterMenu = (selectedElement: ElementModel) => {
-  const items: MenuProps['items'] = [];
-
-  if (selectedElement.type !== ObjectType.SolarWaterHeater) return { items };
-
-  const waterHeater = selectedElement as SolarWaterHeaterModel;
+const SolarWaterHeaterMenu = () => {
+  const lang = useLanguage();
+  const waterHeater = useContextMenuElement(ObjectType.SolarWaterHeater) as SolarWaterHeaterModel;
+  if (!waterHeater) return null;
 
   const editable = !waterHeater.locked;
-  const lang = { lng: useStore.getState().language };
-  const upright =
-    selectedElement.type === ObjectType.SolarWaterHeater &&
-    Util.isIdentical(waterHeater.normal, UNIT_VECTOR_POS_Z_ARRAY);
+  const upright = Util.isIdentical(waterHeater.normal, UNIT_VECTOR_POS_Z_ARRAY);
 
-  items.push({
-    key: 'water-heater-copy',
-    label: <Copy />,
-  });
+  return (
+    <>
+      {/* water-heater-copy */}
+      <Copy />
 
-  if (editable) {
-    items.push({
-      key: 'water-heater-cut',
-      label: <Cut />,
-    });
-  }
+      {/* water-heater-cut */}
+      {editable && <Cut />}
 
-  items.push({
-    key: 'water-heater-lock',
-    label: <Lock selectedElement={waterHeater} />,
-  });
+      {/* water-heater-lock */}
+      <Lock selectedElement={waterHeater} />
 
-  if (editable) {
-    items.push(
-      {
-        key: 'water-heater-length',
-        label: <DialogItem Dialog={SolarWaterHeaterLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>,
-      },
-      {
-        key: 'water-heater-width',
-        label: <DialogItem Dialog={SolarWaterHeaterWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
-      },
-      {
-        key: 'water-heater-height',
-        label: <DialogItem Dialog={SolarWaterHeaterHeightInput}>{i18n.t('word.Height', lang)} ...</DialogItem>,
-      },
-    );
+      {editable && (
+        <>
+          {/* water-heater-length */}
+          <DialogItem Dialog={SolarWaterHeaterLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>
 
-    if (upright) {
-      items.push({
-        key: 'water-heater-relative-azimuth',
-        label: (
-          <DialogItem Dialog={SolarWaterHeaterRelativeAzimuthInput}>
-            {i18n.t('solarCollectorMenu.RelativeAzimuth', lang)} ...
-          </DialogItem>
-        ),
-      });
-    }
+          {/* water-heater-width */}
+          <DialogItem Dialog={SolarWaterHeaterWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>
 
-    items.push({
-      key: 'water-heater-frame-color',
-      label: <DialogItem Dialog={SolarWaterHeaterColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>,
-    });
+          {/* water-heater-height */}
+          <DialogItem Dialog={SolarWaterHeaterHeightInput}>{i18n.t('word.Height', lang)} ...</DialogItem>
 
-    items.push({
-      key: 'water-heater-draw-sun-beam',
-      label: <SolarCollectorSunBeamCheckbox solarCollector={waterHeater} />,
-    });
+          {/* water-heater-relative-azimuth */}
+          {upright && (
+            <DialogItem Dialog={SolarWaterHeaterRelativeAzimuthInput}>
+              {i18n.t('solarCollectorMenu.RelativeAzimuth', lang)} ...
+            </DialogItem>
+          )}
 
-    items.push({
-      key: 'solar-water-heater-label',
-      label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,
-      children: createLabelSubmenu(waterHeater),
-    });
-  }
+          {/* water-heater-frame-color */}
+          <DialogItem Dialog={SolarWaterHeaterColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>
 
-  return { items } as MenuProps;
+          {/* water-heater-draw-sun-beam */}
+          <SolarCollectorSunBeamCheckbox solarCollector={waterHeater} />
+
+          {/* solar-water-heater-label */}
+          <LabelSubmenu element={waterHeater} />
+        </>
+      )}
+    </>
+  );
 };
+
+export default SolarWaterHeaterMenu;

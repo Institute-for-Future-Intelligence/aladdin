@@ -5,8 +5,8 @@
 import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { MenuItem } from '../../menuItems';
-import { Checkbox, Modal, Radio, RadioChangeEvent, Space } from 'antd';
+import { ContextMenuItem, ContextSubMenu, AntdMenuItem } from '../../menuItems';
+import { Checkbox, Modal, Radio, Space } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { UndoableRemoveAllChildren } from 'src/undo/UndoableRemoveAllChildren';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
@@ -21,6 +21,7 @@ import { Util } from 'src/Util';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
 import React from 'react';
+import { ClickEvent, MenuItem, MenuRadioGroup, RadioChangeEvent } from '@szhsin/react-menu';
 
 interface WallMenuItemProps {
   wall: WallModel;
@@ -80,9 +81,9 @@ export const RemoveWallElementsItem = ({
   };
 
   return (
-    <MenuItem update noPadding onClick={handleClickItem}>
+    <ContextMenuItem noPadding onClick={handleClickItem}>
       {children}
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -120,9 +121,9 @@ export const LockWallElementsItem = ({ wall, objectType, lock, children }: LockW
   };
 
   return (
-    <MenuItem stayAfterClick update noPadding onClick={handleClick}>
+    <ContextMenuItem stayAfterClick noPadding onClick={handleClick}>
       {children}
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -162,11 +163,11 @@ export const ParapetCheckbox = ({ wall }: WallMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick={false} noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={wall.parapet.display} onChange={handleChange}>
         {i18n.t('wallMenu.Parapet', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -193,7 +194,7 @@ export const WallStructureRadioGroup = ({ wall }: WallMenuItemProps) => {
       name: 'Select Wall Structure',
       timestamp: Date.now(),
       oldValue: wall.wallStructure,
-      newValue: e.target.value,
+      newValue: e.value,
       changedElementId: wall.id,
       changedElementType: wall.type,
       undo: () => {
@@ -204,9 +205,9 @@ export const WallStructureRadioGroup = ({ wall }: WallMenuItemProps) => {
       },
     } as UndoableChange;
     useStore.getState().addUndoable(undoableChange);
-    updateWallStructureById(wall.id, e.target.value);
+    updateWallStructureById(wall.id, e.value);
     useStore.getState().set((state) => {
-      state.actionState.wallStructure = e.target.value;
+      state.actionState.wallStructure = e.value;
       if (
         state.actionState.wallStructure === WallStructure.Stud ||
         state.actionState.wallStructure === WallStructure.Pillar
@@ -216,24 +217,24 @@ export const WallStructureRadioGroup = ({ wall }: WallMenuItemProps) => {
     });
   };
 
+  const onItemClick = (e: ClickEvent) => {
+    e.keepOpen = true;
+  };
+
   const value = wall.wallStructure ?? WallStructure.Default;
 
   return (
-    <MenuItem stayAfterClick={false} noPadding>
-      <Radio.Group value={value} onChange={handleChange}>
-        <Space direction="vertical">
-          <Radio style={{ width: '100%' }} value={WallStructure.Default}>
-            {i18n.t('wallMenu.DefaultStructure', lang)}
-          </Radio>
-          <Radio style={{ width: '100%' }} value={WallStructure.Stud}>
-            {i18n.t('wallMenu.StudStructure', lang)}
-          </Radio>
-          <Radio style={{ width: '100%' }} value={WallStructure.Pillar}>
-            {i18n.t('wallMenu.PillarStructure', lang)}
-          </Radio>
-        </Space>
-      </Radio.Group>
-    </MenuItem>
+    <MenuRadioGroup value={value} onRadioChange={handleChange}>
+      <MenuItem type="radio" value={WallStructure.Default} onClick={onItemClick}>
+        {i18n.t('wallMenu.DefaultStructure', lang)}
+      </MenuItem>
+      <MenuItem type="radio" value={WallStructure.Stud} onClick={onItemClick}>
+        {i18n.t('wallMenu.StudStructure', lang)}
+      </MenuItem>
+      <MenuItem type="radio" value={WallStructure.Pillar} onClick={onItemClick}>
+        {i18n.t('wallMenu.PillarStructure', lang)}
+      </MenuItem>
+    </MenuRadioGroup>
   );
 };
 
@@ -288,7 +289,7 @@ export const AddPolygonOnWallItem = ({ wall }: WallMenuItemProps) => {
     useStore.getState().addUndoable(undoableAdd);
   };
 
-  return <MenuItem onClick={handleClick}>{i18n.t('foundationMenu.AddPolygon', lang)}</MenuItem>;
+  return <ContextMenuItem onClick={handleClick}>{i18n.t('foundationMenu.AddPolygon', lang)}</ContextMenuItem>;
 };
 
 export const WallFillRadioGroup = ({ wall }: WallMenuItemProps) => {
@@ -310,7 +311,7 @@ export const WallFillRadioGroup = ({ wall }: WallMenuItemProps) => {
       name: 'Select Wall Fill',
       timestamp: Date.now(),
       oldValue: wall.fill,
-      newValue: e.target.value,
+      newValue: e.value,
       changedElementId: wall.id,
       changedElementType: wall.type,
       undo: () => {
@@ -321,25 +322,25 @@ export const WallFillRadioGroup = ({ wall }: WallMenuItemProps) => {
       },
     } as UndoableChange;
     useStore.getState().addUndoable(undoableChange);
-    updateWallFillById(wall.id, e.target.value);
+    updateWallFillById(wall.id, e.value);
+  };
+
+  const onItemClick = (e: ClickEvent) => {
+    e.keepOpen = true;
   };
 
   return (
-    <MenuItem stayAfterClick={false} noPadding>
-      <Radio.Group value={wall.fill} onChange={handleChange}>
-        <Space direction="vertical">
-          <Radio style={{ width: '100%' }} value={WallFill.Full}>
-            {i18n.t('wallMenu.Full', lang)}
-          </Radio>
-          <Radio style={{ width: '100%' }} value={WallFill.Partial}>
-            {i18n.t('wallMenu.Partial', lang)}
-          </Radio>
-          <Radio style={{ width: '100%' }} value={WallFill.Empty}>
-            {i18n.t('wallMenu.Empty', lang)}
-          </Radio>
-        </Space>
-      </Radio.Group>
-    </MenuItem>
+    <MenuRadioGroup value={wall.fill} onRadioChange={handleChange}>
+      <MenuItem type="radio" value={WallFill.Full} onClick={onItemClick}>
+        {i18n.t('wallMenu.Full', lang)}
+      </MenuItem>
+      <MenuItem type="radio" value={WallFill.Partial} onClick={onItemClick}>
+        {i18n.t('wallMenu.Partial', lang)}
+      </MenuItem>
+      <MenuItem type="radio" value={WallFill.Empty} onClick={onItemClick}>
+        {i18n.t('wallMenu.Empty', lang)}
+      </MenuItem>
+    </MenuRadioGroup>
   );
 };
 
@@ -377,10 +378,10 @@ export const WallOpenToOutsideCheckbox = ({ wall }: WallMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick={false} noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={!!wall.openToOutside} onChange={handleChange}>
         {i18n.t('wallMenu.OpenToOutside', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };

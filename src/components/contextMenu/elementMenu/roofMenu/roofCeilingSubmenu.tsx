@@ -3,38 +3,38 @@
  */
 
 import i18n from 'src/i18n/i18n';
-import { useStore } from 'src/stores/common';
-import type { MenuProps } from 'antd';
 import { RoofModel } from 'src/models/RoofModel';
 import { RoofCeilingCheckbox } from './roofMenuItems';
-import { DialogItem } from '../../menuItems';
+import { ContextSubMenu, DialogItem } from '../../menuItems';
 import CeilingRValueInput from './ceilingRValueInput';
+import { useLanguage } from 'src/hooks';
+import { MenuDivider } from '@szhsin/react-menu';
 
-export const createRoofCeilingSubmenu = (roof: RoofModel) => {
-  const lang = { lng: useStore.getState().language };
+interface Props {
+  roof: RoofModel;
+}
 
-  const items: MenuProps['items'] = [];
+const RoofCeilingSubmenu = ({ roof }: Props) => {
+  const lang = useLanguage();
 
-  items.push({
-    key: 'roof-ceiling',
-    label: <RoofCeilingCheckbox roof={roof} />,
-  });
+  return (
+    <ContextSubMenu label={i18n.t('roofMenu.Ceiling', lang)}>
+      {/* roof-ceiling */}
+      <RoofCeilingCheckbox roof={roof} />
 
-  if (roof.ceiling) {
-    items.push(
-      {
-        type: 'divider',
-      },
-      {
-        key: 'ceiling-r-value',
-        label: (
+      {roof.ceiling && (
+        <>
+          {/* divider */}
+          <MenuDivider />
+
+          {/* ceiling-r-value */}
           <DialogItem noPadding Dialog={CeilingRValueInput}>
             {i18n.t('roofMenu.CeilingRValue', lang)} ...
           </DialogItem>
-        ),
-      },
-    );
-  }
-
-  return items;
+        </>
+      )}
+    </ContextSubMenu>
+  );
 };
+
+export default RoofCeilingSubmenu;

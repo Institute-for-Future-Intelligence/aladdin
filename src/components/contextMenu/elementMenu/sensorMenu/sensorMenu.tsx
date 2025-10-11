@@ -2,49 +2,34 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { type MenuProps } from 'antd';
-import { ElementModel } from 'src/models/ElementModel';
 import { SensorModel } from 'src/models/SensorModel';
 import { ObjectType } from 'src/types';
 import { Copy, Cut, Lock } from '../../menuItems';
 import { SensorLabelTextInput, SensorShowLabelCheckbox } from './sensorMenuItems';
+import { useContextMenuElement } from '../menuHooks';
 
-export const createSensorMenu = (selectedElement: ElementModel) => {
-  const items: MenuProps['items'] = [];
-
-  if (selectedElement.type !== ObjectType.Sensor) return { items };
-
-  const sensor = selectedElement as SensorModel;
+const SensorMenu = () => {
+  const sensor = useContextMenuElement(ObjectType.Sensor) as SensorModel;
+  if (!sensor) return null;
 
   const editable = !sensor.locked;
 
-  items.push({
-    key: 'sensor-copy',
-    label: <Copy />,
-  });
+  return (
+    <>
+      <Copy />
 
-  if (editable) {
-    items.push({
-      key: 'sensor-cut',
-      label: <Cut />,
-    });
-  }
+      {editable && <Cut />}
 
-  items.push({
-    key: 'sensor-lock',
-    label: <Lock selectedElement={sensor} />,
-  });
+      <Lock selectedElement={sensor} />
 
-  if (editable) {
-    items.push({
-      key: 'sensor-show-label',
-      label: <SensorShowLabelCheckbox sensor={sensor} />,
-    });
-    items.push({
-      key: 'sensor-label-text',
-      label: <SensorLabelTextInput sensor={sensor} />,
-    });
-  }
-
-  return { items } as MenuProps;
+      {editable && (
+        <>
+          <SensorShowLabelCheckbox sensor={sensor} />
+          <SensorLabelTextInput sensor={sensor} />
+        </>
+      )}
+    </>
+  );
 };
+
+export default SensorMenu;

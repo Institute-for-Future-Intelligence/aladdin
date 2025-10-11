@@ -3,7 +3,7 @@
  */
 
 import { Checkbox, InputNumber, Space } from 'antd';
-import { MenuItem } from '../../menuItems';
+import { ContextMenuItem, ContextSubMenu } from '../../menuItems';
 import { LightModel } from 'src/models/LightModel';
 import { useLanguage } from 'src/hooks';
 import i18n from 'src/i18n/i18n';
@@ -42,11 +42,11 @@ export const LightInsideCheckbox = ({ light }: LightMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={light.inside} onChange={handleChange}>
         {i18n.t('lightMenu.Inside', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -89,10 +89,10 @@ export const LightIntensityInput = ({ light }: LightMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <ContextMenuItem stayAfterClick>
       <Space style={{ width: '80px' }}>{i18n.t('lightMenu.Intensity', lang)}:</Space>
       <InputNumber min={0.1} max={10} step={0.1} precision={1} value={inputIntensity} onChange={setIntensity} />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -135,15 +135,17 @@ export const LightDistanceInput = ({ light }: LightMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <ContextMenuItem stayAfterClick>
       <Space style={{ width: '80px' }}>{i18n.t('lightMenu.MaximumDistance', lang)}:</Space>
       <InputNumber min={1} max={10} step={1} precision={1} value={inputDistance} onChange={setDistance} />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
-export const LightColorPicker = ({ light }: LightMenuItemProps) => {
+export const LightColorSubmenu = ({ light }: LightMenuItemProps) => {
   const inputColor = light.color ?? '#ffff99';
+
+  const lang = useLanguage();
 
   const updateLightColorById = (id: string, color: string) => {
     useStore.getState().set((state) => {
@@ -157,7 +159,7 @@ export const LightColorPicker = ({ light }: LightMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextSubMenu label={i18n.t('word.Color', lang)}>
       <CompactPicker
         color={inputColor}
         onChangeComplete={(colorResult) => {
@@ -182,6 +184,6 @@ export const LightColorPicker = ({ light }: LightMenuItemProps) => {
           });
         }}
       />
-    </MenuItem>
+    </ContextSubMenu>
   );
 };

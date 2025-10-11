@@ -10,13 +10,20 @@ import { UndoableRemoveAll } from '../../../../undo/UndoableRemoveAll';
 import { UndoableCheck } from '../../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../../undo/UndoableChangeGroup';
-import { Checkbox, InputNumber, Modal, Radio, type RadioChangeEvent, Space, Switch } from 'antd';
+import { Checkbox, Flex, InputNumber, Modal, Space, Switch } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { ColorResult, CompactPicker } from 'react-color';
-import { MenuItem } from '../../menuItems';
-import { DEFAULT_LEAF_OFF_DAY, DEFAULT_LEAF_OUT_DAY, MONTHS } from '../../../../constants';
+import { ContextMenuItem, ContextSubMenu } from '../../menuItems';
+import {
+  DEFAULT_LEAF_OFF_DAY,
+  DEFAULT_LEAF_OUT_DAY,
+  DEFAULT_MONTHLY_IRRADIANCE_LOSSES,
+  MONTHS,
+  MONTHS_ABBV,
+} from '../../../../constants';
 import i18n from 'src/i18n/i18n';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
+import { ClickEvent, MenuItem, MenuRadioGroup, RadioChangeEvent } from '@szhsin/react-menu';
 
 interface RemoveElementsItemProps {
   itemLabel: string;
@@ -63,15 +70,15 @@ export const GroundImageCheckbox = ({ forModelTree }: { forModelTree?: boolean }
       <Switch size={'small'} checked={groundImage} onChange={handleChange} />
     </Space>
   ) : (
-    <MenuItem stayAfterClick noPadding>
-      <Checkbox style={{ width: '100%' }} checked={groundImage} onChange={(e) => handleChange(e.target.checked)}>
+    <ContextMenuItem stayAfterClick noPadding>
+      <Checkbox checked={groundImage} onChange={(e) => handleChange(e.target.checked)}>
         {i18n.t('groundMenu.ImageOnGround', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
-export const SurfaceTypeRadioGroup = () => {
+export const SurfaceTypeSubmenu = () => {
   const waterSurface = useStore(Selector.viewState.waterSurface);
   const lang = useLanguage();
 
@@ -83,7 +90,7 @@ export const SurfaceTypeRadioGroup = () => {
 
   const onChange = (e: RadioChangeEvent) => {
     const oldValue = waterSurface;
-    const newValue = e.target.value;
+    const newValue = e.value;
     const undoableChange = {
       name: 'Select Surface Type',
       timestamp: Date.now(),
@@ -100,21 +107,26 @@ export const SurfaceTypeRadioGroup = () => {
     setWaterSurface(newValue === 'Water');
   };
 
+  const onClickItem = (e: ClickEvent) => {
+    e.keepOpen = true;
+  };
+
   return (
-    <MenuItem stayAfterClick noPadding update>
-      <Radio.Group value={waterSurface ? 'Water' : 'Land'} onChange={onChange}>
-        <Radio style={{ width: '100%', paddingBottom: '6px' }} key={'Land'} value={'Land'}>
+    <ContextSubMenu label={i18n.t('groundMenu.SurfaceType', lang)}>
+      <MenuRadioGroup value={waterSurface ? 'Water' : 'Land'} onRadioChange={onChange}>
+        <MenuItem type="radio" value={'Land'} onClick={onClickItem}>
           {i18n.t('groundMenu.LandSurface', lang)}
-        </Radio>
-        <Radio style={{ width: '100%' }} key={'Water'} value={'Water'}>
+        </MenuItem>
+        <MenuItem type="radio" value={'Water'} onClick={onClickItem}>
           {i18n.t('groundMenu.WaterSurface', lang)}
-        </Radio>
-      </Radio.Group>
-    </MenuItem>
+        </MenuItem>
+      </MenuRadioGroup>
+    </ContextSubMenu>
   );
 };
 
-export const GroundColorPicker = () => {
+export const GroundColorSubmenu = () => {
+  const lang = useLanguage();
   const groundColor = useStore(Selector.viewState.groundColor);
 
   const setGroundColor = (color: string) => {
@@ -143,9 +155,32 @@ export const GroundColorPicker = () => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextSubMenu label={i18n.t('word.Color', lang)}>
       <CompactPicker color={groundColor} onChangeComplete={onChange} />
-    </MenuItem>
+    </ContextSubMenu>
+  );
+};
+
+export const MonthlyIrradianceLossSubmenu = () => {
+  const lang = useLanguage();
+
+  return (
+    <ContextSubMenu label={i18n.t('groundMenu.MonthlyIrradianceLoss', lang)}>
+      {MONTHS_ABBV.slice().map((val, idx) => {
+        if (idx % 2 === 0) return null;
+        return (
+          <ContextMenuItem key={val} stayAfterClick noPadding>
+            <IrradianceLossInput monthIndex={idx - 1} />
+            <IrradianceLossInput monthIndex={idx} />
+          </ContextMenuItem>
+        );
+      })}
+      <hr style={{ marginTop: '6px' }} />
+      <Flex style={{ width: '240px' }}>
+        <span style={{ fontSize: '32px', padding: '0 8px', verticalAlign: 'top' }}>🎓</span>
+        <span style={{ fontSize: '12px' }}>{i18n.t('groundMenu.MonthlyIrradianceLossExplanation', lang)}</span>
+      </Flex>
+    </ContextSubMenu>
   );
 };
 
@@ -190,7 +225,7 @@ export const LeafOutDayInput = () => {
   const AddonAfter = () => <div style={{ width: '60px' }}>(1-150)</div>;
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <InputNumber
         addonBefore={<AddonBefore />}
         addonAfter={<AddonAfter />}
@@ -202,7 +237,7 @@ export const LeafOutDayInput = () => {
         value={leafDayOfYear1}
         onChange={onChange}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -247,7 +282,7 @@ export const LeafShedDayInput = () => {
   const AddonAfter = () => <div style={{ width: '60px' }}>(215-365)</div>;
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <InputNumber
         addonBefore={<AddonBefore />}
         addonAfter={<AddonAfter />}
@@ -259,18 +294,17 @@ export const LeafShedDayInput = () => {
         value={leafDayOfYear2}
         onChange={onChange}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
 export const IrradianceLossInput = ({ monthIndex }: { monthIndex: number }) => {
-  const monthlyIrradianceLoss =
-    useStore((state) => {
-      if (!state.world.monthlyIrradianceLosses) {
-        return 0.05;
-      }
-      return state.world.monthlyIrradianceLosses[monthIndex];
-    }) ?? 0.05;
+  const monthlyIrradianceLoss = useStore((state) => {
+    if (state.world.monthlyIrradianceLosses === undefined) {
+      return DEFAULT_MONTHLY_IRRADIANCE_LOSSES[monthIndex];
+    }
+    return state.world.monthlyIrradianceLosses[monthIndex];
+  });
 
   const lang = useLanguage();
 
@@ -353,10 +387,10 @@ export const AlbedoInput = ({ forModelTree }: { forModelTree?: boolean }) => {
       <InputNumber min={0.05} max={1} step={0.01} precision={2} value={albedo} onChange={onChange} />
     </Space>
   ) : (
-    <MenuItem stayAfterClick>
+    <ContextMenuItem stayAfterClick>
       <Space style={{ width: '60px' }}>{i18n.t('groundMenu.Albedo', lang)}:</Space>
       <InputNumber min={0.05} max={1} step={0.01} precision={2} value={albedo} onChange={onChange} />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -392,7 +426,7 @@ export const RemoveGroundElementsItem = ({ itemLabel, modalTitle, objectType }: 
     });
   };
 
-  return <MenuItem onClick={handleClickItem}>{itemLabel}</MenuItem>;
+  return <ContextMenuItem onClick={handleClickItem}>{itemLabel}</ContextMenuItem>;
 };
 
 export const LockElementsItem = ({ lock, count, label }: LockElementsItemProps) => {
@@ -424,8 +458,8 @@ export const LockElementsItem = ({ lock, count, label }: LockElementsItemProps) 
   };
 
   return (
-    <MenuItem update onClick={onClick}>
+    <ContextMenuItem onClick={onClick}>
       {label} ({count})
-    </MenuItem>
+    </ContextMenuItem>
   );
 };

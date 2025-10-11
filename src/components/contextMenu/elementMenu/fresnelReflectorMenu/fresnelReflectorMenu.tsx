@@ -2,106 +2,78 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import type { MenuProps } from 'antd';
-import { ElementModel } from 'src/models/ElementModel';
 import { FresnelReflectorModel } from 'src/models/FresnelReflectorModel';
-import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { Copy, Cut, DialogItem, Lock, MenuItem } from '../../menuItems';
+import { Copy, Cut, DialogItem, Lock } from '../../menuItems';
 import i18n from 'src/i18n/i18n';
 import FresnelReflectorDrawSunBeamSelection from './fresnelReflectorDrawSunBeamSelection';
-import { createLabelSubmenu } from '../../labelSubmenuItems';
+import LabelSubmenu from '../../labelSubmenuItems';
 import FresnelReflectorAbsorberSelection from './fresnelReflectorAbsorberSelection';
 import FresnelReflectorLengthInput from './fresnelReflectorLengthInput';
 import FresnelReflectorWidthInput from './fresnelReflectorWidthInput';
 import FresnelReflectorModuleLengthInput from './fresnelReflectorModuleLengthInput';
 import FresnelReflectorPoleHeightInput from './fresnelReflectorPoleHeightInput';
 import FresnelReflectorReflectanceInput from './fresnelReflectorReflectanceInput';
+import { useLanguage } from 'src/hooks';
+import { useContextMenuElement } from '../menuHooks';
 
-export const createFresnelReflectorMenu = (selectedElement: ElementModel) => {
-  const items: MenuProps['items'] = [];
+const FresnelReflectorMenu = () => {
+  const lang = useLanguage();
+  const fresnelReflector = useContextMenuElement(ObjectType.FresnelReflector) as FresnelReflectorModel;
+  if (!fresnelReflector) return null;
 
-  if (selectedElement.type !== ObjectType.FresnelReflector) return { items };
-
-  const fresnelReflector = selectedElement as FresnelReflectorModel;
-
-  const lang = { lng: useStore.getState().language };
   const editable = !fresnelReflector.locked;
 
-  items.push({
-    key: 'fresnel-reflector-copy',
-    label: <Copy />,
-  });
+  return (
+    <>
+      {/* fresnel-reflector-copy */}
+      <Copy />
 
-  if (editable) {
-    items.push({
-      key: 'fresnel-reflector-cut',
-      label: <Cut />,
-    });
-  }
+      {/* fresnel-reflector-cut */}
+      {editable && <Cut />}
 
-  items.push({
-    key: 'fresnel-reflector-lock',
-    label: <Lock selectedElement={fresnelReflector} />,
-  });
+      {/* fresnel-reflector-lock */}
+      <Lock selectedElement={fresnelReflector} />
 
-  if (editable) {
-    items.push(
-      {
-        key: 'fresnel-reflector-receiver',
-        label: (
+      {editable && (
+        <>
+          {/* fresnel-reflector-receiver */}
           <DialogItem Dialog={FresnelReflectorAbsorberSelection}>
             {i18n.t('fresnelReflectorMenu.SelectAbsorberToReflectSunlightTo', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'fresnel-reflector-length',
-        label: <DialogItem Dialog={FresnelReflectorLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>,
-      },
-      {
-        key: 'fresnel-reflector-width',
-        label: <DialogItem Dialog={FresnelReflectorWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
-      },
-      {
-        key: 'fresnel-reflector-module-length',
-        label: (
+
+          {/* fresnel-reflector-length */}
+          <DialogItem Dialog={FresnelReflectorLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>
+
+          {/* fresnel-reflector-width */}
+          <DialogItem Dialog={FresnelReflectorWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>
+
+          {/* fresnel-reflector-module-length */}
           <DialogItem Dialog={FresnelReflectorModuleLengthInput}>
             {i18n.t('fresnelReflectorMenu.ModuleLength', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'fresnel-reflector-pole-height',
-        label: (
+
+          {/* fresnel-reflector-pole-height */}
           <DialogItem Dialog={FresnelReflectorPoleHeightInput}>
             {i18n.t('solarCollectorMenu.ExtraPoleHeight', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'fresnel-reflector-reflectance',
-        label: (
+
+          {/* fresnel-reflector-reflectance */}
           <DialogItem Dialog={FresnelReflectorReflectanceInput}>
             {i18n.t('concentratedSolarPowerCollectorMenu.ReflectorReflectance', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'fresnel-reflector-draw-sun-beam',
-        label: (
+
+          {/* fresnel-reflector-draw-sun-beam */}
           <DialogItem Dialog={FresnelReflectorDrawSunBeamSelection}>
             {i18n.t('solarCollectorMenu.DrawSunBeam', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'fresnel-reflector-label-submenu',
-        label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,
-        children: createLabelSubmenu(fresnelReflector),
-      },
-    );
-  }
 
-  return { items } as MenuProps;
+          {/* fresnel-reflector-label-submenu */}
+          <LabelSubmenu element={fresnelReflector} />
+        </>
+      )}
+    </>
+  );
 };
+
+export default FresnelReflectorMenu;

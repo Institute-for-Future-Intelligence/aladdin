@@ -2,21 +2,21 @@
  * @Copyright 2025. Institute for Future Intelligence, Inc.
  */
 
-import { Radio, RadioChangeEvent, Space } from 'antd';
 import { useLanguage } from 'src/hooks';
 import { RulerModel, RulerType } from 'src/models/RulerModel';
-import { MenuItem } from '../../menuItems';
+import { ContextSubMenu } from '../../menuItems';
 import i18n from 'src/i18n/i18n';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { UndoableChangeRulerType } from 'src/undo/UndoableChange';
 import { useState } from 'react';
+import { ClickEvent, MenuItem, MenuRadioGroup, RadioChangeEvent } from '@szhsin/react-menu';
 
 interface Props {
   ruler: RulerModel;
 }
 
-export const RulerTypeRadioGroup = ({ ruler }: Props) => {
+export const RulerTypeSubmenu = ({ ruler }: Props) => {
   const [_type, setType] = useState(ruler.rulerType ?? RulerType.Horizontal);
 
   const lang = useLanguage();
@@ -37,7 +37,7 @@ export const RulerTypeRadioGroup = ({ ruler }: Props) => {
   };
 
   const handleChange = (e: RadioChangeEvent) => {
-    const newType = e.target.value;
+    const newType = e.value;
     const newRightPoint = [...ruler.leftEndPoint.position];
     if (newType === RulerType.Horizontal) {
       newRightPoint[0] += 5;
@@ -66,21 +66,23 @@ export const RulerTypeRadioGroup = ({ ruler }: Props) => {
     setType(newType);
   };
 
+  const onClickItem = (e: ClickEvent) => {
+    e.keepOpen = true;
+  };
+
   return (
-    <MenuItem stayAfterClick noPadding>
-      <Radio.Group value={_type} onChange={handleChange}>
-        <Space direction="vertical">
-          <Radio style={{ width: '100%' }} value={RulerType.Horizontal}>
-            {i18n.t('rulerMenu.Horizontal', lang)}
-          </Radio>
-          <Radio style={{ width: '100%' }} value={RulerType.Vertical}>
-            {i18n.t('rulerMenu.Vertical', lang)}
-          </Radio>
-          {/* <Radio style={{ width: '100%' }} value={RulerType.Arbitrary}>
+    <ContextSubMenu label={i18n.t('rulerMenu.RulerDirection', lang)}>
+      <MenuRadioGroup value={_type} onRadioChange={handleChange}>
+        <MenuItem type="radio" value={RulerType.Horizontal} onClick={onClickItem}>
+          {i18n.t('rulerMenu.Horizontal', lang)}
+        </MenuItem>
+        <MenuItem type="radio" value={RulerType.Vertical} onClick={onClickItem}>
+          {i18n.t('rulerMenu.Vertical', lang)}
+        </MenuItem>
+        {/* <Radio style={{ width: '100%' }} value={RulerType.Arbitrary}>
             {i18n.t('rulerMenu.Arbitrary', lang)}
           </Radio> */}
-        </Space>
-      </Radio.Group>
-    </MenuItem>
+      </MenuRadioGroup>
+    </ContextSubMenu>
   );
 };

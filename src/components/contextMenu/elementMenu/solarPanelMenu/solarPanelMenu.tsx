@@ -2,12 +2,9 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import type { MenuProps } from 'antd';
-import { ElementModel } from 'src/models/ElementModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
-import { useStore } from 'src/stores/common';
 import { ObjectType, TrackerType } from 'src/types';
-import { Copy, Cut, DialogItem, Lock, MenuItem, SolarCollectorSunBeamCheckbox } from '../../menuItems';
+import { ContextSubMenu, Copy, Cut, DialogItem, Lock, SolarCollectorSunBeamCheckbox } from '../../menuItems';
 import i18n from 'src/i18n/i18n';
 import SolarPanelModelSelection from './solarPanelModelSelection';
 import SolarPanelOrientationSelection from './solarPanelOrientationSelection';
@@ -23,218 +20,129 @@ import SolarPanelTrackerSelection from './solarPanelTrackerSelection';
 import SolarPanelFrameColorSelection from './solarPanelFrameColorSelection';
 import SolarPanelPoleHeightInput from './solarPanelPoleHeightInput';
 import SolarPanelPoleSpacingInput from './solarPanelPoleSpacingInput';
-import { createLabelSubmenu } from '../../labelSubmenuItems';
+import LabelSubmenu from '../../labelSubmenuItems';
 import SolarPanelXInput from './solarPanelXInput';
 import SolarPanelYInput from './solarPanelYInput';
 import SolarPanelBatteryStorageSelection from './solarPanelBatteryStorageSelection';
+import { useLanguage } from 'src/hooks';
+import { useContextMenuElement } from '../menuHooks';
 
-export const createSolarPanelMenu = (selectedElement: ElementModel) => {
-  const items: MenuProps['items'] = [];
-
-  if (selectedElement.type !== ObjectType.SolarPanel) return { items };
-
-  const solarPanel = selectedElement as SolarPanelModel;
+const SolarPanelMenu = () => {
+  const lang = useLanguage();
+  const solarPanel = useContextMenuElement(ObjectType.SolarPanel) as SolarPanelModel;
+  if (!solarPanel) return null;
 
   const editable = !solarPanel.locked;
-  const lang = { lng: useStore.getState().language };
-  const upright =
-    selectedElement.type === ObjectType.SolarPanel && Util.isIdentical(solarPanel.normal, UNIT_VECTOR_POS_Z_ARRAY);
+  const upright = Util.isIdentical(solarPanel.normal, UNIT_VECTOR_POS_Z_ARRAY);
 
-  items.push({
-    key: 'solar-panel-copy',
-    label: <Copy />,
-  });
+  return (
+    <>
+      {/* solar-panel-copy */}
+      <Copy />
 
-  if (editable) {
-    items.push({
-      key: 'solar-panel-cut',
-      label: <Cut />,
-    });
-  }
+      {/* solar-panel-cut */}
+      {editable && <Cut />}
 
-  items.push({
-    key: 'solar-panel-lock',
-    label: <Lock selectedElement={solarPanel} />,
-  });
+      {/* solar-panel-lock */}
+      <Lock selectedElement={solarPanel} />
 
-  if (editable) {
-    items.push(
-      {
-        key: 'solar-panel-model-change',
-        label: (
+      {editable && (
+        <>
+          {/* solar-panel-model-change */}
           <DialogItem Dialog={SolarPanelModelSelection}>
             {i18n.t('solarPanelMenu.ChangePvModel', lang)} ({solarPanel.pvModelName}) ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'solar-panel-orientation',
-        label: (
+
+          {/* solar-panel-orientation */}
           <DialogItem Dialog={SolarPanelOrientationSelection}>
             {i18n.t('solarPanelMenu.Orientation', lang)} ...
           </DialogItem>
-        ),
-      },
-    );
 
-    if (solarPanel.parentType === ObjectType.Wall) {
-      items.push({
-        key: 'solar-panel-tilt-angle-on-wall',
-        label: (
-          <DialogItem Dialog={SolarPanelTiltAngleInput}>{i18n.t('solarPanelMenu.TiltAngle', lang)} ...</DialogItem>
-        ),
-      });
-    }
-
-    if (upright) {
-      if (solarPanel.trackerType === TrackerType.NO_TRACKER) {
-        items.push({
-          key: 'solar-panel-tilt-angle',
-          label: (
+          {/* solar-panel-tilt-angle-on-wall */}
+          {solarPanel.parentType === ObjectType.Wall && (
             <DialogItem Dialog={SolarPanelTiltAngleInput}>{i18n.t('solarPanelMenu.TiltAngle', lang)} ...</DialogItem>
-          ),
-        });
-      }
+          )}
 
-      items.push({
-        key: 'solar-panel-relative-azimuth',
-        label: (
-          <DialogItem Dialog={SolarPanelRelativeAzimuthInput}>
-            {i18n.t('solarCollectorMenu.RelativeAzimuth', lang)} ...
+          {upright && (
+            <>
+              {/* solar-panel-tilt-angle */}
+              {solarPanel.trackerType === TrackerType.NO_TRACKER && (
+                <DialogItem Dialog={SolarPanelTiltAngleInput}>
+                  {i18n.t('solarPanelMenu.TiltAngle', lang)} ...
+                </DialogItem>
+              )}
+
+              {/* solar-panel-relative-azimuth */}
+              <DialogItem Dialog={SolarPanelRelativeAzimuthInput}>
+                {i18n.t('solarCollectorMenu.RelativeAzimuth', lang)} ...
+              </DialogItem>
+
+              {/* solar-panel-tracker */}
+              {solarPanel.parentType !== ObjectType.Roof && (
+                <DialogItem Dialog={SolarPanelTrackerSelection}>
+                  {i18n.t('solarPanelMenu.Tracker', lang)} ...
+                </DialogItem>
+              )}
+            </>
+          )}
+
+          {/* solar-panel-frame-color */}
+          <DialogItem Dialog={SolarPanelFrameColorSelection}>
+            {i18n.t('solarPanelMenu.FrameColor', lang)} ...
           </DialogItem>
-        ),
-      });
 
-      if (solarPanel.parentType !== ObjectType.Roof) {
-        items.push({
-          key: 'solar-panel-tracker',
-          label: (
-            <DialogItem Dialog={SolarPanelTrackerSelection}>{i18n.t('solarPanelMenu.Tracker', lang)} ...</DialogItem>
-          ),
-        });
-      }
-    }
+          {/* solar-panel-draw-sun-beam */}
+          <SolarCollectorSunBeamCheckbox solarCollector={solarPanel} />
 
-    items.push({
-      key: 'solar-panel-frame-color',
-      label: (
-        <DialogItem Dialog={SolarPanelFrameColorSelection}>{i18n.t('solarPanelMenu.FrameColor', lang)} ...</DialogItem>
-      ),
-    });
+          {/* solar-panel-size-submenu */}
+          <ContextSubMenu label={i18n.t('word.Size', lang)}>
+            <DialogItem noPadding Dialog={SolarPanelLengthInput}>
+              {i18n.t('word.Length', lang)} ...
+            </DialogItem>
+            <DialogItem noPadding Dialog={SolarPanelWidthInput}>
+              {i18n.t('word.Width', lang)} ...
+            </DialogItem>
+          </ContextSubMenu>
 
-    items.push({
-      key: 'solar-panel-draw-sun-beam',
-      label: <SolarCollectorSunBeamCheckbox solarCollector={solarPanel} />,
-    });
-
-    if (editable) {
-      items.push({
-        key: 'solar-panel-size-submenu',
-        label: <MenuItem>{i18n.t('word.Size', lang)}</MenuItem>,
-        children: [
-          {
-            key: 'solar-panel-length',
-            label: (
-              <DialogItem noPadding={true} Dialog={SolarPanelLengthInput}>
-                {i18n.t('word.Length', lang)} ...
-              </DialogItem>
-            ),
-          },
-          {
-            key: 'solar-panel-width',
-            label: (
-              <DialogItem noPadding={true} Dialog={SolarPanelWidthInput}>
-                {i18n.t('word.Width', lang)} ...
-              </DialogItem>
-            ),
-          },
-        ],
-      });
-    }
-
-    items.push({
-      key: 'solar-panel-coordinates-submenu',
-      label: <MenuItem>{i18n.t('solarCollectorMenu.Coordinates', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'solar-panel-center-x',
-          label: (
+          {/* solar-panel-coordinates-submenu */}
+          <ContextSubMenu label={i18n.t('solarCollectorMenu.Coordinates', lang)}>
             <DialogItem Dialog={SolarPanelXInput} noPadding>
               {i18n.t('solarCollectorMenu.RelativeXCoordinateOfCenter', lang)} ...
             </DialogItem>
-          ),
-        },
-        {
-          key: 'solar-panel-center-y',
-          label: (
             <DialogItem Dialog={SolarPanelYInput} noPadding>
               {i18n.t('solarCollectorMenu.RelativeYCoordinateOfCenter', lang)} ...
             </DialogItem>
-          ),
-        },
-      ],
-    });
+          </ContextSubMenu>
 
-    items.push({
-      key: 'solar-panel-electrical-submenu',
-      label: <MenuItem>{i18n.t('solarPanelMenu.ElectricalProperties', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'solar-panel-inverter-efficiency',
-          label: (
+          {/* solar-panel-electrical-submenu */}
+          <ContextSubMenu label={i18n.t('solarPanelMenu.ElectricalProperties', lang)}>
             <DialogItem Dialog={SolarPanelInverterEfficiencyInput} noPadding>
               {i18n.t('solarPanelMenu.InverterEfficiency', lang)} ...
             </DialogItem>
-          ),
-        },
-        {
-          key: 'solar-panel-dc-ac-ratio',
-          label: (
             <DialogItem Dialog={SolarPanelDcToAcRatioInput} noPadding>
               {i18n.t('solarPanelMenu.DcToAcSizeRatio', lang)} ...
             </DialogItem>
-          ),
-        },
-        {
-          key: 'solar-panel-battery-storage-selection',
-          label: (
             <DialogItem Dialog={SolarPanelBatteryStorageSelection} noPadding>
               {i18n.t('solarPanelMenu.BatteryStorageSelection', lang)} ...
             </DialogItem>
-          ),
-        },
-      ],
-    });
+          </ContextSubMenu>
 
-    items.push({
-      key: 'solar-panel-pole-submenu',
-      label: <MenuItem>{i18n.t('solarCollectorMenu.Pole', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'solar-panel-pole-height',
-          label: (
+          {/* solar-panel-pole-submenu */}
+          <ContextSubMenu label={i18n.t('solarCollectorMenu.Pole', lang)}>
             <DialogItem noPadding Dialog={SolarPanelPoleHeightInput}>
               {i18n.t('solarCollectorMenu.PoleHeight', lang)} ...
             </DialogItem>
-          ),
-        },
-        {
-          key: 'solar-panel-pole-spacing',
-          label: (
             <DialogItem noPadding Dialog={SolarPanelPoleSpacingInput}>
               {i18n.t('solarPanelMenu.PoleSpacing', lang)} ...
             </DialogItem>
-          ),
-        },
-      ],
-    });
+          </ContextSubMenu>
 
-    items.push({
-      key: 'solar-panel-label',
-      label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,
-      children: createLabelSubmenu(solarPanel),
-    });
-  }
-
-  return { items } as MenuProps;
+          {/* solar-panel-label */}
+          <LabelSubmenu element={solarPanel} />
+        </>
+      )}
+    </>
+  );
 };
+
+export default SolarPanelMenu;

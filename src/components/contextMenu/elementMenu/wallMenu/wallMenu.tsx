@@ -2,27 +2,27 @@
  * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
-import type { MenuProps } from 'antd';
-import { ElementModel } from 'src/models/ElementModel';
 import { WallModel, WallStructure } from 'src/models/WallModel';
 import { ObjectType } from 'src/types';
-import { Copy, Cut, DialogItem, Lock, MenuItem, Paste } from '../../menuItems';
+import { Copy, Cut, DialogItem, Lock, Paste } from '../../menuItems';
 import { Util } from 'src/Util';
 import { useStore } from 'src/stores/common';
 import i18n from 'src/i18n/i18n';
-import { createWallElementCounterSubmenu } from './wallElementCounterSubmenu';
-import { createParapetSubmenu } from './wallParapetSubmenu';
-import { createWallStructureSubmenu } from './wallStructureSubmenu';
+import WallElementCounterSubmenu from './wallElementCounterSubmenu';
+import ParapetSubmenu from './wallParapetSubmenu';
+import WallStructureSubmenu from './wallStructureSubmenu';
 import { WallNumberDialogItem } from './wallNumberDialogItem';
 import WallNumberInput from './wallNumberInput';
 import { AddPolygonOnWallItem } from './wallMenuItems';
-import { createWallFillSubmenu } from './wallFillSubmenu';
+import WallFillSubmenu from './wallFillSubmenu';
 import WallRValueInput from './wallRValueInput';
 import WallHeatCapacityInput from './wallHeatCapacityInput';
 import WallTextureSelection from './wallTextureSelection';
 import WallColorSelection from './wallColorSelection';
 import { WallNumberDataType } from './WallNumberDataType';
 import WallPermeabilityInput from './wallPermeabilityInput';
+import { useLanguage } from 'src/hooks';
+import { useContextMenuElement } from '../menuHooks';
 
 export type WallNumberDialogSettingType = {
   attributeKey: keyof WallModel;
@@ -54,135 +54,84 @@ const legalToPaste = () => {
   return false;
 };
 
-export const createWallMenu = (selectedElement: ElementModel) => {
-  const items: MenuProps['items'] = [];
-
-  if (selectedElement.type !== ObjectType.Wall) return { items };
-
-  const wall = selectedElement as WallModel;
-
-  const editable = !wall.locked;
-  const lang = { lng: useStore.getState().language };
+const WallMenu = () => {
+  const lang = useLanguage();
+  const wall = useContextMenuElement(ObjectType.Wall) as WallModel;
+  if (!wall) return null;
 
   const countAllOffspringsByType = useStore.getState().countAllOffspringsByTypeAtOnce;
 
+  const editable = !wall.locked;
   const counterAll = countAllOffspringsByType(wall.id, true);
   const counterUnlocked = countAllOffspringsByType(wall.id, false);
 
-  if (legalToPaste()) {
-    items.push({
-      key: 'wall-paste',
-      label: <Paste />,
-    });
-  }
+  return (
+    <>
+      {legalToPaste() && <Paste />}
 
-  items.push({
-    key: 'wall-copy',
-    label: <Copy />,
-  });
+      <Copy />
 
-  if (editable) {
-    items.push({
-      key: 'wall-cut',
-      label: <Cut />,
-    });
-  }
+      {editable && <Cut />}
 
-  items.push({
-    key: 'wall-lock',
-    label: <Lock selectedElement={wall} />,
-  });
+      <Lock selectedElement={wall} />
 
-  if (editable) {
-    if (wall.wallStructure !== WallStructure.Default) {
-      items.push({
-        key: 'wall-opacity',
-        label: (
-          <WallNumberDialogItem dataType={WallNumberDataType.Opacity} Dialog={WallNumberInput}>
-            {i18n.t(`wallMenu.${WallNumberDataType.Opacity}`, lang)} ...
-          </WallNumberDialogItem>
-        ),
-      });
-    }
+      {editable && (
+        <>
+          {wall.wallStructure !== WallStructure.Default && (
+            <WallNumberDialogItem dataType={WallNumberDataType.Opacity} Dialog={WallNumberInput}>
+              {i18n.t(`wallMenu.${WallNumberDataType.Opacity}`, lang)} ...
+            </WallNumberDialogItem>
+          )}
 
-    items.push(
-      {
-        key: 'add-polygon-on-wall',
-        label: <AddPolygonOnWallItem wall={wall} />,
-      },
-      {
-        key: 'wall-thickness',
-        label: (
+          {/* add-polygon-on-wall */}
+          <AddPolygonOnWallItem wall={wall} />
+
+          {/* wall-thickness */}
           <WallNumberDialogItem dataType={WallNumberDataType.Thickness} Dialog={WallNumberInput}>
             {i18n.t(`wallMenu.${WallNumberDataType.Thickness}`, lang)} ...
           </WallNumberDialogItem>
-        ),
-      },
-      {
-        key: 'wall-height',
-        label: (
+
+          {/* wall-height */}
           <WallNumberDialogItem dataType={WallNumberDataType.Height} Dialog={WallNumberInput}>
             {i18n.t(`wallMenu.${WallNumberDataType.Height}`, lang)} ...
           </WallNumberDialogItem>
-        ),
-      },
-      {
-        key: 'wall-eaves-length',
-        label: (
+
+          {/* wall-eaves-length */}
           <WallNumberDialogItem dataType={WallNumberDataType.EavesLength} Dialog={WallNumberInput}>
             {i18n.t(`wallMenu.${WallNumberDataType.EavesLength}`, lang)} ...
           </WallNumberDialogItem>
-        ),
-      },
-      {
-        key: 'wall-r-value',
-        label: <DialogItem Dialog={WallRValueInput}>{i18n.t('word.RValue', lang)} ...</DialogItem>,
-      },
-      {
-        key: 'wall-air-permeability',
-        label: <DialogItem Dialog={WallPermeabilityInput}>{i18n.t('word.AirPermeability', lang)} ...</DialogItem>,
-      },
-      {
-        key: 'wall-heat-capacity',
-        label: (
+
+          {/* wall-r-value */}
+          <DialogItem Dialog={WallRValueInput}>{i18n.t('word.RValue', lang)} ...</DialogItem>
+
+          {/* wall-air-permeability */}
+          <DialogItem Dialog={WallPermeabilityInput}>{i18n.t('word.AirPermeability', lang)} ...</DialogItem>
+
+          {/* wall-heat-capacity */}
           <DialogItem Dialog={WallHeatCapacityInput}>{i18n.t('word.VolumetricHeatCapacity', lang)} ...</DialogItem>
-        ),
-      },
-      {
-        key: 'wall-texture',
-        label: <DialogItem Dialog={WallTextureSelection}>{i18n.t('wallMenu.Texture', lang)} ...</DialogItem>,
-      },
-      {
-        key: 'wall-color',
-        label: <DialogItem Dialog={WallColorSelection}>{i18n.t('wallMenu.Color', lang)} ...</DialogItem>,
-      },
-    );
-    items.push({
-      key: 'wall-fill',
-      label: <MenuItem>{i18n.t('wallMenu.Fill', lang)}</MenuItem>,
-      children: createWallFillSubmenu(wall),
-    });
 
-    items.push({
-      key: 'wall-parapet',
-      label: <MenuItem>{i18n.t('wallMenu.Parapet', lang)}</MenuItem>,
-      children: createParapetSubmenu(wall),
-    });
+          {/* wall-texture */}
+          <DialogItem Dialog={WallTextureSelection}>{i18n.t('wallMenu.Texture', lang)} ...</DialogItem>
 
-    items.push({
-      key: 'wall-structure',
-      label: <MenuItem>{i18n.t('wallMenu.WallStructure', lang)}</MenuItem>,
-      children: createWallStructureSubmenu(wall),
-    });
+          {/* wall-color */}
+          <DialogItem Dialog={WallColorSelection}>{i18n.t('wallMenu.Color', lang)} ...</DialogItem>
 
-    if (counterAll.gotSome()) {
-      items.push({
-        key: 'lock-unlock-clear-on-wall',
-        label: <MenuItem>{i18n.t('word.Elements', lang)}</MenuItem>,
-        children: createWallElementCounterSubmenu(wall, counterAll, counterUnlocked),
-      });
-    }
-  }
+          {/* wall-fill */}
+          <WallFillSubmenu wall={wall} />
 
-  return { items } as MenuProps;
+          {/* wall-parapet */}
+          <ParapetSubmenu wall={wall} />
+
+          {/* wall-structure */}
+          <WallStructureSubmenu wall={wall} />
+
+          {counterAll.gotSome() && (
+            <WallElementCounterSubmenu wall={wall} counterAll={counterAll} counterUnlocked={counterUnlocked} />
+          )}
+        </>
+      )}
+    </>
+  );
 };
+
+export default WallMenu;

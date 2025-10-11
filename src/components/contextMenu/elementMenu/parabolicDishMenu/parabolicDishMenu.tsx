@@ -2,13 +2,10 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import type { MenuProps } from 'antd';
-import { ElementModel } from 'src/models/ElementModel';
-import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { Copy, Cut, DialogItem, Lock, MenuItem, SolarCollectorSunBeamCheckbox } from '../../menuItems';
+import { Copy, Cut, DialogItem, Lock, SolarCollectorSunBeamCheckbox } from '../../menuItems';
 import i18n from 'src/i18n/i18n';
-import { createLabelSubmenu } from '../../labelSubmenuItems';
+import LabelSubmenu from '../../labelSubmenuItems';
 import { ParabolicDishModel } from 'src/models/ParabolicDishModel';
 import ParabolicDishDiameterInput from './parabolicDishDiameterInput';
 import ParabolicDishLatusRectumInput from './parabolicDishLatusRectumInput';
@@ -19,119 +16,83 @@ import ParabolicDishReflectanceInput from './parabolicDishReflectanceInput';
 import ParabolicDishAbsorptanceInput from './parabolicDishAbsorptanceInput';
 import ParabolicDishOpticalEfficiencyInput from './parabolicDishOpticalEfficiencyInput';
 import ParabolicDishThermalEfficiencyInput from './parabolicDishThermalEfficiencyInput';
+import { useLanguage } from 'src/hooks';
+import { useContextMenuElement } from '../menuHooks';
 
-export const createParabolicDishMenu = (selectedElement: ElementModel) => {
-  const items: MenuProps['items'] = [];
+const ParabolicDishMenu = () => {
+  const lang = useLanguage();
+  const parabolicDish = useContextMenuElement(ObjectType.ParabolicDish) as ParabolicDishModel;
+  if (!parabolicDish) return null;
 
-  if (selectedElement.type !== ObjectType.ParabolicDish) return { items };
-
-  const parabolicDish = selectedElement as ParabolicDishModel;
-
-  const lang = { lng: useStore.getState().language };
   const editable = !parabolicDish.locked;
 
-  items.push({
-    key: 'parabolic-dish-copy',
-    label: <Copy />,
-  });
+  return (
+    <>
+      {/* parabolic-dish-copy */}
+      <Copy />
 
-  if (editable) {
-    items.push({
-      key: 'parabolic-dish-cut',
-      label: <Cut />,
-    });
-  }
+      {/* parabolic-dish-cut */}
+      {editable && <Cut />}
 
-  items.push({
-    key: 'parabolic-dish-lock',
-    label: <Lock selectedElement={parabolicDish} />,
-  });
+      {/* parabolic-dish-lock */}
+      <Lock selectedElement={parabolicDish} />
 
-  if (editable) {
-    items.push(
-      {
-        key: 'parabolic-dish-radius',
-        label: (
+      {editable && (
+        <>
+          {/* parabolic-dish-radius */}
           <DialogItem Dialog={ParabolicDishDiameterInput}>
             {i18n.t('parabolicDishMenu.RimDiameter', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parabolic-dish-latus-rectum',
-        label: (
+
+          {/* parabolic-dish-latus-rectum */}
           <DialogItem Dialog={ParabolicDishLatusRectumInput}>
             {i18n.t('parabolicDishMenu.LatusRectum', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parabolic-dish-structure-type',
-        label: (
+
+          {/* parabolic-dish-structure-type */}
           <DialogItem Dialog={ParabolicDishStructureTypeInput}>
             {i18n.t('parabolicDishMenu.ReceiverStructure', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parabolic-dish-pole-height',
-        label: (
+
+          {/* parabolic-dish-pole-height */}
           <DialogItem Dialog={ParabolicDishPoleHeightInput}>
             {i18n.t('solarCollectorMenu.ExtraPoleHeight', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parabolic-dish-pole-radius',
-        label: (
+
+          {/* parabolic-dish-pole-radius */}
           <DialogItem Dialog={ParabolicDishPoleRadiusInput}>
             {i18n.t('solarCollectorMenu.PoleRadius', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parabolic-dish-reflectance',
-        label: (
+
+          {/* parabolic-dish-reflectance */}
           <DialogItem Dialog={ParabolicDishReflectanceInput}>
             {i18n.t('concentratedSolarPowerCollectorMenu.ReflectorReflectance', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parabolic-dish-absorptance',
-        label: (
+
+          {/* parabolic-dish-absorptance */}
           <DialogItem Dialog={ParabolicDishAbsorptanceInput}>
             {i18n.t('concentratedSolarPowerCollectorMenu.ReceiverAbsorptance', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parabolic-dish-optical-efficiency',
-        label: (
+
+          {/* parabolic-dish-optical-efficiency */}
           <DialogItem Dialog={ParabolicDishOpticalEfficiencyInput}>
             {i18n.t('concentratedSolarPowerCollectorMenu.ReflectorOpticalEfficiency', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parabolic-dish-thermal-efficiency',
-        label: (
+
+          {/* parabolic-dish-thermal-efficiency */}
           <DialogItem Dialog={ParabolicDishThermalEfficiencyInput}>
             {i18n.t('concentratedSolarPowerCollectorMenu.ReceiverThermalEfficiency', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parabolic-dish-draw-sun-beam',
-        label: <SolarCollectorSunBeamCheckbox solarCollector={parabolicDish} />,
-      },
-      {
-        key: 'parabolic-dish-label-submenu',
-        label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,
-        children: createLabelSubmenu(parabolicDish),
-      },
-    );
-  }
 
-  return { items } as MenuProps;
+          {/* parabolic-dish-draw-sun-beam */}
+          <SolarCollectorSunBeamCheckbox solarCollector={parabolicDish} />
+
+          {/* parabolic-dish-label-submenu */}
+          <LabelSubmenu element={parabolicDish} />
+        </>
+      )}
+    </>
+  );
 };
+
+export default ParabolicDishMenu;

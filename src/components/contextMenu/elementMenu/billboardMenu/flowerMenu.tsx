@@ -2,61 +2,40 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { Space, type MenuProps } from 'antd';
-import { ElementModel } from 'src/models/ElementModel';
-import { useStore } from 'src/stores/common';
+import { Space } from 'antd';
 import { ObjectType } from 'src/types';
-import { Copy, Cut, Lock, MenuItem } from '../../menuItems';
+import { ContextMenuItem, Copy, Cut, Lock } from '../../menuItems';
 import i18n from 'src/i18n/i18n';
 import { BillboardFlipCheckbox } from './billboardMenuItems';
 import { FlowerModel } from 'src/models/FlowerModel';
 import FlowerSelection from './flowerSelection';
+import { useLanguage } from 'src/hooks';
+import { useContextMenuElement } from '../menuHooks';
 
-export const createFlowerMenu = (selectedElement: ElementModel) => {
-  const items: MenuProps['items'] = [];
-
-  if (selectedElement.type !== ObjectType.Flower) return { items };
-
-  const flower = selectedElement as FlowerModel;
+const FlowerMenu = () => {
+  const lang = useLanguage();
+  const flower = useContextMenuElement(ObjectType.Flower) as FlowerModel;
+  if (!flower) return null;
 
   const editable = !flower.locked;
-  const lang = { lng: useStore.getState().language };
 
-  items.push({
-    key: 'flower-copy',
-    label: <Copy />,
-  });
+  return (
+    <>
+      <Copy />
+      {editable && <Cut />}
 
-  if (editable) {
-    items.push({
-      key: 'flower-cut',
-      label: <Cut />,
-    });
-  }
+      <Lock selectedElement={flower} />
 
-  items.push({
-    key: 'flower-lock',
-    label: <Lock selectedElement={flower} />,
-  });
+      {editable && <BillboardFlipCheckbox billboardModel={flower} />}
 
-  if (editable) {
-    items.push({
-      key: 'flower-flip',
-      label: <BillboardFlipCheckbox billboardModel={flower} />,
-    });
-  }
-
-  if (editable) {
-    items.push({
-      key: 'flower-change-type',
-      label: (
-        <MenuItem stayAfterClick>
+      {editable && (
+        <ContextMenuItem stayAfterClick>
           <Space style={{ width: '60px' }}>{i18n.t('flowerMenu.Type', lang)}: </Space>
           <FlowerSelection flower={flower} />
-        </MenuItem>
-      ),
-    });
-  }
-
-  return { items } as MenuProps;
+        </ContextMenuItem>
+      )}
+    </>
+  );
 };
+
+export default FlowerMenu;

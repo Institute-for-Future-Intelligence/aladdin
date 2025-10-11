@@ -5,8 +5,7 @@
 import { RoofModel, RoofStructure } from 'src/models/RoofModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { MenuItem } from '../../menuItems';
-import { Checkbox, Modal, Radio, RadioChangeEvent, Space } from 'antd';
+import { Checkbox, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { UndoableRemoveAllChildren } from 'src/undo/UndoableRemoveAllChildren';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
@@ -16,6 +15,8 @@ import i18n from 'src/i18n/i18n';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import React, { useEffect, useState } from 'react';
+import { ContextMenuItem } from '../../menuItems';
+import { ClickEvent, MenuItem, MenuRadioGroup, RadioChangeEvent } from '@szhsin/react-menu';
 
 interface RoofMenuItemProps {
   roof: RoofModel;
@@ -73,11 +74,11 @@ export const RoofCeilingCheckbox = ({ roof }: RoofMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick={false} noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={ceiling} onChange={handleChange}>
         {i18n.t('roofMenu.Ceiling', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -123,9 +124,9 @@ export const RemoveRoofElementsItem = ({
   };
 
   return (
-    <MenuItem update noPadding onClick={handleClickItem}>
+    <ContextMenuItem noPadding onClick={handleClickItem}>
       {children}
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -163,9 +164,9 @@ export const LockRoofElementsItem = ({ roof, objectType, lock, children }: LockR
   };
 
   return (
-    <MenuItem stayAfterClick update noPadding onClick={handleClick}>
+    <ContextMenuItem stayAfterClick noPadding onClick={handleClick}>
       {children}
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -179,7 +180,7 @@ export const RoofStructureRadioGroup = ({ roof }: RoofMenuItemProps) => {
       name: 'Select Roof Structure',
       timestamp: Date.now(),
       oldValue: roof.roofStructure ?? RoofStructure.Default,
-      newValue: e.target.value,
+      newValue: e.value,
       changedElementId: roof.id,
       changedElementType: roof.type,
       undo: () => {
@@ -190,27 +191,27 @@ export const RoofStructureRadioGroup = ({ roof }: RoofMenuItemProps) => {
       },
     } as UndoableChange;
     useStore.getState().addUndoable(undoableChange);
-    updateRoofStructureById(roof.id, e.target.value);
+    updateRoofStructureById(roof.id, e.value);
     useStore.getState().set((state) => {
-      state.actionState.roofStructure = e.target.value;
+      state.actionState.roofStructure = e.value;
     });
   };
 
+  const onClick = (e: ClickEvent) => {
+    e.keepOpen = true;
+  };
+
   return (
-    <MenuItem stayAfterClick={false} noPadding>
-      <Radio.Group value={roof.roofStructure ?? RoofStructure.Default} onChange={handleChange}>
-        <Space direction="vertical">
-          <Radio style={{ width: '100%' }} value={RoofStructure.Default}>
-            {i18n.t('roofMenu.DefaultStructure', lang)}
-          </Radio>
-          <Radio style={{ width: '100%' }} value={RoofStructure.Rafter}>
-            {i18n.t('roofMenu.RafterStructure', lang)}
-          </Radio>
-          {/*<Radio style={{ width: '100%' }} value={RoofStructure.Glass}>*/}
-          {/*  {i18n.t('roofMenu.GlassStructure', lang)}*/}
-          {/*</Radio>*/}
-        </Space>
-      </Radio.Group>
-    </MenuItem>
+    <MenuRadioGroup value={roof.roofStructure ?? RoofStructure.Default} onRadioChange={handleChange}>
+      <MenuItem type="radio" value={RoofStructure.Default} onClick={onClick}>
+        {i18n.t('roofMenu.DefaultStructure', lang)}
+      </MenuItem>
+      <MenuItem type="radio" value={RoofStructure.Rafter} onClick={onClick}>
+        {i18n.t('roofMenu.RafterStructure', lang)}
+      </MenuItem>
+      {/*<MenuItem type="radio" value={RoofStructure.Glass} onClick={onClick}>*/}
+      {/*  {i18n.t('roofMenu.GlassStructure', lang)}*/}
+      {/*</MenuItem>*/}
+    </MenuRadioGroup>
   );
 };

@@ -2,134 +2,123 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useRef } from 'react';
-import { Dropdown } from 'antd';
+import React, { ReactNode, useState } from 'react';
 import { useStore } from '../../stores/common';
-import * as Selector from '../../stores/selector';
 import { ObjectType } from '../../types';
-import {
-  createGroundMenu,
-  createSkyMenu,
-  createFoundationMenu,
-  createCuboidMenu,
-  createWallMenu,
-  createRoofMenu,
-  createSolarPanelMenu,
-  createWindowMenu,
-  createDoorMenu,
-  createSensorMenu,
-  createLightMenu,
-  createHumanMenu,
-  createTreeMenu,
-  createFlowerMenu,
-  createParabolicTroughMenu,
-  createParabolicDishMenu,
-  createFresnelReflectorMenu,
-  createHeliostatMenu,
-  createPolygonMenu,
-  createPolygonVertexMenu,
-  createWindTurbineMenu,
-} from './elementMenu';
-import { useSelectedElement } from './elementMenu/menuHooks';
-import { usePrimitiveStore } from 'src/stores/commonPrimitive';
-import { ElementModel } from 'src/models/ElementModel';
+import SolarWaterHeaterMenu from './elementMenu/solarWaterHeaterMenu/solarWaterHeaterMenu';
+import BatteryStorageMenu from './elementMenu/batteryStorageMenu/batteryStorageMenu';
+import RulerMenu from './elementMenu/rulerMenu/rulerMenu';
+import ProtractorMenu from './elementMenu/protractorMenu/protractorMenu';
+import { ControlledMenu } from '@szhsin/react-menu';
+import GroundMenu from './elementMenu/groundMenu/groundMenu';
 import './style.css';
-import { createSolarWaterHeaterMenu } from './elementMenu/solarWaterHeaterMenu/solarWaterHeaterMenu';
-import { createBatteryStorageMenu } from './elementMenu/batteryStorageMenu/batteryStorageMenu';
-import { createRulerMenu } from './elementMenu/rulerMenu/rulerMenu';
-import { createProtractorMenu } from './elementMenu/protractorMenu/protractorMenu';
+import SkyMenu from './elementMenu/skyMenu/skyMenu';
+import FoundationMenu from './elementMenu/foundationMenu/foundationMenu';
+import SensorMenu from './elementMenu/sensorMenu/sensorMenu';
+import LightMenu from './elementMenu/lightMenu/lightMenu';
+import HumanMenu from './elementMenu/billboardMenu/humanMenu';
+import TreeMenu from './elementMenu/billboardMenu/treeMenu';
+import FlowerMenu from './elementMenu/billboardMenu/flowerMenu';
+import CuboidMenu from './elementMenu/cuboidMenu/cuboidMenu';
+import WallMenu from './elementMenu/wallMenu/wallMenu';
+import WindowMenu from './elementMenu/windowMenu/windowMenu';
+import DoorMenu from './elementMenu/doorMenu/doorMenu';
+import RoofMenu from './elementMenu/roofMenu/roofMenu';
+import SolarPanelMenu from './elementMenu/solarPanelMenu/solarPanelMenu';
+import ParabolicTroughMenu from './elementMenu/parabolicTroughMenu/parabolicTroughMenu';
+import ParabolicDishMenu from './elementMenu/parabolicDishMenu/parabolicDishMenu';
+import FresnelReflectorMenu from './elementMenu/fresnelReflectorMenu/fresnelReflectorMenu';
+import HeliostatMenu from './elementMenu/heliostatMenu/heliostatMenu';
+import WindTurbineMenu from './elementMenu/windTurbineMenu/windTurbineMenu';
+import PolygonMenu from './elementMenu/polygonMenu/polygonMenu';
+import PolygonVertexMenu from './elementMenu/polygonVertexMenu';
+
 export interface ContextMenuProps {
   [key: string]: any;
 }
 
-const useContextMenu = () => {
-  const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
-  const selectedElement = useSelectedElement();
+const DropdownContextMenu = ({ children }: { children: ReactNode }) => {
+  const [isOpen, setOpen] = useState(false);
+  const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
 
-  const ctxRef = useRef(contextMenuObjectType);
-  const elRef = useRef(selectedElement);
-
-  // dropdown menu fades out about 0.2s, so we have to preserve the state util the menu is fully disappeared.
-  if (contextMenuObjectType !== null) {
-    ctxRef.current = contextMenuObjectType;
-    elRef.current = selectedElement;
-  } else {
-    setTimeout(() => {
-      ctxRef.current = contextMenuObjectType;
-      elRef.current = contextMenuObjectType === null ? undefined : selectedElement;
-    }, 200);
-  }
-
-  return [ctxRef.current, elRef.current] as [ObjectType | null, ElementModel | undefined];
-};
-
-const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
-  usePrimitiveStore((state) => state.contextMenuFlag);
-
-  const [contextMenuObjectType, selectedElement] = useContextMenu();
-
-  const createMenu = () => {
-    if (!selectedElement) {
-      if (contextMenuObjectType === ObjectType.Ground) return createGroundMenu();
-      if (contextMenuObjectType === ObjectType.Sky) return createSkyMenu();
-      return { items: [] };
-    }
-    switch (contextMenuObjectType) {
-      case ObjectType.Protractor:
-        return createProtractorMenu(selectedElement);
-      case ObjectType.Ruler:
-        return createRulerMenu(selectedElement);
-      case ObjectType.Foundation:
-        return createFoundationMenu(selectedElement);
+  const menus = () => {
+    const objectType = useStore.getState().contextMenuObjectType;
+    switch (objectType) {
+      case ObjectType.Ground:
+        return <GroundMenu />;
+      case ObjectType.Sky:
+        return <SkyMenu />;
       case ObjectType.Cuboid:
-        return createCuboidMenu(selectedElement);
+        return <CuboidMenu />;
+      case ObjectType.Foundation:
+        return <FoundationMenu />;
       case ObjectType.Wall:
-        return createWallMenu(selectedElement);
+        return <WallMenu />;
       case ObjectType.Roof:
-        return createRoofMenu(selectedElement);
-      case ObjectType.SolarPanel:
-        return createSolarPanelMenu(selectedElement);
+        return <RoofMenu />;
       case ObjectType.Window:
-        return createWindowMenu(selectedElement);
+        return <WindowMenu />;
       case ObjectType.Door:
-        return createDoorMenu(selectedElement);
-      case ObjectType.Sensor:
-        return createSensorMenu(selectedElement);
-      case ObjectType.Light:
-        return createLightMenu(selectedElement);
-      case ObjectType.Human:
-        return createHumanMenu(selectedElement);
-      case ObjectType.Tree:
-        return createTreeMenu(selectedElement);
-      case ObjectType.Flower:
-        return createFlowerMenu(selectedElement);
-      case ObjectType.ParabolicTrough:
-        return createParabolicTroughMenu(selectedElement);
-      case ObjectType.ParabolicDish:
-        return createParabolicDishMenu(selectedElement);
-      case ObjectType.FresnelReflector:
-        return createFresnelReflectorMenu(selectedElement);
-      case ObjectType.Heliostat:
-        return createHeliostatMenu(selectedElement);
-      case ObjectType.Polygon:
-        return createPolygonMenu(selectedElement);
-      case ObjectType.PolygonVertex:
-        return createPolygonVertexMenu(selectedElement);
-      case ObjectType.WindTurbine:
-        return createWindTurbineMenu(selectedElement);
+        return <DoorMenu />;
+      case ObjectType.SolarPanel:
+        return <SolarPanelMenu />;
       case ObjectType.SolarWaterHeater:
-        return createSolarWaterHeaterMenu(selectedElement);
+        return <SolarWaterHeaterMenu />;
       case ObjectType.BatteryStorage:
-        return createBatteryStorageMenu(selectedElement);
-      default:
-        return { items: [] };
+        return <BatteryStorageMenu />;
+      case ObjectType.ParabolicTrough:
+        return <ParabolicTroughMenu />;
+      case ObjectType.ParabolicDish:
+        return <ParabolicDishMenu />;
+      case ObjectType.FresnelReflector:
+        return <FresnelReflectorMenu />;
+      case ObjectType.Heliostat:
+        return <HeliostatMenu />;
+      case ObjectType.WindTurbine:
+        return <WindTurbineMenu />;
+      case ObjectType.Polygon:
+        return <PolygonMenu />;
+      case ObjectType.PolygonVertex:
+        return <PolygonVertexMenu />;
+      case ObjectType.Human:
+        return <HumanMenu />;
+      case ObjectType.Tree:
+        return <TreeMenu />;
+      case ObjectType.Flower:
+        return <FlowerMenu />;
+      case ObjectType.Sensor:
+        return <SensorMenu />;
+      case ObjectType.Light:
+        return <LightMenu />;
+      case ObjectType.Protractor:
+        return <ProtractorMenu />;
+      case ObjectType.Ruler:
+        return <RulerMenu />;
     }
   };
 
   return (
-    <Dropdown trigger={['contextMenu']} menu={createMenu()} overlayClassName="my-overlay">
+    <div
+      onContextMenu={(e) => {
+        if (typeof document.hasFocus === 'function' && !document.hasFocus()) return;
+
+        e.preventDefault();
+        setAnchorPoint({ x: e.clientX, y: e.clientY });
+        setOpen(true);
+      }}
+    >
       {children}
-    </Dropdown>
+      <ControlledMenu
+        anchorPoint={anchorPoint}
+        state={isOpen ? 'open' : 'closed'}
+        onClose={() => {
+          setOpen(false);
+        }}
+        menuStyle={{ fontSize: '14px', minWidth: '4rem', borderRadius: '0.35rem' }}
+      >
+        {menus()}
+      </ControlledMenu>
+    </div>
   );
 };
 

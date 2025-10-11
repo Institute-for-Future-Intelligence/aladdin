@@ -8,8 +8,9 @@ import { ElementCounter } from 'src/stores/ElementCounter';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import { UndoableRemoveAllChildren } from 'src/undo/UndoableRemoveAllChildren';
-import type { MenuProps } from 'antd';
 import { LockOffspringsItem, RemoveFoundationElementsItem } from './foundationMenuItems';
+import { ContextSubMenu } from '../../menuItems';
+import { useLanguage } from 'src/hooks';
 
 type FoundationCounterItem = {
   key: keyof ElementCounter;
@@ -242,51 +243,30 @@ const handleClickRemoveAllWalls = (foundation: FoundationModel) => {
   } as UndoableRemoveAllChildren;
   useStore.getState().addUndoable(undoableRemoveAllWallChildren);
 };
+interface Props {
+  foundation: FoundationModel;
+}
 
-export const createFoundationElementCounterSubmenu = (
-  foundation: FoundationModel,
-  counterAll: ElementCounter,
-  counterUnlocked: ElementCounter,
-) => {
-  const items: MenuProps['items'] = [];
-  const lang = { lng: useStore.getState().language };
+const FoundationElementCounterSubmenu = ({ foundation }: Props) => {
+  const lang = useLanguage();
+  const counterAll = useStore.getState().countAllOffspringsByTypeAtOnce(foundation.id, true);
+  const counterUnlocked = useStore.getState().countAllOffspringsByTypeAtOnce(foundation.id, false);
 
-  // lock-all-offsprings
-  if (counterAll.unlockedCount > 0) {
-    items.push({
-      key: 'lock-all-offsprings',
-      label: <LockOffspringsItem foundation={foundation} lock={true} count={counterAll.unlockedCount} />,
-    });
-  }
-
-  // unlock-all-offsprings
-  if (counterAll.lockedCount > 0) {
-    items.push({
-      key: 'unlock-all-offsprings',
-      label: <LockOffspringsItem foundation={foundation} lock={false} count={counterAll.lockedCount} />,
-    });
-  }
-
-  // elements-counter-wall
-  if (counterUnlocked.wallCount > 0) {
+  const removeWallsMenuItem = () => {
     const { itemLabel, modalTitle } = getItemText(ObjectType.Wall, counterUnlocked.wallCount);
-    items.push({
-      key: `remove-all-walls-on-foundation`,
-      label: (
-        <RemoveFoundationElementsItem
-          foundation={foundation}
-          objectType={ObjectType.Wall}
-          modalTitle={modalTitle}
-          onClickOk={() => handleClickRemoveAllWalls(foundation)}
-        >
-          {itemLabel}
-        </RemoveFoundationElementsItem>
-      ),
-    });
-  }
+    return (
+      <RemoveFoundationElementsItem
+        foundation={foundation}
+        objectType={ObjectType.Wall}
+        modalTitle={modalTitle}
+        onClickOk={() => handleClickRemoveAllWalls(foundation)}
+      >
+        {itemLabel}
+      </RemoveFoundationElementsItem>
+    );
+  };
 
-  // elements-counter-solar-panels
-  if (counterUnlocked.solarPanelCount > 0) {
+  const removeSolarPanelsMenuItem = () => {
     const modalTitle =
       i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSolarPanelsOnFoundation', lang) +
       ' (' +
@@ -298,40 +278,60 @@ export const createFoundationElementCounterSubmenu = (
       ' ' +
       i18n.t('foundationMenu.Racks', lang) +
       ')?';
-    items.push({
-      key: `remove-all-solar-panels-on-foundation`,
-      label: (
-        <RemoveFoundationElementsItem
-          foundation={foundation}
-          objectType={ObjectType.SolarPanel}
-          modalTitle={modalTitle}
-        >
-          {i18n.t('foundationMenu.RemoveAllUnlockedSolarPanels', lang)}&nbsp; ({counterUnlocked.solarPanelModuleCount}{' '}
-          {i18n.t('foundationMenu.SolarPanels', lang)}, {counterUnlocked.solarPanelCount}{' '}
-          {i18n.t('foundationMenu.Racks', lang)})
-        </RemoveFoundationElementsItem>
-      ),
-    });
-  }
+    return (
+      <RemoveFoundationElementsItem foundation={foundation} objectType={ObjectType.SolarPanel} modalTitle={modalTitle}>
+        {i18n.t('foundationMenu.RemoveAllUnlockedSolarPanels', lang)}&nbsp; ({counterUnlocked.solarPanelModuleCount}{' '}
+        {i18n.t('foundationMenu.SolarPanels', lang)}, {counterUnlocked.solarPanelCount}{' '}
+        {i18n.t('foundationMenu.Racks', lang)})
+      </RemoveFoundationElementsItem>
+    );
+  };
 
-  // elements-counter-others
-  counterItems.forEach(({ key, objectType }) => {
-    const count = getCount(counterUnlocked, key, objectType);
+  const removeOtherElementsMenuItem = () => {
+    return counterItems.map(({ key, objectType }, idx) => {
+      const count = getCount(counterUnlocked, key, objectType);
+      if (typeof count === 'number' && count > 0) {
+        const { itemLabel, modalTitle } = getItemText(objectType, count);
+        const typeKeyName = objectType.replaceAll(' ', '');
 
-    if (typeof count === 'number' && count > 0) {
-      const { itemLabel, modalTitle } = getItemText(objectType, count);
-      const typeKeyName = objectType.replaceAll(' ', '');
-
-      items.push({
-        key: `remove-all-${typeKeyName}s-on-foundation`,
-        label: (
-          <RemoveFoundationElementsItem foundation={foundation} objectType={objectType} modalTitle={modalTitle}>
+        return (
+          <RemoveFoundationElementsItem
+            key={typeKeyName}
+            foundation={foundation}
+            objectType={objectType}
+            modalTitle={modalTitle}
+          >
             {itemLabel}
           </RemoveFoundationElementsItem>
-        ),
-      });
-    }
-  });
+        );
+      } else {
+        return null;
+      }
+    });
+  };
 
-  return items;
+  return (
+    <ContextSubMenu label={i18n.t('word.Elements', lang)}>
+      {/* lock all offsprings */}
+      {counterAll.unlockedCount > 0 && (
+        <LockOffspringsItem foundation={foundation} lock={true} count={counterAll.unlockedCount} />
+      )}
+
+      {/* unlock all offsprings */}
+      {counterAll.lockedCount > 0 && (
+        <LockOffspringsItem foundation={foundation} lock={false} count={counterAll.unlockedCount} />
+      )}
+
+      {/* remove walls */}
+      {counterUnlocked.wallCount > 0 && removeWallsMenuItem()}
+
+      {/* remove solar panels */}
+      {counterUnlocked.solarPanelCount > 0 && removeSolarPanelsMenuItem()}
+
+      {/* remove others */}
+      {removeOtherElementsMenuItem()}
+    </ContextSubMenu>
+  );
 };
+
+export default FoundationElementCounterSubmenu;

@@ -328,11 +328,18 @@ const Flower = React.memo((flowerModel: FlowerModel) => {
                   name={MoveHandleType.Default}
                   renderOrder={2}
                   onPointerDown={(e) => {
-                    if (e.button !== 2 && e.eventObject === e.intersections[0].eventObject) {
-                      selectMe(id, e, ActionType.Move);
-                      useRefStore.setState({
-                        flowerRef: groupRef,
-                      });
+                    if (e.eventObject === e.intersections[0].eventObject) {
+                      if (e.button === 2) {
+                        // right click
+                        setCommonStore((state) => {
+                          state.contextMenuObjectType = ObjectType.Flower;
+                        });
+                      } else {
+                        selectMe(id, e, ActionType.Move);
+                        useRefStore.setState({
+                          flowerRef: groupRef,
+                        });
+                      }
                     }
                   }}
                   onPointerEnter={(e) => {

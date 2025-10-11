@@ -3,7 +3,7 @@
  */
 
 import { Checkbox, Modal } from 'antd';
-import { MenuItem } from '../../menuItems';
+import { ContextMenuItem, AntdMenuItem } from '../../menuItems';
 import i18n from 'src/i18n/i18n';
 import { useLanguage } from 'src/hooks';
 import { CuboidModel } from 'src/models/CuboidModel';
@@ -55,11 +55,11 @@ export const StackableCheckbox = React.memo(({ cuboid }: CuboidMenuItemProps) =>
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={cuboid.stackable} onChange={handleChange}>
         {i18n.t('cuboidMenu.Stackable', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 });
 
@@ -112,7 +112,7 @@ export const AddPolygonItem = React.memo(({ cuboid, selectedSideIndex }: AddPoly
     });
   };
 
-  return <MenuItem onClick={handleClick}>{i18n.t('cuboidMenu.AddPolygon', lang)}</MenuItem>;
+  return <ContextMenuItem onClick={handleClick}>{i18n.t('cuboidMenu.AddPolygon', lang)}</ContextMenuItem>;
 });
 
 export const RemoveCuboidElementsItem = React.memo(
@@ -152,9 +152,9 @@ export const RemoveCuboidElementsItem = React.memo(
     };
 
     return (
-      <MenuItem noPadding onClick={handleClickItem}>
+      <ContextMenuItem noPadding onClick={handleClickItem}>
         {children}
-      </MenuItem>
+      </ContextMenuItem>
     );
   },
 );

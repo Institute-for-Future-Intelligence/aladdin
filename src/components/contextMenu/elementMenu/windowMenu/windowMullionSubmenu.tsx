@@ -2,54 +2,57 @@
  * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
-import type { MenuProps } from 'antd';
 import { WindowBooleanDialogItem, WindowColorDialogItem, WindowNumberDialogItem } from './windowMenuItems';
 import { WindowModel } from 'src/models/WindowModel';
 import { WindowBooleanData, WindowColorData, WindowNumberData } from './WindowPropertyTypes';
+import { ContextSubMenu } from '../../menuItems';
+import { t } from 'i18next';
+import { useLanguage } from 'src/hooks';
+import { MenuDivider } from '@szhsin/react-menu';
 
-export const createWindowMullionSubmenu = (window: WindowModel) => {
-  const items: MenuProps['items'] = [];
+interface Props {
+  window: WindowModel;
+}
 
-  items.push(
-    {
-      key: 'window-horizontal-mullion',
-      label: <WindowBooleanDialogItem noPadding dataType={WindowBooleanData.HorizontalMullion} />,
-    },
-    {
-      key: 'window-vertical-mullion',
-      label: <WindowBooleanDialogItem noPadding dataType={WindowBooleanData.VerticalMullion} />,
-    },
+const WindowMullionSubmenu = ({ window }: Props) => {
+  const lang = useLanguage();
+
+  return (
+    <ContextSubMenu label={t('windowMenu.Mullion', lang)}>
+      {/* window-horizontal-mullion */}
+      <WindowBooleanDialogItem noPadding dataType={WindowBooleanData.HorizontalMullion} />
+
+      {/* window-vertical-mullion */}
+      <WindowBooleanDialogItem noPadding dataType={WindowBooleanData.VerticalMullion} />
+
+      {(window.horizontalMullion || window.verticalMullion) && (
+        <>
+          {/* divider */}
+          <MenuDivider />
+
+          {/* window-mullion-width */}
+          <WindowNumberDialogItem noPadding dataType={WindowNumberData.MullionWidth} />
+
+          {/* window-mullion-color */}
+          <WindowColorDialogItem noPadding dataType={WindowColorData.MullionColor} />
+
+          {window.horizontalMullion && (
+            <>
+              {/* window-horizontal-mullion-spacing */}
+              <WindowNumberDialogItem noPadding dataType={WindowNumberData.HorizontalMullionSpacing} />
+            </>
+          )}
+
+          {window.verticalMullion && (
+            <>
+              {/* window-vertical-mullion-spacing */}
+              <WindowNumberDialogItem noPadding dataType={WindowNumberData.VerticalMullionSpacing} />
+            </>
+          )}
+        </>
+      )}
+    </ContextSubMenu>
   );
-
-  if (window.horizontalMullion || window.verticalMullion) {
-    items.push(
-      {
-        type: 'divider',
-      },
-      {
-        key: 'window-mullion-width',
-        label: <WindowNumberDialogItem noPadding dataType={WindowNumberData.MullionWidth} />,
-      },
-      {
-        key: 'window-mullion-color',
-        label: <WindowColorDialogItem noPadding dataType={WindowColorData.MullionColor} />,
-      },
-    );
-
-    if (window.horizontalMullion) {
-      items.push({
-        key: 'window-horizontal-mullion-spacing',
-        label: <WindowNumberDialogItem noPadding dataType={WindowNumberData.HorizontalMullionSpacing} />,
-      });
-    }
-
-    if (window.verticalMullion) {
-      items.push({
-        key: 'window-vertical-mullion-spacing',
-        label: <WindowNumberDialogItem noPadding dataType={WindowNumberData.VerticalMullionSpacing} />,
-      });
-    }
-  }
-
-  return items;
 };
+
+export default WindowMullionSubmenu;

@@ -2,13 +2,10 @@
  * @Copyright 2025. Institute for Future Intelligence, Inc.
  */
 
-import { MenuProps } from 'antd';
 import { BatteryStorageModel } from 'src/models/BatteryStorageModel';
-import { ElementModel } from 'src/models/ElementModel';
-import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { Copy, Cut, DialogItem, EditableId, Lock, MenuItem } from '../../menuItems';
-import { createLabelSubmenu } from '../../labelSubmenuItems';
+import { Copy, Cut, DialogItem, EditableId, Lock } from '../../menuItems';
+import LabelSubmenu from '../../labelSubmenuItems';
 import i18n from 'src/i18n/i18n';
 import BatteryStorageAzimuthInput from './batteryStorageAzimuthInput';
 import BatteryStorageHeightInput from './batteryStorageHeightInput';
@@ -18,99 +15,68 @@ import BatteryStorageColorSelection from './batteryStorageColorSelection';
 import BatteryStorageHvacIdSelection from './batteryStorageHvacIdSelection';
 import BatteryStorageChargingEfficiencyInput from './batteryStorageChargingEfficiencyInput';
 import BatteryStorageDischargingEfficiencyInput from './batteryStorageDischargingEfficiencyInput';
+import { useLanguage } from 'src/hooks';
+import { useContextMenuElement } from '../menuHooks';
 
-export const createBatteryStorageMenu = (selectedElement: ElementModel) => {
-  const items: MenuProps['items'] = [];
+const BatteryStorageMenu = () => {
+  const lang = useLanguage();
+  const batteryStorage = useContextMenuElement(ObjectType.BatteryStorage) as BatteryStorageModel;
+  if (!batteryStorage) return null;
 
-  if (selectedElement.type !== ObjectType.BatteryStorage) return { items };
+  const editable = !batteryStorage.locked;
 
-  const batteryStorage = selectedElement as BatteryStorageModel;
+  return (
+    <>
+      {/* battery-storage-id */}
+      <EditableId element={batteryStorage} />
 
-  const lang = { lng: useStore.getState().language };
+      {/* battery-storage-copy */}
+      <Copy />
 
-  const editable = !batteryStorage?.locked;
+      {/* battery-storage-cut */}
+      {editable && <Cut />}
 
-  items.push({
-    key: 'battery-storage-id',
-    label: <EditableId element={batteryStorage} />,
-  });
+      {/* battery-storage-lock */}
+      <Lock selectedElement={batteryStorage} />
 
-  items.push({
-    key: 'battery-storage-copy',
-    label: <Copy />,
-  });
+      {editable && (
+        <>
+          {/* battery-storage-color */}
+          <DialogItem Dialog={BatteryStorageColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>
 
-  if (editable) {
-    items.push({
-      key: 'battery-storage-cut',
-      label: <Cut />,
-    });
-  }
+          {/* battery-storage-length */}
+          <DialogItem Dialog={BatteryStorageLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>
 
-  items.push({
-    key: 'battery-storage-lock',
-    label: <Lock selectedElement={batteryStorage} />,
-  });
+          {/* battery-storage-width */}
+          <DialogItem Dialog={BatteryStorageWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>
 
-  if (editable) {
-    items.push({
-      key: 'battery-storage-color',
-      label: <DialogItem Dialog={BatteryStorageColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>,
-    });
+          {/* battery-storage-height */}
+          <DialogItem Dialog={BatteryStorageHeightInput}>{i18n.t('word.Height', lang)} ...</DialogItem>
 
-    items.push({
-      key: 'battery-storage-length',
-      label: <DialogItem Dialog={BatteryStorageLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>,
-    });
+          {/* battery-storage-azimuth */}
+          <DialogItem Dialog={BatteryStorageAzimuthInput}>{i18n.t('word.Azimuth', lang)} ...</DialogItem>
 
-    items.push({
-      key: 'battery-storage-width',
-      label: <DialogItem Dialog={BatteryStorageWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
-    });
+          {/* battery-storage-charging-efficiency */}
+          <DialogItem Dialog={BatteryStorageChargingEfficiencyInput}>
+            {i18n.t('batteryStorageMenu.ChargingEfficiency', lang)} ...
+          </DialogItem>
 
-    items.push({
-      key: 'battery-storage-height',
-      label: <DialogItem Dialog={BatteryStorageHeightInput}>{i18n.t('word.Height', lang)} ...</DialogItem>,
-    });
+          {/* battery-storage-discharging-efficiency */}
+          <DialogItem Dialog={BatteryStorageDischargingEfficiencyInput}>
+            {i18n.t('batteryStorageMenu.DischargingEfficiency', lang)} ...
+          </DialogItem>
 
-    items.push({
-      key: 'battery-storage-azimuth',
-      label: <DialogItem Dialog={BatteryStorageAzimuthInput}>{i18n.t('word.Azimuth', lang)} ...</DialogItem>,
-    });
+          {/* battery-storage-hvacId-selection */}
+          <DialogItem Dialog={BatteryStorageHvacIdSelection}>
+            {i18n.t('batteryStorageMenu.HvacIdSelection', lang)} ...
+          </DialogItem>
 
-    items.push({
-      key: 'battery-storage-charging-efficiency',
-      label: (
-        <DialogItem Dialog={BatteryStorageChargingEfficiencyInput}>
-          {i18n.t('batteryStorageMenu.ChargingEfficiency', lang)} ...
-        </DialogItem>
-      ),
-    });
-
-    items.push({
-      key: 'battery-storage-discharging-efficiency',
-      label: (
-        <DialogItem Dialog={BatteryStorageDischargingEfficiencyInput}>
-          {i18n.t('batteryStorageMenu.DischargingEfficiency', lang)} ...
-        </DialogItem>
-      ),
-    });
-
-    items.push({
-      key: 'battery-storage-hvacId-selection',
-      label: (
-        <DialogItem Dialog={BatteryStorageHvacIdSelection}>
-          {i18n.t('batteryStorageMenu.HvacIdSelection', lang)} ...
-        </DialogItem>
-      ),
-    });
-
-    items.push({
-      key: 'battery-storage-label',
-      label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,
-      children: createLabelSubmenu(batteryStorage),
-    });
-  }
-
-  return { items } as MenuProps;
+          {/* battery-storage-label */}
+          <LabelSubmenu element={batteryStorage} />
+        </>
+      )}
+    </>
+  );
 };
+
+export default BatteryStorageMenu;

@@ -3,74 +3,60 @@
  */
 
 import i18n from 'src/i18n/i18n';
-import { useStore } from 'src/stores/common';
-import type { MenuProps } from 'antd';
 import { WallModel } from 'src/models/WallModel';
 import { ParapetCheckbox } from './wallMenuItems';
-import { DialogItem } from '../../menuItems';
+import { ContextSubMenu, DialogItem } from '../../menuItems';
 import WallParapetColorSelection from './wallParapetColorSelection';
 import WallParapetTextureSelection from './wallParapetTextureSelection';
-import React from 'react';
 import ParapetNumberInput from './wallParapetNumberInput';
 import { ParapetDataType } from './ParapetDataType';
 import { ParapetNumberDialogItem } from './parapetNumberDialogItem';
+import { useLanguage } from 'src/hooks';
+import { MenuDivider } from '@szhsin/react-menu';
 
-export const createParapetSubmenu = (wall: WallModel) => {
-  const lang = { lng: useStore.getState().language };
+interface Props {
+  wall: WallModel;
+}
 
-  const items: MenuProps['items'] = [];
-  items.push({
-    key: 'parapet-checkbox',
-    label: <ParapetCheckbox wall={wall} />,
-  });
+const ParapetSubmenu = ({ wall }: Props) => {
+  const lang = useLanguage();
 
-  if (wall.parapet.display) {
-    items.push(
-      {
-        type: 'divider',
-      },
-      {
-        key: 'parapet-color',
-        label: (
+  return (
+    <ContextSubMenu label={i18n.t('wallMenu.Parapet', lang)}>
+      <ParapetCheckbox wall={wall} />
+
+      {wall.parapet.display && (
+        <>
+          <MenuDivider />
+
+          {/* parapet-color */}
           <DialogItem noPadding Dialog={WallParapetColorSelection}>
             {i18n.t(`wallMenu.ParapetColor`, lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parapet-texture',
-        label: (
+
+          {/* parapet-texture */}
           <DialogItem noPadding Dialog={WallParapetTextureSelection}>
             {i18n.t(`wallMenu.ParapetTexture`, lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parapet-height',
-        label: (
+
+          {/* parapet-height */}
           <ParapetNumberDialogItem wall={wall} dataType={ParapetDataType.ParapetHeight} Dialog={ParapetNumberInput}>
             {i18n.t(`wallMenu.ParapetHeight`, lang)} ...
           </ParapetNumberDialogItem>
-        ),
-      },
-      {
-        key: 'copings-height',
-        label: (
+
+          {/* copings-height */}
           <ParapetNumberDialogItem wall={wall} dataType={ParapetDataType.CopingsHeight} Dialog={ParapetNumberInput}>
             {i18n.t(`wallMenu.CopingsHeight`, lang)} ...
           </ParapetNumberDialogItem>
-        ),
-      },
-      {
-        key: 'copings-width',
-        label: (
+
+          {/* copings-width */}
           <ParapetNumberDialogItem wall={wall} dataType={ParapetDataType.CopingsWidth} Dialog={ParapetNumberInput}>
             {i18n.t(`wallMenu.CopingsWidth`, lang)} ...
           </ParapetNumberDialogItem>
-        ),
-      },
-    );
-  }
-
-  return items;
+        </>
+      )}
+    </ContextSubMenu>
+  );
 };
+
+export default ParapetSubmenu;

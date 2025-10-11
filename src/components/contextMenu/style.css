@@ -27,3 +27,12 @@
 .ant-dropdown-menu-submenu-expand-icon {
   top: 3px !important;
 }
+
+/* submenu items */
+.context-menu-submenu-item {
+  padding-left: 36px !important;
+}
+
+.context-menu-submenu-item-no-padding {
+  padding-left: 12px !important;
+}

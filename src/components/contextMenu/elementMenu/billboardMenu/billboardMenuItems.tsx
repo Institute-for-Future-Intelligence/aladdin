@@ -3,7 +3,7 @@
  */
 
 import { Checkbox, Space, InputNumber, Switch } from 'antd';
-import { MenuItem } from '../../menuItems';
+import { ContextMenuItem } from '../../menuItems';
 import { useLanguage } from 'src/hooks';
 import i18n from 'src/i18n/i18n';
 import { ObjectType } from 'src/types';
@@ -63,7 +63,7 @@ export const BillboardFlipCheckbox = React.memo(
         <Switch size={'small'} checked={billboardModel.flip} onChange={handleChange} />
       </Space>
     ) : (
-      <MenuItem stayAfterClick noPadding>
+      <ContextMenuItem stayAfterClick noPadding>
         <Checkbox
           style={{ width: '100%' }}
           checked={billboardModel.flip}
@@ -71,7 +71,7 @@ export const BillboardFlipCheckbox = React.memo(
         >
           {i18n.t('peopleMenu.Flip', lang)}
         </Checkbox>
-      </MenuItem>
+      </ContextMenuItem>
     );
   },
 );
@@ -115,11 +115,11 @@ export const HumanObserverCheckbox = React.memo(
         <Switch size={'small'} checked={human.observer} onChange={handleChange} />
       </Space>
     ) : (
-      <MenuItem stayAfterClick noPadding>
+      <ContextMenuItem stayAfterClick noPadding>
         <Checkbox style={{ width: '100%' }} checked={human.observer} onChange={(e) => handleChange(e.target.checked)}>
           {i18n.t('peopleMenu.Observer', lang)}
         </Checkbox>
-      </MenuItem>
+      </ContextMenuItem>
     );
   },
 );
@@ -203,7 +203,7 @@ export const HumanMoveViewItem = React.memo(({ human }: { human: HumanModel }) =
     animateMove.current = true;
   };
 
-  return <MenuItem onClick={handleClick}>{i18n.t('peopleMenu.ViewFromThisPerson', lang)}</MenuItem>;
+  return <ContextMenuItem onClick={handleClick}>{i18n.t('peopleMenu.ViewFromThisPerson', lang)}</ContextMenuItem>;
 });
 
 export const TreeShowModelCheckbox = React.memo(
@@ -245,7 +245,7 @@ export const TreeShowModelCheckbox = React.memo(
         <Switch size={'small'} checked={tree?.showModel && tree?.type === ObjectType.Tree} onChange={showTreeModel} />
       </Space>
     ) : (
-      <MenuItem stayAfterClick noPadding>
+      <ContextMenuItem stayAfterClick noPadding>
         <Checkbox
           style={{ width: '100%' }}
           checked={tree?.showModel && tree?.type === ObjectType.Tree}
@@ -253,7 +253,7 @@ export const TreeShowModelCheckbox = React.memo(
         >
           {i18n.t('treeMenu.ShowModel', lang)}
         </Checkbox>
-      </MenuItem>
+      </ContextMenuItem>
     );
   },
 );
@@ -289,7 +289,7 @@ export const TreeSpreadInput = React.memo(({ tree }: { tree: TreeModel }) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <ContextMenuItem stayAfterClick>
       <Space style={{ width: '100px' }}>
         {i18n.t('treeMenu.Spread', lang) + ' (' + i18n.t('word.MeterAbbreviation', lang) + ')'}:
       </Space>
@@ -302,7 +302,7 @@ export const TreeSpreadInput = React.memo(({ tree }: { tree: TreeModel }) => {
         value={inputSpread}
         onChange={setSpread}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 });
 
@@ -337,7 +337,7 @@ export const TreeHeightInput = React.memo(({ tree }: { tree: TreeModel }) => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <ContextMenuItem stayAfterClick>
       <Space style={{ width: '100px' }}>
         {i18n.t('word.Height', lang) + ' (' + i18n.t('word.MeterAbbreviation', lang) + ')'}:
       </Space>
@@ -350,6 +350,6 @@ export const TreeHeightInput = React.memo(({ tree }: { tree: TreeModel }) => {
         value={inputHeight}
         onChange={setHeight}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 });

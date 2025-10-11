@@ -240,3 +240,16 @@ export const useColorPicker = (color: string) => {
   };
   return [selectedColor, onColorChange] as [string, (colorResult: ColorResult) => void];
 };
+
+export const useContextMenuElement = (type: ObjectType) => {
+  const el = useSelectedElement(type);
+  const [_el, setElement] = useState(el);
+
+  useEffect(() => {
+    if (el) {
+      setElement(el);
+    }
+  }, [el]);
+
+  return _el;
+};

@@ -4,16 +4,22 @@
 
 import { ElementCounter } from 'src/stores/ElementCounter';
 import { ObjectType } from 'src/types';
-import type { MenuProps } from 'antd';
 import { useStore } from 'src/stores/common';
 import { CuboidModel } from 'src/models/CuboidModel';
 import i18n from 'src/i18n/i18n';
 import { RemoveCuboidElementsItem } from './cuboidMenuItems';
+import { ContextSubMenu } from '../../menuItems';
+import { useLanguage } from 'src/hooks';
 
 type CuboidCounterItem = {
   key: keyof ElementCounter;
   objectType: ObjectType;
 };
+
+interface Props {
+  cuboid: CuboidModel;
+  counterUnlocked: ElementCounter;
+}
 
 const counterItems: CuboidCounterItem[] = [
   {
@@ -102,53 +108,64 @@ const getItemText = (type: ObjectType, count: number) => {
   return { itemLabel, modalTitle };
 };
 
-export const createCuboidElementCounterSubmenu = (cuboid: CuboidModel, counterUnlocked: ElementCounter) => {
-  const items: MenuProps['items'] = [];
-  const lang = { lng: useStore.getState().language };
+const CuboidElementCounterSubmenu = ({ cuboid, counterUnlocked }: Props) => {
+  const lang = useLanguage();
 
-  // remove-all-solar-panels-on-cuboid
-  if (counterUnlocked.solarPanelCount > 0) {
-    const modalTitle =
-      i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllSolarPanelsOnCuboid', lang) +
-      ' (' +
-      counterUnlocked.solarPanelModuleCount +
-      ' ' +
-      i18n.t('cuboidMenu.SolarPanels', lang) +
-      ', ' +
-      counterUnlocked.solarPanelCount +
-      ' ' +
-      i18n.t('cuboidMenu.Racks', lang) +
-      ')?';
+  const removeSolarPanelsItem = () => {
+    if (counterUnlocked.solarPanelCount > 0) {
+      const modalTitle =
+        i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllSolarPanelsOnCuboid', lang) +
+        ' (' +
+        counterUnlocked.solarPanelModuleCount +
+        ' ' +
+        i18n.t('cuboidMenu.SolarPanels', lang) +
+        ', ' +
+        counterUnlocked.solarPanelCount +
+        ' ' +
+        i18n.t('cuboidMenu.Racks', lang) +
+        ')?';
 
-    items.push({
-      key: `remove-all-solar-panels-on-cuboid`,
-      label: (
+      return (
         <RemoveCuboidElementsItem cuboid={cuboid} objectType={ObjectType.SolarPanel} modalTitle={modalTitle}>
           {i18n.t('cuboidMenu.RemoveAllUnlockedSolarPanels', lang)}&nbsp; ({counterUnlocked.solarPanelModuleCount}{' '}
           {i18n.t('cuboidMenu.SolarPanels', lang)},{counterUnlocked.solarPanelCount} {i18n.t('cuboidMenu.Racks', lang)})
         </RemoveCuboidElementsItem>
-      ),
-    });
-  }
+      );
+    } else {
+      return null;
+    }
+  };
 
-  // remove-all-others-on-cuboid
-  counterItems.forEach(({ key, objectType }) => {
-    const count = counterUnlocked[key];
+  const removeOthersItem = () => {
+    return counterItems.map(({ key, objectType }) => {
+      const count = counterUnlocked[key];
 
-    if (typeof count === 'number' && count > 0) {
-      const { itemLabel, modalTitle } = getItemText(objectType, count);
-      const typeKeyName = objectType.replaceAll(' ', '');
+      if (typeof count === 'number' && count > 0) {
+        const { itemLabel, modalTitle } = getItemText(objectType, count);
+        const typeKeyName = objectType.replaceAll(' ', '');
 
-      items.push({
-        key: `remove-all-${typeKeyName}s-on-cuboid`,
-        label: (
-          <RemoveCuboidElementsItem cuboid={cuboid} objectType={objectType} modalTitle={modalTitle}>
+        return (
+          <RemoveCuboidElementsItem
+            key={`remove-all-${typeKeyName}s-on-cuboid`}
+            cuboid={cuboid}
+            objectType={objectType}
+            modalTitle={modalTitle}
+          >
             {itemLabel}
           </RemoveCuboidElementsItem>
-        ),
-      });
-    }
-  });
+        );
+      } else {
+        return null;
+      }
+    });
+  };
 
-  return items;
+  return (
+    <ContextSubMenu label={i18n.t('word.Clear', lang)}>
+      {removeSolarPanelsItem()}
+      {removeOthersItem()}
+    </ContextSubMenu>
+  );
 };
+
+export default CuboidElementCounterSubmenu;

@@ -4,22 +4,22 @@
 
 import { useStore } from '../../../../stores/common';
 import { ObjectType } from '../../../../types';
-import { MenuItem, Paste } from '../../menuItems';
+import { ContextSubMenu, Paste } from '../../menuItems';
 import i18n from '../../../../i18n/i18n';
 import { ElementCounter } from '../../../../stores/ElementCounter';
-import { Flex, MenuProps } from 'antd';
 import {
   AlbedoInput,
-  GroundColorPicker,
+  GroundColorSubmenu,
   GroundImageCheckbox,
-  IrradianceLossInput,
   LeafOutDayInput,
   LeafShedDayInput,
   LockElementsItem,
+  MonthlyIrradianceLossSubmenu,
   RemoveGroundElementsItem,
-  SurfaceTypeRadioGroup,
+  SurfaceTypeSubmenu,
 } from './groundMenuItems';
-import { MONTHS_ABBV } from 'src/constants';
+import { useLanguage } from 'src/hooks';
+import * as Selector from 'src/stores/selector';
 
 type GroundCounterItem = { key: keyof ElementCounter; type: ObjectType; itemLabel: string; modalTitle: string };
 
@@ -62,165 +62,93 @@ const counterItems: GroundCounterItem[] = [
   },
 ];
 
-const legalToPaste = () => {
-  const elementsToPaste = useStore.getState().elementsToPaste;
-
-  if (!elementsToPaste || elementsToPaste.length === 0) return false;
-
-  const e = elementsToPaste[0];
-  return (
-    e.type === ObjectType.Human ||
-    e.type === ObjectType.Tree ||
-    e.type === ObjectType.Flower ||
-    e.type === ObjectType.Cuboid ||
-    e.type === ObjectType.Ruler ||
-    e.type === ObjectType.Protractor ||
-    e.type === ObjectType.Foundation
-  );
-};
-
-const createMonthlyIrradianceLossSubmenu = () => {
-  const lang = { lng: useStore.getState().language };
-  const c = MONTHS_ABBV.slice().reduce((acc, curr, idx, arr) => {
-    if (acc && idx % 2 !== 0) {
-      acc.push({
-        key: `${arr[idx - 1]}-${arr[idx]}`,
-        label: (
-          <MenuItem stayAfterClick noPadding>
-            <IrradianceLossInput monthIndex={idx - 1} />
-            <IrradianceLossInput monthIndex={idx} />
-          </MenuItem>
-        ),
-      });
-    }
-    return acc;
-  }, [] as MenuProps['items']);
-  c?.push({
-    key: `title`,
-    label: (
-      <>
-        <hr style={{ marginTop: '6px' }} />
-        <Flex style={{ width: '240px' }}>
-          <span style={{ fontSize: '32px', marginTop: '-6px', paddingRight: '8px', verticalAlign: 'top' }}>🎓</span>
-          <span style={{ fontSize: '12px' }}>{i18n.t('groundMenu.MonthlyIrradianceLossExplanation', lang)}</span>
-        </Flex>
-      </>
-    ),
-  });
-  return c;
-};
-
-export const createGroundMenu = () => {
-  const lang = { lng: useStore.getState().language };
-
+const GroundMenu = () => {
+  const lang = useLanguage();
   const elementCounter: ElementCounter = useStore.getState().countAllElementsByType(true);
+  const waterSurface = useStore(Selector.viewState.waterSurface);
 
-  const items: MenuProps['items'] = [];
+  const legalToPaste = () => {
+    const elementsToPaste = useStore.getState().elementsToPaste;
 
-  if (legalToPaste()) {
-    items.push({
-      key: 'ground-paste',
-      label: <Paste />,
-    });
-  }
+    if (!elementsToPaste || elementsToPaste.length === 0) return false;
 
-  counterItems.forEach(({ key, type, itemLabel, modalTitle }) => {
-    const count = elementCounter[key];
-    if (typeof count === 'number' && count > 0) {
-      items.push({
-        key: `ground-remove-all-${type}s`,
-        label: (
+    const e = elementsToPaste[0];
+    return (
+      e.type === ObjectType.Human ||
+      e.type === ObjectType.Tree ||
+      e.type === ObjectType.Flower ||
+      e.type === ObjectType.Cuboid ||
+      e.type === ObjectType.Ruler ||
+      e.type === ObjectType.Protractor ||
+      e.type === ObjectType.Foundation
+    );
+  };
+
+  const removeGroundElementItems = () =>
+    counterItems.map(({ key, type, itemLabel, modalTitle }) => {
+      const count = elementCounter[key];
+      if (typeof count === 'number' && count > 0) {
+        return (
           <RemoveGroundElementsItem
+            key={key}
             objectType={type}
             itemLabel={`${i18n.t(itemLabel, lang)} (${count})`}
             modalTitle={`${i18n.t(modalTitle, lang)} (${count})?`}
           />
-        ),
-      });
-    }
-  });
+        );
+      } else {
+        return null;
+      }
+    });
 
-  if (elementCounter.unlockedCount > 0) {
-    items.push({
-      key: 'lock-all-elements',
-      label: (
+  return (
+    <>
+      {/* paste */}
+      {legalToPaste() && <Paste />}
+
+      {/* remove elements */}
+      {removeGroundElementItems()}
+
+      {/* lock-all-elements */}
+      {elementCounter.unlockedCount > 0 && (
         <LockElementsItem
           lock={true}
           count={elementCounter.unlockedCount}
           label={i18n.t('groundMenu.LockAllUnlockedElements', lang)}
         />
-      ),
-    });
-  }
+      )}
 
-  if (elementCounter.lockedCount > 0 && useStore.getState().elements.length > 0) {
-    items.push({
-      key: 'unlock-all-elements',
-      label: (
+      {/* unlock-all-elements */}
+      {elementCounter.lockedCount > 0 && useStore.getState().elements.length > 0 && (
         <LockElementsItem
           lock={false}
           count={elementCounter.lockedCount}
           label={i18n.t('groundMenu.UnlockAllLockedElements', lang)}
         />
-      ),
-    });
-  }
+      )}
 
-  items.push({
-    key: 'image-on-ground',
-    label: <GroundImageCheckbox />,
-  });
+      {/* image-on-ground */}
+      <GroundImageCheckbox />
 
-  items.push({
-    key: 'surface-type-submenu',
-    label: <MenuItem>{i18n.t('groundMenu.SurfaceType', lang)}</MenuItem>,
-    children: [
-      {
-        key: 'surface-type',
-        label: <SurfaceTypeRadioGroup />,
-      },
-    ],
-  });
+      {/* surface-type-submenu */}
+      <SurfaceTypeSubmenu />
 
-  if (!useStore.getState().viewState.waterSurface) {
-    items.push({
-      key: 'ground-color-submenu',
-      label: <MenuItem>{i18n.t('word.Color', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'ground-color-picker',
-          label: <GroundColorPicker />,
-          style: { backgroundColor: 'white' },
-        },
-      ],
-    });
-  }
+      {/* ground-color-submenu */}
+      {!waterSurface && <GroundColorSubmenu />}
 
-  items.push({
-    key: 'vegetation-submenu',
-    label: <MenuItem>{i18n.t('groundMenu.Vegetation', lang)}</MenuItem>,
-    children: [
-      {
-        key: 'leaf-out-day',
-        label: <LeafOutDayInput />,
-      },
-      {
-        key: 'leaf-shed-day',
-        label: <LeafShedDayInput />,
-      },
-    ],
-  });
+      {/* vegetation-submenu */}
+      <ContextSubMenu label={i18n.t('groundMenu.Vegetation', lang)}>
+        <LeafOutDayInput />
+        <LeafShedDayInput />
+      </ContextSubMenu>
 
-  items.push({
-    key: 'monthly-irradiance-loss-submenu',
-    label: <MenuItem>{i18n.t('groundMenu.MonthlyIrradianceLoss', lang)}</MenuItem>,
-    children: createMonthlyIrradianceLossSubmenu(),
-  });
+      {/* monthly-irradiance-loss-submenu */}
+      <MonthlyIrradianceLossSubmenu />
 
-  items.push({
-    key: 'ground-albedo',
-    label: <AlbedoInput />,
-  });
-
-  return { items } as MenuProps;
+      {/* ground-albedo */}
+      <AlbedoInput />
+    </>
+  );
 };
+
+export default GroundMenu;

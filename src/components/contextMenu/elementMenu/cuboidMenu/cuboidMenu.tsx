@@ -3,10 +3,8 @@
  */
 
 import { useStore } from 'src/stores/common';
-import type { MenuProps } from 'antd';
-import { ElementModel } from 'src/models/ElementModel';
 import { CuboidTexture, ObjectType } from 'src/types';
-import { Copy, Cut, DialogItem, GroupMasterCheckbox, Lock, MenuItem, Paste } from '../../menuItems';
+import { Copy, Cut, DialogItem, GroupMasterCheckbox, Lock, Paste } from '../../menuItems';
 import { CuboidModel } from 'src/models/CuboidModel';
 import { AddPolygonItem, StackableCheckbox } from './cuboidMenuItems';
 import i18n from 'src/i18n/i18n';
@@ -16,9 +14,11 @@ import CuboidLengthInput from './cuboidLengthInput';
 import CuboidWidthInput from './cuboidWidthInput';
 import CuboidHeightInput from './cuboidHeightInput';
 import CuboidAzimuthInput from './cuboidAzimuthInput';
-import { createLabelSubmenu } from '../../labelSubmenuItems';
-import { createCuboidElementCounterSubmenu } from './cuboidElementCounterSubmenu';
+import LabelSubmenu from '../../labelSubmenuItems';
+import CuboidElementCounterSubmenu from './cuboidElementCounterSubmenu';
 import CuboidTransparencyInput from './cuboidTransparencyInput';
+import { useLanguage } from 'src/hooks';
+import { useContextMenuElement } from '../menuHooks';
 
 const legalToPaste = () => {
   const elementsToPaste = useStore.getState().elementsToPaste;
@@ -40,115 +40,66 @@ const legalToPaste = () => {
   return false;
 };
 
-export const createCuboidMenu = (selectedElement: ElementModel) => {
-  const items: MenuProps['items'] = [];
+const CuboidMenu = () => {
+  const lang = useLanguage();
+  const cuboid = useContextMenuElement(ObjectType.Cuboid) as CuboidModel;
 
-  if (selectedElement.type !== ObjectType.Cuboid) return { items };
+  if (!cuboid) return null;
 
-  const cuboid = selectedElement as CuboidModel;
-
+  const editable = !cuboid.locked;
   const selectedSideIndex = useStore.getState().selectedSideIndex;
-  const lang = { lng: useStore.getState().language };
-
   const counterUnlocked = useStore.getState().countAllOffspringsByTypeAtOnce(cuboid.id, false);
-  const editable = !cuboid?.locked;
   const showColorSelection =
     !cuboid.textureTypes ||
     (selectedSideIndex >= 0 && cuboid.textureTypes[selectedSideIndex] === CuboidTexture.NoTexture);
 
-  if (legalToPaste()) {
-    items.push({
-      key: 'cuboid-paste',
-      label: <Paste />,
-    });
-  }
+  return (
+    <>
+      {legalToPaste() && <Paste />}
 
-  items.push({
-    key: 'cuboid-copy',
-    label: <Copy />,
-  });
+      <Copy />
 
-  if (editable) {
-    items.push({
-      key: 'cuboid-cut',
-      label: <Cut />,
-    });
-  }
+      {editable && <Cut />}
 
-  items.push({
-    key: 'cuboid-lock',
-    label: <Lock selectedElement={cuboid} />,
-  });
+      <Lock selectedElement={cuboid} />
 
-  items.push({
-    key: 'cuboid-group-master',
-    label: <GroupMasterCheckbox groupableElement={cuboid} />,
-  });
+      <GroupMasterCheckbox groupableElement={cuboid} />
 
-  items.push({
-    key: 'cuboid-stackable',
-    label: <StackableCheckbox cuboid={cuboid} />,
-  });
+      <StackableCheckbox cuboid={cuboid} />
 
-  if (counterUnlocked.gotSome()) {
-    items.push({
-      key: 'cuboid-clear',
-      label: <MenuItem>{i18n.t('word.Clear', lang)}</MenuItem>,
-      children: createCuboidElementCounterSubmenu(cuboid, counterUnlocked),
-    });
-  }
+      {counterUnlocked.gotSome() && <CuboidElementCounterSubmenu cuboid={cuboid} counterUnlocked={counterUnlocked} />}
 
-  if (editable) {
-    if (showColorSelection) {
-      items.push({
-        key: 'cuboid-color',
-        label: <DialogItem Dialog={CuboidColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>,
-      });
-    }
+      {editable && (
+        <>
+          {showColorSelection && (
+            <DialogItem Dialog={CuboidColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>
+          )}
 
-    items.push({
-      key: 'cuboid-texture',
-      label: <DialogItem Dialog={CuboidTextureSelection}>{i18n.t('word.Texture', lang)} ...</DialogItem>,
-    });
+          {/* cuboid-texture */}
+          <DialogItem Dialog={CuboidTextureSelection}>{i18n.t('word.Texture', lang)} ...</DialogItem>
 
-    items.push({
-      key: 'cuboid-length',
-      label: <DialogItem Dialog={CuboidLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>,
-    });
+          {/* cuboid-length */}
+          <DialogItem Dialog={CuboidLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>
 
-    items.push({
-      key: 'cuboid-width',
-      label: <DialogItem Dialog={CuboidWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
-    });
+          {/* cuboid-width */}
+          <DialogItem Dialog={CuboidWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>
 
-    items.push({
-      key: 'cuboid-height',
-      label: <DialogItem Dialog={CuboidHeightInput}>{i18n.t('word.Height', lang)} ...</DialogItem>,
-    });
+          {/* cuboid-height */}
+          <DialogItem Dialog={CuboidHeightInput}>{i18n.t('word.Height', lang)} ...</DialogItem>
 
-    items.push({
-      key: 'cuboid-azimuth',
-      label: <DialogItem Dialog={CuboidAzimuthInput}>{i18n.t('word.Azimuth', lang)} ...</DialogItem>,
-    });
+          {/* cuboid-azimuth */}
+          <DialogItem Dialog={CuboidAzimuthInput}>{i18n.t('word.Azimuth', lang)} ...</DialogItem>
 
-    items.push({
-      key: 'cuboid-transparency',
-      label: <DialogItem Dialog={CuboidTransparencyInput}>{i18n.t('word.Transparency', lang)} ...</DialogItem>,
-    });
-  }
+          {/* cuboid-transparency */}
+          <DialogItem Dialog={CuboidTransparencyInput}>{i18n.t('word.Transparency', lang)} ...</DialogItem>
+        </>
+      )}
 
-  items.push({
-    key: 'add-polygon-on-cuboid',
-    label: <AddPolygonItem cuboid={cuboid} selectedSideIndex={selectedSideIndex} />,
-  });
+      <AddPolygonItem cuboid={cuboid} selectedSideIndex={selectedSideIndex} />
 
-  if (editable) {
-    items.push({
-      key: 'cuboid-label',
-      label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,
-      children: createLabelSubmenu(cuboid),
-    });
-  }
-
-  return { items } as MenuProps;
+      <LabelSubmenu element={cuboid} />
+    </>
+  );
 };
+
+export default CuboidMenu;

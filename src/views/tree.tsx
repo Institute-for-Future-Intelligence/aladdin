@@ -378,11 +378,18 @@ const Tree = React.memo((treeModel: TreeModel) => {
                   name={MoveHandleType.Default}
                   renderOrder={2}
                   onPointerDown={(e) => {
-                    if (e.button !== 2 && e.eventObject === e.intersections[0].eventObject) {
-                      selectMe(id, e, ActionType.Move);
-                      useRefStore.setState({
-                        treeRef: groupRef,
-                      });
+                    if (e.eventObject === e.intersections[0].eventObject) {
+                      if (e.button === 2) {
+                        // right click
+                        setCommonStore((state) => {
+                          state.contextMenuObjectType = ObjectType.Tree;
+                        });
+                      } else {
+                        selectMe(id, e, ActionType.Move);
+                        useRefStore.setState({
+                          treeRef: groupRef,
+                        });
+                      }
                     }
                   }}
                   onPointerEnter={(e) => {
@@ -408,7 +415,16 @@ const Tree = React.memo((treeModel: TreeModel) => {
                       args={[handleSize, handleSize, handleSize]}
                       position={positionTop}
                       onPointerDown={(e) => {
-                        selectMe(id, e, ActionType.Resize);
+                        if (e.eventObject === e.intersections[0].eventObject) {
+                          if (e.button === 2) {
+                            // right click
+                            setCommonStore((state) => {
+                              state.contextMenuObjectType = ObjectType.Tree;
+                            });
+                          } else {
+                            selectMe(id, e, ActionType.Resize);
+                          }
+                        }
                       }}
                       onPointerEnter={(e) => {
                         hoverHandle(e, ResizeHandleType.Top);
@@ -431,7 +447,16 @@ const Tree = React.memo((treeModel: TreeModel) => {
                       args={[handleSize, handleSize, handleSize]}
                       position={positionLeft}
                       onPointerDown={(e) => {
-                        selectMe(id, e, ActionType.Resize);
+                        if (e.eventObject === e.intersections[0].eventObject) {
+                          if (e.button === 2) {
+                            // right click
+                            setCommonStore((state) => {
+                              state.contextMenuObjectType = ObjectType.Tree;
+                            });
+                          } else {
+                            selectMe(id, e, ActionType.Resize);
+                          }
+                        }
                       }}
                       onPointerEnter={(e) => {
                         hoverHandle(e, ResizeHandleType.Left);
@@ -454,7 +479,16 @@ const Tree = React.memo((treeModel: TreeModel) => {
                       args={[handleSize, handleSize, handleSize]}
                       position={positionRight}
                       onPointerDown={(e) => {
-                        selectMe(id, e, ActionType.Resize);
+                        if (e.eventObject === e.intersections[0].eventObject) {
+                          if (e.button === 2) {
+                            // right click
+                            setCommonStore((state) => {
+                              state.contextMenuObjectType = ObjectType.Tree;
+                            });
+                          } else {
+                            selectMe(id, e, ActionType.Resize);
+                          }
+                        }
                       }}
                       onPointerEnter={(e) => {
                         hoverHandle(e, ResizeHandleType.Right);
@@ -477,7 +511,16 @@ const Tree = React.memo((treeModel: TreeModel) => {
                       args={[handleSize, handleSize, handleSize]}
                       position={positionLower}
                       onPointerDown={(e) => {
-                        selectMe(id, e, ActionType.Resize);
+                        if (e.eventObject === e.intersections[0].eventObject) {
+                          if (e.button === 2) {
+                            // right click
+                            setCommonStore((state) => {
+                              state.contextMenuObjectType = ObjectType.Tree;
+                            });
+                          } else {
+                            selectMe(id, e, ActionType.Resize);
+                          }
+                        }
                       }}
                       onPointerEnter={(e) => {
                         hoverHandle(e, ResizeHandleType.Lower);
@@ -500,7 +543,16 @@ const Tree = React.memo((treeModel: TreeModel) => {
                       args={[handleSize, handleSize, handleSize]}
                       position={positionUpper}
                       onPointerDown={(e) => {
-                        selectMe(id, e, ActionType.Resize);
+                        if (e.eventObject === e.intersections[0].eventObject) {
+                          if (e.button === 2) {
+                            // right click
+                            setCommonStore((state) => {
+                              state.contextMenuObjectType = ObjectType.Tree;
+                            });
+                          } else {
+                            selectMe(id, e, ActionType.Resize);
+                          }
+                        }
                       }}
                       onPointerEnter={(e) => {
                         hoverHandle(e, ResizeHandleType.Upper);

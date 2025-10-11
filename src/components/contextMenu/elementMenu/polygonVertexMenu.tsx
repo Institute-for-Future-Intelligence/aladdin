@@ -2,15 +2,15 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import { MenuProps } from 'antd';
 import { CommonStoreState, useStore } from '../../../stores/common';
 import i18n from '../../../i18n/i18n';
 import { PolygonModel } from '../../../models/PolygonModel';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { Point2 } from '../../../models/Point2';
 import { ObjectType, PolygonVertexAction } from '../../../types';
-import { ElementModel } from 'src/models/ElementModel';
-import { MenuItem } from '../menuItems';
+import { ContextMenuItem } from '../menuItems';
+import { useLanguage } from 'src/hooks';
+import { useContextMenuElement } from './menuHooks';
 
 const deletePolygonVertexByIndex = (id: string, index: number) => {
   useStore.getState().set((state: CommonStoreState) => {
@@ -103,46 +103,31 @@ const changeVertex = (polygon: PolygonModel, action: PolygonVertexAction) => {
   }
 };
 
-export const createPolygonVertexMenu = (selectedElement: ElementModel) => {
-  const items: MenuProps['items'] = [];
+const PolygonVertexMenu = () => {
+  const lang = useLanguage();
+  const polygon = useContextMenuElement(ObjectType.Polygon) as PolygonModel;
+  if (!polygon) return null;
 
-  if (selectedElement.type !== ObjectType.Polygon) return { items };
+  return (
+    <>
+      {/* polygon-vertex-insert-before-index */}
+      <ContextMenuItem noPadding onClick={() => changeVertex(polygon, PolygonVertexAction.InsertBeforeIndex)}>
+        {i18n.t('polygonMenu.InsertVertexBeforeIndex', lang)}
+      </ContextMenuItem>
 
-  const polygon = selectedElement as PolygonModel;
+      {/* polygon-vertex-insert-after-index */}
+      <ContextMenuItem noPadding onClick={() => changeVertex(polygon, PolygonVertexAction.InsertAfterIndex)}>
+        {i18n.t('polygonMenu.InsertVertexAfterIndex', lang)}
+      </ContextMenuItem>
 
-  const lang = { lng: useStore.getState().language };
-
-  items.push(
-    {
-      key: 'polygon-vertex-insert-before-index',
-      label: <MenuItem noPadding>{i18n.t('polygonMenu.InsertVertexBeforeIndex', lang)}</MenuItem>,
-    },
-    {
-      key: 'polygon-vertex-insert-after-index',
-      label: <MenuItem noPadding>{i18n.t('polygonMenu.InsertVertexAfterIndex', lang)}</MenuItem>,
-    },
+      {/* polygon-vertex-delete */}
+      {polygon.vertices.length > 3 && (
+        <ContextMenuItem noPadding onClick={() => changeVertex(polygon, PolygonVertexAction.Delete)}>
+          {i18n.t('polygonMenu.DeleteVertex', lang)}
+        </ContextMenuItem>
+      )}
+    </>
   );
-
-  if (polygon.vertices.length > 3) {
-    items.push({
-      key: 'polygon-vertex-delete',
-      label: <MenuItem noPadding>{i18n.t('polygonMenu.DeleteVertex', lang)}</MenuItem>,
-    });
-  }
-
-  const handleClick: MenuProps['onClick'] = ({ key }) => {
-    switch (key) {
-      case 'polygon-vertex-insert-before-index':
-        changeVertex(polygon, PolygonVertexAction.InsertBeforeIndex);
-        break;
-      case 'polygon-vertex-insert-after-index':
-        changeVertex(polygon, PolygonVertexAction.InsertAfterIndex);
-        break;
-      case 'polygon-vertex-delete':
-        changeVertex(polygon, PolygonVertexAction.Delete);
-        break;
-    }
-  };
-
-  return { items, onClick: handleClick } as MenuProps;
 };
+
+export default PolygonVertexMenu;

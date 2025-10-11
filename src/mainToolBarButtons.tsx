@@ -50,7 +50,7 @@ import { showInfo } from './helpers';
 import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { useLanguage } from './hooks';
-import { MenuItem } from './components/contextMenu/menuItems';
+import { AntdMenuItem } from './components/contextMenu/menuItems';
 import { MAXIMUM_HEATMAP_CELLS } from './constants';
 
 const ToolBarButton = ({ ...props }) => {
@@ -92,7 +92,7 @@ const ToolBarMenuItem = ({ objectType, srcImg, setFlag, replacingText }: ToolBar
   const lang = useLanguage();
 
   return (
-    <MenuItem
+    <AntdMenuItem
       noPadding
       textSelectable={false}
       onClick={() => {
@@ -112,7 +112,7 @@ const ToolBarMenuItem = ({ objectType, srcImg, setFlag, replacingText }: ToolBar
         }}
       />
       {i18n.t(`toolbar.Add${replacingText ?? objectType.replaceAll(' ', '')}`, lang)}
-    </MenuItem>
+    </AntdMenuItem>
   );
 };
 

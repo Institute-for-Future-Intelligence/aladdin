@@ -248,7 +248,7 @@ export const DEFAULT_AIR_CONVECTIVE_COEFFICIENT = 5;
 
 export const DEFAULT_TIMES_PER_HOUR = 1;
 export const DEFAULT_DAYS_PER_YEAR = 12;
-export const DEFAULT_MONTHLY_IRRADIANCE_LOSSES = new Array(12).fill(0.05);
+export const DEFAULT_MONTHLY_IRRADIANCE_LOSSES = new Array<number>(12).fill(0.05);
 export const DEFAULT_PV_GRID_CELL_SIZE = 0.5;
 export const DEFAULT_DISCRETIZATION = Discretization.APPROXIMATE;
 export const DEFAULT_DIURNAL_TEMPERATURE_MODEL = DiurnalTemperatureModel.Sinusoidal;

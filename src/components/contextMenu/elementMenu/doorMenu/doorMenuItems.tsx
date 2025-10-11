@@ -2,9 +2,8 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import { Checkbox, Radio, RadioChangeEvent, Space } from 'antd';
+import { Checkbox } from 'antd';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
-import { MenuItem } from '../../menuItems';
 import { useLanguage } from 'src/hooks';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { useStore } from 'src/stores/common';
@@ -13,6 +12,8 @@ import { UndoableCheck } from 'src/undo/UndoableCheck';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import React from 'react';
+import { ContextMenuItem, ContextSubMenu } from '../../menuItems';
+import { ClickEvent, MenuItem, MenuRadioGroup, RadioChangeEvent } from '@szhsin/react-menu';
 
 interface DoorMenuItemProps {
   door: DoorModel;
@@ -56,11 +57,11 @@ export const DoorFilledCheckbox = React.memo(({ door }: DoorMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={door.filled} onChange={handleChange}>
         {i18n.t('doorMenu.Filled', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 });
 
@@ -98,11 +99,11 @@ export const DoorFramedCheckbox = React.memo(({ door }: DoorMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={!door.frameless} onChange={handleChange}>
         {i18n.t('doorMenu.Framed', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 });
 
@@ -143,15 +144,15 @@ export const DoorInteriorCheckbox = React.memo(({ door }: DoorMenuItemProps) => 
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={door.interior} onChange={handleChange}>
         {i18n.t('doorMenu.Interior', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 });
 
-export const DoorTypeRadioGroup = React.memo(({ door }: DoorMenuItemProps) => {
+export const DoorTypeSubmenu = React.memo(({ door }: DoorMenuItemProps) => {
   const lang = useLanguage();
 
   const updateDoorTypeById = (id: string, type: DoorType) => {
@@ -170,7 +171,7 @@ export const DoorTypeRadioGroup = React.memo(({ door }: DoorMenuItemProps) => {
       name: 'Select Door Type',
       timestamp: Date.now(),
       oldValue: door.doorType,
-      newValue: e.target.value,
+      newValue: e.value,
       changedElementId: door.id,
       changedElementType: door.type,
       undo: () => {
@@ -181,24 +182,26 @@ export const DoorTypeRadioGroup = React.memo(({ door }: DoorMenuItemProps) => {
       },
     } as UndoableChange;
     useStore.getState().addUndoable(undoableChange);
-    updateDoorTypeById(door.id, e.target.value);
+    updateDoorTypeById(door.id, e.value);
     useStore.getState().set((state) => {
-      state.actionState.doorType = e.target.value;
+      state.actionState.doorType = e.value;
     });
   };
 
+  const onItemClick = (e: ClickEvent) => {
+    e.keepOpen = true;
+  };
+
   return (
-    <MenuItem stayAfterClick noPadding>
-      <Radio.Group value={door.doorType} onChange={handleChange}>
-        <Space direction="vertical">
-          <Radio style={{ width: '100%' }} value={DoorType.Default}>
-            {i18n.t('doorMenu.Default', lang)}
-          </Radio>
-          <Radio style={{ width: '100%' }} value={DoorType.Arched}>
-            {i18n.t('doorMenu.Arched', lang)}
-          </Radio>
-        </Space>
-      </Radio.Group>
-    </MenuItem>
+    <ContextSubMenu label={i18n.t('doorMenu.DoorType', lang)}>
+      <MenuRadioGroup value={door.doorType} onRadioChange={handleChange}>
+        <MenuItem type="radio" value={DoorType.Default} onClick={onItemClick}>
+          {i18n.t('doorMenu.Default', lang)}
+        </MenuItem>
+        <MenuItem type="radio" value={DoorType.Arched} onClick={onItemClick}>
+          {i18n.t('doorMenu.Arched', lang)}
+        </MenuItem>
+      </MenuRadioGroup>
+    </ContextSubMenu>
   );
 });

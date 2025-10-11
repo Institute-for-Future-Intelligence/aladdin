@@ -5,7 +5,7 @@
 import { useLanguage } from '../../../../hooks';
 import React, { useState } from 'react';
 import { useStore } from '../../../../stores/common';
-import { MenuItem } from '../../menuItems';
+import { ContextMenuItem } from '../../menuItems';
 import i18n from '../../../../i18n/i18n';
 import { ParapetNumberInputProps } from './wallParapetNumberInput';
 import { ParapetArgs, WallModel } from '../../../../models/WallModel';
@@ -44,9 +44,9 @@ export const ParapetNumberDialogItem = ({ Dialog, wall, dataType, children }: Nu
 
   return (
     <>
-      <MenuItem noPadding onClick={handleClick}>
+      <ContextMenuItem noPadding onClick={handleClick}>
         {children}
-      </MenuItem>
+      </ContextMenuItem>
       {dialogVisible && (
         <Dialog
           wall={wall}

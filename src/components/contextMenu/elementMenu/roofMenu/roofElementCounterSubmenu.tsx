@@ -6,10 +6,10 @@ import i18n from 'src/i18n/i18n';
 import { ElementCounter } from 'src/stores/ElementCounter';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import type { MenuProps } from 'antd';
 import { RoofModel } from 'src/models/RoofModel';
 import { LockRoofElementsItem, RemoveRoofElementsItem } from './roofMenuItems';
-import { LightSideItem } from '../../menuItems';
+import { ContextSubMenu, LightSideItem } from '../../menuItems';
+import { useLanguage } from 'src/hooks';
 
 type RoofCounterItem = {
   key: keyof ElementCounter;
@@ -93,88 +93,82 @@ const getCount = (counter: ElementCounter, key: keyof ElementCounter, objectType
   }
 };
 
-export const createRoofElementCounterSubmenu = (
-  roof: RoofModel,
-  counterAll: ElementCounter,
-  counterUnlocked: ElementCounter,
-) => {
-  const items: MenuProps['items'] = [];
-  const lang = { lng: useStore.getState().language };
+interface Props {
+  roof: RoofModel;
+  counterAll: ElementCounter;
+  counterUnlocked: ElementCounter;
+}
 
-  // remove-elements
-  counterItems.forEach(({ key, objectType }) => {
-    const count = getCount(counterUnlocked, key, objectType);
+const RoofElementCounterSubmenu = ({ roof, counterAll, counterUnlocked }: Props) => {
+  const lang = useLanguage();
 
-    if (typeof count === 'number' && count > 0) {
-      const { itemLabel, modalTitle } = getItemText(objectType, count);
-      const typeKeyName = objectType.replaceAll(' ', '');
+  return (
+    <ContextSubMenu label={i18n.t('word.Elements', lang)}>
+      {/* remove-elements */}
+      {counterItems.map(({ key, objectType }) => {
+        const count = getCount(counterUnlocked, key, objectType);
 
-      items.push({
-        key: `remove-all-${typeKeyName}s-on-roof`,
-        label: (
-          <RemoveRoofElementsItem roof={roof} objectType={objectType} modalTitle={modalTitle}>
-            {itemLabel}
-          </RemoveRoofElementsItem>
-        ),
-      });
-    }
-  });
+        if (typeof count === 'number' && count > 0) {
+          const { itemLabel, modalTitle } = getItemText(objectType, count);
+          const typeKeyName = objectType.replaceAll(' ', '');
+          return (
+            <RemoveRoofElementsItem
+              key={`remove-${typeKeyName}`}
+              roof={roof}
+              objectType={objectType}
+              modalTitle={modalTitle}
+            >
+              {itemLabel}
+            </RemoveRoofElementsItem>
+          );
+        } else {
+          return null;
+        }
+      })}
 
-  // lock-elements
-  counterItems.forEach(({ key, objectType }) => {
-    const count = getCount(counterUnlocked, key, objectType);
-    if (typeof count === 'number' && count > 0) {
-      const objectTypeText = objectType.replaceAll(' ', '');
-      items.push({
-        key: `lock-all-${objectTypeText}s-on-roof`,
-        label: (
-          <LockRoofElementsItem roof={roof} objectType={objectType} lock={true}>
-            {i18n.t(`wallMenu.LockAllUnlocked${objectTypeText}s`, lang)} ({count})
-          </LockRoofElementsItem>
-        ),
-      });
-    }
-  });
+      {/* lock-elements */}
+      {counterItems.map(({ key, objectType }) => {
+        const count = getCount(counterUnlocked, key, objectType);
+        if (typeof count === 'number' && count > 0) {
+          const objectTypeText = objectType.replaceAll(' ', '');
+          return (
+            <LockRoofElementsItem key={`lock-${objectTypeText}`} roof={roof} objectType={objectType} lock={true}>
+              {i18n.t(`wallMenu.LockAllUnlocked${objectTypeText}s`, lang)} ({count})
+            </LockRoofElementsItem>
+          );
+        } else {
+          return null;
+        }
+      })}
 
-  // unlock-elements
-  counterItems.forEach(({ lockedKey, objectType }) => {
-    const count = getCount(counterAll, lockedKey, objectType, true);
-    if (typeof count === 'number' && count > 0) {
-      const objectTypeText = objectType.replaceAll(' ', '');
-      items.push({
-        key: `unlock-all-${objectTypeText}s-on-wall`,
-        label: (
-          <LockRoofElementsItem roof={roof} objectType={objectType} lock={false}>
-            {i18n.t(`wallMenu.UnlockAllLocked${objectTypeText}s`, lang)} ({count})
-          </LockRoofElementsItem>
-        ),
-      });
-    }
-  });
+      {/* unlock-elements */}
+      {counterItems.map(({ lockedKey, objectType }) => {
+        const count = getCount(counterAll, lockedKey, objectType, true);
+        if (typeof count === 'number' && count > 0) {
+          const objectTypeText = objectType.replaceAll(' ', '');
+          return (
+            <LockRoofElementsItem key={`unlock-${objectTypeText}`} roof={roof} objectType={objectType} lock={false}>
+              {i18n.t(`wallMenu.UnlockAllLocked${objectTypeText}s`, lang)} ({count})
+            </LockRoofElementsItem>
+          );
+        } else {
+          return null;
+        }
+      })}
 
-  // lights-inside
-  if (counterAll.outsideLightCount > 0) {
-    items.push({
-      key: 'inside-lights-on-wall',
-      label: (
+      {counterAll.outsideLightCount > 0 && (
         <LightSideItem element={roof} inside={true}>
           {i18n.t(`wallMenu.AllLightsOnWallInside`, lang)} ({counterAll.outsideLightCount})
         </LightSideItem>
-      ),
-    });
-  }
+      )}
 
-  // lights-outside
-  if (counterAll.insideLightCount > 0) {
-    items.push({
-      key: 'outside-lights-on-wall',
-      label: (
+      {counterAll.insideLightCount > 0 && (
         <LightSideItem element={roof} inside={false}>
           {i18n.t(`wallMenu.AllLightsOnWallOutside`, lang)} ({counterAll.insideLightCount})
         </LightSideItem>
-      ),
-    });
-  }
-
-  return items;
+      )}
+    </ContextSubMenu>
+  );
 };
+
+export default RoofElementCounterSubmenu;

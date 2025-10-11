@@ -2,8 +2,8 @@
  * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
-import { Checkbox, Modal, Radio, RadioChangeEvent, Space, Switch } from 'antd';
-import { MenuItem } from '../../menuItems';
+import { Checkbox, Modal, Radio, Space, Switch } from 'antd';
+import { ContextMenuItem, ContextSubMenu, AntdMenuItem } from '../../menuItems';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { useStore } from 'src/stores/common';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
@@ -20,6 +20,7 @@ import { UNIT_VECTOR_POS_Z } from 'src/constants';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { Util } from 'src/Util';
+import { ClickEvent, MenuItem, MenuRadioGroup, RadioChangeEvent } from '@szhsin/react-menu';
 
 interface FoundationItemProps {
   foundation: FoundationModel;
@@ -67,11 +68,11 @@ export const BuildingCheckbox = ({ foundation }: FoundationItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={!foundation.notBuilding} onChange={onChange}>
         {i18n.t('word.Building', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -109,11 +110,11 @@ export const VisibilityCheckbox = ({ foundation, forModelTree }: FoundationItemP
       <Switch size={'small'} checked={!foundation.invisible} onChange={toggleVisibility} />
     </Space>
   ) : (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={!foundation.invisible} onChange={toggleVisibility}>
         {i18n.t('word.Visible', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -163,11 +164,11 @@ export const SlopeCheckbox = ({ foundation }: FoundationItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={foundation.enableSlope} onChange={onChange}>
         {i18n.t('foundationMenu.Slope', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -207,9 +208,9 @@ export const LockOffspringsItem = ({ foundation, lock, count }: LockOffspringsIt
   };
 
   return (
-    <MenuItem noPadding onClick={handleClick}>
+    <ContextMenuItem noPadding stayAfterClick onClick={handleClick}>
       {i18n.t(label, lang)} ({count})
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -255,9 +256,9 @@ export const RemoveFoundationElementsItem = ({
   };
 
   return (
-    <MenuItem noPadding onClick={handleClickItem}>
+    <ContextMenuItem noPadding onClick={handleClickItem}>
       {children}
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -292,10 +293,10 @@ export const AddPolygonItem = ({ foundation }: FoundationItemProps) => {
     });
   };
 
-  return <MenuItem onClick={handleClick}>{i18n.t('foundationMenu.AddPolygon', lang)}</MenuItem>;
+  return <ContextMenuItem onClick={handleClick}>{i18n.t('foundationMenu.AddPolygon', lang)}</ContextMenuItem>;
 };
 
-export const SolarStructureRadioGroup = ({ foundation }: FoundationItemProps) => {
+export const SolarStructureSubmenu = ({ foundation }: FoundationItemProps) => {
   const lang = useLanguage();
 
   const selectedSolarStructure = foundation?.solarStructure ?? SolarStructure.None;
@@ -313,7 +314,7 @@ export const SolarStructureRadioGroup = ({ foundation }: FoundationItemProps) =>
 
   const handleChange = (e: RadioChangeEvent) => {
     const oldValue = foundation.solarStructure;
-    const newValue = e.target.value;
+    const newValue = e.value;
     const undoableChange = {
       name: 'Select Solar Structure for Selected Foundation',
       timestamp: Date.now(),
@@ -332,24 +333,26 @@ export const SolarStructureRadioGroup = ({ foundation }: FoundationItemProps) =>
     updateFoundationSolarStructureById(foundation.id, newValue);
   };
 
+  const onClickItem = (e: ClickEvent) => {
+    e.keepOpen = true;
+  };
+
   return (
-    <MenuItem stayAfterClick noPadding>
-      <Radio.Group value={selectedSolarStructure} onChange={handleChange}>
-        <Space direction="vertical">
-          <Radio style={{ width: '100%' }} value={SolarStructure.None}>
-            {i18n.t('word.None', lang)}
-          </Radio>
-          <Radio style={{ width: '100%' }} value={SolarStructure.FocusPipe}>
-            {i18n.t('solarAbsorberPipeMenu.AbsorberPipeForFresnelReflectors', lang)}
-          </Radio>
-          <Radio style={{ width: '100%' }} value={SolarStructure.FocusTower}>
-            {i18n.t('solarPowerTowerMenu.ReceiverTowerForHeliostats', lang)}
-          </Radio>
-          <Radio style={{ width: '100%' }} value={SolarStructure.UpdraftTower}>
-            {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTower', lang)}
-          </Radio>
-        </Space>
-      </Radio.Group>
-    </MenuItem>
+    <ContextSubMenu label={i18n.t('foundationMenu.SolarStructure', lang)}>
+      <MenuRadioGroup value={selectedSolarStructure} onRadioChange={handleChange}>
+        <MenuItem type="radio" value={SolarStructure.None} onClick={onClickItem}>
+          {i18n.t('word.None', lang)}
+        </MenuItem>
+        <MenuItem type="radio" value={SolarStructure.FocusPipe} onClick={onClickItem}>
+          {i18n.t('solarAbsorberPipeMenu.AbsorberPipeForFresnelReflectors', lang)}
+        </MenuItem>
+        <MenuItem type="radio" value={SolarStructure.FocusTower} onClick={onClickItem}>
+          {i18n.t('solarPowerTowerMenu.ReceiverTowerForHeliostats', lang)}
+        </MenuItem>
+        <MenuItem type="radio" value={SolarStructure.UpdraftTower} onClick={onClickItem}>
+          {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTower', lang)}
+        </MenuItem>
+      </MenuRadioGroup>
+    </ContextSubMenu>
   );
 };

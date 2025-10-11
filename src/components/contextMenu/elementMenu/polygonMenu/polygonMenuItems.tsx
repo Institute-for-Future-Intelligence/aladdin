@@ -3,7 +3,6 @@
  */
 
 import { PolygonModel } from 'src/models/PolygonModel';
-import { MenuItem } from '../../menuItems';
 import { Checkbox, Input, InputNumber, Space, Switch } from 'antd';
 import { useLanguage } from 'src/hooks';
 import i18n from 'src/i18n/i18n';
@@ -14,6 +13,7 @@ import { UndoableCheck } from 'src/undo/UndoableCheck';
 import React, { useState } from 'react';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { LabelAddonBefore } from '../../labelSubmenuItems';
+import { ContextMenuItem } from '../../menuItems';
 
 interface PolygonMenuItemProps {
   polygon: PolygonModel;
@@ -58,11 +58,11 @@ export const PolygonFillCheckbox = ({ polygon, forModelTree }: PolygonMenuItemPr
       <Switch size={'small'} checked={polygon.filled} onChange={toggleFilled} />
     </Space>
   ) : (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={polygon.filled} onChange={toggleFilled}>
         {i18n.t('polygonMenu.Filled', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -100,11 +100,11 @@ export const PolygonShinyCheckbox = ({ polygon }: PolygonMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={!!polygon.shininess} onChange={toggleShiny}>
         {i18n.t('polygonMenu.Shiny', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -146,11 +146,11 @@ export const PolygonOutlineCheckbox = ({ polygon, forModelTree }: PolygonMenuIte
       <Switch size={'small'} checked={!polygon.noOutline} onChange={toggleOutline} />
     </Space>
   ) : (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={!polygon.noOutline} onChange={toggleOutline}>
         {i18n.t('polygonMenu.Outline', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -191,7 +191,7 @@ export const PolygonText = ({ polygon }: PolygonMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Input
         addonBefore={<LabelAddonBefore width={'120px'}>{i18n.t('word.Text', lang)}:</LabelAddonBefore>}
         value={textContent}
@@ -199,7 +199,7 @@ export const PolygonText = ({ polygon }: PolygonMenuItemProps) => {
         onPressEnter={changeText}
         onBlur={changeText}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -240,7 +240,7 @@ export const PolygonFontSize = ({ polygon }: PolygonMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <InputNumber
         addonBefore={<LabelAddonBefore width={'120px'}>{i18n.t('word.FontSize', lang)}:</LabelAddonBefore>}
         min={0.1}
@@ -252,7 +252,7 @@ export const PolygonFontSize = ({ polygon }: PolygonMenuItemProps) => {
         onPressEnter={changeFontSize}
         onBlur={changeFontSize}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -293,7 +293,7 @@ export const PolygonFontColor = ({ polygon }: PolygonMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Input
         addonBefore={<LabelAddonBefore width={'120px'}>{i18n.t('word.FontColor', lang)}:</LabelAddonBefore>}
         value={textColor}
@@ -301,7 +301,7 @@ export const PolygonFontColor = ({ polygon }: PolygonMenuItemProps) => {
         onPressEnter={changeFontColor}
         onBlur={changeFontColor}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -342,7 +342,7 @@ export const PolygonFontOutlineColor = ({ polygon }: PolygonMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Input
         addonBefore={
           <LabelAddonBefore width={'120px'}>{i18n.t('polygonMenu.FontOutlineColor', lang)}:</LabelAddonBefore>
@@ -352,7 +352,7 @@ export const PolygonFontOutlineColor = ({ polygon }: PolygonMenuItemProps) => {
         onPressEnter={changeFontOutlineColor}
         onBlur={changeFontOutlineColor}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -393,7 +393,7 @@ export const PolygonFontOutlineWidth = ({ polygon }: PolygonMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <InputNumber
         addonBefore={
           <LabelAddonBefore width={'120px'}>{i18n.t('polygonMenu.FontOutlineWidth', lang)}:</LabelAddonBefore>
@@ -407,7 +407,7 @@ export const PolygonFontOutlineWidth = ({ polygon }: PolygonMenuItemProps) => {
         onPressEnter={changeFontOutlineWidth}
         onBlur={changeFontOutlineWidth}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -448,7 +448,7 @@ export const PolygonFontStrokeColor = ({ polygon }: PolygonMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Input
         addonBefore={
           <LabelAddonBefore width={'120px'}>{i18n.t('polygonMenu.FontStrokeColor', lang)}:</LabelAddonBefore>
@@ -458,7 +458,7 @@ export const PolygonFontStrokeColor = ({ polygon }: PolygonMenuItemProps) => {
         onPressEnter={changeFontStrokeColor}
         onBlur={changeFontStrokeColor}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -499,7 +499,7 @@ export const PolygonFontStrokeWidth = ({ polygon }: PolygonMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <InputNumber
         addonBefore={
           <LabelAddonBefore width={'120px'}>{i18n.t('polygonMenu.FontStrokeWidth', lang)}:</LabelAddonBefore>
@@ -513,6 +513,6 @@ export const PolygonFontStrokeWidth = ({ polygon }: PolygonMenuItemProps) => {
         onPressEnter={changeFontStrokeWidth}
         onBlur={changeFontStrokeWidth}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };

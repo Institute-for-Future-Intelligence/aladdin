@@ -10,7 +10,7 @@ import React from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { usePrimitiveStore } from './stores/commonPrimitive';
-import { MenuItem } from './components/contextMenu/menuItems';
+import { AntdMenuItem } from './components/contextMenu/menuItems';
 import { useLanguage } from './hooks';
 import { WarningOutlined } from '@ant-design/icons';
 
@@ -79,7 +79,7 @@ const MainToolBar = React.memo(({ signIn, signInAnonymously, signOut }: MainTool
     {
       key: 'account',
       label: (
-        <MenuItem
+        <AntdMenuItem
           noPadding
           onClick={() => {
             usePrimitiveStore.getState().set((state) => {
@@ -88,15 +88,15 @@ const MainToolBar = React.memo(({ signIn, signInAnonymously, signOut }: MainTool
           }}
         >
           {i18n.t('avatarMenu.AccountSettings', lang)}
-        </MenuItem>
+        </AntdMenuItem>
       ),
     },
     {
       key: 'signOut',
       label: (
-        <MenuItem noPadding onClick={signOutCheck}>
+        <AntdMenuItem noPadding onClick={signOutCheck}>
           {i18n.t('avatarMenu.SignOut', lang)}
-        </MenuItem>
+        </AntdMenuItem>
       ),
     },
   ];
@@ -105,17 +105,17 @@ const MainToolBar = React.memo(({ signIn, signInAnonymously, signOut }: MainTool
     {
       key: 'signin-default',
       label: (
-        <MenuItem noPadding onClick={signIn}>
+        <AntdMenuItem noPadding onClick={signIn}>
           {i18n.t('avatarMenu.SignInAsMe', lang)}
-        </MenuItem>
+        </AntdMenuItem>
       ),
     },
     {
       key: 'signin-anonymously',
       label: (
-        <MenuItem noPadding onClick={anonymousSignInCheck}>
+        <AntdMenuItem noPadding onClick={anonymousSignInCheck}>
           {i18n.t('avatarMenu.SignInAnonymously', lang)}
-        </MenuItem>
+        </AntdMenuItem>
       ),
     },
   ];

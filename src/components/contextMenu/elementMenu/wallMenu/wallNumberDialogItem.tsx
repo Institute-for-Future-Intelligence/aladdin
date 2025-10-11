@@ -7,7 +7,7 @@ import { WallNumberInputProps } from './wallNumberInput';
 import { WallModel } from 'src/models/WallModel';
 import { useLanguage } from 'src/hooks';
 import { useStore } from 'src/stores/common';
-import { MenuItem } from '../../menuItems';
+import { ContextMenuItem } from '../../menuItems';
 import i18n from 'src/i18n/i18n';
 import { WallNumberDialogSettingType, WallNumberDialogSettings } from './wallMenu';
 import { useSelectedElement } from '../menuHooks';
@@ -37,9 +37,9 @@ export const WallNumberDialogItem = ({ Dialog, noPadding, dataType, children }: 
 
   return (
     <>
-      <MenuItem noPadding={noPadding} onClick={handleClick}>
+      <ContextMenuItem noPadding={noPadding} onClick={handleClick}>
         {children}
-      </MenuItem>
+      </ContextMenuItem>
       {dialogVisible && wall && (
         <Dialog
           wall={wall}

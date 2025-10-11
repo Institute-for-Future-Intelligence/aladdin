@@ -8,7 +8,7 @@ import { useLanguage } from 'src/hooks';
 import React, { useState } from 'react';
 import { useStore } from 'src/stores/common';
 import i18n from 'src/i18n/i18n';
-import { MenuItem } from '../../menuItems';
+import { ContextMenuItem } from '../../menuItems';
 import {
   WindowBooleanDialogSettings,
   WindowBooleanSelectionSettingType,
@@ -68,9 +68,9 @@ export const WindowNumberDialogItem = ({ dataType, noPadding }: WindowDialogItem
 
   return (
     <>
-      <MenuItem noPadding={noPadding} onClick={handleClick}>
+      <ContextMenuItem noPadding={noPadding} onClick={handleClick}>
         {i18n.t(`windowMenu.${dataType}`, lang)} ...
-      </MenuItem>
+      </ContextMenuItem>
       {dialogVisible && setting && window && (
         <WindowNumberInput
           windowModel={window}
@@ -103,9 +103,9 @@ export const WindowColorDialogItem = ({ dataType, noPadding }: WindowDialogItemP
 
   return (
     <>
-      <MenuItem noPadding={noPadding} onClick={handleClick}>
+      <ContextMenuItem noPadding={noPadding} onClick={handleClick}>
         {i18n.t(`windowMenu.${dataType}`, lang)} ...
-      </MenuItem>
+      </ContextMenuItem>
       {dialogVisible && setting && window && (
         <WindowColorSelection
           window={window}
@@ -133,9 +133,9 @@ export const WindowBooleanDialogItem = ({ dataType, noPadding }: WindowDialogIte
 
   return (
     <>
-      <MenuItem noPadding={noPadding} onClick={handleClick}>
+      <ContextMenuItem noPadding={noPadding} onClick={handleClick}>
         {i18n.t(`windowMenu.${dataType}`, lang)} ...
-      </MenuItem>
+      </ContextMenuItem>
       {dialogVisible && setting && window && (
         <WindowBooleanSelection
           window={window}
@@ -164,9 +164,9 @@ export const WindowOptionDialogItem = ({ dataType, noPadding }: WindowDialogItem
 
   return (
     <>
-      <MenuItem noPadding={noPadding} onClick={handleClick}>
+      <ContextMenuItem noPadding={noPadding} onClick={handleClick}>
         {i18n.t(`windowMenu.${dataType}`, lang)} ...
-      </MenuItem>
+      </ContextMenuItem>
       {dialogVisible && setting && window && (
         <WindowOptionSelection
           window={window}
@@ -222,11 +222,11 @@ export const WindowEmptyCheckbox = ({ window }: WindowMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={!!window.empty} onChange={handleChange}>
         {i18n.t('windowMenu.Empty', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -267,10 +267,10 @@ export const WindowInteriorCheckbox = ({ window }: WindowMenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={!!window.interior} onChange={handleChange}>
         {i18n.t('windowMenu.Interior', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };

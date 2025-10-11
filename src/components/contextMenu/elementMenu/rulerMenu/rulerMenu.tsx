@@ -2,76 +2,46 @@
  * @Copyright 2025. Institute for Future Intelligence, Inc.
  */
 
-import { MenuProps } from 'antd';
 import i18n from 'src/i18n/i18n';
-import { ElementModel } from 'src/models/ElementModel';
 import { RulerModel } from 'src/models/RulerModel';
-import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { Copy, Cut, DialogItem, Lock, MenuItem } from '../../menuItems';
+import { Copy, Cut, DialogItem, Lock } from '../../menuItems';
 import RulerColorSelection from './rulerColorSelection';
 import RulerThicknessInput from './rulerThicknessInput';
 import RulerWidthInput from './rulerWidthInput';
 import RulerTickColorSelection from './rulerTickColorSelection';
-import { RulerTypeRadioGroup } from './rulerTypeSubmenu';
+import { RulerTypeSubmenu } from './rulerTypeSubmenu';
+import { useLanguage } from 'src/hooks';
+import { useContextMenuElement } from '../menuHooks';
 
-export const createRulerMenu = (selectedElement: ElementModel) => {
-  const items: MenuProps['items'] = [];
+const RulerMenu = () => {
+  const lang = useLanguage();
 
-  if (selectedElement.type !== ObjectType.Ruler) return { items };
+  const ruler = useContextMenuElement(ObjectType.Ruler) as RulerModel;
 
-  const ruler = selectedElement as RulerModel;
-
-  const lang = { lng: useStore.getState().language };
+  if (!ruler) return null;
 
   const editable = !ruler?.locked;
 
-  items.push({
-    key: 'ruler-copy',
-    label: <Copy />,
-  });
+  return (
+    <>
+      <Copy />
 
-  if (editable) {
-    items.push({
-      key: 'ruler-cut',
-      label: <Cut />,
-    });
-  }
+      {editable && <Cut />}
 
-  items.push({
-    key: 'ruler-lock',
-    label: <Lock selectedElement={ruler} />,
-  });
+      <Lock selectedElement={ruler} />
 
-  if (editable) {
-    items.push({
-      key: 'ruler-width',
-      label: <DialogItem Dialog={RulerWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
-    });
-    items.push({
-      key: 'ruler-thickness',
-      label: <DialogItem Dialog={RulerThicknessInput}>{i18n.t('word.Thickness', lang)} ...</DialogItem>,
-    });
-    items.push({
-      key: 'ruler-color',
-      label: <DialogItem Dialog={RulerColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>,
-    });
-    items.push({
-      key: 'ruler-tick-color',
-      label: <DialogItem Dialog={RulerTickColorSelection}>{i18n.t('rulerMenu.TickMarkColor', lang)} ...</DialogItem>,
-    });
-    items.push({
-      key: 'ruler-type',
-      label: <MenuItem>{i18n.t('rulerMenu.RulerDirection', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'ruler-type-radio-group',
-          label: <RulerTypeRadioGroup ruler={ruler} />,
-          style: { backgroundColor: 'white' },
-        },
-      ],
-    });
-  }
-
-  return { items } as MenuProps;
+      {editable && (
+        <>
+          <DialogItem Dialog={RulerWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>
+          <DialogItem Dialog={RulerThicknessInput}>{i18n.t('word.Thickness', lang)} ...</DialogItem>
+          <DialogItem Dialog={RulerColorSelection}>{i18n.t('word.Color', lang)} ...</DialogItem>
+          <DialogItem Dialog={RulerTickColorSelection}>{i18n.t('rulerMenu.TickMarkColor', lang)} ...</DialogItem>
+          <RulerTypeSubmenu ruler={ruler} />
+        </>
+      )}
+    </>
+  );
 };
+
+export default RulerMenu;

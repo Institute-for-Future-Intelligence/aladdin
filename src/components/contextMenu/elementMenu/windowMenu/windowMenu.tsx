@@ -2,12 +2,9 @@
  * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
-import type { MenuProps } from 'antd';
-import { ElementModel } from 'src/models/ElementModel';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
-import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { Copy, Cut, DialogItem, Lock, MenuItem } from '../../menuItems';
+import { Copy, Cut, DialogItem, Lock } from '../../menuItems';
 import {
   WindowColorDialogItem,
   WindowEmptyCheckbox,
@@ -17,11 +14,13 @@ import {
 } from './windowMenuItems';
 import i18n from 'src/i18n/i18n';
 import WindowUValueInput from './windowUValueInput';
-import { createWindowFrameSubmenu } from './windowFrameSubmenu';
-import { createWindowMullionSubmenu } from './windowMullionSubmenu';
-import { createWindowShutterSubmenu } from './windowShutterSubmenu';
+import WindowFrameSubmenu from './windowFrameSubmenu';
+import WindowMullionSubmenu from './windowMullionSubmenu';
 import { WindowColorData, WindowNumberData, WindowOptionData } from './WindowPropertyTypes';
 import WindowPermeabilityInput from './windowPermeabilityInput';
+import { useLanguage } from 'src/hooks';
+import { useContextMenuElement } from '../menuHooks';
+import WindowShutterSubmenu from './windowShutterSubmenu';
 
 // TODO: This needs to be merged with WindowPropertyType
 export enum WindowDataType {
@@ -122,111 +121,69 @@ export const WindowNumberDialogSettings = {
   SillWidth: { attributeKey: 'sillWidth', range: [0, 0.5], step: 0.01, unit: 'word.MeterAbbreviation', digit: 2 },
 };
 
-export const createWindowMenu = (selectedElement: ElementModel) => {
-  const items: MenuProps['items'] = [];
-
-  if (selectedElement.type !== ObjectType.Window) return { items };
-
-  const window = selectedElement as WindowModel;
+const WindowMenu = () => {
+  const lang = useLanguage();
+  const window = useContextMenuElement(ObjectType.Window) as WindowModel;
+  if (!window) return null;
 
   const editable = !window.locked;
-  const lang = { lng: useStore.getState().language };
 
-  // window-copy
-  items.push({
-    key: 'window-copy',
-    label: <Copy />,
-  });
+  return (
+    <>
+      <Copy />
 
-  // window-cut
-  if (editable) {
-    items.push({
-      key: 'window-cut',
-      label: <Cut />,
-    });
-  }
+      {editable && <Cut />}
 
-  // window-lock
-  items.push({
-    key: 'window-lock',
-    label: <Lock selectedElement={window} />,
-  });
+      <Lock selectedElement={window} />
 
-  if (editable) {
-    items.push(
-      {
-        key: 'window-empty',
-        label: <WindowEmptyCheckbox window={window} />,
-      },
-      {
-        key: 'window-interior',
-        label: <WindowInteriorCheckbox window={window} />,
-      },
-    );
-  }
+      {editable && (
+        <>
+          {/* window-empty */}
+          <WindowEmptyCheckbox window={window} />
 
-  if (editable) {
-    items.push(
-      // window-type
-      {
-        key: 'window-type',
-        label: <WindowOptionDialogItem dataType={WindowOptionData.WindowType} />,
-      },
-      // window-width
-      {
-        key: 'window-width',
-        label: <WindowNumberDialogItem dataType={WindowNumberData.Width} />,
-      },
-      // window-height
-      {
-        key: 'window-height',
-        label: <WindowNumberDialogItem dataType={WindowNumberData.Height} />,
-      },
-      // window-setback
-      {
-        key: 'window-setback',
-        label: <WindowNumberDialogItem dataType={WindowNumberData.Setback} />,
-      },
-      // window-opacity
-      {
-        key: 'window-opacity',
-        label: <WindowNumberDialogItem dataType={WindowNumberData.Opacity} />,
-      },
-      // window-tint
-      {
-        key: 'window-tint',
-        label: <WindowColorDialogItem dataType={WindowColorData.Tint} />,
-      },
-      // window-u-value
-      {
-        key: 'window-u-value',
-        label: <DialogItem Dialog={WindowUValueInput}>{i18n.t('word.UValue', lang)} ...</DialogItem>,
-      },
-      // window-air-permeability
-      {
-        key: 'window-air-permeability',
-        label: <DialogItem Dialog={WindowPermeabilityInput}>{i18n.t('word.AirPermeability', lang)} ...</DialogItem>,
-      },
-      // window-mullion-submenu
-      {
-        key: 'window-mullion-submenu',
-        label: <MenuItem>{i18n.t('windowMenu.Mullion', lang)}</MenuItem>,
-        children: createWindowMullionSubmenu(window),
-      },
-      // window-frame-submenu
-      {
-        key: 'window-frame-submenu',
-        label: <MenuItem>{i18n.t('windowMenu.Frame', lang)}</MenuItem>,
-        children: createWindowFrameSubmenu(window),
-      },
-      // window-shutter-submenu
-      {
-        key: 'window-shutter-submenu',
-        label: <MenuItem>{i18n.t('windowMenu.Shutter', lang)}</MenuItem>,
-        children: createWindowShutterSubmenu(window),
-      },
-    );
-  }
+          {/* window-interior */}
+          <WindowInteriorCheckbox window={window} />
 
-  return { items } as MenuProps;
+          {editable && (
+            <>
+              {/* window-type */}
+              <WindowOptionDialogItem dataType={WindowOptionData.WindowType} />
+
+              {/* window-width */}
+              <WindowNumberDialogItem dataType={WindowNumberData.Width} />
+
+              {/* window-height */}
+              <WindowNumberDialogItem dataType={WindowNumberData.Height} />
+
+              {/* window-setback */}
+              <WindowNumberDialogItem dataType={WindowNumberData.Setback} />
+
+              {/* window-opacity */}
+              <WindowNumberDialogItem dataType={WindowNumberData.Opacity} />
+
+              {/* window-tint */}
+              <WindowColorDialogItem dataType={WindowColorData.Tint} />
+
+              {/* window-u-value */}
+              <DialogItem Dialog={WindowUValueInput}>{i18n.t('word.UValue', lang)} ...</DialogItem>
+
+              {/* window-air-permeability */}
+              <DialogItem Dialog={WindowPermeabilityInput}>{i18n.t('word.AirPermeability', lang)} ...</DialogItem>
+
+              {/* window-mullion-submenu */}
+              <WindowMullionSubmenu window={window} />
+
+              {/* window-frame-submenu */}
+              <WindowFrameSubmenu window={window} />
+
+              {/* window-shutter-submenu */}
+              <WindowShutterSubmenu window={window} />
+            </>
+          )}
+        </>
+      )}
+    </>
+  );
 };
+
+export default WindowMenu;

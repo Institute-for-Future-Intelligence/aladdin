@@ -2,37 +2,43 @@
  * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
-import type { MenuProps } from 'antd';
 import { WindowBooleanDialogItem, WindowColorDialogItem, WindowNumberDialogItem } from './windowMenuItems';
 import { WindowModel } from 'src/models/WindowModel';
 import { WindowBooleanData, WindowColorData, WindowNumberData } from './WindowPropertyTypes';
+import { ContextSubMenu } from '../../menuItems';
+import { t } from 'i18next';
+import { useLanguage } from 'src/hooks';
+import { MenuDivider } from '@szhsin/react-menu';
 
-export const createWindowFrameSubmenu = (window: WindowModel) => {
-  const items: MenuProps['items'] = [];
+interface Props {
+  window: WindowModel;
+}
 
-  items.push({
-    key: 'window-frame-boolean',
-    label: <WindowBooleanDialogItem noPadding dataType={WindowBooleanData.Frame} />,
-  });
+const WindowFrameSubmenu = ({ window }: Props) => {
+  const lang = useLanguage();
 
-  if (window.frame) {
-    items.push(
-      {
-        type: 'divider',
-      },
-      {
-        key: 'window-frame-width',
-        label: <WindowNumberDialogItem noPadding dataType={WindowNumberData.FrameWidth} />,
-      },
-      {
-        key: 'window-sill-width',
-        label: <WindowNumberDialogItem noPadding dataType={WindowNumberData.SillWidth} />,
-      },
-      {
-        key: 'window-frame-color',
-        label: <WindowColorDialogItem noPadding dataType={WindowColorData.Color} />,
-      },
-    );
-  }
-  return items;
+  return (
+    <ContextSubMenu label={t('windowMenu.Frame', lang)}>
+      {/* window-frame-boolean */}
+      <WindowBooleanDialogItem noPadding dataType={WindowBooleanData.Frame} />
+
+      {window.frame && (
+        <>
+          {/* divider */}
+          <MenuDivider />
+
+          {/* window-frame-width */}
+          <WindowNumberDialogItem noPadding dataType={WindowNumberData.FrameWidth} />
+
+          {/* window-sill-width */}
+          <WindowNumberDialogItem noPadding dataType={WindowNumberData.SillWidth} />
+
+          {/* window-frame-color */}
+          <WindowColorDialogItem noPadding dataType={WindowColorData.Color} />
+        </>
+      )}
+    </ContextSubMenu>
+  );
 };
+
+export default WindowFrameSubmenu;

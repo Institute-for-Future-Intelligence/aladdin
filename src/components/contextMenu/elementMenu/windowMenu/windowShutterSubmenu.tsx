@@ -2,40 +2,43 @@
  * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
  */
 
-import type { MenuProps } from 'antd';
 import { WindowBooleanDialogItem, WindowColorDialogItem, WindowNumberDialogItem } from './windowMenuItems';
 import { WindowModel } from 'src/models/WindowModel';
 import { WindowBooleanData, WindowColorData, WindowNumberData } from './WindowPropertyTypes';
+import { useLanguage } from 'src/hooks';
+import { ContextSubMenu } from '../../menuItems';
+import { t } from 'i18next';
+import { MenuDivider } from '@szhsin/react-menu';
 
-export const createWindowShutterSubmenu = (window: WindowModel) => {
-  const items: MenuProps['items'] = [];
+interface Props {
+  window: WindowModel;
+}
 
-  items.push(
-    {
-      key: 'window-left-shutter',
-      label: <WindowBooleanDialogItem noPadding dataType={WindowBooleanData.LeftShutter} />,
-    },
-    {
-      key: 'window-right-shutter',
-      label: <WindowBooleanDialogItem noPadding dataType={WindowBooleanData.RightShutter} />,
-    },
+const WindowShutterSubmenu = ({ window }: Props) => {
+  const lang = useLanguage();
+
+  return (
+    <ContextSubMenu label={t('windowMenu.Shutter', lang)}>
+      {/* window-left-shutter */}
+      <WindowBooleanDialogItem noPadding dataType={WindowBooleanData.LeftShutter} />
+
+      {/* window-right-shutter */}
+      <WindowBooleanDialogItem noPadding dataType={WindowBooleanData.RightShutter} />
+
+      {(window.leftShutter || window.rightShutter) && (
+        <>
+          {/* divider */}
+          <MenuDivider />
+
+          {/* window-shutter-color */}
+          <WindowColorDialogItem noPadding dataType={WindowColorData.ShutterColor} />
+
+          {/* window-shutter-width */}
+          <WindowNumberDialogItem noPadding dataType={WindowNumberData.ShutterWidth} />
+        </>
+      )}
+    </ContextSubMenu>
   );
-
-  if (window.leftShutter || window.rightShutter) {
-    items.push(
-      {
-        type: 'divider',
-      },
-      {
-        key: 'window-shutter-color',
-        label: <WindowColorDialogItem noPadding dataType={WindowColorData.ShutterColor} />,
-      },
-      {
-        key: 'window-shutter-width',
-        label: <WindowNumberDialogItem noPadding dataType={WindowNumberData.ShutterWidth} />,
-      },
-    );
-  }
-
-  return items;
 };
+
+export default WindowShutterSubmenu;

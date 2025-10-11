@@ -5,7 +5,7 @@
 import { SensorModel } from 'src/models/SensorModel';
 import { useLanguage } from 'src/hooks';
 import { useLabel, useLabelShow, useLabelText } from '../menuHooks';
-import { MenuItem } from '../../menuItems';
+import { ContextMenuItem } from '../../menuItems';
 import { Checkbox, Input, Space } from 'antd';
 import i18n from 'src/i18n/i18n';
 import React, { useEffect, useState } from 'react';
@@ -32,11 +32,11 @@ export const SensorShowLabelCheckbox = ({ sensor }: SensorMenuItemProps) => {
   }, [sensor.showLabel]);
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={show} onChange={onChange}>
         {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -46,7 +46,7 @@ export const SensorLabelTextInput = ({ sensor }: SensorMenuItemProps) => {
   const updateLabelText = useLabelText(sensor, labelText);
 
   return (
-    <MenuItem stayAfterClick>
+    <ContextMenuItem stayAfterClick>
       <Space style={{ width: '80px' }}>{i18n.t('labelSubMenu.LabelText', lang) + ':'}</Space>
       <Input
         style={{ width: '150px' }}
@@ -55,6 +55,6 @@ export const SensorLabelTextInput = ({ sensor }: SensorMenuItemProps) => {
         onPressEnter={updateLabelText}
         onBlur={updateLabelText}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };

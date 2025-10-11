@@ -3,14 +3,13 @@
  */
 
 import { useStore } from 'src/stores/common';
-import { MenuItem } from '../../menuItems';
-import { Checkbox, InputNumber, Radio, Space, Switch } from 'antd';
+import { ContextMenuItem, ContextSubMenu } from '../../menuItems';
+import { Checkbox, InputNumber, Space, Switch } from 'antd';
 import * as Selector from '../../../../stores/selector';
 import i18n from 'src/i18n/i18n';
 import { useLanguage } from 'src/hooks';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
-import type { RadioChangeEvent } from 'antd';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { computeSunriseAndSunsetInMinutes } from 'src/analysis/sunTools';
 import { useMemo } from 'react';
@@ -19,6 +18,7 @@ import {
   DEFAULT_VIEW_DIRECT_LIGHT_INTENSITY,
   themes,
 } from '../../../../constants';
+import { ClickEvent, MenuItem, MenuRadioGroup, RadioChangeEvent } from '@szhsin/react-menu';
 
 export const AxesCheckbox = ({ forModelTree }: { forModelTree?: boolean }) => {
   const axes = useStore(Selector.viewState.axes);
@@ -52,15 +52,15 @@ export const AxesCheckbox = ({ forModelTree }: { forModelTree?: boolean }) => {
       <Switch size={'small'} checked={axes} onChange={handleChange} />
     </Space>
   ) : (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={axes} onChange={(e) => handleChange(e.target.checked)}>
         {i18n.t('skyMenu.Axes', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
-export const ThemeRadioGroup = () => {
+export const ThemeSubmenu = () => {
   const theme = useStore(Selector.viewState.theme);
   const lang = useLanguage();
 
@@ -72,7 +72,7 @@ export const ThemeRadioGroup = () => {
 
   const onChange = (e: RadioChangeEvent) => {
     const oldTheme = theme;
-    const newTheme = e.target.value;
+    const newTheme = e.value;
     const undoableChange = {
       name: 'Select Theme',
       timestamp: Date.now(),
@@ -89,18 +89,20 @@ export const ThemeRadioGroup = () => {
     setTheme(newTheme);
   };
 
+  const onClickItem = (e: ClickEvent) => {
+    e.keepOpen = true;
+  };
+
   return (
-    <MenuItem stayAfterClick noPadding>
-      <Radio.Group value={theme} onChange={onChange}>
-        <Space direction="vertical">
-          {themes.map((radio, idx) => (
-            <Radio style={{ width: '100%' }} key={`${idx}-${radio.value}`} value={radio.value}>
-              {i18n.t(radio.label, lang)}
-            </Radio>
-          ))}
-        </Space>
-      </Radio.Group>
-    </MenuItem>
+    <ContextSubMenu label={i18n.t('skyMenu.Theme', lang)}>
+      <MenuRadioGroup value={theme} onRadioChange={onChange}>
+        {themes.map((radio, idx) => (
+          <MenuItem type="radio" value={radio.value} onClick={onClickItem}>
+            {i18n.t(radio.label, lang)}
+          </MenuItem>
+        ))}
+      </MenuRadioGroup>
+    </ContextSubMenu>
   );
 };
 
@@ -139,11 +141,11 @@ export const ShowAzimuthAngleCheckbox = ({ forModelTree }: { forModelTree?: bool
       <Checkbox style={{ width: '100%' }} checked={showAzimuthAngle} onChange={onChange} />
     </Space>
   ) : (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={showAzimuthAngle} onChange={onChange}>
         {i18n.t('skyMenu.ShowAzimuthAngle', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -182,11 +184,11 @@ export const ShowElevationAngleCheckbox = ({ forModelTree }: { forModelTree?: bo
       <Checkbox style={{ width: '100%' }} checked={showElevationAngle} onChange={onChange} />
     </Space>
   ) : (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={showElevationAngle} onChange={onChange}>
         {i18n.t('skyMenu.ShowElevationAngle', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -225,11 +227,11 @@ export const ShowZenithAngleCheckbox = ({ forModelTree }: { forModelTree?: boole
       <Checkbox style={{ width: '100%' }} checked={showZenithAngle} onChange={onChange} />
     </Space>
   ) : (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={showZenithAngle} onChange={onChange}>
         {i18n.t('skyMenu.ShowZenithAngle', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -270,10 +272,10 @@ export const DirectLightIntensityInput = ({ forModelTree }: { forModelTree?: boo
       <InputNumber min={0.1} max={10} step={0.1} precision={2} value={directLightIntensity} onChange={onChange} />
     </Space>
   ) : (
-    <MenuItem stayAfterClick>
+    <ContextMenuItem stayAfterClick>
       <Space style={{ width: '270px' }}>{i18n.t('skyMenu.DirectLightBrightnessAtNoon', lang) + ' [0.1-10]:'}</Space>
       <InputNumber min={0.1} max={10} step={0.1} precision={2} value={directLightIntensity} onChange={onChange} />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -315,10 +317,10 @@ export const AmbientLightIntensityInput = ({ forModelTree }: { forModelTree?: bo
       <InputNumber min={0.01} max={1} step={0.01} precision={2} value={ambientLightIntensity} onChange={onChange} />
     </Space>
   ) : (
-    <MenuItem stayAfterClick>
+    <ContextMenuItem stayAfterClick>
       <Space style={{ width: '270px' }}>{i18n.t('skyMenu.AmbientLightBrightnessAtNoon', lang) + ' [0.01-1]:'}</Space>
       <InputNumber min={0.01} max={1} step={0.01} precision={2} value={ambientLightIntensity} onChange={onChange} />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -359,10 +361,10 @@ export const AirAttenuationCoefficientInput = ({ forModelTree }: { forModelTree?
       <InputNumber min={0} max={0.1} step={0.001} precision={3} value={airAttenuationCoefficient} onChange={onChange} />
     </Space>
   ) : (
-    <MenuItem stayAfterClick>
+    <ContextMenuItem stayAfterClick>
       <Space style={{ width: '270px' }}>{i18n.t('skyMenu.SunlightAttenuationCoefficientInAir', lang) + ':'}</Space>
       <InputNumber min={0} max={0.1} step={0.001} precision={3} value={airAttenuationCoefficient} onChange={onChange} />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -404,10 +406,10 @@ export const AirConvectiveCoefficientInput = ({ forModelTree }: { forModelTree?:
       <span>W/(m²×K)</span>
     </Space>
   ) : (
-    <MenuItem stayAfterClick>
+    <ContextMenuItem stayAfterClick>
       <Space style={{ width: '270px' }}>{i18n.t('skyMenu.ConvectiveCoefficientOfAir', lang) + ' [W/(m²×K)]:'}</Space>
       <InputNumber min={2.5} max={20} step={0.1} precision={2} value={airConvectiveCoefficient} onChange={onChange} />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -449,7 +451,7 @@ export const HighestTemperatureTimeInput = () => {
   };
 
   return (
-    <MenuItem stayAfterClick>
+    <ContextMenuItem stayAfterClick>
       <Space style={{ width: '270px' }}>{i18n.t('skyMenu.HighestTemperatureTimeInMinutes', lang) + ':'}</Space>
       <InputNumber
         min={720}
@@ -459,6 +461,6 @@ export const HighestTemperatureTimeInput = () => {
         value={highestTemperatureTimeInMinutes}
         onChange={onChange}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };

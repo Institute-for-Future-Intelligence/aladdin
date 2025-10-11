@@ -2,12 +2,10 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import type { MenuProps } from 'antd';
-import { ElementModel } from 'src/models/ElementModel';
 import { PolygonModel } from 'src/models/PolygonModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType, PolygonTexture } from 'src/types';
-import { Copy, Cut, DialogItem, Lock, MenuItem, Paste } from '../../menuItems';
+import { ContextSubMenu, Copy, Cut, DialogItem, Lock, Paste } from '../../menuItems';
 import {
   PolygonFillCheckbox,
   PolygonFontColor,
@@ -30,173 +28,96 @@ import PolygonOpacityInput from './polygonOpacityInput';
 import SolarPanelLayoutWizard from '../solarPanelLayoutWizard';
 import SolarPanelArrayGaWizard from '../solarPanelArrayGaWizard';
 import SolarPanelArrayPsoWizard from '../solarPanelArrayPsoWizard';
+import { useLanguage } from 'src/hooks';
+import { useContextMenuElement } from '../menuHooks';
 
-export const createPolygonMenu = (selectedElement: ElementModel) => {
-  const items: MenuProps['items'] = [];
+const PolygonMenu = () => {
+  const lang = useLanguage();
+  const polygon = useContextMenuElement(ObjectType.Polygon) as PolygonModel;
+  if (!polygon) return null;
 
-  if (selectedElement.type !== ObjectType.Polygon) return { items };
-
-  const polygon = selectedElement as PolygonModel;
+  const editable = !polygon.locked;
   const parent = useStore.getState().getParent(polygon);
 
-  const lang = { lng: useStore.getState().language };
-  const editable = !polygon.locked;
+  return (
+    <>
+      {/* polygon-paste */}
+      <Paste />
 
-  items.push({
-    key: 'polygon-paste',
-    label: <Paste />,
-  });
+      {/* polygon-copy */}
+      <Copy />
 
-  items.push({
-    key: 'polygon-copy',
-    label: <Copy />,
-  });
+      {/* polygon-cut */}
+      {editable && <Cut />}
 
-  if (editable) {
-    items.push({
-      key: 'polygon-cut',
-      label: <Cut />,
-    });
-  }
+      {/* polygon-lock */}
+      <Lock selectedElement={polygon} />
 
-  items.push({
-    key: 'polygon-lock',
-    label: <Lock selectedElement={polygon} />,
-  });
+      {editable && (
+        <>
+          {/* polygon-filled */}
+          <PolygonFillCheckbox polygon={polygon} />
 
-  if (editable) {
-    items.push({
-      key: 'polygon-filled',
-      label: <PolygonFillCheckbox polygon={polygon} />,
-    });
+          {/* polygon-shiny */}
+          {polygon.filled && <PolygonShinyCheckbox polygon={polygon} />}
 
-    if (polygon.filled) {
-      items.push({
-        key: 'polygon-shiny',
-        label: <PolygonShinyCheckbox polygon={polygon} />,
-      });
-    }
+          {/* polygon-no-outline */}
+          <PolygonOutlineCheckbox polygon={polygon} />
 
-    items.push({
-      key: 'polygon-no-outline',
-      label: <PolygonOutlineCheckbox polygon={polygon} />,
-    });
-  }
+          {/* polygon line properties */}
+          <DialogItem Dialog={PolygonLineColorSelection}>{i18n.t('polygonMenu.LineColor', lang)} ...</DialogItem>
+          <DialogItem Dialog={PolygonLineStyleSelection}>{i18n.t('polygonMenu.LineStyle', lang)} ...</DialogItem>
+          <DialogItem Dialog={PolygonLineWidthSelection}>{i18n.t('polygonMenu.LineWidth', lang)} ...</DialogItem>
 
-  if (editable) {
-    items.push(
-      {
-        key: 'polygon-line-color',
-        label: <DialogItem Dialog={PolygonLineColorSelection}>{i18n.t('polygonMenu.LineColor', lang)} ...</DialogItem>,
-      },
-      {
-        key: 'polygon-line-style',
-        label: <DialogItem Dialog={PolygonLineStyleSelection}>{i18n.t('polygonMenu.LineStyle', lang)} ...</DialogItem>,
-      },
-      {
-        key: 'polygon-line-width',
-        label: <DialogItem Dialog={PolygonLineWidthSelection}>{i18n.t('polygonMenu.LineWidth', lang)} ...</DialogItem>,
-      },
-    );
+          {polygon.filled && (
+            <>
+              {/* polygon-fill-color */}
+              {!polygon.textureType || polygon.textureType === PolygonTexture.NoTexture ? (
+                <DialogItem Dialog={PolygonFillColorSelection}>{i18n.t('polygonMenu.FillColor', lang)} ...</DialogItem>
+              ) : null}
 
-    if (polygon.filled) {
-      if (!polygon.textureType || polygon.textureType === PolygonTexture.NoTexture) {
-        items.push({
-          key: 'polygon-fill-color',
-          label: (
-            <DialogItem Dialog={PolygonFillColorSelection}>{i18n.t('polygonMenu.FillColor', lang)} ...</DialogItem>
-          ),
-        });
-      }
+              {/* polygon texture & opacity */}
+              <DialogItem Dialog={PolygonTextureSelection}>{i18n.t('polygonMenu.FillTexture', lang)} ...</DialogItem>
+              <DialogItem Dialog={PolygonOpacityInput}>{i18n.t('polygonMenu.Opacity', lang)} ...</DialogItem>
+            </>
+          )}
 
-      items.push(
-        {
-          key: 'polygon-texture',
-          label: (
-            <DialogItem Dialog={PolygonTextureSelection}>{i18n.t('polygonMenu.FillTexture', lang)} ...</DialogItem>
-          ),
-        },
-        {
-          key: 'polygon-opacity',
-          label: <DialogItem Dialog={PolygonOpacityInput}>{i18n.t('polygonMenu.Opacity', lang)} ...</DialogItem>,
-        },
-      );
-    }
-
-    if (parent && (parent.type === ObjectType.Foundation || parent.type === ObjectType.Cuboid)) {
-      items.push({
-        key: 'polygon-layout-submenu',
-        label: <MenuItem>{i18n.t('polygonMenu.Layout', lang)}</MenuItem>,
-        children: [
-          {
-            key: 'solar-panel-layout-wizard',
-            label: (
+          {/* polygon layout submenu */}
+          {parent && (parent.type === ObjectType.Foundation || parent.type === ObjectType.Cuboid) && (
+            <ContextSubMenu label={i18n.t('polygonMenu.Layout', lang)}>
+              {/* Solar panel layout wizard */}
               <DialogItem noPadding Dialog={SolarPanelLayoutWizard}>
                 {i18n.t('polygonMenu.SolarPanelArrayLayoutParametricDesign', lang)} ...
               </DialogItem>
-            ),
-          },
-          {
-            key: 'solar-panel-layout-ai',
-            label: <MenuItem noPadding>{i18n.t('polygonMenu.SolarPanelArrayLayoutGenerativeDesign', lang)}</MenuItem>,
-            children: [
-              {
-                key: 'solar-panel-layout-ga',
-                label: (
-                  <DialogItem noPadding Dialog={SolarPanelArrayGaWizard}>
-                    {i18n.t('optimizationMenu.GeneticAlgorithm', lang)} ...
-                  </DialogItem>
-                ),
-              },
-              {
-                key: 'solar-panel-layout-pso',
-                label: (
-                  <DialogItem noPadding Dialog={SolarPanelArrayPsoWizard}>
-                    {i18n.t('optimizationMenu.ParticleSwarmOptimization', lang)} ...
-                  </DialogItem>
-                ),
-              },
-            ],
-          },
-        ],
-      });
-    }
 
-    items.push({
-      key: 'polygon-text-box',
-      label: <MenuItem>{i18n.t('polygonMenu.TextBox', lang)}</MenuItem>,
-      children: [
-        {
-          key: 'polygon-text',
-          label: <PolygonText polygon={polygon} />,
-        },
-        {
-          key: 'polygon-font-size',
-          label: <PolygonFontSize polygon={polygon} />,
-        },
-        {
-          key: 'polygon-font-color',
-          label: <PolygonFontColor polygon={polygon} />,
-        },
-        {
-          key: 'polygon-font-outline-color',
-          label: <PolygonFontOutlineColor polygon={polygon} />,
-        },
-        {
-          key: 'polygon-font-outline-width',
-          label: <PolygonFontOutlineWidth polygon={polygon} />,
-        },
-        {
-          key: 'polygon-font-stroke-color',
-          label: <PolygonFontStrokeColor polygon={polygon} />,
-        },
-        {
-          key: 'polygon-font-stroke-width',
-          label: <PolygonFontStrokeWidth polygon={polygon} />,
-        },
-      ],
-    });
-  }
+              {/* Solar panel AI layout */}
+              <ContextSubMenu noPadding label={i18n.t('polygonMenu.SolarPanelArrayLayoutGenerativeDesign', lang)}>
+                {/* GA */}
+                <DialogItem noPadding Dialog={SolarPanelArrayGaWizard}>
+                  {i18n.t('optimizationMenu.GeneticAlgorithm', lang)} ...
+                </DialogItem>
+                {/* PSO */}
+                <DialogItem noPadding Dialog={SolarPanelArrayPsoWizard}>
+                  {i18n.t('optimizationMenu.ParticleSwarmOptimization', lang)} ...
+                </DialogItem>
+              </ContextSubMenu>
+            </ContextSubMenu>
+          )}
 
-  return { items } as MenuProps;
+          {/* polygon text box submenu */}
+          <ContextSubMenu label={i18n.t('polygonMenu.TextBox', lang)}>
+            <PolygonText polygon={polygon} />
+            <PolygonFontSize polygon={polygon} />
+            <PolygonFontColor polygon={polygon} />
+            <PolygonFontOutlineColor polygon={polygon} />
+            <PolygonFontOutlineWidth polygon={polygon} />
+            <PolygonFontStrokeColor polygon={polygon} />
+            <PolygonFontStrokeWidth polygon={polygon} />
+          </ContextSubMenu>
+        </>
+      )}
+    </>
+  );
 };
+
+export default PolygonMenu;

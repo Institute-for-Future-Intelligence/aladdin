@@ -2,71 +2,43 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import type { MenuProps } from 'antd';
-import { ElementModel } from 'src/models/ElementModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { Copy, Cut, Lock, MenuItem } from '../../menuItems';
+import { Copy, Cut, Lock } from '../../menuItems';
 import { LightModel } from 'src/models/LightModel';
-import { LightColorPicker, LightDistanceInput, LightInsideCheckbox, LightIntensityInput } from './lightMenuItems';
-import i18n from 'src/i18n/i18n';
+import { LightColorSubmenu, LightDistanceInput, LightInsideCheckbox, LightIntensityInput } from './lightMenuItems';
+import { useLanguage } from 'src/hooks';
+import { useContextMenuElement } from '../menuHooks';
 
-export const createLightMenu = (selectedElement: ElementModel) => {
-  const items: MenuProps['items'] = [];
+const LightMenu = () => {
+  const lang = useLanguage();
+  const light = useContextMenuElement(ObjectType.Light) as LightModel;
 
-  if (selectedElement.type !== ObjectType.Light) return { items };
-
-  const light = selectedElement as LightModel;
+  if (!light) return null;
 
   const editable = !light.locked;
-  const lang = { lng: useStore.getState().language };
   const parent = light.parentId ? useStore.getState().getParent(light) : undefined;
 
-  items.push({
-    key: 'light-copy',
-    label: <Copy />,
-  });
+  return (
+    <>
+      <Copy />
+      {editable && <Cut />}
 
-  if (editable) {
-    items.push({
-      key: 'light-cut',
-      label: <Cut />,
-    });
-  }
+      <Lock selectedElement={light} />
 
-  items.push({
-    key: 'light-lock',
-    label: <Lock selectedElement={light} />,
-  });
+      {editable && parent && (parent.type === ObjectType.Roof || parent.type === ObjectType.Wall) && (
+        <LightInsideCheckbox light={light} />
+      )}
 
-  if (editable) {
-    if (parent && (parent.type === ObjectType.Roof || parent.type === ObjectType.Wall)) {
-      items.push({
-        key: 'light-inside',
-        label: <LightInsideCheckbox light={light} />,
-      });
-    }
-  }
-
-  if (editable) {
-    items.push(
-      {
-        key: 'light-intensity',
-        label: <LightIntensityInput light={light} />,
-      },
-      {
-        key: 'light-distance',
-        label: <LightDistanceInput light={light} />,
-      },
-      {
-        key: 'light-color',
-        label: <MenuItem>{i18n.t('word.Color', lang)}</MenuItem>,
-        children: [
-          { key: 'light-color-picker', label: <LightColorPicker light={light} />, style: { backgroundColor: 'white' } },
-        ],
-      },
-    );
-  }
-
-  return { items } as MenuProps;
+      {editable && (
+        <>
+          <LightIntensityInput light={light} />
+          <LightDistanceInput light={light} />
+          <LightColorSubmenu light={light} />
+        </>
+      )}
+    </>
+  );
 };
+
+export default LightMenu;

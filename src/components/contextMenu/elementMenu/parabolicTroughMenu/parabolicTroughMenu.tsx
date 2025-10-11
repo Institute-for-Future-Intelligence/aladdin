@@ -2,13 +2,10 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import type { MenuProps } from 'antd';
-import { ElementModel } from 'src/models/ElementModel';
-import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { Copy, Cut, DialogItem, Lock, MenuItem, SolarCollectorSunBeamCheckbox } from '../../menuItems';
+import { Copy, Cut, DialogItem, Lock, SolarCollectorSunBeamCheckbox } from '../../menuItems';
 import i18n from 'src/i18n/i18n';
-import { createLabelSubmenu } from '../../labelSubmenuItems';
+import LabelSubmenu from '../../labelSubmenuItems';
 import { ParabolicTroughModel } from 'src/models/ParabolicTroughModel';
 import ParabolicTroughLengthInput from './parabolicTroughLengthInput';
 import ParabolicTroughWidthInput from './parabolicTroughWidthInput';
@@ -19,111 +16,79 @@ import ParabolicTroughReflectanceInput from './parabolicTroughReflectanceInput';
 import ParabolicTroughAbsorptanceInput from './parabolicTroughAbsorptanceInput';
 import ParabolicTroughOpticalEfficiencyInput from './parabolicTroughOpticalEfficiencyInput';
 import ParabolicTroughThermalEfficiencyInput from './parabolicTroughThermalEfficiencyInput';
+import { useLanguage } from 'src/hooks';
+import { useContextMenuElement } from '../menuHooks';
 
-export const createParabolicTroughMenu = (selectedElement: ElementModel) => {
-  const items: MenuProps['items'] = [];
+const ParabolicTroughMenu = () => {
+  const lang = useLanguage();
+  const parabolicTrough = useContextMenuElement(ObjectType.ParabolicTrough) as ParabolicTroughModel;
+  if (!parabolicTrough) return null;
 
-  if (selectedElement.type !== ObjectType.ParabolicTrough) return { items };
-
-  const parabolicTrough = selectedElement as ParabolicTroughModel;
-
-  const lang = { lng: useStore.getState().language };
   const editable = !parabolicTrough.locked;
 
-  items.push({
-    key: 'parabolic-trough-copy',
-    label: <Copy />,
-  });
+  return (
+    <>
+      {/* parabolic-trough-copy */}
+      <Copy />
 
-  if (editable) {
-    items.push({
-      key: 'parabolic-trough-cut',
-      label: <Cut />,
-    });
-  }
+      {/* parabolic-trough-cut */}
+      {editable && <Cut />}
 
-  items.push({
-    key: 'parabolic-trough-lock',
-    label: <Lock selectedElement={parabolicTrough} />,
-  });
+      {/* parabolic-trough-lock */}
+      <Lock selectedElement={parabolicTrough} />
 
-  if (editable) {
-    items.push(
-      {
-        key: 'parabolic-trough-length',
-        label: <DialogItem Dialog={ParabolicTroughLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>,
-      },
-      {
-        key: 'parabolic-trough-width',
-        label: <DialogItem Dialog={ParabolicTroughWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>,
-      },
-      {
-        key: 'parabolic-trough-module-length',
-        label: (
+      {editable && (
+        <>
+          {/* parabolic-trough-length */}
+          <DialogItem Dialog={ParabolicTroughLengthInput}>{i18n.t('word.Length', lang)} ...</DialogItem>
+
+          {/* parabolic-trough-width */}
+          <DialogItem Dialog={ParabolicTroughWidthInput}>{i18n.t('word.Width', lang)} ...</DialogItem>
+
+          {/* parabolic-trough-module-length */}
           <DialogItem Dialog={ParabolicTroughModuleLengthInput}>
             {i18n.t('parabolicTroughMenu.ModuleLength', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parabolic-trough-latus-rectum',
-        label: (
+
+          {/* parabolic-trough-latus-rectum */}
           <DialogItem Dialog={ParabolicTroughLatusRectumInput}>
             {i18n.t('parabolicTroughMenu.LatusRectum', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parabolic-trough-pole-height',
-        label: (
+
+          {/* parabolic-trough-pole-height */}
           <DialogItem Dialog={ParabolicTroughPoleHeightInput}>
             {i18n.t('solarCollectorMenu.ExtraPoleHeight', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parabolic-trough-reflectance',
-        label: (
+
+          {/* parabolic-trough-reflectance */}
           <DialogItem Dialog={ParabolicTroughReflectanceInput}>
             {i18n.t('concentratedSolarPowerCollectorMenu.ReflectorReflectance', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parabolic-trough-absorptance',
-        label: (
+
+          {/* parabolic-trough-absorptance */}
           <DialogItem Dialog={ParabolicTroughAbsorptanceInput}>
             {i18n.t('concentratedSolarPowerCollectorMenu.ReceiverAbsorptance', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parabolic-trough-optical-efficiency',
-        label: (
+
+          {/* parabolic-trough-optical-efficiency */}
           <DialogItem Dialog={ParabolicTroughOpticalEfficiencyInput}>
             {i18n.t('concentratedSolarPowerCollectorMenu.ReflectorOpticalEfficiency', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parabolic-trough-thermal-efficiency',
-        label: (
+
+          {/* parabolic-trough-thermal-efficiency */}
           <DialogItem Dialog={ParabolicTroughThermalEfficiencyInput}>
             {i18n.t('concentratedSolarPowerCollectorMenu.ReceiverThermalEfficiency', lang)} ...
           </DialogItem>
-        ),
-      },
-      {
-        key: 'parabolic-dish-draw-sun-beam',
-        label: <SolarCollectorSunBeamCheckbox solarCollector={parabolicTrough} />,
-      },
-      {
-        key: 'parabolic-trough-label-submenu',
-        label: <MenuItem>{i18n.t('labelSubMenu.Label', lang)}</MenuItem>,
-        children: createLabelSubmenu(parabolicTrough),
-      },
-    );
-  }
 
-  return { items } as MenuProps;
+          {/* parabolic-dish-draw-sun-beam */}
+          <SolarCollectorSunBeamCheckbox solarCollector={parabolicTrough} />
+
+          {/* parabolic-trough-label-submenu */}
+          <LabelSubmenu element={parabolicTrough} />
+        </>
+      )}
+    </>
+  );
 };
+
+export default ParabolicTroughMenu;

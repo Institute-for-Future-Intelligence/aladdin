@@ -15,7 +15,7 @@ import {
 import type { MenuProps } from 'antd';
 import { ElementModel } from 'src/models/ElementModel';
 import { useLanguage } from 'src/hooks';
-import { MenuItem } from './menuItems';
+import { ContextMenuItem, ContextSubMenu } from './menuItems';
 import i18n from 'src/i18n/i18n';
 import React, { useEffect, useState } from 'react';
 import { useStore } from '../../stores/common';
@@ -60,11 +60,11 @@ export const ShowLabelCheckbox = ({ element, forModelTree }: LabelSubmenuItemPro
       <Switch size={'small'} checked={show} onChange={onChange} />
     </Space>
   ) : (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={show} onChange={onChange}>
         {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -92,7 +92,7 @@ export const LabelTextInput = ({ element }: LabelSubmenuItemProps) => {
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Input
         addonBefore={<LabelAddonBefore>{i18n.t('labelSubMenu.LabelText', lang) + ':'}</LabelAddonBefore>}
         value={labelText}
@@ -100,7 +100,7 @@ export const LabelTextInput = ({ element }: LabelSubmenuItemProps) => {
         onPressEnter={update}
         onBlur={update}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -111,7 +111,7 @@ export const LabelHeightInput = ({ element }: LabelSubmenuItemProps) => {
   const _el = useStore((state) => state.elements.find((e) => e.id === element.id));
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <InputNumber
         addonBefore={<LabelAddonBefore>{i18n.t('labelSubMenu.LabelHeight', lang) + ':'}</LabelAddonBefore>}
         min={0.2}
@@ -121,7 +121,7 @@ export const LabelHeightInput = ({ element }: LabelSubmenuItemProps) => {
         value={_el?.labelHeight ?? 0.2}
         onChange={(value) => setLabelHeight(value!)}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -132,7 +132,7 @@ export const LabelFontSizeInput = ({ element }: LabelSubmenuItemProps) => {
   const _el = useStore((state) => state.elements.find((e) => e.id === element.id));
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <InputNumber
         addonBefore={<LabelAddonBefore>{i18n.t('labelSubMenu.LabelFontSize', lang) + ':'}</LabelAddonBefore>}
         min={10}
@@ -142,7 +142,7 @@ export const LabelFontSizeInput = ({ element }: LabelSubmenuItemProps) => {
         value={_el?.labelFontSize ?? 20}
         onChange={(value) => setLabelFontSize(value!)}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -153,7 +153,7 @@ export const LabelSizeInput = ({ element }: LabelSubmenuItemProps) => {
   const _el = useStore((state) => state.elements.find((e) => e.id === element.id));
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <InputNumber
         addonBefore={<LabelAddonBefore>{i18n.t('labelSubMenu.LabelSize', lang) + ':'}</LabelAddonBefore>}
         min={0.2}
@@ -163,7 +163,7 @@ export const LabelSizeInput = ({ element }: LabelSubmenuItemProps) => {
         value={_el?.labelSize ?? 0.2}
         onChange={(value) => setLabelSize(value!)}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -174,13 +174,13 @@ export const LabelColorInput = ({ element }: LabelSubmenuItemProps) => {
   const _el = useStore((state) => state.elements.find((e) => e.id === element.id));
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Input
         addonBefore={<LabelAddonBefore>{i18n.t('labelSubMenu.LabelColor', lang) + ':'}</LabelAddonBefore>}
         value={_el?.labelColor ?? '#ffffff'}
         onChange={(e) => setLabelColor(e.target.value)}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -214,3 +214,34 @@ export const createLabelSubmenu = (element: ElementModel) => {
 
   return items;
 };
+
+interface Props {
+  element: ElementModel;
+}
+const LabelSubmenu = ({ element }: Props) => {
+  const lang = useLanguage();
+
+  return (
+    <ContextSubMenu label={i18n.t('labelSubMenu.Label', lang)}>
+      {/* show-label */}
+      <ShowLabelCheckbox element={element} />
+
+      {/* label-text */}
+      <LabelTextInput element={element} />
+
+      {/* label-height */}
+      <LabelHeightInput element={element} />
+
+      {/* label-font-size */}
+      <LabelFontSizeInput element={element} />
+
+      {/* label-size */}
+      <LabelSizeInput element={element} />
+
+      {/* label-color */}
+      <LabelColorInput element={element} />
+    </ContextSubMenu>
+  );
+};
+
+export default LabelSubmenu;

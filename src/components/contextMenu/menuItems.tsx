@@ -23,6 +23,8 @@ import { GroupableModel, isGroupable } from 'src/models/Groupable';
 import { LightModel } from 'src/models/LightModel';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { BatteryStorageModel } from 'src/models/BatteryStorageModel';
+import { ClickEvent, EventHandler, MenuItem, SubMenu, SubMenuProps } from '@szhsin/react-menu';
+import { LabelMark } from '../mainMenu/mainMenuItems';
 
 interface MenuItemProps {
   noPadding?: boolean;
@@ -74,6 +76,45 @@ interface EditAbleIdProps {
   element: BatteryStorageModel;
 }
 
+interface MainMenuItemProps {
+  noPadding?: boolean;
+  stayAfterClick?: boolean;
+  onClick?: EventHandler<ClickEvent>;
+  children?: React.ReactNode;
+}
+
+interface ContextSubMenu {
+  noPadding?: boolean;
+}
+
+export const ContextMenuItem = ({ noPadding, stayAfterClick, onClick, children }: MainMenuItemProps) => {
+  return (
+    <MenuItem
+      style={{ paddingLeft: noPadding ? '12px' : '36px', paddingRight: '12px' }}
+      onClick={(e) => {
+        if (onClick) onClick(e);
+        if (stayAfterClick) e.keepOpen = true;
+      }}
+    >
+      <span style={{ width: '100%', textAlign: 'start' }}>{children}</span>
+    </MenuItem>
+  );
+};
+
+export const ContextSubMenu = (props: SubMenuProps & ContextSubMenu) => {
+  let className = 'context-menu-submenu-item';
+  if (props.noPadding) {
+    className += ' context-menu-submenu-item-no-padding';
+  }
+  return (
+    <SubMenu
+      {...props}
+      itemProps={{ className }}
+      menuStyle={{ minWidth: '5rem', padding: '2px', borderRadius: '0.35rem' }}
+    />
+  );
+};
+
 export const Paste = () => {
   const setCommonStore = useStore(Selector.set);
   const pasteElements = useStore(Selector.pasteElementsToPoint);
@@ -110,10 +151,10 @@ export const Paste = () => {
   };
 
   return (
-    <MenuItem onClick={paste}>
+    <ContextMenuItem onClick={paste}>
       {i18n.t('word.Paste', lang)}
-      <span style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+V)</span>
-    </MenuItem>
+      <LabelMark>({isMac ? '⌘' : 'Ctrl'}+V)</LabelMark>
+    </ContextMenuItem>
   );
 };
 
@@ -141,10 +182,10 @@ export const Copy = () => {
   };
 
   return (
-    <MenuItem onClick={copyElement}>
+    <ContextMenuItem onClick={copyElement}>
       {i18n.t('word.Copy', lang)}
-      <span style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+C)</span>
-    </MenuItem>
+      <LabelMark>({isMac ? '⌘' : 'Ctrl'}+C)</LabelMark>
+    </ContextMenuItem>
   );
 };
 
@@ -218,10 +259,10 @@ export const Cut = () => {
   };
 
   return (
-    <MenuItem onClick={cut}>
+    <ContextMenuItem onClick={cut}>
       {i18n.t('word.Cut', lang)}
-      <span style={{ paddingLeft: '4px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+X)</span>
-    </MenuItem>
+      <LabelMark>({isMac ? '⌘' : 'Ctrl'}+X)</LabelMark>
+    </ContextMenuItem>
   );
 };
 
@@ -255,15 +296,15 @@ export const Lock = ({ selectedElement }: { selectedElement: ElementModel }) => 
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={selectedElement.locked} onChange={onChange}>
         {i18n.t('word.Lock', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
-export const MenuItem: React.FC<MenuItemProps> = ({
+export const AntdMenuItem: React.FC<MenuItemProps> = ({
   stayAfterClick,
   noPadding,
   fontWeight,
@@ -312,9 +353,9 @@ export const DialogItem = ({ Dialog, noPadding, children }: DialogItemProps) => 
 
   return (
     <>
-      <MenuItem noPadding={noPadding} onClick={handleClick}>
+      <ContextMenuItem noPadding={noPadding} onClick={handleClick}>
         {children}
-      </MenuItem>
+      </ContextMenuItem>
       {dialogVisible && <Dialog setDialogVisible={setDialogVisible} />}
     </>
   );
@@ -350,11 +391,11 @@ export const GroupMasterCheckbox = ({ groupableElement }: GroupMasterCheckboxPro
   };
 
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={groupableElement.enableGroupMaster} onChange={onChange}>
         {i18n.t('foundationMenu.GroupMaster', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -387,9 +428,9 @@ export const LightSideItem = ({ element, inside, children }: LightSideItemProps)
   };
 
   return (
-    <MenuItem stayAfterClick update noPadding onClick={handleClick}>
+    <ContextMenuItem stayAfterClick noPadding onClick={handleClick}>
       {children}
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -422,7 +463,7 @@ export const SolarCollectorSunBeamCheckbox = ({ solarCollector, forModelTree }: 
       <Switch size={'small'} checked={solarCollector.drawSunBeam} onChange={drawSunBeam} />
     </Space>
   ) : (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox
         style={{ width: '100%' }}
         checked={solarCollector.drawSunBeam}
@@ -430,26 +471,26 @@ export const SolarCollectorSunBeamCheckbox = ({ solarCollector, forModelTree }: 
       >
         {i18n.t('solarCollectorMenu.DrawSunBeam', lang)}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
 export const CheckboxMenuItem = ({ checked, onClick, children }: CheckboxMenuItemProps) => {
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       <Checkbox style={{ width: '100%' }} checked={checked} onClick={onClick}>
         {children}
       </Checkbox>
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
 export const SliderMenuItem = ({ min, max, value, onChange, children }: SliderMenuItemProps) => {
   return (
-    <MenuItem stayAfterClick noPadding>
+    <ContextMenuItem stayAfterClick noPadding>
       {children}
       <Slider min={min} max={max} tooltip={{ open: false }} defaultValue={value} onChange={onChange} />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };
 
@@ -490,7 +531,7 @@ export const EditableId = ({ element }: EditAbleIdProps) => {
   }, [element]);
 
   return (
-    <MenuItem stayAfterClick>
+    <ContextMenuItem stayAfterClick>
       <span style={{ paddingRight: '6px' }}>ID:</span>
       <Input
         value={id}
@@ -499,6 +540,6 @@ export const EditableId = ({ element }: EditAbleIdProps) => {
         onPressEnter={() => setEditableId(id)}
         style={{ width: '150px' }}
       />
-    </MenuItem>
+    </ContextMenuItem>
   );
 };

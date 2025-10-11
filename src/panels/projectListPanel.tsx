@@ -16,7 +16,7 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { ProjectState } from '../types';
 import { useTranslation } from 'react-i18next';
 import { MenuProps } from 'antd/lib';
-import { MenuItem } from 'src/components/contextMenu/menuItems';
+import { AntdMenuItem } from 'src/components/contextMenu/menuItems';
 import { useLanguage } from '../hooks';
 
 const { Column } = Table;
@@ -351,9 +351,9 @@ const ProjectListPanel = React.memo(
                         key: 'project-title',
                         label: (
                           <>
-                            <MenuItem noPadding fontWeight={'bold'}>
+                            <AntdMenuItem noPadding fontWeight={'bold'}>
                               {title}
-                            </MenuItem>
+                            </AntdMenuItem>
                             <hr />
                           </>
                         ),
@@ -361,15 +361,15 @@ const ProjectListPanel = React.memo(
                       {
                         key: 'open-project',
                         label: (
-                          <MenuItem noPadding onClick={() => openProject(record as unknown as ProjectState)}>
+                          <AntdMenuItem noPadding onClick={() => openProject(record as unknown as ProjectState)}>
                             {t('word.Open', lang)}
-                          </MenuItem>
+                          </AntdMenuItem>
                         ),
                       },
                       {
                         key: 'copy-title-to-clip-board',
                         label: (
-                          <MenuItem
+                          <AntdMenuItem
                             noPadding
                             onClick={() => {
                               navigator.clipboard.writeText(title).then(() => {
@@ -387,13 +387,13 @@ const ProjectListPanel = React.memo(
                             }}
                           >
                             {t('projectListPanel.CopyTitle', lang)}
-                          </MenuItem>
+                          </AntdMenuItem>
                         ),
                       },
                       {
                         key: 'rename-project',
                         label: (
-                          <MenuItem
+                          <AntdMenuItem
                             noPadding
                             onClick={() => {
                               setOldTitle(title);
@@ -401,21 +401,21 @@ const ProjectListPanel = React.memo(
                             }}
                           >
                             {t('word.Rename', lang)}
-                          </MenuItem>
+                          </AntdMenuItem>
                         ),
                       },
                       {
                         key: 'delete-project',
                         label: (
-                          <MenuItem noPadding onClick={() => confirmDeleteProject(title)}>
+                          <AntdMenuItem noPadding onClick={() => confirmDeleteProject(title)}>
                             {t('word.Delete', lang)}
-                          </MenuItem>
+                          </AntdMenuItem>
                         ),
                       },
                       {
                         key: 'generate-project-link',
                         label: (
-                          <MenuItem
+                          <AntdMenuItem
                             noPadding
                             onClick={() => {
                               const url =
@@ -435,7 +435,7 @@ const ProjectListPanel = React.memo(
                             }}
                           >
                             {t('projectListPanel.GenerateProjectLink', lang)}
-                          </MenuItem>
+                          </AntdMenuItem>
                         ),
                       },
                     ];
