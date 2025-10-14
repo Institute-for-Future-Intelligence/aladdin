@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { BarsOutlined } from '@ant-design/icons';
 import { Popover } from 'antd';
 import i18n from '../i18n/i18n';
-import { CheckboxMenuItem } from './contextMenu/menuItems';
+import { AntdCheckboxMenuItem } from './contextMenu/menuItems';
 import { useLanguage } from 'src/hooks';
 
 export interface BarGraphMenuProps {
@@ -33,12 +33,12 @@ const BarGraphMenu = React.memo(
       <Popover
         content={
           <div style={{ width: '200px' }}>
-            <CheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
+            <AntdCheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
               {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
-            </CheckboxMenuItem>
-            <CheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
+            </AntdCheckboxMenuItem>
+            <AntdCheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
               {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
-            </CheckboxMenuItem>
+            </AntdCheckboxMenuItem>
           </div>
         }
       >

@@ -3,7 +3,7 @@
  */
 
 import { Checkbox, Modal } from 'antd';
-import { ContextMenuItem, AntdMenuItem } from '../../menuItems';
+import { ContextMenuItem } from '../../menuItems';
 import i18n from 'src/i18n/i18n';
 import { useLanguage } from 'src/hooks';
 import { CuboidModel } from 'src/models/CuboidModel';

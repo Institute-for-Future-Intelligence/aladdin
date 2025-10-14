@@ -485,6 +485,25 @@ export const CheckboxMenuItem = ({ checked, onClick, children }: CheckboxMenuIte
   );
 };
 
+export const AntdCheckboxMenuItem = ({ checked, onClick, children }: CheckboxMenuItemProps) => {
+  return (
+    <AntdMenuItem stayAfterClick noPadding>
+      <Checkbox style={{ width: '100%' }} checked={checked} onClick={onClick}>
+        {children}
+      </Checkbox>
+    </AntdMenuItem>
+  );
+};
+
+export const AntdSliderMenuItem = ({ min, max, value, onChange, children }: SliderMenuItemProps) => {
+  return (
+    <AntdMenuItem stayAfterClick noPadding>
+      {children}
+      <Slider min={min} max={max} tooltip={{ open: false }} defaultValue={value} onChange={onChange} />
+    </AntdMenuItem>
+  );
+};
+
 export const SliderMenuItem = ({ min, max, value, onChange, children }: SliderMenuItemProps) => {
   return (
     <ContextMenuItem stayAfterClick noPadding>

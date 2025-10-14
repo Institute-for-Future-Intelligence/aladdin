@@ -36,3 +36,11 @@
 .context-menu-submenu-item-no-padding {
   padding-left: 12px !important;
 }
+
+/* align radio buttons */
+/* .szh-menu__item--type-radio::before {
+  top: 0.475rem;
+}
+.szh-menu__item--type-radio.szh-menu__item--checked::before {
+  left: 0.9rem;
+} */

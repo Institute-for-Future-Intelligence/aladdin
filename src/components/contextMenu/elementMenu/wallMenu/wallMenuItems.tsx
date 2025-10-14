@@ -5,8 +5,8 @@
 import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { ContextMenuItem, ContextSubMenu, AntdMenuItem } from '../../menuItems';
-import { Checkbox, Modal, Radio, Space } from 'antd';
+import { ContextMenuItem } from '../../menuItems';
+import { Checkbox, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { UndoableRemoveAllChildren } from 'src/undo/UndoableRemoveAllChildren';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';

@@ -7,7 +7,7 @@ import { BarsOutlined } from '@ant-design/icons';
 import { Popover } from 'antd';
 import i18n from '../i18n/i18n';
 import { useLanguage } from 'src/hooks';
-import { CheckboxMenuItem, SliderMenuItem } from './contextMenu/menuItems';
+import { AntdCheckboxMenuItem, AntdSliderMenuItem } from './contextMenu/menuItems';
 
 export interface LineGraphMenuProps {
   horizontalGrid: boolean;
@@ -56,18 +56,18 @@ const LineGraphMenu = React.memo(
       <Popover
         content={
           <div style={{ width: '200px' }}>
-            <SliderMenuItem min={0} max={10} value={lineWidth * 2} onChange={onChangeLineWidth}>
+            <AntdSliderMenuItem min={0} max={10} value={lineWidth * 2} onChange={onChangeLineWidth}>
               {i18n.t('menu.graph.LineWidth', lang) + ':'}
-            </SliderMenuItem>
-            <SliderMenuItem min={2} max={12} value={symbolSize * 5} onChange={onChangeSymbolSize}>
+            </AntdSliderMenuItem>
+            <AntdSliderMenuItem min={2} max={12} value={symbolSize * 5} onChange={onChangeSymbolSize}>
               {i18n.t('menu.graph.SymbolSize', lang) + ':'}
-            </SliderMenuItem>
-            <CheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
+            </AntdSliderMenuItem>
+            <AntdCheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
               {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
-            </CheckboxMenuItem>
-            <CheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
+            </AntdCheckboxMenuItem>
+            <AntdCheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
               {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
-            </CheckboxMenuItem>
+            </AntdCheckboxMenuItem>
           </div>
         }
       >

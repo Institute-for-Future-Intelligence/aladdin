@@ -7,7 +7,7 @@ import { MoreOutlined } from '@ant-design/icons';
 import { Popover } from 'antd';
 import i18n from '../i18n/i18n';
 import { useLanguage } from 'src/hooks';
-import { CheckboxMenuItem, SliderMenuItem } from './contextMenu/menuItems';
+import { AntdCheckboxMenuItem, AntdSliderMenuItem } from './contextMenu/menuItems';
 
 export interface ScatterPlotMenuProps {
   horizontalGrid: boolean;
@@ -46,15 +46,15 @@ const ScatterPlotMenu = React.memo(
       <Popover
         content={
           <div style={{ width: '200px' }}>
-            <SliderMenuItem min={1} max={8} value={symbolSize} onChange={onChangeSymbolSize}>
+            <AntdSliderMenuItem min={1} max={8} value={symbolSize} onChange={onChangeSymbolSize}>
               {i18n.t('menu.graph.SymbolSize', lang) + ':'}
-            </SliderMenuItem>
-            <CheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
+            </AntdSliderMenuItem>
+            <AntdCheckboxMenuItem checked={horizontalGrid} onClick={onShowHorizontalGridLines}>
               {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
-            </CheckboxMenuItem>
-            <CheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
+            </AntdCheckboxMenuItem>
+            <AntdCheckboxMenuItem checked={verticalGrid} onClick={onShowVerticalGridLines}>
               {i18n.t('menu.graph.ShowHorizontalGridLines', lang)}
-            </CheckboxMenuItem>
+            </AntdCheckboxMenuItem>
           </div>
         }
       >
