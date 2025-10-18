@@ -3,9 +3,12 @@
  */
 
 import {
-  DEFAULT_AIR_PERMEABILITY,
   DEFAULT_GROUND_FLOOR_R_VALUE,
+  DEFAULT_ROOF_AIR_PERMEABILITY,
+  DEFAULT_ROOF_COLOR,
   DEFAULT_ROOF_R_VALUE,
+  DEFAULT_ROOF_THICKNESS,
+  DEFAULT_WALL_AIR_PERMEABILITY,
   DEFAULT_WALL_R_VALUE,
   GROUND_ID,
   TWO_PI,
@@ -243,7 +246,7 @@ export class GenAIUtil {
       parapet: actionState.wallParapet,
       eavesLength: overhang ?? actionState.wallEavesLength,
       rValue: rValue ?? actionState.wallRValue ?? DEFAULT_WALL_R_VALUE,
-      airPermeability: airPermeability ?? actionState.wallAirPermeability ?? DEFAULT_AIR_PERMEABILITY,
+      airPermeability: airPermeability ?? actionState.wallAirPermeability ?? DEFAULT_WALL_AIR_PERMEABILITY,
       fill: WallFill.Full,
       leftUnfilledHeight: 0.5,
       rightUnfilledHeight: 0.5,
@@ -319,7 +322,16 @@ export class GenAIUtil {
     } as DoorModel;
   }
 
-  static makeGableRoof(id: string, fId: string, wId: string, rise: number, color: string, rValue: number) {
+  static makeGableRoof(
+    id: string,
+    fId: string,
+    wId: string,
+    thickness: number,
+    rise: number,
+    color: string,
+    rValue: number,
+    airPermeability: number,
+  ) {
     const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Roof,
@@ -330,11 +342,11 @@ export class GenAIUtil {
       ly: 0,
       lz: 0,
       ceiling: actionState.roofCeiling ?? false,
+      thickness: thickness ?? actionState.roofThickness ?? DEFAULT_ROOF_THICKNESS,
       rise: rise,
-      thickness: actionState.roofThickness ?? 0.2,
       rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
-      airPermeability: DEFAULT_AIR_PERMEABILITY,
-      color: color,
+      airPermeability: airPermeability ?? actionState.roofAirPermeability ?? DEFAULT_ROOF_AIR_PERMEABILITY,
+      color: color ?? actionState.roofColor ?? DEFAULT_ROOF_COLOR,
       sideColor: actionState.roofSideColor ?? '#ffffff',
       textureType: actionState.roofTexture ?? RoofTexture.Default,
       roofType: RoofType.Gable,
@@ -353,7 +365,16 @@ export class GenAIUtil {
     } as GableRoofModel;
   }
 
-  static makePyramidRoof(id: string, fId: string, wId: string, rise: number, color: string, rValue: number) {
+  static makePyramidRoof(
+    id: string,
+    fId: string,
+    wId: string,
+    thickness: number,
+    rise: number,
+    color: string,
+    rValue: number,
+    airPermeability: number,
+  ) {
     const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Roof,
@@ -365,9 +386,9 @@ export class GenAIUtil {
       lz: 0,
       ceiling: actionState.roofCeiling ?? false,
       rise: rise,
-      thickness: actionState.roofThickness ?? 0.2,
+      thickness: thickness ?? actionState.roofThickness ?? DEFAULT_ROOF_THICKNESS,
       rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
-      airPermeability: DEFAULT_AIR_PERMEABILITY,
+      airPermeability: airPermeability ?? actionState.roofAirPermeability ?? DEFAULT_ROOF_AIR_PERMEABILITY,
       color: color,
       sideColor: actionState.roofSideColor ?? '#ffffff',
       textureType: actionState.roofTexture ?? RoofTexture.Default,
@@ -383,6 +404,138 @@ export class GenAIUtil {
       foundationId: fId,
       id: id,
     } as PyramidRoofModel;
+  }
+
+  static makeMansardRoof(
+    id: string,
+    fId: string,
+    wId: string,
+    thickness: number,
+    rise: number,
+    color: string,
+    ridgeLength = 1,
+    rValue: number,
+    airPermeability: number,
+  ) {
+    const actionState = useStore.getState().actionState;
+    return {
+      type: ObjectType.Roof,
+      cx: 0,
+      cy: 0,
+      cz: 0,
+      lx: 0,
+      ly: 0,
+      lz: 0,
+      ceiling: actionState.roofCeiling ?? false,
+      rise: rise,
+      thickness: thickness ?? actionState.roofThickness ?? DEFAULT_ROOF_THICKNESS,
+      rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
+      airPermeability: airPermeability ?? actionState.roofAirPermeability ?? DEFAULT_ROOF_AIR_PERMEABILITY,
+      color: color,
+      sideColor: actionState.roofSideColor ?? '#ffffff',
+      textureType: actionState.roofTexture ?? RoofTexture.Default,
+      roofType: RoofType.Mansard,
+      roofStructure: RoofStructure.Default,
+      wallsId: [wId],
+      ridgeWidth: ridgeLength,
+      lineWidth: 0.2,
+      lineColor: '#000000',
+      showLabel: false,
+      normal: [0, 0, 1],
+      rotation: [0, 0, 0],
+      parentId: fId,
+      foundationId: fId,
+      id: id,
+    } as MansardRoofModel;
+  }
+
+  static makeGambrelRoof(
+    id: string,
+    fId: string,
+    wId: string,
+    thickness: number,
+    rise: number,
+    color: string,
+    rValue: number,
+    airPermeability: number,
+  ) {
+    const xPercent = 0.35;
+    const actionState = useStore.getState().actionState;
+    return {
+      type: ObjectType.Roof,
+      cx: 0,
+      cy: 0,
+      cz: 0,
+      lx: 0,
+      ly: 0,
+      lz: 0,
+      ceiling: actionState.roofCeiling ?? false,
+      rise: rise,
+      thickness: actionState.roofThickness ?? 0.2,
+      rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
+      airPermeability: airPermeability ?? actionState.roofAirPermeability ?? DEFAULT_ROOF_AIR_PERMEABILITY,
+      color: color,
+      sideColor: actionState.roofSideColor ?? '#ffffff',
+      textureType: actionState.roofTexture ?? RoofTexture.Default,
+      roofType: RoofType.Gambrel,
+      roofStructure: RoofStructure.Default,
+      wallsId: [wId],
+      topRidgePoint: [0, 1],
+      frontRidgePoint: [xPercent, 0.5],
+      backRidgePoint: [xPercent, 0.5],
+      lineWidth: 0.2,
+      lineColor: '#000000',
+      showLabel: false,
+      normal: [0, 0, 1],
+      rotation: [0, 0, 0],
+      parentId: fId,
+      foundationId: fId,
+      id: id,
+    } as GambrelRoofModel;
+  }
+
+  static makeHipRoof(
+    id: string,
+    fId: string,
+    wId: string,
+    thickness: number,
+    rise: number,
+    color: string,
+    ridgeLength = 2,
+    rValue: number,
+    airPermeability: number,
+  ) {
+    const actionState = useStore.getState().actionState;
+    return {
+      type: ObjectType.Roof,
+      cx: 0,
+      cy: 0,
+      cz: 0,
+      lx: 0,
+      ly: 0,
+      lz: 0,
+      ceiling: actionState.roofCeiling ?? false,
+      rise: rise,
+      thickness: actionState.roofThickness ?? 0.2,
+      rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
+      airPermeability: airPermeability ?? actionState.roofAirPermeability ?? DEFAULT_ROOF_AIR_PERMEABILITY,
+      color: color,
+      sideColor: actionState.roofSideColor ?? '#ffffff',
+      textureType: actionState.roofTexture ?? RoofTexture.Default,
+      roofType: RoofType.Hip,
+      roofStructure: RoofStructure.Default,
+      wallsId: [wId],
+      lineWidth: 0.2,
+      lineColor: '#000000',
+      showLabel: false,
+      normal: [0, 0, 1],
+      rotation: [0, 0, 0],
+      parentId: fId,
+      foundationId: fId,
+      id: id,
+      leftRidgeLength: ridgeLength / 2,
+      rightRidgeLength: ridgeLength / 2,
+    } as HipRoofModel;
   }
 
   static makeWindow(
@@ -451,125 +604,6 @@ export class GenAIUtil {
       foundationId: fId,
       id: id,
     } as WindowModel;
-  }
-
-  static makeMansardRoof(
-    id: string,
-    fId: string,
-    wId: string,
-    rise: number,
-    color: string,
-    ridgeLength = 1,
-    rValue: number,
-  ) {
-    const actionState = useStore.getState().actionState;
-    return {
-      type: ObjectType.Roof,
-      cx: 0,
-      cy: 0,
-      cz: 0,
-      lx: 0,
-      ly: 0,
-      lz: 0,
-      ceiling: actionState.roofCeiling ?? false,
-      rise: rise,
-      thickness: actionState.roofThickness ?? 0.2,
-      rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
-      airPermeability: DEFAULT_AIR_PERMEABILITY,
-      color: color,
-      sideColor: actionState.roofSideColor ?? '#ffffff',
-      textureType: actionState.roofTexture ?? RoofTexture.Default,
-      roofType: RoofType.Mansard,
-      roofStructure: RoofStructure.Default,
-      wallsId: [wId],
-      ridgeWidth: ridgeLength,
-      lineWidth: 0.2,
-      lineColor: '#000000',
-      showLabel: false,
-      normal: [0, 0, 1],
-      rotation: [0, 0, 0],
-      parentId: fId,
-      foundationId: fId,
-      id: id,
-    } as MansardRoofModel;
-  }
-
-  static makeGambrelRoof(id: string, fId: string, wId: string, rise: number, color: string, rValue: number) {
-    const xPercent = 0.35;
-    const actionState = useStore.getState().actionState;
-    return {
-      type: ObjectType.Roof,
-      cx: 0,
-      cy: 0,
-      cz: 0,
-      lx: 0,
-      ly: 0,
-      lz: 0,
-      ceiling: actionState.roofCeiling ?? false,
-      rise: rise,
-      thickness: actionState.roofThickness ?? 0.2,
-      rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
-      airPermeability: DEFAULT_AIR_PERMEABILITY,
-      color: color,
-      sideColor: actionState.roofSideColor ?? '#ffffff',
-      textureType: actionState.roofTexture ?? RoofTexture.Default,
-      roofType: RoofType.Gambrel,
-      roofStructure: RoofStructure.Default,
-      wallsId: [wId],
-      topRidgePoint: [0, 1],
-      frontRidgePoint: [xPercent, 0.5],
-      backRidgePoint: [xPercent, 0.5],
-      lineWidth: 0.2,
-      lineColor: '#000000',
-      showLabel: false,
-      normal: [0, 0, 1],
-      rotation: [0, 0, 0],
-      parentId: fId,
-      foundationId: fId,
-      id: id,
-    } as GambrelRoofModel;
-  }
-
-  static makeHipRoof(
-    id: string,
-    fId: string,
-    wId: string,
-    rise: number,
-    color: string,
-    ridgeLength = 2,
-    rValue: number,
-  ) {
-    const actionState = useStore.getState().actionState;
-    return {
-      type: ObjectType.Roof,
-      cx: 0,
-      cy: 0,
-      cz: 0,
-      lx: 0,
-      ly: 0,
-      lz: 0,
-      ceiling: actionState.roofCeiling ?? false,
-      rise: rise,
-      thickness: actionState.roofThickness ?? 0.2,
-      rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
-      airPermeability: DEFAULT_AIR_PERMEABILITY,
-      color: color,
-      sideColor: actionState.roofSideColor ?? '#ffffff',
-      textureType: actionState.roofTexture ?? RoofTexture.Default,
-      roofType: RoofType.Hip,
-      roofStructure: RoofStructure.Default,
-      wallsId: [wId],
-      lineWidth: 0.2,
-      lineColor: '#000000',
-      showLabel: false,
-      normal: [0, 0, 1],
-      rotation: [0, 0, 0],
-      parentId: fId,
-      foundationId: fId,
-      id: id,
-      leftRidgeLength: ridgeLength / 2,
-      rightRidgeLength: ridgeLength / 2,
-    } as HipRoofModel;
   }
 
   static calculateSolutionSpace(design: Design) {

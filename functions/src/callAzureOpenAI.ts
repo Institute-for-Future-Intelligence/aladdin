@@ -41,12 +41,14 @@ Wall has a normal direction represented by the normal vector from "leftPoint" to
 Wall has a property "rValue" in the unit of m²·℃/W, which defaults to 2.
 Wall has a number property "airPermeability" in the unit of m³/(h·m²), which defaults to 0.
 
-- Roof: When a wall is connected to other walls and the connection forms a loop, a "Roof" can be built on that wall.
+- Roof: When a wall is connected to other walls and the connection forms a loop, a roof can be built on that wall.
 "wId" is the id of the wall that it is built on. "fId" is the id of the foundation that it is built on.
 Roof should preferably be built on the wall that faces south.
 Roof has default color: "#454769".
+Roof has default "thickness" of 0.2 meter.
 Roof has default "rise" of 2 meters.
 Roof has a property "rValue" in the unit of m²·℃/W, which defaults to 2.
+Roof has a number property "airPermeability" in the unit of m³/(h·m²), which defaults to 0.
 Roof has "roofType" that is either "Gable", "Pyramid", "Hip", "Mansard", or "Gambrel".
 For Hip roof type, it has a ridgeLength, which by default should be half of the length of the wall that it is built on.
 
@@ -58,7 +60,9 @@ Door has a boolean property "filled", which defaults to true.
 Door has a property "uValue" in the unit of W/(m²·℃), which defaults to 1.
 Door has a number property "airPermeability" in the unit of m³/(h·m²), which defaults to 0.
 Door has a string property "doorType" that can be either "Default" or "Arched", which defaults to "Default".
-Door has a string property "textureType" that can be "Door Texture #1", "Door Texture #2", ..., "Door Texture #17", "Door Texture Default", and "No Door Texture", which defaults to "Door Texture #1".
+Door has a string property "textureType" that can be "Door Texture #1", "Door Texture #2", ..., "Door Texture #17", "Door Texture Default", or "No Door Texture", which defaults to "Door Texture #1".
+Do not set "textureType" to "Door Texture Default" or "No Door Texture" unless explicitly specified.
+Prefer to set "textureType" to "Door Texture #1", "Door Texture #2", ..., or "Door Texture #17".
 "Door Texture #1" is a white, paneled front door with a semicircular window at the top featuring a sunburst-style grid design.
 "Door Texture #2" is a wooden Craftsman-style door featuring a grid of six small square windows at the top and three vertical recessed panels below a decorative ledge.
 "Door Texture #3" is a wooden door with a dark brown finish, two vertical panels, and a small decorative glass window at the top.
@@ -76,7 +80,9 @@ Door has a string property "textureType" that can be "Door Texture #1", "Door Te
 "Door Texture #15" is a dark double door with gold hardware and a semicircular transom window featuring a fanlight design above it, all framed by light-colored molding.
 "Door Texture #16" is a panelized green single door with two vertical glass windows featuring a decorative circular design, topped by a semicircular fanlight transom, and set within a light-colored arched entryway.
 "Door Texture #17" is a panelized coral single door featuring a multi-pane glass window in the upper section and a semicircular fanlight transom above, all framed by light-colored pilasters and a pink arch.
-When "textureType" is "Door Texture Default" or "No Door Texture", set door's color (default to white). Otherwise, set the texture color.
+Only when "textureType" is "Door Texture Default" or "No Door Texture", set door's color (default to white).
+Do not change "textureType" to "Door Texture Default" or "No Door Texture" when setting color.
+When "textureType" is neither "Door Texture Default" nor "No Door Texture", consider door's color when selecting the texture type.
 Door has default frame color white.
 
 - Window: is built on a wall. "pId" is the id of the wall on which it is built. "fId" is the id of the foundation on which it is built.
@@ -278,12 +284,26 @@ export const callAzureOpenAI = async (
                       fId: { type: 'string' },
                       wId: { type: 'string' },
                       roofType: { type: 'string', enum: ['Gable', 'Pyramid', 'Hip', 'Mansard', 'Gambrel'] },
+                      thickness: { type: 'number' },
                       rise: { type: 'number' },
                       color: { type: 'string' },
                       rValue: { type: 'number' },
+                      airPermeability: { type: 'number' },
                       ridgeLength: { type: 'number' },
                     },
-                    required: ['type', 'id', 'fId', 'wId', 'roofType', 'rise', 'color', 'ridgeLength', 'rValue'],
+                    required: [
+                      'type',
+                      'id',
+                      'fId',
+                      'wId',
+                      'roofType',
+                      'thickness',
+                      'rise',
+                      'color',
+                      'ridgeLength',
+                      'rValue',
+                      'airPermeability',
+                    ],
                     additionalProperties: false,
                   },
                   {

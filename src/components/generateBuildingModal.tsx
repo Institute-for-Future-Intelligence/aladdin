@@ -260,36 +260,56 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
             case ObjectType.Roof: {
               switch (e.roofType) {
                 case RoofType.Gable: {
-                  const { id, fId, wId, rise, color, rValue } = e;
-                  const r = GenAIUtil.makeGableRoof(id, fId, wId, rise, color, rValue);
+                  const { id, fId, wId, thickness, rise, color, rValue, airPermeability } = e;
+                  const r = GenAIUtil.makeGableRoof(id, fId, wId, thickness, rise, color, rValue, airPermeability);
                   state.elements.push(r);
                   state.addedRoofIdSet.add(id);
                   break;
                 }
                 case RoofType.Pyramid: {
-                  const { id, fId, wId, rise, color, rValue } = e;
-                  const r = GenAIUtil.makePyramidRoof(id, fId, wId, rise, color, rValue);
+                  const { id, fId, wId, thickness, rise, color, rValue, airPermeability } = e;
+                  const r = GenAIUtil.makePyramidRoof(id, fId, wId, thickness, rise, color, rValue, airPermeability);
                   state.elements.push(r);
                   state.addedRoofIdSet.add(id);
                   break;
                 }
                 case RoofType.Gambrel: {
-                  const { id, fId, wId, rise, color, rValue } = e;
-                  const r = GenAIUtil.makeGambrelRoof(id, fId, wId, rise, color, rValue);
+                  const { id, fId, wId, thickness, rise, color, rValue, airPermeability } = e;
+                  const r = GenAIUtil.makeGambrelRoof(id, fId, wId, thickness, rise, color, rValue, airPermeability);
                   state.elements.push(r);
                   state.addedRoofIdSet.add(id);
                   break;
                 }
                 case RoofType.Mansard: {
-                  const { id, fId, wId, rise, color, ridgeLength, rValue } = e;
-                  const r = GenAIUtil.makeMansardRoof(id, fId, wId, rise, color, ridgeLength, rValue);
+                  const { id, fId, wId, thickness, rise, color, ridgeLength, rValue, airPermeability } = e;
+                  const r = GenAIUtil.makeMansardRoof(
+                    id,
+                    fId,
+                    wId,
+                    thickness,
+                    rise,
+                    color,
+                    ridgeLength,
+                    rValue,
+                    airPermeability,
+                  );
                   state.elements.push(r);
                   state.addedRoofIdSet.add(id);
                   break;
                 }
                 case RoofType.Hip: {
-                  const { id, fId, wId, rise, color, ridgeLength, rValue } = e;
-                  const r = GenAIUtil.makeHipRoof(id, fId, wId, rise, color, ridgeLength, rValue);
+                  const { id, fId, wId, thickness, rise, color, ridgeLength, rValue, airPermeability } = e;
+                  const r = GenAIUtil.makeHipRoof(
+                    id,
+                    fId,
+                    wId,
+                    thickness,
+                    rise,
+                    color,
+                    ridgeLength,
+                    rValue,
+                    airPermeability,
+                  );
                   state.elements.push(r);
                   state.addedRoofIdSet.add(id);
                   break;

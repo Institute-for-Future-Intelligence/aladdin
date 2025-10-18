@@ -23,7 +23,7 @@ import {
 import { Rectangle } from './models/Rectangle';
 import { GroundModel } from './models/GroundModel';
 
-export const VERSION = '1.9.2';
+export const VERSION = '1.9.3';
 
 // used for check old file that need to update light intensity.
 export const LIGHT_INTENSITY_CHANGED_VERSION = '1.5.0';
@@ -60,14 +60,6 @@ export const DEFAULT_LEAF_OFF_DAY = 320;
 
 export const DEFAULT_SCENE_RADIUS = 100;
 
-export const DEFAULT_GROUND_FLOOR_R_VALUE = 2;
-export const DEFAULT_WALL_R_VALUE = 2;
-export const DEFAULT_ROOF_R_VALUE = 2;
-export const DEFAULT_CEILING_R_VALUE = 2;
-export const DEFAULT_WINDOW_U_VALUE = 2;
-export const DEFAULT_DOOR_U_VALUE = 1;
-export const DEFAULT_AIR_PERMEABILITY = 3;
-
 export const DEFAULT_LINE_COLOR = BLACK;
 export const DEFAULT_LINE_WIDTH = 0.2;
 export const DEFAULT_LABEL_SIZE = 0.2;
@@ -80,6 +72,7 @@ export const DEFAULT_FOUNDATION_LZ = 0.1;
 export const DEFAULT_FOUNDATION_COLOR = GREY;
 export const DEFAULT_FOUNDATION_SLAB_DEPTH = 1;
 export const DEFAULT_FOUNDATION_SLOPE = 0.2;
+export const DEFAULT_GROUND_FLOOR_R_VALUE = 2;
 
 export const DEFAULT_CUBOID_COLOR = GREY;
 export const DEFAULT_CUBOID_TRANSPARENCY = 0;
@@ -93,6 +86,7 @@ export const DEFAULT_WALL_OPACITY = 0.5;
 export const DEFAULT_WALL_STRUCTURE_SPACING = 2;
 export const DEFAULT_WALL_STRUCTURE_WIDTH = 0.1;
 export const DEFAULT_WALL_STRUCTURE_COLOR = WHITE;
+export const DEFAULT_WALL_R_VALUE = 2;
 export const DEFAULT_WALL_AIR_PERMEABILITY = 0;
 export const DEFAULT_WALL_VOLUMETRIC_HEAT_CAPACITY = 0.5;
 
@@ -104,6 +98,7 @@ export const DEFAULT_WINDOW_SHUTTER_WIDTH = 0.5;
 export const DEFAULT_WINDOW_FRAME_WIDTH = 0.1;
 export const DEFAULT_WINDOW_SILL_WIDTH = 0.1;
 export const DEFAULT_WINDOW_ARCH_HEIGHT = 1;
+export const DEFAULT_WINDOW_U_VALUE = 2;
 export const DEFAULT_WINDOW_AIR_PERMEABILITY = 0;
 export const DEFAULT_MULLION_WIDTH = 0.06;
 export const DEFAULT_MULLION_COLOR = WHITE;
@@ -111,6 +106,7 @@ export const DEFAULT_HORIZONTAL_MULLION_SPACING = 0.5;
 export const DEFAULT_VERTICAL_MULLION_SPACING = 0.5;
 
 export const DEFAULT_DOOR_COLOR = WHITE;
+export const DEFAULT_DOOR_U_VALUE = 1;
 export const DEFAULT_DOOR_AIR_PERMEABILITY = 0;
 export const DEFAULT_DOOR_VOLUMETRIC_HEAT_CAPACITY = 0.5;
 export const DEFAULT_DOOR_ARCH_HEIGHT = 1;
@@ -120,6 +116,7 @@ export const DEFAULT_DOOR_FRAME_COLOR = WHITE;
 export const DEFAULT_ROOF_COLOR = '#454769';
 export const DEFAULT_ROOF_THICKNESS = 0.2;
 export const DEFAULT_ROOF_RISE = 2;
+export const DEFAULT_ROOF_R_VALUE = 2;
 export const DEFAULT_ROOF_VOLUMETRIC_HEAT_CAPACITY = 0.5;
 export const DEFAULT_ROOF_AIR_PERMEABILITY = 0;
 export const DEFAULT_ROOF_SIDE_COLOR = WHITE;
@@ -128,6 +125,7 @@ export const DEFAULT_ROOF_RAFTER_WIDTH = 0.1;
 export const DEFAULT_ROOF_RAFTER_COLOR = WHITE;
 export const DEFAULT_ROOF_OPACITY = 0.5;
 export const DEFAULT_ROOF_GLASS_TINT = '#73D8FF';
+export const DEFAULT_CEILING_R_VALUE = 2;
 
 export const DEFAULT_LIGHT_COLOR = '#ffff99';
 export const DEFAULT_LIGHT_INTENSITY = 3;

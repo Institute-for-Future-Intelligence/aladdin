@@ -28,10 +28,12 @@ export interface RoofModel extends ElementModel {
 }
 
 export interface PyramidRoofModel extends RoofModel {}
+
 export interface GableRoofModel extends RoofModel {
   ridgeLeftPoint: number[];
   ridgeRightPoint: number[];
 }
+
 export interface HipRoofModel extends RoofModel {
   rightRidgeLength: number;
   leftRidgeLength: number;
@@ -56,12 +58,6 @@ export interface MansardRoofModel extends RoofModel {
   // old files
   frontRidge?: number;
   backRidge?: number;
-}
-
-export interface Point3 {
-  x: number;
-  y: number;
-  z: number;
 }
 
 export enum RoofType {
