@@ -143,7 +143,8 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
               const {
                 id,
                 pId,
-                size,
+                thickness,
+                height,
                 leftPoint,
                 rightPoint,
                 color,
@@ -156,7 +157,8 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
               const w = GenAIUtil.makeWall(
                 id,
                 pId,
-                size,
+                thickness,
+                height,
                 color,
                 overhang,
                 rValue,

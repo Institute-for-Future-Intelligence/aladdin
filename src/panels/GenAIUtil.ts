@@ -9,7 +9,9 @@ import {
   DEFAULT_ROOF_R_VALUE,
   DEFAULT_ROOF_THICKNESS,
   DEFAULT_WALL_AIR_PERMEABILITY,
+  DEFAULT_WALL_HEIGHT,
   DEFAULT_WALL_R_VALUE,
+  DEFAULT_WALL_THICKNESS,
   GROUND_ID,
   TWO_PI,
 } from 'src/constants';
@@ -121,7 +123,7 @@ export class GenAIUtil {
         if (
           cx + lx / 2 + margin > wallHx ||
           cx - lx / 2 - margin < -wallHx ||
-          cz + lz / 2 + margin > wall.size[1] ||
+          cz + lz / 2 + margin > wall.height ||
           cz - lz / 2 - margin < 0
         ) {
           console.log('outside boundary', center, size, wall);
@@ -214,7 +216,8 @@ export class GenAIUtil {
   static makeWall(
     id: string,
     pId: string,
-    size: number[],
+    thickness: number,
+    height: number,
     color: string,
     overhang = 0.3,
     rValue = 2,
@@ -224,7 +227,9 @@ export class GenAIUtil {
     leftConnectId?: string,
     rightConnectId?: string,
   ) {
-    const [ly, lz] = size;
+    const actionState = useStore.getState().actionState;
+    const ly = thickness ?? actionState.wallThickness ?? DEFAULT_WALL_THICKNESS;
+    const lz = height ?? actionState.wallHeight ?? DEFAULT_WALL_HEIGHT;
     const [lpx, lpy] = leftPoint;
     const [rpx, rpy] = rightPoint;
     const cx = (lpx + rpx) / 2;
@@ -234,15 +239,14 @@ export class GenAIUtil {
     let angle = Math.atan2(rpy - lpy, rpx - lpx);
     angle = angle >= 0 ? angle : (TWO_PI + angle) % TWO_PI;
 
-    const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Wall,
-      cx: cx,
-      cy: cy,
+      cx,
+      cy,
       cz: 0,
-      lx: lx,
-      ly: ly,
-      lz: lz,
+      lx,
+      ly,
+      lz,
       parapet: actionState.wallParapet,
       eavesLength: overhang ?? actionState.wallEavesLength,
       rValue: rValue ?? actionState.wallRValue ?? DEFAULT_WALL_R_VALUE,

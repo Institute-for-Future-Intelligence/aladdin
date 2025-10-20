@@ -30,15 +30,17 @@ Default lz is 0.1 meter and color is 'grey';
 
 - Wall: Must be built on foundation. It's position is defined by two points: "leftPoint" [cx, cy] and "rightPoint" [cx, cy],
 representing the relative positions of the wall's leftmost and rightmost endpoints with respect to the foundation,
-The size is [ly, lz], ly is thickness, lz is height. "pId" is the id of the foundation on which it is built.
+Wall has a number property "thickness" in the unit of meter, which defaults to 0.3.
+Wall has a number property "height" in the unit of meter.
+"pId" is the id of the foundation on which it is built.
 "leftConnectId" and "rightConnectId" represent the id of the wall that it is connected to.
 When two walls' endpoints are at the same position, they are connected.
 If wall A is connected to wall B, then wall B is also connected to wall A.
 "overhang" is the roof eaves overhang length, with a default value of 0.3 meter.
-Default color is white. Default ly is 0.1 meter.
+Default color is white.
 Note that "leftConnectId" can only be connected to other wall's "rightConnectId", and vise versa.
 Wall has a normal direction represented by the normal vector from "leftPoint" to "rightPoint", rotated clockwise by 90 degree.
-Wall has a property "rValue" in the unit of m²·℃/W, which defaults to 2.
+Wall has a number property "rValue" in the unit of m²·℃/W, which defaults to 2.
 Wall has a number property "airPermeability" in the unit of m³/(h·m²), which defaults to 0.
 
 - Roof: When a wall is connected to other walls and the connection forms a loop, a roof can be built on that wall.
@@ -250,7 +252,8 @@ export const callAzureOpenAI = async (
                       type: { type: 'string', enum: ['Wall'] },
                       id: { type: 'string' },
                       pId: { type: 'string' },
-                      size: { type: 'array', items: { type: 'number' } },
+                      thickness: { type: 'number' },
+                      height: { type: 'number' },
                       color: { type: 'string' },
                       rValue: { type: 'number' },
                       airPermeability: { type: 'number' },
@@ -264,7 +267,8 @@ export const callAzureOpenAI = async (
                       'type',
                       'id',
                       'pId',
-                      'size',
+                      'thickness',
+                      'height',
                       'color',
                       'rValue',
                       'airPermeability',
