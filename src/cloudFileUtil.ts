@@ -54,6 +54,7 @@ export const loadCloudFile = async (
   ofProject: boolean,
   popState?: boolean,
   viewOnly?: boolean,
+  projectTitle?: string | null,
 ) => {
   const lang = { lng: useStore.getState().language };
 
@@ -63,6 +64,19 @@ export const loadCloudFile = async (
   });
 
   try {
+    if (projectTitle) {
+      const projectDocRef = doc(firestore, 'users', userid, 'projects', projectTitle);
+      const documentSnapshot = await getDoc(projectDocRef);
+      if (documentSnapshot.exists()) {
+        const data_1 = documentSnapshot.data();
+        if (data_1) {
+          useStore.getState().set((state_1) => {
+            state_1.projectState.designs = [...data_1.designs];
+          });
+        }
+      }
+    }
+
     const docRef = doc(firestore, 'users', userid, ofProject ? 'designs' : 'files', title);
     const docSnap = await getDoc(docRef);
     const data = docSnap.data();

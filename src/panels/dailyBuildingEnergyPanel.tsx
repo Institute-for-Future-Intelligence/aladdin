@@ -145,88 +145,34 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
     hasSolarPanels,
   );
 
-  const updateDesign = async (heating: number, cooling: number, solar: number, net: number) => {
-    const userid = useStore.getState().user.uid;
-    const projectTitle = useStore.getState().projectState.title;
+  const updateDesign = (heating: number, cooling: number, solar: number, net: number) => {
     const designTitle = useStore.getState().cloudFile;
 
-    if (!designTitle || !userid || !projectTitle) {
-      console.log('no design title, userid or projectTitle');
+    if (!designTitle) {
+      console.log('no design title');
       return;
     }
-    const lang = { lng: useStore.getState().language };
-    usePrimitiveStore.getState().set((state) => {
-      state.waiting = true;
-    });
-
-    usePrimitiveStore.getState().setChanged(false);
-    try {
-      const projectDocRef = doc(firestore, 'users', userid, 'projects', projectTitle);
-      const documentSnapshot = await getDoc(projectDocRef);
-      if (documentSnapshot.exists()) {
-        const data_1 = documentSnapshot.data();
-        if (data_1) {
-          const updatedDesigns: Design[] = [];
-          updatedDesigns.push(...data_1.designs);
-          // Get the index of the design to be modified by the title
-          let index = -1;
-          for (const [i, d] of updatedDesigns.entries()) {
-            if (d.title === designTitle) {
-              index = i;
-              break;
-            }
-          }
-
-          // If found, update the design in the array
-          if (index >= 0) {
-            // Update design from the current parameters and results and the new thumbnail
-            const prompt = updatedDesigns[index].prompt;
-            const data = updatedDesigns[index].data;
-            updatedDesigns[index] = createDesign(
-              DesignProblem.BUILDING_DESIGN,
-              designTitle,
-              updatedDesigns[index].thumbnail,
-            );
-            if (prompt && data) {
-              updatedDesigns[index].prompt = prompt;
-              updatedDesigns[index].data = data;
-            }
-            // update simulation result
-            updatedDesigns[index].heating = heating;
-            updatedDesigns[index].cooling = cooling;
-            updatedDesigns[index].solar = solar;
-            updatedDesigns[index].net = net;
-            updatedDesigns[index].modelChanged = false;
-            usePrimitiveStore.getState().set((state) => {
-              state.modelChanged = false;
-            });
-
-            // Finally, upload the updated design array back to Firestore
-            try {
-              const projectDocRef = doc(firestore, 'users', userid, 'projects', projectTitle);
-
-              await updateDoc(projectDocRef, { designs: updatedDesigns });
-            } catch (error) {
-              showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-            } finally {
-              // Update the cached array in the local storage via the common store
-              useStore.getState().set((state_1) => {
-                state_1.projectState.designs = updatedDesigns;
-              });
-              usePrimitiveStore.getState().set((state_2) => {
-                state_2.updateProjectsFlag = true;
-                state_2.waiting = false;
-              });
-            }
+    useStore.getState().set((state_1) => {
+      if (state_1.projectState.designs) {
+        for (const design of state_1.projectState.designs) {
+          if (design.title === designTitle) {
+            design.heating = heating;
+            design.cooling = cooling;
+            design.solar = solar;
+            design.net = net;
+            design.modelChanged = false;
+            break;
           }
         }
       }
-    } catch (error) {
-      showError(i18n.t('message.CannotFetchProjectData', lang) + ': ' + error);
-    }
+    });
+    usePrimitiveStore.getState().set((state) => {
+      state.modelChanged = false;
+      state.changed = false;
+    });
   };
 
-  const updateHiddenParameters = async () => {
+  const updateHiddenParameters = () => {
     const hiddenParameters = useStore.getState().projectState.hiddenParameters;
     let counter = 0;
     hiddenParameters?.forEach((p) => {
@@ -234,37 +180,13 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
     });
     if (counter !== 4) return;
 
-    const userid = useStore.getState().user.uid;
-
-    if (userid && userid === useStore.getState().projectState.owner) {
-      const projectTitle = useStore.getState().projectState.title;
-      if (projectTitle) {
-        const lang = { lng: useStore.getState().language };
-        try {
-          await updateDoc(doc(firestore, 'users', userid, 'projects', projectTitle), {
-            hiddenParameters: arrayRemove('heating', 'cooling', 'solar', 'net'),
-          });
-        } catch (error) {
-          showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-        }
-
-        useStore.getState().set((state) => {
-          if (state.projectState.hiddenParameters) {
-            state.projectState.hiddenParameters = state.projectState.hiddenParameters.filter(
-              (p) => p !== 'heating' && p !== 'cooling' && p !== 'solar' && p !== 'net',
-            );
-          }
-        });
+    useStore.getState().set((state) => {
+      if (state.projectState.hiddenParameters) {
+        state.projectState.hiddenParameters = state.projectState.hiddenParameters.filter(
+          (p) => p !== 'heating' && p !== 'cooling' && p !== 'solar' && p !== 'net',
+        );
       }
-    } else {
-      useStore.getState().set((state) => {
-        if (state.projectState.hiddenParameters) {
-          state.projectState.hiddenParameters = state.projectState.hiddenParameters.filter(
-            (p) => p !== 'heating' && p !== 'cooling' && p !== 'solar' && p !== 'net',
-          );
-        }
-      });
-    }
+    });
   };
 
   useEffect(() => {

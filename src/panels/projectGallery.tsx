@@ -50,7 +50,7 @@ import { DataColoring, DatumEntry, Design, DesignProblem, Orientation } from '..
 import ParallelCoordinates from '../components/parallelCoordinates';
 //@ts-expect-error ignore
 import { saveSvgAsPng } from 'save-svg-as-png';
-import { showError, showInfo, showSuccess } from '../helpers';
+import { showInfo, showSuccess } from '../helpers';
 import { Util } from '../Util';
 import { ProjectUtil } from './ProjectUtil';
 import { HOME_URL } from '../constants';
@@ -79,9 +79,6 @@ import { UndoableChange } from '../undo/UndoableChange';
 import { FidgetSpinner } from 'react-loader-spinner';
 import GenerateBuildingModal from 'src/components/generateBuildingModal';
 import SparkImage from 'src/assets/spark.png';
-import { firestore } from 'src/firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import i18n from 'src/i18n/i18n';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -1950,7 +1947,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const openDesign = (design: Design) => {
     setSelectedDesign(design);
     if (projectOwner) {
-      loadCloudFile(projectOwner, design.title, true, true).then(() => {
+      loadCloudFile(projectOwner, design.title, true, true, undefined, projectTitle).then(() => {
         if (loggable) {
           setCommonStore((state) => {
             state.actionInfo = {
@@ -2062,50 +2059,6 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     confirmToOpenDesign(design);
   };
 
-  const updateDesignModelChanged = async (userid: string, projectTitle: string, designTitle: string) => {
-    const lang = { lng: useStore.getState().language };
-    usePrimitiveStore.getState().set((state) => {
-      state.waiting = true;
-    });
-
-    usePrimitiveStore.getState().setChanged(false);
-    try {
-      const projectDocRef = doc(firestore, 'users', userid, 'projects', projectTitle);
-      const documentSnapshot = await getDoc(projectDocRef);
-      if (documentSnapshot.exists()) {
-        const data_1 = documentSnapshot.data();
-        if (data_1) {
-          const updatedDesigns: Design[] = [];
-          updatedDesigns.push(...data_1.designs);
-          for (const [i, d] of updatedDesigns.entries()) {
-            if (d.title === designTitle) {
-              d.modelChanged = true;
-              try {
-                const projectDocRef = doc(firestore, 'users', userid, 'projects', projectTitle);
-
-                await updateDoc(projectDocRef, { designs: updatedDesigns });
-              } catch (error) {
-                showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
-              } finally {
-                // Update the cached array in the local storage via the common store
-                useStore.getState().set((state_1) => {
-                  state_1.projectState.designs = updatedDesigns;
-                });
-                usePrimitiveStore.getState().set((state_2) => {
-                  state_2.updateProjectsFlag = true;
-                  state_2.waiting = false;
-                });
-              }
-              break;
-            }
-          }
-        }
-      }
-    } catch (error) {
-      showError(i18n.t('message.CannotFetchProjectData', lang) + ': ' + error);
-    }
-  };
-
   const elements = useStore(Selector.elements);
   useEffect(() => {
     if (usePrimitiveStore.getState().skipChange && usePrimitiveStore.getState().modelChanged) {
@@ -2119,41 +2072,6 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       });
     }
   }, [elements]);
-
-  useEffect(() => {
-    const onPointUp = () => {
-      if (usePrimitiveStore.getState().modelChanged) {
-        if (usePrimitiveStore.getState().genAIModelCreated) {
-          usePrimitiveStore.getState().set((state) => {
-            state.genAIModelCreated = false;
-          });
-        } else {
-          const userid = useStore.getState().user.uid;
-          const projectTitle = useStore.getState().projectState.title;
-          const designTitle = useStore.getState().cloudFile;
-
-          if (!designTitle || !userid || !projectTitle) {
-            return;
-          }
-
-          if (userid !== useStore.getState().projectState.owner) {
-            return;
-          }
-
-          if (selectedDesign) {
-            if (selectedDesign.modelChanged) return;
-            updateDesignModelChanged(userid, projectTitle, designTitle);
-            setSelectedDesign({ ...selectedDesign, modelChanged: false });
-          }
-        }
-        usePrimitiveStore.getState().set((state) => {
-          state.modelChanged = false;
-        });
-      }
-    };
-    window.addEventListener('pointerup', onPointUp);
-    return () => window.removeEventListener('pointerup', onPointUp);
-  }, [selectedDesign]);
 
   return (
     <Container
