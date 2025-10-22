@@ -107,6 +107,14 @@ Window has a number property "verticalMullionSpacing", which defaults to 0.5 met
 Window has a string property "mullionColor", which defaults to "#ffffff".
 Window has a number property "mullionWidth", which defaults to 0.06 meter.
 
+- Solar panel: is mounted on a foundation, roof, or wall (parent).
+"pId" is the id of the parent on which it is mounted.
+"fId" is the id of the foundation on which it is mounted.
+The orientation of a solar panel can be "Landscape" or "Portrait". The default is "Landscape".
+"pvModelName" is the name of the PV module of the solar panel. The default is "SPR-X21-335-BLK".
+Its size is [lx, ly], where lx is width, ly is height.
+Its center is [cx, cy, cz], where cx and cy are relative to the foundation's center.
+
 When building a house, first draw a rectangle on the foundation, which defines the positions of walls, then put a wall on each side of the rectangle.
 The endpoints of the walls should be the same as the vertices of the rectangle.
 A house is built on top of one foundation, with four walls connected one by one forming a loop.
@@ -392,6 +400,21 @@ export const callAzureOpenAI = async (
                       'mullionColor',
                       'mullionWidth',
                     ],
+                    additionalProperties: false,
+                  },
+                  {
+                    type: 'object',
+                    properties: {
+                      type: { type: 'string', enum: ['Solar Panel'] },
+                      id: { type: 'string' },
+                      pId: { type: 'string' },
+                      fId: { type: 'string' },
+                      pvModelName: { type: 'string' },
+                      orientation: { type: 'string' },
+                      center: { type: 'array', items: { type: 'number' } },
+                      size: { type: 'array', items: { type: 'number' } },
+                    },
+                    required: ['type', 'id', 'pId', 'fId', 'pvModelName', 'orientation', 'center', 'size'],
                     additionalProperties: false,
                   },
                 ],

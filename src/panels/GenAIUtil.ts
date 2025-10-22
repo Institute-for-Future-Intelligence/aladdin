@@ -8,6 +8,8 @@ import {
   DEFAULT_ROOF_COLOR,
   DEFAULT_ROOF_R_VALUE,
   DEFAULT_ROOF_THICKNESS,
+  DEFAULT_SOLAR_PANEL_MODEL,
+  DEFAULT_SOLAR_PANEL_POLE_HEIGHT,
   DEFAULT_WALL_AIR_PERMEABILITY,
   DEFAULT_WALL_HEIGHT,
   DEFAULT_WALL_R_VALUE,
@@ -32,10 +34,12 @@ import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { useStore } from 'src/stores/common';
 import { useDataStore } from 'src/stores/commonData';
-import { Design, FoundationTexture, ObjectType, RoofTexture, WallTexture } from 'src/types';
+import { Design, FoundationTexture, ObjectType, Orientation, RoofTexture, WallTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { RoofUtil } from 'src/views/roof/RoofUtil';
 import { HvacSystem } from '../models/HvacSystem';
+import { SolarPanelModel } from '../models/SolarPanelModel';
+import { PvModel } from '../models/PvModel';
 
 export class GenAIUtil {
   static arrayCorrection(jsonElements: any[]) {
@@ -608,6 +612,41 @@ export class GenAIUtil {
       foundationId: fId,
       id: id,
     } as WindowModel;
+  }
+
+  static makeSolarPanel(
+    id: string,
+    pId: string,
+    fId: string,
+    pvModelName: string,
+    orientation: string,
+    center: number[],
+    size: number[],
+  ) {
+    const actionState = useStore.getState().actionState;
+    const pvModules = { ...useStore.getState().supportedPvModules, ...useStore.getState().customPvModules };
+    const pvModel = pvModules[pvModelName] as PvModel;
+
+    const [cx, cy, cz] = center;
+    const [lx, ly] = size;
+    const sp = {
+      type: ObjectType.SolarPanel,
+      cx,
+      cy,
+      cz,
+      parentId: pId,
+      parentType: ObjectType.Foundation,
+      foundationId: fId,
+      id,
+      orientation: orientation as Orientation,
+      pvModelName: pvModelName ?? actionState.solarPanelModelName ?? DEFAULT_SOLAR_PANEL_MODEL,
+      poleHeight: DEFAULT_SOLAR_PANEL_POLE_HEIGHT,
+      normal: [0, 0, 1],
+      rotation: [0, 0, 0],
+    } as SolarPanelModel;
+    sp.lx = Util.panelizeLx(sp, pvModel, lx);
+    sp.ly = Util.panelizeLy(sp, pvModel, ly);
+    return sp;
   }
 
   static calculateSolutionSpace(design: Design) {

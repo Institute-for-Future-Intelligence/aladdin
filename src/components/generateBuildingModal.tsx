@@ -208,6 +208,23 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
               }
               break;
             }
+            case ObjectType.SolarPanel: {
+              const { id, pId, fId, pvModelName, orientation, center, size } = e;
+              const foundation = state.elements.find((e) => e.id === fId);
+              if (foundation) {
+                const s = GenAIUtil.makeSolarPanel(
+                  id,
+                  pId,
+                  fId,
+                  pvModelName,
+                  orientation,
+                  [center[0] / foundation.lx, center[1] / foundation.ly, center[2]],
+                  size,
+                );
+                state.elements.push(s);
+              }
+              break;
+            }
             case ObjectType.Window: {
               const {
                 id,
