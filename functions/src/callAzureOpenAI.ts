@@ -172,7 +172,7 @@ Document the thinking process.
 If the user's prompts are irrelevant, just build and return a simple house.
 `;
 
-export const callAzureOpenAI = async (
+export const callBuildingOpenAI = async (
   apiKey: string | undefined,
   inputMessage: [],
   fromBrowser = false,
