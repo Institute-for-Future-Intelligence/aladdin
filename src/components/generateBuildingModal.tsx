@@ -17,7 +17,7 @@ import i18n from 'src/i18n/i18n';
 import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
-import { callBuildingOpenAI } from 'functions/src/callAzureOpenAI';
+import { callBuildingAI } from 'functions/src/callAzureOpenAI';
 import { ObjectType } from 'src/types';
 import { GenAIUtil } from 'src/panels/GenAIUtil';
 import { RoofType } from 'src/models/RoofModel';
@@ -366,7 +366,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
     try {
       const input = createInput();
       console.log('calling...', input); // for debugging
-      const response = await callBuildingOpenAI(apiKey, input as [], true, reasoningEffort);
+      const response = await callBuildingAI(apiKey, input as [], true, reasoningEffort);
       const result = response.choices[0].message.content;
       console.log('res', response);
       return result;
