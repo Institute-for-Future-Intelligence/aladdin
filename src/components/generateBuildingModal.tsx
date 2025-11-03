@@ -17,7 +17,7 @@ import i18n from 'src/i18n/i18n';
 import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
-import { callBuildingAI } from 'functions/src/callAzureOpenAI';
+import { callBuildingAI } from 'functions/src/callBuildingAI';
 import { ObjectType } from 'src/types';
 import { GenAIUtil } from 'src/panels/GenAIUtil';
 import { RoofType } from 'src/models/RoofModel';
