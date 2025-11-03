@@ -415,6 +415,31 @@ export const useUpdateRooftopElementsByContextMenuChanges = (
   }, [topZ, thickness, updateFlag]);
 };
 
+export const useUpdateRooftopElementsByGenAI = (
+  foundation: FoundationModel | null,
+  roofId: string,
+  roofSegments: RoofSegmentProps[],
+  centroid: Vector3,
+  topZ: number,
+  thickness: number,
+  isFlatGambrel?: boolean,
+) => {
+  const updateFlag = useStore((state) => state.updateElementOnRoofFromGenAIFlag);
+
+  // only update by GenAI
+  useEffect(() => {
+    if (updateFlag) {
+      updateRooftopElements(foundation, roofId, roofSegments, centroid, topZ, thickness, isFlatGambrel);
+      useStore.getState().set((state) => {
+        state.updateElementOnRoofFromGenAIFlag = false;
+      });
+      usePrimitiveStore.getState().set((state) => {
+        state.modelChanged = false;
+      });
+    }
+  }, [updateFlag]);
+};
+
 export const useUpdateRooftopElementsByControlPoints = (
   foundation: FoundationModel | null,
   rId: string,
@@ -442,6 +467,7 @@ export const useUpdateRooftopElements = (
 ) => {
   useUpdateRooftopElementsByControlPoints(foundation, roofId, segments, centroid, topZ, thickness, isFlatGambrel);
   useUpdateRooftopElementsByContextMenuChanges(foundation, roofId, segments, centroid, topZ, thickness, isFlatGambrel);
+  useUpdateRooftopElementsByGenAI(foundation, roofId, segments, centroid, topZ, thickness, isFlatGambrel);
 };
 
 export const useUserData = (

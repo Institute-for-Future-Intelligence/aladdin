@@ -30,6 +30,7 @@ const Poles = React.memo(
     ({ lx, ly, poleRadius, poleHeight, poleSpacing, tiltAngle, color, visiable }: PolesProps, ref) => {
       const radialSegment = useStore((state) => (state.elements.length > 100 ? 2 : 4));
 
+      console.log(lx, ly, poleRadius, poleHeight, poleSpacing, tiltAngle, color, visiable);
       const [_lx, setLx] = useInnerState(lx);
       const [_ly, setLy] = useInnerState(ly);
       const [_tilt, setTilt] = useInnerState(tiltAngle);

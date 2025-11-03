@@ -10,6 +10,8 @@ import {
   DEFAULT_ROOF_THICKNESS,
   DEFAULT_SOLAR_PANEL_MODEL,
   DEFAULT_SOLAR_PANEL_POLE_HEIGHT,
+  DEFAULT_SOLAR_PANEL_POLE_RADIUS,
+  DEFAULT_SOLAR_PANEL_POLE_SPACING,
   DEFAULT_WALL_AIR_PERMEABILITY,
   DEFAULT_WALL_HEIGHT,
   DEFAULT_WALL_R_VALUE,
@@ -46,9 +48,12 @@ export class GenAIUtil {
     const correctedElements: any[] = [];
 
     const wallMap = new Map();
+    const foundationMap = new Map();
     for (const e of jsonElements) {
       if (e.type === ObjectType.Wall) {
         wallMap.set(e.id, e);
+      } else if (e.type === ObjectType.Foundation) {
+        foundationMap.set(e.id, e);
       }
     }
 
@@ -110,8 +115,9 @@ export class GenAIUtil {
       }
     }
 
+    // push elements to array (other than rooftop solar panels)
     for (const e of jsonElements) {
-      // check windows
+      // check and push windows
       if (e.type === ObjectType.Window) {
         const { id, pId, center, size } = e;
 
@@ -166,8 +172,64 @@ export class GenAIUtil {
         } else {
           correctedElements.push(e);
         }
-      } else {
-        // push other elements to corrected array
+      }
+      // check and push rooftop solar panels
+      else if (e.type === ObjectType.SolarPanel && e.parentType === ObjectType.Roof) {
+        const pvModelName = e.pvModelName ?? 'SPR-X21-335-BLK';
+        const pvModules = { ...useStore.getState().supportedPvModules, ...useStore.getState().customPvModules };
+        const pvModel = pvModules[pvModelName] as PvModel;
+
+        const [lx, ly] = Util.getPanelizedSize(e, pvModel, e.lx, e.ly);
+        const [cx = 0, cy = 0] = e.center;
+        const margin = 0.05;
+
+        const foundation = foundationMap.get(e.foundationId);
+        if (!foundation) continue;
+
+        const [fHx = 0, fHy = 0] = [foundation.lx / 2, foundation.ly / 2];
+        // check boundary
+        if (
+          cx + lx / 2 + margin > fHx ||
+          cx - lx / 2 - margin < -fHx ||
+          cy + ly / 2 + margin > fHy ||
+          cy - ly / 2 - margin < fHy
+        ) {
+          console.log('outside boundary', e, foundation);
+          continue;
+        }
+
+        // check overlap
+        const siblings = correctedElements.filter(
+          (sib) =>
+            sib.type === ObjectType.SolarPanel &&
+            sib.parentType === ObjectType.Roof &&
+            sib.id !== e.id &&
+            sib.pId === e.pId,
+        );
+        if (siblings.length > 0) {
+          let isOverlapped = false;
+          for (const sib of siblings) {
+            const pvModel = pvModules[sib.pvModelName ?? 'SPR-X21-335-BLK'] as PvModel;
+            if (
+              Util.isRectOverlap(
+                [cx, cy, lx, ly],
+                [sib.center[0], sib.center[1], ...Util.getPanelizedSize(sib, pvModel, sib.lx, sib.ly)],
+              )
+            ) {
+              isOverlapped = true;
+              console.log('sp on roof overlap with sib', e, sib);
+              break;
+            }
+          }
+          if (!isOverlapped) {
+            correctedElements.push(e);
+          }
+        } else {
+          correctedElements.push(e);
+        }
+      }
+      // push other elements to corrected array
+      else {
         correctedElements.push(e);
       }
     }
@@ -635,7 +697,7 @@ export class GenAIUtil {
       cy,
       cz,
       parentId: pId,
-      parentType: ObjectType.Foundation,
+      parentType: ObjectType.Roof,
       foundationId: fId,
       id,
       orientation: orientation as Orientation,
@@ -643,6 +705,10 @@ export class GenAIUtil {
       poleHeight: DEFAULT_SOLAR_PANEL_POLE_HEIGHT,
       normal: [0, 0, 1],
       rotation: [0, 0, 0],
+      poleRadius: DEFAULT_SOLAR_PANEL_POLE_RADIUS,
+      poleSpacing: DEFAULT_SOLAR_PANEL_POLE_SPACING,
+      tiltAngle: 0,
+      version: 1,
     } as SolarPanelModel;
     sp.lx = Util.panelizeLx(sp, pvModel, lx);
     sp.ly = Util.panelizeLy(sp, pvModel, ly);

@@ -41,6 +41,7 @@ import {
   useUpdateRooftopElementsByContextMenuChanges,
   useIsFirstRender,
   useUserData,
+  useUpdateRooftopElementsByGenAI,
 } from './hooks';
 import RoofSegment from './roofSegment';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
@@ -913,6 +914,7 @@ const GambrelRoof = ({ roofModel, foundationModel }: GambrelRoofProps) => {
   }, [roofSegments]);
 
   useUpdateRooftopElementsByContextMenuChanges(foundationModel, id, roofSegments, centroid, topZ, thickness, isFlat);
+  useUpdateRooftopElementsByGenAI(foundationModel, id, roofSegments, centroid, topZ, thickness, isFlat);
 
   const updateSegmentVerticesWithoutOverhangMap = () => {
     const segmentVertices: Vector3[][] = [];

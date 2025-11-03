@@ -822,6 +822,18 @@ export class Util {
     return ly;
   }
 
+  static getPanelizedSize(solarPanel: SolarPanelModel, pvModel: PvModel, lx: number, ly: number) {
+    const dx = solarPanel.orientation === Orientation.portrait ? pvModel.width : pvModel.length;
+    let _lx = lx ?? 1;
+    const nx = Math.max(1, Math.ceil((_lx - dx / 2) / dx));
+    _lx = nx * dx;
+    const dy = solarPanel.orientation === Orientation.portrait ? pvModel.length : pvModel.width;
+    let _ly = ly ?? 1;
+    const ny = Math.max(1, Math.ceil((_ly - dy / 2) / dy));
+    _ly = ny * dy;
+    return [_lx, _ly];
+  }
+
   // ray-casting algorithm based on
   static isPointInside(x: number, y: number, vertices: Point2[]): boolean {
     let inside = false;

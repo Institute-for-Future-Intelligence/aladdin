@@ -218,10 +218,11 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
                   fId,
                   pvModelName,
                   orientation,
-                  [center[0] / foundation.lx, center[1] / foundation.ly, center[2]],
+                  [center[0], center[1], center[2]],
                   size,
                 );
                 state.elements.push(s);
+                state.updateElementOnRoofFromGenAIFlag = true;
               }
               break;
             }

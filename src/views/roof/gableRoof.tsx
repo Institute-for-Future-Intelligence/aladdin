@@ -60,6 +60,7 @@ import {
   useUpdateSegmentVerticesWithoutOverhangMap,
   useUpdateRooftopElementsByContextMenuChanges,
   useUserData,
+  useUpdateRooftopElementsByGenAI,
 } from './hooks';
 import { ConvexGeometry } from 'src/js/ConvexGeometry';
 import { CSG } from 'three-csg-ts';
@@ -884,6 +885,7 @@ const GableRoof = ({ roofModel, foundationModel }: GableRoofProps) => {
   }, [roofSegments]);
 
   useUpdateRooftopElementsByContextMenuChanges(foundationModel, id, roofSegments, centroid, topZ, thickness);
+  useUpdateRooftopElementsByGenAI(foundationModel, id, roofSegments, centroid, topZ, thickness);
 
   const updateSegmentVerticesWithoutOverhangMap = () => {
     if (!composedWalls || composedWalls.length !== 4) return;
