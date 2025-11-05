@@ -831,7 +831,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
 
         if (surfaceType === SurfaceType.Horizontal) {
           if (polesRef.current) {
-            polesRef.current.setVisiable(true);
+            polesRef.current.setVisible(true);
           }
           if (mountRef.current) {
             mountRef.current.setVisiable(false);
@@ -839,7 +839,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
           updateAzimuthGroupZ(poleHeight + hlz);
         } else {
           if (polesRef.current) {
-            polesRef.current.setVisiable(false);
+            polesRef.current.setVisible(false);
           }
           if (mountRef.current) {
             mountRef.current.setVisiable(true);
@@ -1112,7 +1112,7 @@ const SolarPanel = React.memo((solarPanel: SolarPanelModel) => {
           poleRadius={poleRadius}
           poleSpacing={poleSpacing}
           color={color}
-          visiable={isShowPoles}
+          visible={isShowPoles}
         />
 
         {/* label */}

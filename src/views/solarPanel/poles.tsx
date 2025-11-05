@@ -17,24 +17,23 @@ interface PolesProps {
   poleSpacing: number;
   tiltAngle: number;
   color: string;
-  visiable: boolean;
+  visible: boolean;
 }
 
 export interface PolesRefProps {
   update: ({ lx, ly, tilt }: { lx?: number; ly?: number; tilt?: number }) => void;
-  setVisiable: (b: boolean) => void;
+  setVisible: (b: boolean) => void;
 }
 
 const Poles = React.memo(
   forwardRef<PolesRefProps, PolesProps>(
-    ({ lx, ly, poleRadius, poleHeight, poleSpacing, tiltAngle, color, visiable }: PolesProps, ref) => {
+    ({ lx, ly, poleRadius, poleHeight, poleSpacing, tiltAngle, color, visible }: PolesProps, ref) => {
       const radialSegment = useStore((state) => (state.elements.length > 100 ? 2 : 4));
 
-      console.log(lx, ly, poleRadius, poleHeight, poleSpacing, tiltAngle, color, visiable);
       const [_lx, setLx] = useInnerState(lx);
       const [_ly, setLy] = useInnerState(ly);
       const [_tilt, setTilt] = useInnerState(tiltAngle);
-      const [_visiable, setVisiable] = useInnerState(visiable);
+      const [_visible, setVisible] = useInnerState(visible);
 
       const groupRef = useRef<Group>(null!);
 
@@ -52,8 +51,8 @@ const Poles = React.memo(
               setTilt(tilt);
             }
           },
-          setVisiable(b) {
-            setVisiable(b);
+          setVisible(b) {
+            setVisible(b);
           },
         }),
         [],
@@ -76,7 +75,7 @@ const Poles = React.memo(
         return poleArray;
       }, [_lx, _ly, _tilt, poleSpacing, poleHeight]);
 
-      if (!_visiable) return null;
+      if (!_visible) return null;
       return (
         <group name={'Poles group'} ref={groupRef} position={[0, 0, -poleHeight / 2]}>
           {polesPositionArray.map((p, i) => {
