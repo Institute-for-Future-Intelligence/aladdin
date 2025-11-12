@@ -284,7 +284,11 @@ export class GenAIUtil {
             // check boundary to correct position
             if (isOutsideBoundary(cx, cy, lx, ly2d, boundaryLx, 0.35 * boundaryLy)) {
               const oldCenter = [...sp.center];
-              sp.center = [0, -boundaryLy * 0.175, sp.center[2]];
+              if (oldCenter[1] > 0) {
+                sp.center = [0, -boundaryLy * 0.175, sp.center[2]];
+              } else {
+                sp.center = [0, -boundaryLy * 0.175, sp.center[2]];
+              }
               [cx, cy] = sp.center;
               console.log(`sp outside wall boundary, position corrected: [${oldCenter}] -> [${sp.center}]`);
             }
@@ -300,7 +304,11 @@ export class GenAIUtil {
             // check boundary to correct position
             if (isOutsideBoundary(cx, cy, lx, ly2d, boundaryLx, boundaryLy)) {
               const oldCenter = [...sp.center];
-              sp.center = [0, -boundaryLy / 4, sp.center[2]];
+              if (oldCenter[1] > 0) {
+                sp.center = [0, boundaryLy / 4, sp.center[2]];
+              } else {
+                sp.center = [0, -boundaryLy / 4, sp.center[2]];
+              }
               [cx, cy] = sp.center;
               console.log(`sp outside wall boundary, position corrected: [${oldCenter}] -> [${sp.center}]`);
             }
@@ -386,6 +394,8 @@ export class GenAIUtil {
           }
           if (!isOverlapped) {
             correctedElements.push(sp);
+          } else {
+            console.log('sp overlapped with siblings');
           }
         } else {
           correctedElements.push(sp);
