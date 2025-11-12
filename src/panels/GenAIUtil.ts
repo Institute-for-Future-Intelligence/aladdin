@@ -136,7 +136,7 @@ export class GenAIUtil {
           cz + lz / 2 + margin > wall.height ||
           cz - lz / 2 - margin < 0
         ) {
-          console.log('outside boundary', center, size, wall);
+          console.log('window outside boundary', center, size, wall);
           continue;
         }
 
@@ -148,7 +148,7 @@ export class GenAIUtil {
             const [dLx, dLz] = door.size;
             const [dCx, dCz] = [door.center, dLz / 2];
             if (Util.isRectOverlap([dCx, dCz, dLx, dLz], [cx, cz, lx, lz])) {
-              console.log('overlap with door', center, size, door);
+              console.log('window overlap with door', center, size, door);
               overlapWithDoors = true;
               break;
             }
@@ -162,7 +162,7 @@ export class GenAIUtil {
           for (const sib of siblings) {
             if (Util.isRectOverlap([cx, cz, lx, lz], [...sib.center, ...sib.size])) {
               overlapWithWindows = true;
-              console.log('overlap with sib', center, size, sib);
+              console.log('window overlap with sib', center, size, sib);
               break;
             }
           }
@@ -173,29 +173,192 @@ export class GenAIUtil {
           correctedElements.push(e);
         }
       }
-      // check and push rooftop solar panels
-      else if (e.type === ObjectType.SolarPanel && e.parentType === ObjectType.Roof) {
-        const pvModelName = e.pvModelName ?? 'SPR-X21-335-BLK';
+      // push other elements to corrected array
+      else if (e.type !== ObjectType.SolarPanel) {
+        correctedElements.push(e);
+      }
+    }
+
+    // check/push solar panel at last
+    for (const e of jsonElements) {
+      if (e.type === ObjectType.SolarPanel) {
+        const sp = e;
+        const pvModelName = sp.pvModelName ?? 'SPR-X21-335-BLK';
         const pvModules = { ...useStore.getState().supportedPvModules, ...useStore.getState().customPvModules };
         const pvModel = pvModules[pvModelName] as PvModel;
 
-        const [lx, ly] = Util.getPanelizedSize(e, pvModel, e.lx, e.ly);
-        const [cx = 0, cy = 0] = e.center;
-        const margin = 0.05;
+        let [lx, ly] = Util.getPanelizedSize(sp, pvModel, sp.size[0], sp.size[1]);
+        let [cx = 0, cy = 0] = sp.center;
 
-        const foundation = foundationMap.get(e.foundationId);
-        if (!foundation) continue;
+        const roof = jsonElements.find((r) => r.type === ObjectType.Roof && r.fId === sp.fId);
+        if (!roof) continue;
 
-        const [fHx = 0, fHy = 0] = [foundation.lx / 2, foundation.ly / 2];
-        // check boundary
-        if (
-          cx + lx / 2 + margin > fHx ||
-          cx - lx / 2 - margin < -fHx ||
-          cy + ly / 2 + margin > fHy ||
-          cy - ly / 2 - margin < fHy
-        ) {
-          console.log('outside boundary', e, foundation);
-          continue;
+        const wallPoints: number[][] = [];
+        for (const w of jsonElements) {
+          if (w.type === ObjectType.Wall && w.pId === sp.fId) {
+            wallPoints.push([...w.leftPoint]);
+          }
+        }
+
+        let boundaryLx = Math.abs(wallPoints[0][0] - wallPoints[1][0]);
+        let boundaryLy = Math.abs(wallPoints[1][1] - wallPoints[2][1]);
+        if (boundaryLx === 0 || boundaryLy === 0) {
+          boundaryLx = Math.abs(wallPoints[1][0] - wallPoints[2][0]);
+          boundaryLy = Math.abs(wallPoints[0][1] - wallPoints[1][1]);
+        }
+        const roofAngle = Math.atan2(roof.rise, boundaryLy / 2);
+
+        const isOutsideBoundary = (cx: number, cy: number, lx: number, ly: number, bLx: number, bLy: number) => {
+          const marginX = bLx * 0.1;
+          const marginY = bLy * 0.05;
+          return (
+            cx + lx / 2 + marginX > bLx / 2 ||
+            cx - lx / 2 - marginX < -bLx / 2 ||
+            cy + ly / 2 + marginY > bLy / 2 ||
+            cy - ly / 2 - marginY < -bLy / 2
+          );
+        };
+
+        if (roof.rise === 0) {
+          // check boundary to correct position
+          if (isOutsideBoundary(cx, cy, lx, ly, boundaryLx, boundaryLy)) {
+            const oldCenter = [...sp.center];
+            sp.center = [0, 0];
+            [cx, cy] = sp.center;
+            console.log(`sp outside flat boundary, position corrected: [${oldCenter}] -> [${sp.center}]`);
+          }
+          // check boundary to correct size
+          if (isOutsideBoundary(cx, cy, lx, ly, boundaryLx, boundaryLy)) {
+            const oldSize = [...sp.size];
+            sp.size = [Math.min(sp.size[0], boundaryLx * 0.9), Math.min(sp.size[1], boundaryLy * 0.9)];
+            [lx, ly] = Util.getPanelizedSize(sp, pvModel, sp.size[0], sp.size[1]);
+            console.log(`sp outside flat boundary, size corrected: [${oldSize}] -> [${sp.size}]`);
+          }
+        } else {
+          if (roof.roofType === RoofType.Hip) {
+            const ly2d = ly * Math.cos(roofAngle);
+            const ridgeLength = roof.ridgeLength ?? boundaryLx;
+            // check boundary to correct position
+            if (isOutsideBoundary(cx, cy, lx, ly2d, ridgeLength, boundaryLy)) {
+              const oldCenter = [...sp.center];
+              if (oldCenter[1] > 0) {
+                sp.center = [0, boundaryLy / 4, sp.center[2]];
+              } else {
+                sp.center = [0, -boundaryLy / 4, sp.center[2]];
+              }
+              [cx, cy] = sp.center;
+              console.log(`sp outside ridge boundary, position corrected: [${oldCenter}] -> [${sp.center}]`);
+            }
+            // check boundary to correct size
+            if (isOutsideBoundary(cx, cy, lx, ly2d, ridgeLength, boundaryLy)) {
+              const oldSize = [...sp.size];
+              sp.size = [
+                Math.min(sp.size[0], ridgeLength),
+                Math.min(sp.size[1], (boundaryLy / 2 / Math.cos(roofAngle)) * 0.9),
+              ];
+              [lx, ly] = Util.getPanelizedSize(sp, pvModel, sp.size[0], sp.size[1]);
+              console.log(`sp outside ridge boundary, size corrected: [${oldSize}] -> [${sp.size}]`);
+            }
+          } else if (roof.roofType === RoofType.Mansard) {
+            const ly2d = ly * Math.cos(roofAngle);
+            const ridgeLength = (roof.ridgeLength ?? 1) * (Math.sqrt(2) / 2);
+            // check boundary to correct position
+            if (isOutsideBoundary(cx, cy, lx, ly2d, boundaryLx - ridgeLength * 2, boundaryLy - ridgeLength * 2)) {
+              const oldCenter = [...sp.center];
+              sp.center = [0, 0];
+              [cx, cy] = sp.center;
+              console.log(`sp outside mansard top boundary, position corrected: [${oldCenter}] -> [${sp.center}]`);
+            }
+            // check boundary to correct size
+            if (isOutsideBoundary(cx, cy, lx, ly2d, boundaryLx - ridgeLength * 2, boundaryLy - ridgeLength * 2)) {
+              const oldSize = [...sp.size];
+              sp.size = [
+                Math.min(sp.size[0], (boundaryLx - ridgeLength * 2) * 0.9),
+                Math.min(sp.size[1], (boundaryLy - ridgeLength * 2) * 0.9),
+              ];
+              [lx, ly] = Util.getPanelizedSize(sp, pvModel, sp.size[0], sp.size[1]);
+              console.log(`sp outside mansard top boundary, size corrected: [${oldSize}] -> [${sp.size}]`);
+            }
+          } else if (roof.roofType === RoofType.Gambrel) {
+            const ly2d = ly; // approximate
+            // check boundary to correct position
+            if (isOutsideBoundary(cx, cy, lx, ly2d, boundaryLx, 0.35 * boundaryLy)) {
+              const oldCenter = [...sp.center];
+              sp.center = [0, -boundaryLy * 0.175, sp.center[2]];
+              [cx, cy] = sp.center;
+              console.log(`sp outside wall boundary, position corrected: [${oldCenter}] -> [${sp.center}]`);
+            }
+            // check boundary to correct size
+            if (isOutsideBoundary(cx, cy, lx, ly2d, boundaryLx, 0.35 * boundaryLy)) {
+              const oldSize = [...sp.size];
+              sp.size = [Math.min(sp.size[0], boundaryLx * 0.9), Math.min(sp.size[1], boundaryLy * 0.35)];
+              [lx, ly] = Util.getPanelizedSize(sp, pvModel, sp.size[0], sp.size[1]);
+              console.log(`sp outside wall boundary, size corrected: [${oldSize}] -> [${sp.size}]`);
+            }
+          } else if (roof.roofType === RoofType.Gable) {
+            const ly2d = ly * Math.cos(roofAngle);
+            // check boundary to correct position
+            if (isOutsideBoundary(cx, cy, lx, ly2d, boundaryLx, boundaryLy)) {
+              const oldCenter = [...sp.center];
+              sp.center = [0, -boundaryLy / 4, sp.center[2]];
+              [cx, cy] = sp.center;
+              console.log(`sp outside wall boundary, position corrected: [${oldCenter}] -> [${sp.center}]`);
+            }
+            // check boundary to correct size
+            if (isOutsideBoundary(cx, cy, lx, ly2d, boundaryLx, boundaryLy)) {
+              const oldSize = [...sp.size];
+              sp.size = [
+                Math.min(sp.size[0], boundaryLx * 0.9),
+                Math.min(sp.size[1], (boundaryLy / 2 / Math.cos(roofAngle)) * 0.9),
+              ];
+              [lx, ly] = Util.getPanelizedSize(sp, pvModel, sp.size[0], sp.size[1]);
+              console.log(`sp outside wall boundary, size corrected: [${oldSize}] -> [${sp.size}]`);
+            }
+          } else {
+            const ly2d = ly * Math.cos(roofAngle);
+            // check boundary to correct position
+            const { region, outside } = GenAIUtil.checkSolarPanelBoundary(cx, cy, lx, ly2d, boundaryLx, boundaryLy);
+            if (outside) {
+              const oldCenter = [...sp.center];
+              if (region === 'top') {
+                sp.center = [0, (boundaryLy * 3) / 8, sp.center[2]];
+              } else if (region === 'left') {
+                sp.center = [(-boundaryLx * 3) / 8, 0, sp.center[2]];
+              } else if (region === 'right') {
+                sp.center = [(boundaryLx * 3) / 8, 0, sp.center[2]];
+              } else {
+                sp.center = [0, (-boundaryLy * 3) / 8, sp.center[2]];
+              }
+              [cx, cy] = sp.center;
+              console.log(`sp outside wall boundary, position corrected: [${oldCenter}] -> [${sp.center}]`);
+            }
+
+            // check boundary to correct size
+            const { region: region_2, outside: outside_2 } = GenAIUtil.checkSolarPanelBoundary(
+              cx,
+              cy,
+              lx,
+              ly2d,
+              boundaryLx,
+              boundaryLy,
+            );
+            if (outside_2) {
+              const oldSize = [...sp.size];
+              if (region_2 === 'left' || region_2 === 'right') {
+                sp.size = [
+                  Math.min(sp.size[0], (boundaryLy / 2) * 0.9),
+                  Math.min(sp.size[1], (boundaryLx / 4 / Math.cos(roofAngle)) * 0.9),
+                ];
+              } else {
+                sp.size = [
+                  Math.min(sp.size[0], (boundaryLx / 2) * 0.9),
+                  Math.min(sp.size[1], (boundaryLy / 4 / Math.cos(roofAngle)) * 0.9),
+                ];
+              }
+              [lx, ly] = Util.getPanelizedSize(sp, pvModel, sp.size[0], sp.size[1]);
+              console.log(`sp outside wall boundary, size corrected: [${oldSize}] -> [${sp.size}]`);
+            }
+          }
         }
 
         // check overlap
@@ -203,8 +366,8 @@ export class GenAIUtil {
           (sib) =>
             sib.type === ObjectType.SolarPanel &&
             sib.parentType === ObjectType.Roof &&
-            sib.id !== e.id &&
-            sib.pId === e.pId,
+            sib.id !== sp.id &&
+            sib.pId === sp.pId,
         );
         if (siblings.length > 0) {
           let isOverlapped = false;
@@ -217,20 +380,16 @@ export class GenAIUtil {
               )
             ) {
               isOverlapped = true;
-              console.log('sp on roof overlap with sib', e, sib);
+              console.log('sp on roof overlap with sib', sp, sib);
               break;
             }
           }
           if (!isOverlapped) {
-            correctedElements.push(e);
+            correctedElements.push(sp);
           }
         } else {
-          correctedElements.push(e);
+          correctedElements.push(sp);
         }
-      }
-      // push other elements to corrected array
-      else {
-        correctedElements.push(e);
       }
     }
 
@@ -857,5 +1016,49 @@ export class GenAIUtil {
     }
 
     return totalArea;
+  }
+
+  static getSolarPanelRegion(px: number, py: number, blx: number, bly: number) {
+    const k = bly / blx;
+    const y1 = k * px;
+    const y2 = -k * px;
+
+    if (py > y1 && py > y2) return 'top';
+    if (py > y1 && py < y2) return 'left';
+    if (py < y1 && py < y2) return 'bot';
+    if (py < y1 && py > y2) return 'right';
+    return 'on-line';
+  }
+
+  static checkSolarPanelBoundary(cx: number, cy: number, lx: number, ly: number, blx: number, bly: number) {
+    const regionCenter = GenAIUtil.getSolarPanelRegion(cx, cy, blx, bly);
+
+    const [hx, hy] = [lx / 2, ly / 2];
+
+    let corners = [
+      [cx - hx, cy - hy],
+      [cx - hx, cy + hy],
+      [cx + hx, cy - hy],
+      [cx + hx, cy + hy],
+    ];
+
+    if (regionCenter === 'left' || regionCenter === 'right') {
+      corners = [
+        [cx - hy, cy - hx],
+        [cx - hy, cy + hx],
+        [cx + hy, cy - hx],
+        [cx + hy, cy + hx],
+      ];
+    }
+
+    const cornerRegions = corners.map(([x, y]) => GenAIUtil.getSolarPanelRegion(x, y, blx, bly));
+
+    const allSameRegion = cornerRegions.every((r) => r === regionCenter);
+
+    return {
+      region: regionCenter,
+      outside: !allSameRegion,
+      cornerRegions,
+    };
   }
 }

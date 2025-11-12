@@ -54,6 +54,7 @@ Roof has a number property "airPermeability" in the unit of m³/(h·m²), which 
 Roof has "roofType" that is either "Gable", "Pyramid", "Hip", "Mansard", or "Gambrel".
 For Hip roof type, it has a ridgeLength, which by default should be half of the length of the wall that it is built on.
 For Mansard roof type, it has a ridgeLength, which by default should be 1.
+For Gambrel roof type, default rise is 3 meters.
 
 - Door: is built on a wall. "pId" is the id of the wall on which it is built. "fId" is the id of the foundation on which it is built.
 Door size [lx, ly], lx is width, ly is height.
@@ -113,10 +114,10 @@ Window has a number property "mullionWidth", which defaults to 0.06 meter.
 "fId" is the id of the foundation on which it is belonged.
 The orientation of a solar panel can be "Landscape" or "Portrait". The default is "Landscape".
 "pvModelName" is the name of the PV module of the solar panel. The default is "SPR-X21-335-BLK".
-Its size is [lx, ly], where lx is width, ly is height.
+Its size is [lx, ly], it should cover the entire area of the roof segment it is mounted on.
 Its center is [cx, cy, cz], where cx and cy are relative to the foundation's center.
 When adding a solar panel to the roof, place it at the center of the south-facing roof segment by default. 
-If the roof is mansard roof, place solar panels at the center of the roof.
+If the roof is mansard roof, place solar panel at the center of the roof.
 It's important to make sure the panel stays within the building and foundation boundary!
 
 When building a house, first draw a rectangle on the foundation, which defines the positions of walls, then put a wall on each side of the rectangle.
