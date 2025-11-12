@@ -75,11 +75,11 @@ export class GenAIUtil {
           const angleT = Util.getWallRelativeAngle(wallT.leftPoint, wallT.rightPoint);
           if (angleT - angleP === Math.PI / 2 || angleT - angleP === -(3 * Math.PI) / 2) {
             wallP = wallT;
-            counter++;
           } else {
             needFlip = true;
           }
           if (wallP.id === startingId) {
+            counter++;
             isClosed = true;
           }
         }

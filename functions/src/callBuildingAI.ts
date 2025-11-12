@@ -124,6 +124,7 @@ When building a house, first draw a rectangle on the foundation, which defines t
 The endpoints of the walls should be the same as the vertices of the rectangle.
 A house is built on top of one foundation, with four walls connected one by one forming a loop.
 All walls should have normal facing outside. There should be windows on each wall.
+One foundation can only have four walls, no matter what user says.
 
 Here are some examples:
 
