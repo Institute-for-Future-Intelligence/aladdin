@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { ReactNode, useMemo, useRef } from 'react';
@@ -222,20 +222,22 @@ const ArchedDoor = React.memo(
 
         {heatFluxes &&
           heatFluxes.map((v, index) => {
+            const w = heatFluxWidth ?? DEFAULT_VIEW_HEAT_FLUX_WIDTH;
+            const arrowHeight = 0.2 + 0.03 * (w - 1);
             return (
               <React.Fragment key={index}>
                 <Line
                   points={v}
                   name={'Heat Flux ' + index}
-                  lineWidth={heatFluxWidth ?? DEFAULT_VIEW_HEAT_FLUX_WIDTH}
+                  lineWidth={w}
                   color={heatFluxColor ?? DEFAULT_VIEW_HEAT_FLUX_COLOR}
                 />
                 <Cone
                   userData={{ unintersectable: true }}
                   position={v[heatFluxArrowHead.current]
                     .clone()
-                    .add(new Vector3(0, heatFluxArrowHead.current === 0 ? -0.1 : 0.1, 0))}
-                  args={[0.06, 0.2, 4, 1]}
+                    .add(new Vector3(0, (heatFluxArrowHead.current === 0 ? -0.1 : 0.1) - arrowHeight / 2, 0))}
+                  args={[0.06 + 0.01 * (w - 1), arrowHeight, 8, 1]}
                   name={'Normal Vector Arrow Head'}
                   rotation={heatFluxArrowEuler.current ?? [0, 0, 0]}
                 >

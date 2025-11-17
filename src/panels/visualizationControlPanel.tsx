@@ -47,6 +47,7 @@ const VisualizationControlPanel = React.memo(() => {
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
+  const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
 
   const lang = useLanguage();
@@ -55,8 +56,8 @@ const VisualizationControlPanel = React.memo(() => {
     <Container style={{ top: showSiteInfoPanel ? '110px' : '80px' }}>
       <ColumnWrapper
         style={{
-          width: showHeatFluxes ? '320px' : '170px',
-          left: showHeatFluxes ? 'calc(100vw / 2 - 150px)' : 'calc(100vw / 2 - 80px)',
+          width: showHeatFluxes ? '420px' : '170px',
+          left: showHeatFluxes ? 'calc(100vw / 2 - 200px)' : 'calc(100vw / 2 - 80px)',
         }}
       >
         <Space direction={'horizontal'} style={{ color: 'antiquewhite', fontSize: '10px' }}>
@@ -91,6 +92,22 @@ const VisualizationControlPanel = React.memo(() => {
                   if (value === null) return;
                   setCommonStore((state) => {
                     state.viewState.heatFluxScaleFactor = value;
+                  });
+                }}
+              />
+              {i18n.t('visualizationControlPanel.FluxWidth', lang) + ':'}
+              <InputNumber
+                title={i18n.t('visualizationControlPanel.ClickUpOrDownArrowButtonsToChange', lang)}
+                min={1}
+                max={5}
+                step={1}
+                style={{ width: 65 }}
+                precision={0}
+                value={heatFluxWidth ?? 1}
+                onChange={(value) => {
+                  if (value === null) return;
+                  setCommonStore((state) => {
+                    state.viewState.heatFluxWidth = value;
                   });
                 }}
               />

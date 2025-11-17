@@ -1537,6 +1537,7 @@ export const i18n_tr = {
     visualizationControlPanel: {
       ColorContrast: 'Renk Kontrastı',
       FluxScale: 'Flux Scale',
+      FluxWidth: 'Flux Width',
       ClickUpOrDownArrowButtonsToChange: 'Değiştirmek için yukarı veya aşağı ok butonlarına tıklayınız',
     },
 

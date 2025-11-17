@@ -1510,6 +1510,7 @@ export const i18n_zh_cn = {
     visualizationControlPanel: {
       ColorContrast: '热图颜色对比度',
       FluxScale: '热通量长度',
+      FluxWidth: '热通量粗细',
       ClickUpOrDownArrowButtonsToChange: '点击上下箭头改变参数',
     },
 

@@ -1511,6 +1511,7 @@ export const i18n_zh_tw = {
     visualizationControlPanel: {
       ColorContrast: '熱圖顏色對比度',
       FluxScale: '熱通量長度',
+      FluxWidth: '熱通量粗細',
       ClickUpOrDownArrowButtonsToChange: '點擊上下箭頭改變參數',
     },
 

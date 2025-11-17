@@ -9,7 +9,7 @@ import * as Selector from 'src/stores/selector';
 import { DoorTexture, ObjectType, ResizeHandleType } from 'src/types';
 import WindowResizeHandle from '../window/windowResizeHandle';
 import { ThreeEvent } from '@react-three/fiber';
-import RectangleDoor from './rectangleDoor';
+import RectangularDoor from './rectangularDoor';
 import ArchedDoor from './archedDoor';
 import { useDoorTexture } from './hooks';
 import { ArchResizeHandle } from '../window/windowHandleWrapper';
@@ -272,7 +272,7 @@ const Door = (doorModel: DoorModel) => {
     switch (doorType) {
       case DoorType.Default:
         return (
-          <RectangleDoor
+          <RectangularDoor
             id={id}
             dimension={dimensionData}
             color={color}
@@ -286,7 +286,7 @@ const Door = (doorModel: DoorModel) => {
             foundation={getFoundation(doorModel)}
           >
             {doorMaterial}
-          </RectangleDoor>
+          </RectangularDoor>
         );
       case DoorType.Arched:
         return (

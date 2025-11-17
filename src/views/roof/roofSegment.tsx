@@ -285,12 +285,14 @@ export const RoofSegment = ({
 
       {heatFluxes &&
         heatFluxes.map((v, index) => {
+          const w = heatFluxWidth ?? DEFAULT_VIEW_HEAT_FLUX_WIDTH;
+          const arrowHeight = 0.2 + 0.03 * (w - 1);
           return (
             <React.Fragment key={index}>
               <Line
                 points={v}
                 name={'Heat Flux ' + index}
-                lineWidth={heatFluxWidth ?? DEFAULT_VIEW_HEAT_FLUX_WIDTH}
+                lineWidth={w}
                 color={heatFluxColor ?? DEFAULT_VIEW_HEAT_FLUX_COLOR}
               />
               <Cone
@@ -300,7 +302,7 @@ export const RoofSegment = ({
                     ? v[heatFluxArrowHead.current].clone().add(heatFluxArrowLength.current)
                     : v[0]
                 }
-                args={[0.06, 0.2, 4, 1]}
+                args={[0.06 + 0.01 * (w - 1), arrowHeight, 8, 1]}
                 name={'Normal Vector Arrow Head ' + index}
                 rotation={heatFluxArrowEuler.current ?? [0, 0, 0]}
               >

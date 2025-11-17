@@ -1537,6 +1537,7 @@ export const i18n_en = {
     visualizationControlPanel: {
       ColorContrast: 'Color Contrast',
       FluxScale: 'Flux Scale',
+      FluxWidth: 'Flux Width',
       ClickUpOrDownArrowButtonsToChange: 'Click up or down arrow buttons to change',
     },
 

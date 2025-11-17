@@ -1541,6 +1541,7 @@ export const i18n_ua = {
     visualizationControlPanel: {
       ColorContrast: 'Контраст кольору',
       FluxScale: 'Шкала потоку',
+      FluxWidth: 'Flux Width',
       ClickUpOrDownArrowButtonsToChange: 'Натисніть кнопки зі стрілками вгору або вниз щоб змінити',
     },
 
