@@ -114,27 +114,19 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
         for (const e of jsonElements) {
           switch (e.type) {
             case ObjectType.Foundation: {
-              const {
-                id,
-                center,
-                size,
-                color,
-                rotation,
-                rValue,
-                heatingSetpoint,
-                coolingSetpoint,
-                coefficientOfPerformanceAC,
-              } = e;
+              const hasBattery = jsonElements.find((el) => el.type === ObjectType.BatteryStorage && el.pId === e.id);
               const f = GenAIUtil.makeFoundation(
-                id,
-                center,
-                size,
-                Util.toRadians(rotation),
-                color,
-                rValue,
-                heatingSetpoint,
-                coolingSetpoint,
-                coefficientOfPerformanceAC,
+                e.id,
+                e.center,
+                e.size,
+                Util.toRadians(e.rotation),
+                e.color,
+                e.rValue,
+                e.heatingSetpoint,
+                e.coolingSetpoint,
+                e.coefficientOfPerformanceAC,
+                e.hvacId,
+                hasBattery,
               );
               state.elements.push(f);
               break;
@@ -220,6 +212,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
                   orientation,
                   [center[0], center[1], center[2]],
                   size,
+                  e.batteryId,
                 );
                 state.elements.push(s);
                 state.updateElementOnRoofFromGenAIFlag = true;
@@ -336,6 +329,19 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
                 }
               }
               break;
+            }
+            case ObjectType.BatteryStorage: {
+              const b = GenAIUtil.makeBatteryStorage(
+                e.id,
+                e.pId,
+                e.center,
+                e.size,
+                e.color,
+                e.chargingEfficiency,
+                e.dischargingEfficiency,
+                e.hvacId,
+              );
+              state.elements.push(b);
             }
           }
         }

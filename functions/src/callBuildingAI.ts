@@ -116,9 +116,17 @@ The orientation of a solar panel can be "Landscape" or "Portrait". The default i
 "pvModelName" is the name of the PV module of the solar panel. The default is "SPR-X21-335-BLK".
 Its size is [lx, ly], it should cover the entire area of the roof segment it is mounted on.
 Its center is [cx, cy, cz], where cx and cy are relative to the foundation's center.
+"batteryId" should be the id of batter storage built on the same foundation if there is any.
 When adding a solar panel to the roof, place it at the center of the south-facing roof segment by default. 
 If the roof is mansard roof, place solar panel at the center of the roof.
 It's important to make sure the panel stays within the building and foundation boundary!
+
+- Battery storage: is built on foundation. "pId" is the id of the foundation on which it is built.
+"color" by default is "#C7BABE".
+"size" is [lx, ly, lz], by default is [1.5, 2, 1.5].
+"chargingEfficiency" and "dischargingEfficiency" by default is 0.95.
+"center" is [cx, cy, cz], it should be stick on the west side and outside surface of west facing wall of the building, cz should be half of the foundation lz.
+"hvacId" should be the same hvacId as the foundation on which it is built.
 
 When building a house, first draw a rectangle on the foundation, which defines the positions of walls, then put a wall on each side of the rectangle.
 The endpoints of the walls should be the same as the vertices of the rectangle.
@@ -243,6 +251,7 @@ export const callBuildingAI = async (
                       rValue: { type: 'number' },
                       heatingSetpoint: { type: 'number' },
                       coolingSetpoint: { type: 'number' },
+                      hvacId: { type: 'string' },
                       coefficientOfPerformanceAC: { type: 'number' },
                       rotation: { type: 'number' },
                     },
@@ -257,6 +266,7 @@ export const callBuildingAI = async (
                       'heatingSetpoint',
                       'coolingSetpoint',
                       'coefficientOfPerformanceAC',
+                      'hvacId',
                     ],
                     additionalProperties: false,
                   },
@@ -419,8 +429,35 @@ export const callBuildingAI = async (
                       orientation: { type: 'string' },
                       center: { type: 'array', items: { type: 'number' } },
                       size: { type: 'array', items: { type: 'number' } },
+                      batteryId: { type: 'string' },
                     },
-                    required: ['type', 'id', 'pId', 'fId', 'pvModelName', 'orientation', 'center', 'size'],
+                    required: ['type', 'id', 'pId', 'fId', 'pvModelName', 'orientation', 'center', 'size', 'batteryId'],
+                    additionalProperties: false,
+                  },
+                  {
+                    type: 'object',
+                    properties: {
+                      type: { type: 'string', enum: ['Battery Storage'] },
+                      id: { type: 'string' },
+                      pId: { type: 'string' },
+                      center: { type: 'array', items: { type: 'number' } },
+                      size: { type: 'array', items: { type: 'number' } },
+                      color: { type: 'string' },
+                      chargingEfficiency: { type: 'number' },
+                      dischargingEfficiency: { type: 'number' },
+                      hvacId: { type: 'string' },
+                    },
+                    required: [
+                      'type',
+                      'id',
+                      'pId',
+                      'center',
+                      'size',
+                      'color',
+                      'chargingEfficiency',
+                      'dischargingEfficiency',
+                      'hvacId',
+                    ],
                     additionalProperties: false,
                   },
                 ],

@@ -42,6 +42,7 @@ import { RoofUtil } from 'src/views/roof/RoofUtil';
 import { HvacSystem } from '../models/HvacSystem';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { PvModel } from '../models/PvModel';
+import { BatteryStorageModel } from 'src/models/BatteryStorageModel';
 
 export class GenAIUtil {
   static arrayCorrection(jsonElements: any[]) {
@@ -416,6 +417,8 @@ export class GenAIUtil {
     heatingSetpoint: number,
     coolingSetpoint: number,
     coefficientOfPerformanceAC: number,
+    hvacId: string,
+    hasBattery: boolean,
   ) {
     const [cx = 0, cy = 0] = center;
     const [lx = 10, ly = 10, lz = 0.1] = size;
@@ -426,8 +429,8 @@ export class GenAIUtil {
       cx,
       cy,
       cz: lz / 2,
-      lx: lx + 0.5,
-      ly: ly + 0.5,
+      lx: lx + (hasBattery ? 3.5 : 0.5),
+      ly: ly + (hasBattery ? 1.5 : 0.5),
       lz,
       normal: [0, 0, 1],
       rotation: [0, 0, ((((r + 180) % 360) + 360) % 360) - 180],
@@ -439,7 +442,7 @@ export class GenAIUtil {
       solarAbsorberPipe: {},
       solarPowerTower: {},
       hvacSystem: {
-        id: 'HVAC ' + id,
+        id: hvacId,
         heatingSetpoint: heatingSetpoint ?? 20,
         coolingSetpoint: coolingSetpoint ?? 25,
         temperatureThreshold: 3,
@@ -853,6 +856,7 @@ export class GenAIUtil {
     orientation: string,
     center: number[],
     size: number[],
+    batteryId: string,
   ) {
     const actionState = useStore.getState().actionState;
     const pvModules = { ...useStore.getState().supportedPvModules, ...useStore.getState().customPvModules };
@@ -877,11 +881,44 @@ export class GenAIUtil {
       poleRadius: DEFAULT_SOLAR_PANEL_POLE_RADIUS,
       poleSpacing: DEFAULT_SOLAR_PANEL_POLE_SPACING,
       tiltAngle: 0,
+      batteryStorageId: batteryId.length === 0 ? null : batteryId,
       version: 1,
     } as SolarPanelModel;
     sp.lx = Util.panelizeLx(sp, pvModel, lx);
     sp.ly = Util.panelizeLy(sp, pvModel, ly);
     return sp;
+  }
+
+  static makeBatteryStorage(
+    id: string,
+    pId: string,
+    center: number[],
+    size: number[],
+    color: string,
+    charging: number,
+    discharging: number,
+    hvacId: string,
+  ) {
+    const [cx, cy, cz] = center;
+    const [lx, ly, lz] = size;
+    return {
+      type: ObjectType.BatteryStorage,
+      id,
+      parentId: pId,
+      foundationId: pId,
+      cx: cx,
+      cy: cy,
+      cz: cz,
+      lx: lx,
+      ly: ly,
+      lz: lz,
+      chargingEfficiency: charging,
+      dischargingEfficiency: discharging,
+      normal: [0, 0, 0],
+      rotation: [0, 0, 0],
+      color: color,
+      connectedHvacIds: hvacId ? [hvacId] : [],
+    } as BatteryStorageModel;
   }
 
   static calculateSolutionSpace(design: Design) {
