@@ -17,7 +17,7 @@ import { RoofModel, RoofType } from 'src/models/RoofModel';
 import { WALL_PADDING } from '../wall/wall';
 import { WindowModel, WindowType } from '../../models/WindowModel';
 import { FoundationModel } from '../../models/FoundationModel';
-import { DEFAULT_POLYGONTOP } from '../window/window';
+import { DEFAULT_POLYGON_TOP } from '../window/window';
 import { ComposedWall } from './hooks';
 import { useDataStore } from 'src/stores/commonData';
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
@@ -542,7 +542,7 @@ export class RoofUtil {
       }
     }
     if (window.windowType === WindowType.Polygonal) {
-      const [tx, th] = window.polygonTop ?? DEFAULT_POLYGONTOP;
+      const [tx, th] = window.polygonTop ?? DEFAULT_POLYGON_TOP;
       const vertex = new Vector3(tx * window.lx, window.lz + th).add(center);
       vertices.push(vertex);
     }

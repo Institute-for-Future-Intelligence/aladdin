@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo, useRef, useState } from 'react';
@@ -24,7 +24,7 @@ import { UndoableResizeSkylight, UndoableResizeSkylightPolygonTop } from 'src/un
 import { getRoofPointsOfGambrelRoof } from '../roof/flatRoof';
 import { ElementModel } from 'src/models/ElementModel';
 import { Point2 } from 'src/models/Point2';
-import { DEFAULT_POLYGONTOP } from './window';
+import { DEFAULT_POLYGON_TOP } from './window';
 import { FOUNDATION_GROUP_NAME } from '../foundation/foundation';
 import { BUILDING_GROUP_NAME } from '../foundation/buildingRenderer';
 import { useDataStore } from 'src/stores/commonData';
@@ -49,7 +49,7 @@ const getPointerOnIntersectionPlane = (e: ThreeEvent<PointerEvent>) => {
   if (e.intersections.length > 0) {
     for (const intersection of e.intersections) {
       if (intersection.eventObject.name === INTERSECTION_PLANE_NAME) {
-        // don't know why there is case point.z is negtive
+        // don't know why there is case point.z is negative
         if (intersection.point.z < 0) return null;
         return intersection.point;
       }
@@ -210,7 +210,7 @@ const getElementVerticesOnRoof = (el: ElementModel, foundation: FoundationModel,
     }
   }
   if (el.type === ObjectType.Window && (el as WindowModel).windowType === WindowType.Polygonal) {
-    const [tx, th] = (el as WindowModel).polygonTop ?? DEFAULT_POLYGONTOP;
+    const [tx, th] = (el as WindowModel).polygonTop ?? DEFAULT_POLYGON_TOP;
     const v = new Vector3(tx * hx, th + hy).applyEuler(euler).add(center);
     vertices.push(v);
   }
@@ -219,7 +219,7 @@ const getElementVerticesOnRoof = (el: ElementModel, foundation: FoundationModel,
 
 const getPolygonTop = (window: WindowModel) => {
   if (window.windowType !== WindowType.Polygonal) return;
-  return window.polygonTop ?? DEFAULT_POLYGONTOP;
+  return window.polygonTop ?? DEFAULT_POLYGON_TOP;
 };
 
 export const ArchResizeHandle = ({ z }: { z: number }) => {
@@ -411,7 +411,7 @@ const WindowHandleWrapper = ({
     addUndoable(undoable);
   };
 
-  const addUndoableReizePolygonTop = () => {
+  const addUndoableResizePolygonTop = () => {
     if (!oldPolygonTop.current) return;
     const window = useStore.getState().elements.find((e) => e.id === id && e.type === ObjectType.Window) as WindowModel;
     if (!window) return;
@@ -421,7 +421,7 @@ const WindowHandleWrapper = ({
       timestamp: Date.now(),
       id: window.id,
       oldPolygonTop: [...oldPolygonTop.current],
-      newPolygonTop: window.polygonTop ?? DEFAULT_POLYGONTOP,
+      newPolygonTop: window.polygonTop ?? DEFAULT_POLYGON_TOP,
       undo() {
         setUndoableResizePolygonTop(this.id, this.oldPolygonTop);
       },
@@ -445,8 +445,7 @@ const WindowHandleWrapper = ({
       const segmentVertices = useDataStore.getState().getRoofSegmentVertices(parentId);
       if (!segmentVertices) return;
       const idx = segmentIdx === -1 ? segmentVertices.length - 1 : segmentIdx;
-      const vertices = segmentVertices[idx];
-      return vertices;
+      return segmentVertices[idx];
     }
   };
 
@@ -615,7 +614,7 @@ const WindowHandleWrapper = ({
         setCommonStore((state) => {
           const segmentVertices = useDataStore.getState().getRoofSegmentVertices(parentId);
           if (!segmentVertices) return;
-          // mansard top surface idx is -1, and its vertices is the last in the arrary
+          // mansard top surface idx is -1, and its vertices is the last in the array
           const idx = segmentIdx === -1 ? segmentVertices.length - 1 : segmentIdx;
           const vertices = segmentVertices[idx];
           if (!vertices) return;
@@ -726,7 +725,7 @@ const WindowHandleWrapper = ({
         const lowerRightPoint = new Vector3(whx, -whz, 0).applyEuler(euler).add(centerPoint);
 
         const topToBotDist2D = RoofUtil.getDistance(lowerLeftPoint, lowerRightPoint, pointerRelToFoundation);
-        let newLz = Math.hypot(topToBotDist2D, pointerRelToFoundation.z - lowerLeftPoint.z);
+        const newLz = Math.hypot(topToBotDist2D, pointerRelToFoundation.z - lowerLeftPoint.z);
 
         const ah = Math.min(window.archHeight, window.lz, window.lx / 2);
         const rectHeight = window.lz - ah;
@@ -760,7 +759,7 @@ const WindowHandleWrapper = ({
     } else if (isResizeHandle(handleTypeRef.current)) {
       addUndoableResize();
     } else if (handleTypeRef.current === ResizeHandleType.Upper) {
-      addUndoableReizePolygonTop();
+      addUndoableResizePolygonTop();
     } else if (handleTypeRef.current === ResizeHandleType.Arch) {
       addUndoableResize();
     }

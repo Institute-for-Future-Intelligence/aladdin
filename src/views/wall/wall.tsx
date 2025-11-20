@@ -30,7 +30,7 @@ import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { Point2 } from 'src/models/Point2';
 import { ElementGrid } from '../elementGrid';
-import Window, { DEFAULT_POLYGONTOP, WINDOW_GROUP_NAME } from '../window/window';
+import Window, { DEFAULT_POLYGON_TOP, WINDOW_GROUP_NAME } from '../window/window';
 import WallWireFrame from './wallWireFrame';
 import * as Selector from 'src/stores/selector';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
@@ -258,7 +258,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               drawArchWindow(windowShape, wlx, wly, wcx, wcy, window.archHeight);
               break;
             case WindowType.Polygonal: {
-              const [tx, th] = window.polygonTop ?? DEFAULT_POLYGONTOP;
+              const [tx, th] = window.polygonTop ?? DEFAULT_POLYGON_TOP;
               drawPolygonalWindow(windowShape, wlx, wly, wcx, wcy, tx * wlx, th);
               break;
             }
@@ -373,7 +373,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               drawArchWindow(windowShape, wlx, wly, wcx, wcy, window.archHeight);
               break;
             case WindowType.Polygonal: {
-              const [tx, th] = window.polygonTop ?? DEFAULT_POLYGONTOP;
+              const [tx, th] = window.polygonTop ?? DEFAULT_POLYGON_TOP;
               drawPolygonalWindow(windowShape, wlx, wly, wcx, wcy, tx * wlx, th);
               break;
             }
@@ -1796,7 +1796,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             selectedElement.type === ObjectType.Window &&
             (selectedElement as WindowModel).windowType === WindowType.Polygonal
           ) {
-            polygonTop = (selectedElement as WindowModel).polygonTop ?? DEFAULT_POLYGONTOP;
+            polygonTop = (selectedElement as WindowModel).polygonTop ?? DEFAULT_POLYGON_TOP;
             isInside = checkPolygonTopInsideBoundary(boundedPointer, eLx, eLz, polygonTop);
           }
           const isValid = checkCollision(selectedElement.id, boundedPointer, eLx, eLz, polygonTop);
@@ -1858,7 +1858,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               let isPolygonTopInside = true;
               let polygonTop: number[] | undefined = undefined;
               if (window.windowType === WindowType.Polygonal) {
-                polygonTop = window.polygonTop ?? DEFAULT_POLYGONTOP;
+                polygonTop = window.polygonTop ?? DEFAULT_POLYGON_TOP;
                 isPolygonTopInside = checkPolygonTopInsideBoundary(center, dimensionXZ.x, dimensionXZ.z, polygonTop);
               }
               if (

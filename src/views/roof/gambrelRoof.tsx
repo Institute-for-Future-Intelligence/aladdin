@@ -50,7 +50,7 @@ import Ceiling from './ceiling';
 import { BuildingParts, FoundationModel } from '../../models/FoundationModel';
 import FlatRoof from './flatRoof';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
-import { DEFAULT_POLYGONTOP } from '../window/window';
+import { DEFAULT_POLYGON_TOP } from '../window/window';
 import { shallow } from 'zustand/shallow';
 import { useSelected } from '../../hooks';
 
@@ -113,7 +113,7 @@ export const isRoofValid = (wallHeightsMap: Map<string, WallHeights>, foundation
               lz = ly;
             }
             if (child.type === ObjectType.Window && (child as WindowModel).windowType === WindowType.Polygonal) {
-              const [tx, th] = (child as WindowModel).polygonTop ?? DEFAULT_POLYGONTOP;
+              const [tx, th] = (child as WindowModel).polygonTop ?? DEFAULT_POLYGON_TOP;
               const px = cx + tx * lx;
               const pz = cz + lz / 2 + th;
               if (!Util.isPointInside(px, pz, wallShapePoints)) {

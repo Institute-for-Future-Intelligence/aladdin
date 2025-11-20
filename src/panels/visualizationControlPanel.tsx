@@ -101,7 +101,7 @@ const VisualizationControlPanel = React.memo(() => {
                 min={1}
                 max={5}
                 step={1}
-                style={{ width: 65 }}
+                style={{ width: 55 }}
                 precision={0}
                 value={heatFluxWidth ?? 1}
                 onChange={(value) => {

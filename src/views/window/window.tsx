@@ -93,7 +93,7 @@ export const Shutter = ({ cx, cz = 0, lx, lz, color, showLeft, showRight, spacin
 
 export const WINDOW_GROUP_NAME = 'Window Group';
 
-export const DEFAULT_POLYGONTOP = [0, 0.5];
+export const DEFAULT_POLYGON_TOP = [0, 0.5];
 
 const Window = (windowModel: WindowModel) => {
   const {
@@ -128,8 +128,8 @@ const Window = (windowModel: WindowModel) => {
     sillWidth = 0.1,
     windowType = WindowType.Default,
     archHeight,
-    parentType = ObjectType.Wall, // undefined is wall
-    polygonTop = DEFAULT_POLYGONTOP,
+    parentType = ObjectType.Wall, // default to wall
+    polygonTop = DEFAULT_POLYGON_TOP,
   } = windowModel;
 
   const GROUP_NAME = `${WINDOW_GROUP_NAME} ${id}`;
