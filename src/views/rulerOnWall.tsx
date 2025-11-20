@@ -14,7 +14,7 @@ export interface RulerOnWallProps {
   element: ElementModel;
 }
 
-export const RulerOnWall = ({ element }: RulerOnWallProps) => {
+const RulerOnWall = ({ element }: RulerOnWallProps) => {
   const language = useStore(Selector.language);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);

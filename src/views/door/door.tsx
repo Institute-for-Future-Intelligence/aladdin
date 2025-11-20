@@ -13,24 +13,15 @@ import RectangularDoor from './rectangularDoor';
 import ArchedDoor from './archedDoor';
 import { useDoorTexture } from './hooks';
 import { ArchResizeHandle } from '../window/windowHandleWrapper';
-import {
-  CanvasTexture,
-  DoubleSide,
-  FrontSide,
-  MeshBasicMaterial,
-  MeshPhongMaterial,
-  MeshStandardMaterial,
-  RepeatWrapping,
-  Vector3,
-} from 'three';
+import { CanvasTexture, DoubleSide, FrontSide, MeshStandardMaterial, RepeatWrapping, Vector3 } from 'three';
 import { Plane } from '@react-three/drei';
 import { DEFAULT_VIEW_WINDOW_SHININESS, HALF_PI, INVALID_ELEMENT_COLOR } from 'src/constants';
-import { RulerOnWall } from '../rulerOnWall';
 import { Util } from '../../Util';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import { useRefStore } from 'src/stores/commonRef';
 import { useSelected } from '../../hooks';
+import RulerOnWall from '../rulerOnWall';
 
 interface DoorHandleWrapperProps {
   dimension: number[];

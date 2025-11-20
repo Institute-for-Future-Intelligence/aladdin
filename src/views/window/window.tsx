@@ -14,13 +14,13 @@ import { DEFAULT_VIEW_WINDOW_SHININESS, HALF_PI } from 'src/constants';
 import { ThreeEvent } from '@react-three/fiber';
 import RectangleWindow from './rectangularWindow';
 import ArchedWindow from './archedWindow';
-import { RulerOnWall } from '../rulerOnWall';
 import { Util } from '../../Util';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useRefStore } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
 import PolygonalWindow from './polygonalWindow';
 import { useSelected } from '../../hooks';
+import RulerOnWall from '../rulerOnWall';
 
 export type MullionDataType = {
   horizontalMullion: boolean;
