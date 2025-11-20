@@ -70,7 +70,7 @@ const MainMenu = React.memo(({ viewOnly, canvas }: MainMenuProps) => {
   const openModelsMap = usePrimitiveStore(Selector.openModelsMap);
 
   const language = useStore(Selector.language);
-  const user = useStore.getState().user;
+  const user = useStore(Selector.user);
 
   const [aboutUs, setAboutUs] = useState(false);
 
