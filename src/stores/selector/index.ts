@@ -1020,6 +1020,8 @@ export const reasoningEffort = (state: CommonStoreState) => state.projectState.r
 
 export const generateBuildingPrompt = (state: CommonStoreState) => state.projectState.generateBuildingPrompt;
 
+export const generateCSPPrompt = (state: CommonStoreState) => state.projectState.generateCSPPrompt;
+
 export const independentPrompt = (state: CommonStoreState) => state.projectState.independentPrompt;
 
 export const setPrimitiveStore = (state: PrimitiveStoreState) => state.setPrimitiveStore;

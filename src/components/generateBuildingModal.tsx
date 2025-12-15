@@ -357,6 +357,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
       console.log('calling...', input); // for debugging
       const res = (await callAzure({
         text: input,
+        type: 'building',
         reasoningEffort,
       })) as any;
       return res.data.text;

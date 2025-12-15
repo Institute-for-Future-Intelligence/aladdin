@@ -126,6 +126,9 @@ const CreateNewProjectDialog = React.memo(
               <Option key={DesignProblem.BUILDING_DESIGN} value={DesignProblem.BUILDING_DESIGN}>
                 {`${i18n.t('projectPanel.BuildingDesign', lang)}`}
               </Option>
+              <Option key={DesignProblem.CSP_DESIGN} value={DesignProblem.CSP_DESIGN}>
+                {`${i18n.t('projectPanel.CSPDesign', lang)}`}
+              </Option>
             </Select>
           </Col>
         </Row>

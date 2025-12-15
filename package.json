@@ -24,6 +24,7 @@
     "immer": "^9.0.7",
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",
+    "mathjs": "^15.1.0",
     "moment": "^2.29.4",
     "openai": "^4.98.0",
     "papaparse": "^5.3.1",

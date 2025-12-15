@@ -318,8 +318,10 @@ export const i18n_zh_cn = {
       SigningOutAnonymousAccount: '你确定退出吗？一旦退出，此匿名账号将不可恢复。',
       SigningInAnonymousAccount:
         '你确定匿名登录吗？一旦退出，匿名账号将无法恢复。匿名登录主要是为无法实名登录的用户提供临时方便。',
-      GeneratingBuilding: '正在生成建筑。。。',
+      GeneratingBuilding: '正在生成建筑...',
+      GeneratingCSP: '正在生成CSP...',
       GeneratingABuildingMayTakeAWhile: '生成一个建筑可能需要一些时间且无法取消。在按确定键前请仔细考虑好给AI的输入。',
+      GeneratingCSPMayTakeAWhile: '生成CSP可能需要一些时间且无法取消。在按确定键前请仔细考虑好给AI的输入。',
       GeneratedResultNotAccepted: '抱歉，返回结果无法解读。',
     },
 
@@ -1709,7 +1711,9 @@ export const i18n_zh_cn = {
       SelectYAxis: '选择Y轴',
       BuildingDesign: '建筑设计',
       GenerateBuilding: '用AI设计建筑',
+      GenerateCSP: '用AI设计CSP',
       WhatBuildingDoYouWant: '你想要什么样的建筑？',
+      WhatCSPDoYouWant: '你想要什么样的CSP？',
       Listening: '正在倾听...',
       ReasoningEffort: '推理努力程度',
       GenAIPrompt: '生成此分子的提示',
@@ -1719,6 +1723,7 @@ export const i18n_zh_cn = {
       ReasoningInClipBoard: '您现在可以粘贴推理了。',
       UserPrompt: '用户提示',
       AIReasoning: 'AI推理',
+      CSPDesign: 'CSP设计',
     },
 
     accountSettingsPanel: {

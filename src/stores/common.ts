@@ -655,6 +655,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             thumbnailWidth: 200,
             reasoningEffort: 'medium',
             generateBuildingPrompt: 'Generate a colonial style house.',
+            generateCSPPrompt: 'Generate a CPS with Fermat spiral.',
             independentPrompt: false,
           } as ProjectState,
           projectImages: new Map<string, HTMLImageElement>(),

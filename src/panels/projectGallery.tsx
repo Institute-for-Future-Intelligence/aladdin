@@ -79,6 +79,7 @@ import { UndoableChange } from '../undo/UndoableChange';
 import { FidgetSpinner } from 'react-loader-spinner';
 import GenerateBuildingModal from 'src/components/generateBuildingModal';
 import SparkImage from 'src/assets/spark.png';
+import GenerateCSPModal from 'src/components/generateCSPModal';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -194,6 +195,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [updateHiddenFlag, setUpdateHiddenFlag] = useState<boolean>(false);
   const [generateBuildingDialogVisible, setGenerateBuildingDialogVisible] = useState(false);
+  const [generateCSPDialogVisible, setGenerateCSPDialogVisible] = useState(false);
 
   const descriptionTextAreaEditableRef = useRef<boolean>(false);
   const descriptionRef = useRef<string | null>(projectDescription ?? null);
@@ -462,6 +464,29 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           }
           data.push(d);
         }
+      } else if (projectType === DesignProblem.CSP_DESIGN) {
+        for (const design of projectDesigns) {
+          const d = {} as DatumEntry;
+          d['group'] = projectDataColoring === DataColoring.INDIVIDUALS ? design.title : 'default';
+          d['selected'] = selectedDesign === design;
+          d['hovered'] = hoveredDesign === design;
+          d['invisible'] = design.invisible;
+          d['excluded'] = false;
+          if (projectFilters) {
+            for (const f of projectFilters) {
+              if (f.type === FilterType.Between && f.upperBound !== undefined && f.lowerBound !== undefined) {
+                const v = d[f.variable];
+                if (typeof v === 'number') {
+                  if (v > f.upperBound || v < f.lowerBound) {
+                    d['excluded'] = true;
+                    break;
+                  }
+                }
+              }
+            }
+          }
+          data.push(d);
+        }
       }
     }
     return data;
@@ -483,7 +508,9 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     setCommonStore((state) => {
       if (state.projectState.designs) {
         for (const [i, design] of state.projectState.designs.entries()) {
-          design.excluded = data[i].excluded;
+          if (data[i] !== undefined) {
+            design.excluded = data[i].excluded;
+          }
         }
       }
     });
@@ -1783,7 +1810,33 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                   </>
                 )}
 
-                {projectType !== DesignProblem.BUILDING_DESIGN && (
+                {projectType === DesignProblem.CSP_DESIGN && (
+                  <>
+                    {generating ? (
+                      <span
+                        title={t('message.GeneratingCSP', lang)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <FidgetSpinner width={24} height={24} />
+                      </span>
+                    ) : (
+                      <Button
+                        disabled={false}
+                        style={{ border: 'none', padding: '4px' }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setGenerateCSPDialogVisible(true);
+                        }}
+                      >
+                        <img src={GenaiImage} alt={'spark'} title={t('projectPanel.GenerateCSP', lang)} />
+                      </Button>
+                    )}
+                  </>
+                )}
+
+                {projectType !== DesignProblem.BUILDING_DESIGN && projectType !== DesignProblem.CSP_DESIGN && (
                   <Button
                     style={{ border: 'none', padding: '4px' }}
                     onClick={(e) => {
@@ -2194,12 +2247,12 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                     <Popover
                       trigger={'click'}
                       onOpenChange={(open: boolean) => {
-                        if (projectType === DesignProblem.BUILDING_DESIGN) {
+                        if (projectType === DesignProblem.BUILDING_DESIGN || projectType === DesignProblem.CSP_DESIGN) {
                           setPop(open);
                         }
                       }}
                       content={
-                        projectType === DesignProblem.BUILDING_DESIGN && (
+                        (projectType === DesignProblem.BUILDING_DESIGN || projectType === DesignProblem.CSP_DESIGN) && (
                           <Space direction="vertical" style={{ width: '600px' }}>
                             <Space style={{ fontWeight: 'bold' }}>
                               {design.title
@@ -2430,6 +2483,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           setDialogVisible={setGenerateBuildingDialogVisible}
           isDialogVisible={() => generateBuildingDialogVisible}
         />
+        <GenerateCSPModal setDialogVisible={setGenerateCSPDialogVisible} isDialogVisible={generateCSPDialogVisible} />
       </ColumnWrapper>
     </Container>
   );

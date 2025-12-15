@@ -243,6 +243,17 @@ export const updateGenerateBuildingPrompt = async (
   }
 };
 
+export const updateGenerateCSPPrompt = async (userid: string, projectTitle: string, generateCSPPrompt: string) => {
+  const lang = { lng: useStore.getState().language };
+  try {
+    await updateDoc(doc(firestore, 'users', userid, 'projects', projectTitle), {
+      generateCSPPrompt,
+    });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
+};
+
 export const updateAIMemory = async (userid: string, projectTitle: string, memory: boolean) => {
   const lang = { lng: useStore.getState().language };
   try {
@@ -288,6 +299,15 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
       // TODO: Each row has a different tilt angle
       break;
     case DesignProblem.BUILDING_DESIGN: {
+      const genAIData = useStore.getState().genAIData;
+      if (genAIData) {
+        design.prompt = genAIData.prompt;
+        design.data = genAIData.data;
+      }
+      GenAIUtil.calculateSolutionSpace(design);
+      break;
+    }
+    case DesignProblem.CSP_DESIGN: {
       const genAIData = useStore.getState().genAIData;
       if (genAIData) {
         design.prompt = genAIData.prompt;
