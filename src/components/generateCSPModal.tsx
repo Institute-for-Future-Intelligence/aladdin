@@ -273,7 +273,6 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
   };
 
   const onCancel = () => {
-    console.log('oncalcel', generateCSPPrompt);
     setPrompt(generateCSPPrompt);
     close();
   };
@@ -289,7 +288,6 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
     setResults([]);
   };
 
-  console.log('prompt', prompt);
   return (
     <Modal
       width={650}
