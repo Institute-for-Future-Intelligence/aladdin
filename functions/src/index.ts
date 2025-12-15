@@ -11,7 +11,7 @@ exports.callAzure = onCall(
   async (req) => {
     const apiKey = process.env.AZURE_OPENAI_API_KEY;
     const prompt = req.data.text;
-    const type = req.data.type;
+    const type = req.data.type ?? 'building';
     const reasoningEffort = req.data.reasoningEffort ?? 'medium';
     try {
       if (type === 'building') {
