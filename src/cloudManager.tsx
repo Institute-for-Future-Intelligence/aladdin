@@ -786,6 +786,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           independentPrompt: !!data.independentPrompt,
           reasoningEffort: data.reasoningEffrot ?? 'medium',
           generateBuildingPrompt: data.generateBuildingPrompt ?? 'Generate a colonial style house.',
+          generateCSPPrompt: data.generateCSPPrompt ?? 'Generate CSP with Fermat spiral.',
         } as ProjectState);
       });
 
@@ -862,6 +863,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           state.projectState.independentPrompt = false;
           state.projectState.reasoningEffort = 'medium';
           state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
+          state.projectState.generateCSPPrompt = 'Generate CSP with Fermat spiral.';
         }
       });
     } catch (error) {
@@ -1530,6 +1532,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
               state.projectState.independentPrompt = false;
               state.projectState.reasoningEffort = 'medium';
               state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
+              state.projectState.generateCSPPrompt = 'Generate CSP with Fermat spiral.';
             });
           } catch (error) {
             showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
@@ -1588,6 +1591,8 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             const reasoningEffort = useStore.getState().projectState.reasoningEffort ?? 'medium';
             const generateBuildingPrompt =
               useStore.getState().projectState.generateBuildingPrompt ?? 'Generate a colonial style house.';
+            const generateCSPPrompt =
+              useStore.getState().projectState.generateCSPPrompt ?? 'Generate CSP with Fermat spiral.';
             for (const [i, d] of designs.entries()) {
               copyDesign(d.title, newDesigns[i].title, owner, user.uid);
             }
@@ -1621,6 +1626,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                   independentPrompt: !!useStore.getState().projectState.independentPrompt,
                   reasoningEffort,
                   generateBuildingPrompt: generateBuildingPrompt,
+                  generateCSPPrompt: generateCSPPrompt,
                 });
                 setCommonStore((state) => {
                   state.projectView = true;
