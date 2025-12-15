@@ -149,10 +149,14 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
           rotation: [0, 0, 0],
           parentId: foundation.id,
           foundationId: foundation.id,
-          id: p.id,
+          id: short.generate() as string,
         } as HeliostatModel;
         state.elements.push(heliostat);
       }
+
+      state.viewState.cameraPosition = [0, -maxY * 2, maxY * 2];
+      state.viewState.panCenter = [0, 0, 0];
+      state.cameraChangeFlag = !state.cameraChangeFlag;
     });
   };
 

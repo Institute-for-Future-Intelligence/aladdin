@@ -175,6 +175,7 @@ export interface CommonStoreState {
   ray: Raycaster;
   mouse: Vector2;
 
+  cameraChangeFlag: boolean;
   fileChanged: boolean;
   applyCount: number;
   setApplyCount: (count: number) => void;
@@ -745,6 +746,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           ray: new Raycaster(),
           mouse: new Vector2(),
 
+          cameraChangeFlag: false,
           fileChanged: false,
 
           setNavigationView(selected) {

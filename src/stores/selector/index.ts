@@ -202,6 +202,8 @@ export const openLocalFileFlag = (state: PrimitiveStoreState) => state.openLocal
 
 export const saveLocalFileDialogVisible = (state: PrimitiveStoreState) => state.saveLocalFileDialogVisible;
 
+export const cameraChangeFlag = (state: CommonStoreState) => state.cameraChangeFlag;
+
 export const fileChanged = (state: CommonStoreState) => state.fileChanged;
 
 export const undoManager = (state: CommonStoreState) => state.undoManager;

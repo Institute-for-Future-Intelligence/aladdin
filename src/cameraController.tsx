@@ -55,6 +55,7 @@ const CameraController = React.memo(() => {
   const enableRotate = useStore(Selector.viewState.enableRotate);
   const autoRotate = useStore(Selector.viewState.autoRotate);
   const fileChanged = useStore(Selector.fileChanged);
+  const cameraChangeFlag = useStore(Selector.cameraChangeFlag);
   const sceneRadius = useStore(Selector.sceneRadius);
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const cameraZoom = useStore(Selector.viewState.cameraZoom);
@@ -148,6 +149,7 @@ const CameraController = React.memo(() => {
           camera.position.fromArray(positionNav);
           camera.rotation.fromArray([rotationNav[0], rotationNav[1], rotationNav[2], 'XYZ']);
         } else {
+          console.log('updated', viewState.cameraPosition);
           const cameraPosition = getVector(viewState.cameraPosition ?? [0, 0, 20]);
           const panCenter = getVector(viewState.panCenter ?? [0, 0, 0]);
           persCameraRef.current.position.copy(cameraPosition);
@@ -175,7 +177,7 @@ const CameraController = React.memo(() => {
         }
       }
     }
-  }, [fileChanged]);
+  }, [fileChanged, cameraChangeFlag]);
 
   // switch camera
   useEffect(() => {
