@@ -18,7 +18,7 @@ import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
 import { callCSPAI } from 'functions/src/callCSPAI';
-import { FoundationTexture, ObjectType } from 'src/types';
+import { FoundationTexture, ObjectType, SolarStructure } from 'src/types';
 import * as Constants from '../constants';
 import { updateGenerateCSPPrompt } from 'src/cloudProjectUtil';
 import { HeliostatModel } from 'src/models/HeliostatModel';
@@ -70,8 +70,13 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
     if (!useStore.getState().projectState.independentPrompt && designs && designs.length > 0) {
       for (const d of designs) {
         if (d.prompt && d.data) {
+          // const parsedData = JSON.parse(d.data)
+          // delete parsedData.thinking;
+          // const content = JSON.stringify(parsedData);
+          const content = d.data;
+
           input.push({ role: 'user', content: d.prompt });
-          input.push({ role: 'assistant', content: d.data });
+          input.push({ role: 'assistant', content: content });
         }
       }
     }
@@ -89,9 +94,12 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
     console.log('prompt:', prompt);
     console.log('raw', JSON.parse(text));
     console.log('thinking:', json.thinking);
+    console.log('fn', json.fn);
 
     const fn = math.evaluate(json.fn);
     const N = json.N;
+    const heliostatProperties = json.heliostat;
+    const towerProperties = json.tower;
 
     const points = [...Array(N).keys()].map((i) => fn(i + 1)._data);
 
@@ -119,9 +127,11 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
         color: Constants.DEFAULT_FOUNDATION_COLOR,
         textureType: FoundationTexture.NoTexture,
         rValue: Constants.DEFAULT_GROUND_FLOOR_R_VALUE,
+        solarStructure: SolarStructure.FocusTower,
         solarUpdraftTower: {},
         solarAbsorberPipe: {},
-        solarPowerTower: {},
+        solarPowerTower: { towerHeight: towerProperties.height ?? 20, towerRadius: towerProperties.radius ?? 1 },
+        notBuilding: true,
         hvacSystem: { ...Constants.DEFAULT_HVAC_SYSTEM },
         id: short.generate() as string,
       } as FoundationModel;
@@ -131,24 +141,26 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
       for (const p of points) {
         const heliostat = {
           type: ObjectType.Heliostat,
-          towerId: Constants.DEFAULT_HELIOSTAT_TOWER,
           reflectance: Constants.DEFAULT_HELIOSTAT_REFLECTANCE,
           relativeAzimuth: 0,
           tiltAngle: 0,
           drawSunBeam: false,
-          poleHeight: Constants.DEFAULT_HELIOSTAT_POLE_HEIGHT, // extra pole height in addition to half of the width or height, whichever is larger
-          poleRadius: Constants.DEFAULT_HELIOSTAT_POLE_RADIUS,
+          poleHeight: heliostatProperties.poleHeight
+            ? heliostatProperties.poleHeight - 2
+            : Constants.DEFAULT_HELIOSTAT_POLE_HEIGHT, // extra pole height in addition to half of the width or height, whichever is larger
+          poleRadius: heliostatProperties.poleRadius ?? Constants.DEFAULT_HELIOSTAT_POLE_RADIUS,
           cx: p[0] / foundation.lx,
           cy: p[1] / foundation.ly,
           cz: 0.5,
-          lx: 2,
-          ly: 4,
+          lx: heliostatProperties.size[0] ?? 2,
+          ly: heliostatProperties.size[1] ?? 4,
           lz: 0.1,
           showLabel: false,
           normal: [0, 0, 1],
           rotation: [0, 0, 0],
           parentId: foundation.id,
           foundationId: foundation.id,
+          towerId: foundation.id,
           id: short.generate() as string,
         } as HeliostatModel;
         state.elements.push(heliostat);
