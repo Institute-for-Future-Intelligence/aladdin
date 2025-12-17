@@ -22,8 +22,9 @@ Requirements:
   -"poleHeight": the height of the pole, by default is 2.2.
   -"poleRadius": the radius of the pole, by default is 0.1.
 9. The details of solar receiver tower, including:
-  -"height": by default is 20.  
-  -"radius": by default is 1.
+  -"height": default is 20.  
+  -"radius": default is 1.
+  -"center": default is [0, 0].
   Adjust the height and radius of the tower according to the number of the heliostat. The more the larger.
 10. Each heliostat's position should not overlap with others. So choose function and parameter wisely.
 
@@ -81,10 +82,11 @@ export const callCSPAI = async (
             tower: {
               type: 'object',
               properties: {
+                center: { type: 'array', items: { type: 'number' } },
                 height: { type: 'number' },
                 radius: { type: 'number' },
               },
-              required: ['height', 'radius'],
+              required: ['center', 'height', 'radius'],
               additionalProperties: false,
             },
           },

@@ -94,7 +94,7 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
     console.log('prompt:', prompt);
     console.log('raw', JSON.parse(text));
     console.log('thinking:', json.thinking);
-    console.log('fn', json.fn);
+    console.log(json.fn);
 
     const fn = math.evaluate(json.fn);
     const N = json.N;
@@ -105,6 +105,32 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
 
     useStore.getState().set((state) => {
       state.elements = [];
+
+      const towerRadius = Math.max(1, towerProperties.radius ?? 1);
+      const towerHeight = Math.max(10, towerProperties.height ?? 20);
+      const foundation_tower = {
+        type: ObjectType.Foundation,
+        cx: towerProperties.center[0] ?? 0,
+        cy: towerProperties.center[1] ?? 0,
+        cz: 0.05,
+        lx: towerRadius * 2 + 1,
+        ly: towerRadius * 2 + 1,
+        lz: 0.1,
+        normal: [0, 0, 1],
+        rotation: [0, 0, 0],
+        parentId: Constants.GROUND_ID,
+        color: Constants.DEFAULT_FOUNDATION_COLOR,
+        textureType: FoundationTexture.NoTexture,
+        rValue: Constants.DEFAULT_GROUND_FLOOR_R_VALUE,
+        solarUpdraftTower: {},
+        solarAbsorberPipe: {},
+        hvacSystem: { ...Constants.DEFAULT_HVAC_SYSTEM },
+        solarStructure: SolarStructure.FocusTower,
+        solarPowerTower: { towerHeight, towerRadius },
+        notBuilding: true,
+        id: short.generate() as string,
+      } as FoundationModel;
+      state.elements.push(foundation_tower);
 
       let maxX = 0;
       let maxY = 0;
@@ -127,11 +153,9 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
         color: Constants.DEFAULT_FOUNDATION_COLOR,
         textureType: FoundationTexture.NoTexture,
         rValue: Constants.DEFAULT_GROUND_FLOOR_R_VALUE,
-        solarStructure: SolarStructure.FocusTower,
         solarUpdraftTower: {},
         solarAbsorberPipe: {},
-        solarPowerTower: { towerHeight: towerProperties.height ?? 20, towerRadius: towerProperties.radius ?? 1 },
-        notBuilding: true,
+        solarPowerTower: {},
         hvacSystem: { ...Constants.DEFAULT_HVAC_SYSTEM },
         id: short.generate() as string,
       } as FoundationModel;
@@ -160,7 +184,7 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
           rotation: [0, 0, 0],
           parentId: foundation.id,
           foundationId: foundation.id,
-          towerId: foundation.id,
+          towerId: foundation_tower.id,
           id: short.generate() as string,
         } as HeliostatModel;
         state.elements.push(heliostat);
