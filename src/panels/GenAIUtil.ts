@@ -941,12 +941,11 @@ export class GenAIUtil {
       } else {
         design['heliostatLength'] = e.lx;
         design['heliostatWidth'] = e.ly;
-        design['heliostatHeight'] = e.lz + 2;
       }
     }
-    design['heliostatNumber'] = useStore.getState().elements.length - 2;
+    design['heliostatCount'] = useStore.getState().elements.length - 2;
     design['packingDensity'] =
-      (design['heliostatLength'] * design['heliostatWidth'] * design['heliostatNumber'] * 100) / filedArea;
+      (design['heliostatLength'] * design['heliostatWidth'] * design['heliostatCount'] * 100) / filedArea;
   }
 
   static calculateBuildingSolutionSpace(design: Design) {

@@ -157,8 +157,7 @@ const VerticalAxis = React.memo(
         variable === 'interRowSpacing' ||
         variable === 'heliostatLength' ||
         variable === 'heliostatWidth' ||
-        variable === 'heliostatHeight' ||
-        variable === 'heliostatNumber' ||
+        variable === 'heliostatCount' ||
         variable === 'towerHeight'
       )
         return 0;

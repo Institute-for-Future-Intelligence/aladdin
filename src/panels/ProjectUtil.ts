@@ -67,8 +67,7 @@ export class ProjectUtil {
       const a: string[] = [];
       if (!hidden?.includes('heliostatLength')) a.push('heliostatLength');
       if (!hidden?.includes('heliostatWidth')) a.push('heliostatWidth');
-      if (!hidden?.includes('heliostatHeight')) a.push('heliostatHeight');
-      if (!hidden?.includes('heliostatNumber')) a.push('heliostatNumber');
+      if (!hidden?.includes('heliostatCount')) a.push('heliostatCount');
       if (!hidden?.includes('towerHeight')) a.push('towerHeight');
       if (!hidden?.includes('packingDensity')) a.push('packingDensity');
       return a;
@@ -109,8 +108,7 @@ export class ProjectUtil {
       const a: string[] = [];
       if (!hidden?.includes('heliostatLength')) a.push(i18n.t('solutionSpace.HeliostatLength', l));
       if (!hidden?.includes('heliostatWidth')) a.push(i18n.t('solutionSpace.HeliostatWidth', l));
-      if (!hidden?.includes('heliostatHeight')) a.push(i18n.t('solutionSpace.HeliostatHeight', l));
-      if (!hidden?.includes('heliostatNumber')) a.push(i18n.t('solutionSpace.HeliostatNumber', l));
+      if (!hidden?.includes('heliostatCount')) a.push(i18n.t('solutionSpace.heliostatCount', l));
       if (!hidden?.includes('towerHeight')) a.push(i18n.t('solutionSpace.TowerHeight', l));
       if (!hidden?.includes('packingDensity')) a.push(i18n.t('solutionSpace.PackingDensity', l));
       return a;
@@ -151,8 +149,7 @@ export class ProjectUtil {
       const a: string[] = [];
       if (!hidden?.includes('heliostatLength')) a.push('number');
       if (!hidden?.includes('heliostatWidth')) a.push('number');
-      if (!hidden?.includes('heliostatHeight')) a.push('number');
-      if (!hidden?.includes('heliostatNumber')) a.push('number');
+      if (!hidden?.includes('heliostatCount')) a.push('number');
       if (!hidden?.includes('towerHeight')) a.push('number');
       if (!hidden?.includes('packingDensity')) a.push('number');
       return a;
@@ -193,8 +190,7 @@ export class ProjectUtil {
       const a: number[] = [];
       if (!hidden?.includes('heliostatLength')) a.push(1);
       if (!hidden?.includes('heliostatWidth')) a.push(1);
-      if (!hidden?.includes('heliostatHeight')) a.push(1);
-      if (!hidden?.includes('heliostatNumber')) a.push(0);
+      if (!hidden?.includes('heliostatCount')) a.push(0);
       if (!hidden?.includes('towerHeight')) a.push(1);
       if (!hidden?.includes('packingDensity')) a.push(0);
       return a;
@@ -235,8 +231,7 @@ export class ProjectUtil {
       const a: boolean[] = [];
       if (!hidden?.includes('heliostatLength')) a.push(false);
       if (!hidden?.includes('heliostatWidth')) a.push(false);
-      if (!hidden?.includes('heliostatHeight')) a.push(false);
-      if (!hidden?.includes('heliostatNumber')) a.push(false);
+      if (!hidden?.includes('heliostatCount')) a.push(false);
       if (!hidden?.includes('towerHeight')) a.push(false);
       if (!hidden?.includes('packingDensity')) a.push(false);
       return a;
@@ -277,8 +272,7 @@ export class ProjectUtil {
       const a: string[] = [];
       if (!hidden?.includes('heliostatLength')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));
       if (!hidden?.includes('heliostatWidth')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));
-      if (!hidden?.includes('heliostatHeight')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));
-      if (!hidden?.includes('heliostatNumber')) a.push('');
+      if (!hidden?.includes('heliostatCount')) a.push('');
       if (!hidden?.includes('towerHeight')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));
       if (!hidden?.includes('packingDensity')) a.push('%');
       return a;
@@ -306,7 +300,6 @@ export class ProjectUtil {
       case 'height':
       case 'heliostatLength':
       case 'heliostatWidth':
-      case 'heliostatHeight':
       case 'towerHeight':
         return i18n.t('word.MeterAbbreviation', l);
       case 'packingDensity':
@@ -389,11 +382,8 @@ export class ProjectUtil {
       case 'heliostatWidth':
         datum[axis] = design.heliostatWidth;
         break;
-      case 'heliostatHeight':
-        datum[axis] = design.heliostatHeight;
-        break;
-      case 'heliostatNumber':
-        datum[axis] = design.heliostatNumber;
+      case 'heliostatCount':
+        datum[axis] = design.heliostatCount;
         break;
       case 'towerHeight':
         datum[axis] = design.towerHeight;

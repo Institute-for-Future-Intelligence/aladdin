@@ -473,8 +473,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           const d = {} as DatumEntry;
           if (!hiddenParameters?.includes('heliostatLength')) d['heliostatLength'] = design.heliostatLength;
           if (!hiddenParameters?.includes('heliostatWidth')) d['heliostatWidth'] = design.heliostatWidth;
-          if (!hiddenParameters?.includes('heliostatHeight')) d['heliostatHeight'] = design.heliostatHeight;
-          if (!hiddenParameters?.includes('heliostatNumber')) d['heliostatNumber'] = design.heliostatNumber;
+          if (!hiddenParameters?.includes('heliostatCount')) d['heliostatCount'] = design.heliostatCount;
           if (!hiddenParameters?.includes('towerHeight')) d['towerHeight'] = design.towerHeight;
           if (!hiddenParameters?.includes('packingDensity')) d['packingDensity'] = design.packingDensity;
           d['group'] = projectDataColoring === DataColoring.INDIVIDUALS ? design.title : 'default';
@@ -588,8 +587,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       const array: number[] = [];
       if (!hiddenParameters?.includes('heliostatLength')) array.push(getMin('heliostatLength', 0));
       if (!hiddenParameters?.includes('heliostatWidth')) array.push(getMin('heliostatWidth', 0));
-      if (!hiddenParameters?.includes('heliostatHeight')) array.push(getMin('heliostatHeight', 0));
-      if (!hiddenParameters?.includes('heliostatNumber')) array.push(getMin('heliostatNumber', 0));
+      if (!hiddenParameters?.includes('heliostatCount')) array.push(getMin('heliostatCount', 0));
       if (!hiddenParameters?.includes('towerHeight')) array.push(getMin('towerHeight', 10));
       if (!hiddenParameters?.includes('packingDensity')) array.push(getMin('packingDensity', 0));
       return array;
@@ -634,8 +632,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       const array: number[] = [];
       if (!hiddenParameters?.includes('heliostatLength')) array.push(getMax('heliostatLength', 20));
       if (!hiddenParameters?.includes('heliostatWidth')) array.push(getMax('heliostatWidth', 20));
-      if (!hiddenParameters?.includes('heliostatHeight')) array.push(getMax('heliostatHeight', 7));
-      if (!hiddenParameters?.includes('heliostatNumber')) array.push(getMax('heliostatNumber', 5000));
+      if (!hiddenParameters?.includes('heliostatCount')) array.push(getMax('heliostatCount', 5000));
       if (!hiddenParameters?.includes('towerHeight')) array.push(getMax('towerHeight', 500));
       if (!hiddenParameters?.includes('packingDensity')) array.push(getMax('packingDensity', 100));
       return array;
@@ -733,8 +730,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       const array: Filter[] = [];
       if (!hiddenParameters?.includes('heliostatLength')) array.push(createFilter('heliostatLength', 20, 0));
       if (!hiddenParameters?.includes('heliostatWidth')) array.push(createFilter('heliostatWidth', 20, 0));
-      if (!hiddenParameters?.includes('heliostatHeight')) array.push(createFilter('heliostatHeight', 7, 0));
-      if (!hiddenParameters?.includes('heliostatNumber')) array.push(createFilter('heliostatNumber', 5000, 0));
+      if (!hiddenParameters?.includes('heliostatCount')) array.push(createFilter('heliostatCount', 5000, 0));
       if (!hiddenParameters?.includes('towerHeight')) array.push(createFilter('towerHeight', 500, 10));
       if (!hiddenParameters?.includes('packingDensity')) array.push(createFilter('packingDensity', 100, 0));
       return array;
@@ -773,10 +769,9 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       return array;
     } else if (projectType === DesignProblem.CSP_DESIGN) {
       const array: number[] = [];
-      if (!hiddenParameters?.includes('heliostatHeight')) array.push(0.1);
       if (!hiddenParameters?.includes('heliostatLength')) array.push(0.1);
       if (!hiddenParameters?.includes('heliostatWidth')) array.push(0.1);
-      if (!hiddenParameters?.includes('heliostatNumber')) array.push(1);
+      if (!hiddenParameters?.includes('heliostatCount')) array.push(1);
       if (!hiddenParameters?.includes('towerHeight')) array.push(1);
       if (!hiddenParameters?.includes('packingDensity')) array.push(1);
       return array;
@@ -1280,22 +1275,11 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           <Checkbox
             style={{ width: '100%' }}
             onChange={(e) => {
-              selectParameter(e.target.checked, 'heliostatHeight');
+              selectParameter(e.target.checked, 'heliostatCount');
             }}
-            checked={!hiddenParameters?.includes('heliostatHeight')}
+            checked={!hiddenParameters?.includes('heliostatCount')}
           >
-            <span style={{ fontSize: '12px' }}>{t('solutionSpace.HeliostatHeight', lang)}</span>
-          </Checkbox>
-          <br />
-
-          <Checkbox
-            style={{ width: '100%' }}
-            onChange={(e) => {
-              selectParameter(e.target.checked, 'heliostatNumber');
-            }}
-            checked={!hiddenParameters?.includes('heliostatNumber')}
-          >
-            <span style={{ fontSize: '12px' }}>{t('solutionSpace.HeliostatNumber', lang)}</span>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.heliostatCount', lang)}</span>
           </Checkbox>
           <br />
 
@@ -1413,11 +1397,8 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           <Option key={'heliostatWidth'} value={'heliostatWidth'}>
             <span style={{ fontSize: '12px' }}>{t('solutionSpace.HeliostatWidth', lang)}</span>
           </Option>
-          <Option key={'heliostatHeight'} value={'heliostatHeight'}>
-            <span style={{ fontSize: '12px' }}>{t('solutionSpace.HeliostatHeight', lang)}</span>
-          </Option>
-          <Option key={'heliostatNumber'} value={'heliostatNumber'}>
-            <span style={{ fontSize: '12px' }}>{t('solutionSpace.HeliostatNumber', lang)}</span>
+          <Option key={'heliostatCount'} value={'heliostatCount'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.heliostatCount', lang)}</span>
           </Option>
           <Option key={'towerHeight'} value={'towerHeight'}>
             <span style={{ fontSize: '12px' }}>{t('solutionSpace.TowerHeight', lang)}</span>
@@ -1586,13 +1567,9 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           bound.min = getMin('heliostatWidth', 0);
           bound.max = getMax('heliostatWidth', 20);
           break;
-        case 'heliostatHeight':
-          bound.min = getMin('heliostatHeight', 0);
-          bound.max = getMax('heliostatHeight', 7);
-          break;
-        case 'heliostatNumber':
-          bound.min = getMin('heliostatNumber', 0);
-          bound.max = getMax('heliostatNumber', 5000);
+        case 'heliostatCount':
+          bound.min = getMin('heliostatCount', 0);
+          bound.max = getMax('heliostatCount', 5000);
           break;
         case 'towerHeight':
           bound.min = getMin('towerHeight', 10);
