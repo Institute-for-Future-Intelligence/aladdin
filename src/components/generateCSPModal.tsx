@@ -108,13 +108,13 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
 
       const towerRadius = Math.max(1, towerProperties.radius ?? 1);
       const towerHeight = Math.max(10, towerProperties.height ?? 20);
-      const foundation_tower = {
+      const towerFoundation = {
         type: ObjectType.Foundation,
         cx: towerProperties.center[0] ?? 0,
         cy: towerProperties.center[1] ?? 0,
         cz: 1.5,
-        lx: towerRadius * 2 + 1,
-        ly: towerRadius * 2 + 1,
+        lx: Math.max(10, towerRadius * 4),
+        ly: Math.max(10, towerRadius * 4),
         lz: 3,
         normal: [0, 0, 1],
         rotation: [0, 0, 0],
@@ -130,7 +130,7 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
         notBuilding: true,
         id: short.generate() as string,
       } as FoundationModel;
-      state.elements.push(foundation_tower);
+      state.elements.push(towerFoundation);
 
       let maxX = 0;
       let maxY = 0;
@@ -184,7 +184,7 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
           rotation: [0, 0, 0],
           parentId: foundation.id,
           foundationId: foundation.id,
-          towerId: foundation_tower.id,
+          towerId: towerFoundation.id,
           id: short.generate() as string,
         } as HeliostatModel;
         state.elements.push(heliostat);

@@ -154,7 +154,12 @@ const VerticalAxis = React.memo(
         variable === 'meanYearlyYield' ||
         variable === 'unitCost' ||
         variable === 'poleHeight' ||
-        variable === 'interRowSpacing'
+        variable === 'interRowSpacing' ||
+        variable === 'heliostatLength' ||
+        variable === 'heliostatWidth' ||
+        variable === 'heliostatHeight' ||
+        variable === 'heliostatNumber' ||
+        variable === 'towerHeight'
       )
         return 0;
       if (variable === 'tiltAngle') return -90;
@@ -166,6 +171,7 @@ const VerticalAxis = React.memo(
     const getMax = () => {
       if (variable === 'tiltAngle') return 90;
       if (variable === 'latitude') return 90;
+      if (variable === 'packingDensity') return 100;
       return Number.MAX_SAFE_INTEGER;
     };
 

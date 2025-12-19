@@ -36,7 +36,15 @@ import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { useStore } from 'src/stores/common';
 import { useDataStore } from 'src/stores/commonData';
-import { Design, FoundationTexture, ObjectType, Orientation, RoofTexture, WallTexture } from 'src/types';
+import {
+  Design,
+  FoundationTexture,
+  ObjectType,
+  Orientation,
+  RoofTexture,
+  SolarStructure,
+  WallTexture,
+} from 'src/types';
 import { Util } from 'src/Util';
 import { RoofUtil } from 'src/views/roof/RoofUtil';
 import { HvacSystem } from '../models/HvacSystem';
@@ -921,7 +929,27 @@ export class GenAIUtil {
     } as BatteryStorageModel;
   }
 
-  static calculateSolutionSpace(design: Design) {
+  static calculateCSPSolutionSpace(design: Design) {
+    let filedArea = 1;
+    for (const e of useStore.getState().elements) {
+      if (e.type === ObjectType.Foundation) {
+        const f = e as FoundationModel;
+        filedArea = Math.max(filedArea, f.lx * f.ly);
+        if (f.notBuilding && f.solarStructure === SolarStructure.FocusTower) {
+          design['towerHeight'] = f.solarPowerTower?.receiverHeight ?? 10;
+        }
+      } else {
+        design['heliostatLength'] = e.lx;
+        design['heliostatWidth'] = e.ly;
+        design['heliostatHeight'] = e.lz + 2;
+      }
+    }
+    design['heliostatNumber'] = useStore.getState().elements.length - 2;
+    design['packingDensity'] =
+      (design['heliostatLength'] * design['heliostatWidth'] * design['heliostatNumber'] * 100) / filedArea;
+  }
+
+  static calculateBuildingSolutionSpace(design: Design) {
     let floorArea = 0;
     let surfaceArea = 0;
     let fenestratedArea = 0; // no windows on roof for now

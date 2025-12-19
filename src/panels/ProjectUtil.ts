@@ -63,6 +63,15 @@ export class ProjectUtil {
       if (!hidden?.includes('solar')) a.push('solar');
       if (!hidden?.includes('net')) a.push('net');
       return a;
+    } else if (projectType === DesignProblem.CSP_DESIGN) {
+      const a: string[] = [];
+      if (!hidden?.includes('heliostatLength')) a.push('heliostatLength');
+      if (!hidden?.includes('heliostatWidth')) a.push('heliostatWidth');
+      if (!hidden?.includes('heliostatHeight')) a.push('heliostatHeight');
+      if (!hidden?.includes('heliostatNumber')) a.push('heliostatNumber');
+      if (!hidden?.includes('towerHeight')) a.push('towerHeight');
+      if (!hidden?.includes('packingDensity')) a.push('packingDensity');
+      return a;
     }
     return [];
   }
@@ -95,6 +104,15 @@ export class ProjectUtil {
       if (!hidden?.includes('cooling')) a.push(i18n.t('solutionSpace.Cooling', l));
       if (!hidden?.includes('solar')) a.push(i18n.t('solutionSpace.Solar', l));
       if (!hidden?.includes('net')) a.push(i18n.t('solutionSpace.Net', l));
+      return a;
+    } else if (projectType === DesignProblem.CSP_DESIGN) {
+      const a: string[] = [];
+      if (!hidden?.includes('heliostatLength')) a.push(i18n.t('solutionSpace.HeliostatLength', l));
+      if (!hidden?.includes('heliostatWidth')) a.push(i18n.t('solutionSpace.HeliostatWidth', l));
+      if (!hidden?.includes('heliostatHeight')) a.push(i18n.t('solutionSpace.HeliostatHeight', l));
+      if (!hidden?.includes('heliostatNumber')) a.push(i18n.t('solutionSpace.HeliostatNumber', l));
+      if (!hidden?.includes('towerHeight')) a.push(i18n.t('solutionSpace.TowerHeight', l));
+      if (!hidden?.includes('packingDensity')) a.push(i18n.t('solutionSpace.PackingDensity', l));
       return a;
     }
     return [];
@@ -129,6 +147,15 @@ export class ProjectUtil {
       if (!hidden?.includes('solar')) a.push('number');
       if (!hidden?.includes('net')) a.push('number');
       return a;
+    } else if (projectType === DesignProblem.CSP_DESIGN) {
+      const a: string[] = [];
+      if (!hidden?.includes('heliostatLength')) a.push('number');
+      if (!hidden?.includes('heliostatWidth')) a.push('number');
+      if (!hidden?.includes('heliostatHeight')) a.push('number');
+      if (!hidden?.includes('heliostatNumber')) a.push('number');
+      if (!hidden?.includes('towerHeight')) a.push('number');
+      if (!hidden?.includes('packingDensity')) a.push('number');
+      return a;
     }
     return [];
   }
@@ -161,6 +188,15 @@ export class ProjectUtil {
       if (!hidden?.includes('cooling')) a.push(1);
       if (!hidden?.includes('solar')) a.push(1);
       if (!hidden?.includes('net')) a.push(1);
+      return a;
+    } else if (projectType === DesignProblem.CSP_DESIGN) {
+      const a: number[] = [];
+      if (!hidden?.includes('heliostatLength')) a.push(1);
+      if (!hidden?.includes('heliostatWidth')) a.push(1);
+      if (!hidden?.includes('heliostatHeight')) a.push(1);
+      if (!hidden?.includes('heliostatNumber')) a.push(0);
+      if (!hidden?.includes('towerHeight')) a.push(1);
+      if (!hidden?.includes('packingDensity')) a.push(0);
       return a;
     }
     return [];
@@ -195,6 +231,15 @@ export class ProjectUtil {
       if (!hidden?.includes('solar')) a.push(false);
       if (!hidden?.includes('net')) a.push(false);
       return a;
+    } else if (projectType === DesignProblem.CSP_DESIGN) {
+      const a: boolean[] = [];
+      if (!hidden?.includes('heliostatLength')) a.push(false);
+      if (!hidden?.includes('heliostatWidth')) a.push(false);
+      if (!hidden?.includes('heliostatHeight')) a.push(false);
+      if (!hidden?.includes('heliostatNumber')) a.push(false);
+      if (!hidden?.includes('towerHeight')) a.push(false);
+      if (!hidden?.includes('packingDensity')) a.push(false);
+      return a;
     }
     return [];
   }
@@ -228,14 +273,21 @@ export class ProjectUtil {
       if (!hidden?.includes('solar')) a.push('kWh');
       if (!hidden?.includes('net')) a.push('kWh');
       return a;
+    } else if (projectType === DesignProblem.CSP_DESIGN) {
+      const a: string[] = [];
+      if (!hidden?.includes('heliostatLength')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));
+      if (!hidden?.includes('heliostatWidth')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));
+      if (!hidden?.includes('heliostatHeight')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));
+      if (!hidden?.includes('heliostatNumber')) a.push('');
+      if (!hidden?.includes('towerHeight')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));
+      if (!hidden?.includes('packingDensity')) a.push('%');
+      return a;
     }
     return [];
   }
 
   static getUnit(variable: string, l: { lng: string }): string {
     if (variable === 'tiltAngle' || variable === 'latitude') return '°';
-    if (variable === 'interRowSpacing') return i18n.t('word.MeterAbbreviation', l);
-    if (variable === 'poleHeight') return i18n.t('word.MeterAbbreviation', l);
     if (variable === 'totalYearlyYield') return 'MWh';
     if (variable === 'meanYearlyYield') return 'kWh';
     if (variable === 'totalYearlyCost') return 'K';
@@ -243,12 +295,23 @@ export class ProjectUtil {
     if (variable === 'floorArea') return 'm²';
     if (variable === 'volume') return 'm³';
     if (variable === 'surfaceArea') return 'm²';
-    if (variable === 'height') return i18n.t('word.MeterAbbreviation', l);
     if (variable === 'buildingOrientation') return '°';
     if (variable === 'heating') return 'kWh';
     if (variable === 'cooling') return 'kWh';
     if (variable === 'solar') return 'kWh';
     if (variable === 'net') return 'kWh';
+    switch (variable) {
+      case 'interRowSpacing':
+      case 'poleHeight':
+      case 'height':
+      case 'heliostatLength':
+      case 'heliostatWidth':
+      case 'heliostatHeight':
+      case 'towerHeight':
+        return i18n.t('word.MeterAbbreviation', l);
+      case 'packingDensity':
+        return '%';
+    }
     return '';
   }
 
@@ -319,6 +382,24 @@ export class ProjectUtil {
         break;
       case 'yearlyProfit':
         datum[axis] = Util.calculateProfit(design);
+        break;
+      case 'heliostatLength':
+        datum[axis] = design.heliostatLength;
+        break;
+      case 'heliostatWidth':
+        datum[axis] = design.heliostatWidth;
+        break;
+      case 'heliostatHeight':
+        datum[axis] = design.heliostatHeight;
+        break;
+      case 'heliostatNumber':
+        datum[axis] = design.heliostatNumber;
+        break;
+      case 'towerHeight':
+        datum[axis] = design.towerHeight;
+        break;
+      case 'packingDensity':
+        datum[axis] = design.packingDensity;
         break;
     }
   }

@@ -205,10 +205,8 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const parameterSelectionChangedRef = useRef<boolean>(false);
   const projectDesignsRef = useRef<Design[]>(projectDesigns ?? []); // store sorted designs
   const thumbnailSizeRef = useRef<number>(projectThumbnailWidth ?? 200);
-  const xAxisRef = useRef<string>(
-    xAxisNameScatterPlot ?? projectType === DesignProblem.BUILDING_DESIGN ? 'floorArea' : 'rowWidth',
-  );
-  const yAxisRef = useRef<string>(yAxisNameScatterPlot ?? 'rowWidth');
+  const xAxisRef = useRef<string>(xAxisNameScatterPlot ?? getDefaultScatterPlotAxisName(projectType));
+  const yAxisRef = useRef<string>(yAxisNameScatterPlot ?? getDefaultScatterPlotAxisName(projectType));
   const dotSizeRef = useRef<number>(dotSizeScatterPlot ?? 5);
   const scatterChartHorizontalLinesRef = useRef<boolean>(true);
   const scatterChartVerticalLinesRef = useRef<boolean>(true);
@@ -216,12 +214,18 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
 
   const [pop, setPop] = useState(false);
 
+  function getDefaultScatterPlotAxisName(projectType: DesignProblem) {
+    if (projectType === DesignProblem.BUILDING_DESIGN) return 'floorArea';
+    if (projectType === DesignProblem.CSP_DESIGN) return 'heliostatLength';
+    return 'rowWidth';
+  }
+
   useEffect(() => {
-    xAxisRef.current = xAxisNameScatterPlot ?? projectType === DesignProblem.BUILDING_DESIGN ? 'floorArea' : 'rowWidth';
+    xAxisRef.current = xAxisNameScatterPlot ?? getDefaultScatterPlotAxisName(projectType);
   }, [xAxisNameScatterPlot, projectType]);
 
   useEffect(() => {
-    yAxisRef.current = yAxisNameScatterPlot ?? projectType === DesignProblem.BUILDING_DESIGN ? 'floorArea' : 'rowWidth';
+    yAxisRef.current = yAxisNameScatterPlot ?? getDefaultScatterPlotAxisName(projectType);
   }, [yAxisNameScatterPlot, projectType]);
 
   useEffect(() => {
@@ -391,7 +395,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     [projectType, hiddenParameters, updateHiddenFlag, lang],
   );
 
-  const data: DatumEntry[] = useMemo(() => {
+  const solutionSpaceData: DatumEntry[] = useMemo(() => {
     const data: DatumEntry[] = [];
     if (projectDesigns) {
       if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
@@ -467,6 +471,12 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       } else if (projectType === DesignProblem.CSP_DESIGN) {
         for (const design of projectDesigns) {
           const d = {} as DatumEntry;
+          if (!hiddenParameters?.includes('heliostatLength')) d['heliostatLength'] = design.heliostatLength;
+          if (!hiddenParameters?.includes('heliostatWidth')) d['heliostatWidth'] = design.heliostatWidth;
+          if (!hiddenParameters?.includes('heliostatHeight')) d['heliostatHeight'] = design.heliostatHeight;
+          if (!hiddenParameters?.includes('heliostatNumber')) d['heliostatNumber'] = design.heliostatNumber;
+          if (!hiddenParameters?.includes('towerHeight')) d['towerHeight'] = design.towerHeight;
+          if (!hiddenParameters?.includes('packingDensity')) d['packingDensity'] = design.packingDensity;
           d['group'] = projectDataColoring === DataColoring.INDIVIDUALS ? design.title : 'default';
           d['selected'] = selectedDesign === design;
           d['hovered'] = hoveredDesign === design;
@@ -508,13 +518,13 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     setCommonStore((state) => {
       if (state.projectState.designs) {
         for (const [i, design] of state.projectState.designs.entries()) {
-          if (data[i] !== undefined) {
-            design.excluded = data[i].excluded;
+          if (solutionSpaceData[i] !== undefined) {
+            design.excluded = solutionSpaceData[i].excluded;
           }
         }
       }
     });
-  }, [data]);
+  }, [solutionSpaceData]);
 
   const getMin = (variable: string, defaultValue: number) => {
     let min = defaultValue;
@@ -574,6 +584,15 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('solar')) array.push(getMin('solar', 0));
       if (!hiddenParameters?.includes('net')) array.push(getMin('net', 0));
       return array;
+    } else if (projectType === DesignProblem.CSP_DESIGN) {
+      const array: number[] = [];
+      if (!hiddenParameters?.includes('heliostatLength')) array.push(getMin('heliostatLength', 0));
+      if (!hiddenParameters?.includes('heliostatWidth')) array.push(getMin('heliostatWidth', 0));
+      if (!hiddenParameters?.includes('heliostatHeight')) array.push(getMin('heliostatHeight', 0));
+      if (!hiddenParameters?.includes('heliostatNumber')) array.push(getMin('heliostatNumber', 0));
+      if (!hiddenParameters?.includes('towerHeight')) array.push(getMin('towerHeight', 10));
+      if (!hiddenParameters?.includes('packingDensity')) array.push(getMin('packingDensity', 0));
+      return array;
     }
     return [];
   }, [solarPanelArrayLayoutConstraints, projectType, projectRanges, hiddenParameters, updateHiddenFlag]);
@@ -610,6 +629,15 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('cooling')) array.push(getMax('cooling', 100000));
       if (!hiddenParameters?.includes('solar')) array.push(getMax('solar', 100000));
       if (!hiddenParameters?.includes('net')) array.push(getMax('net', 100000));
+      return array;
+    } else if (projectType === DesignProblem.CSP_DESIGN) {
+      const array: number[] = [];
+      if (!hiddenParameters?.includes('heliostatLength')) array.push(getMax('heliostatLength', 20));
+      if (!hiddenParameters?.includes('heliostatWidth')) array.push(getMax('heliostatWidth', 20));
+      if (!hiddenParameters?.includes('heliostatHeight')) array.push(getMax('heliostatHeight', 7));
+      if (!hiddenParameters?.includes('heliostatNumber')) array.push(getMax('heliostatNumber', 5000));
+      if (!hiddenParameters?.includes('towerHeight')) array.push(getMax('towerHeight', 500));
+      if (!hiddenParameters?.includes('packingDensity')) array.push(getMax('packingDensity', 100));
       return array;
     }
     return [];
@@ -688,7 +716,6 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('yearlyProfit')) array.push(createFilter('yearlyProfit', 10, -10));
       return array;
     } else if (projectType === DesignProblem.BUILDING_DESIGN) {
-      // todo: genAI range filter
       const array: Filter[] = [];
       if (!hiddenParameters?.includes('floorArea')) array.push(createFilter('floorArea', 500, 0));
       if (!hiddenParameters?.includes('volume')) array.push(createFilter('volume', 1000, 0));
@@ -701,6 +728,15 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('cooling')) array.push(createFilter('cooling', 100000, 0));
       if (!hiddenParameters?.includes('solar')) array.push(createFilter('solar', 100000, 0));
       if (!hiddenParameters?.includes('net')) array.push(createFilter('net', 100000, 0));
+      return array;
+    } else if (projectType === DesignProblem.CSP_DESIGN) {
+      const array: Filter[] = [];
+      if (!hiddenParameters?.includes('heliostatLength')) array.push(createFilter('heliostatLength', 20, 0));
+      if (!hiddenParameters?.includes('heliostatWidth')) array.push(createFilter('heliostatWidth', 20, 0));
+      if (!hiddenParameters?.includes('heliostatHeight')) array.push(createFilter('heliostatHeight', 7, 0));
+      if (!hiddenParameters?.includes('heliostatNumber')) array.push(createFilter('heliostatNumber', 5000, 0));
+      if (!hiddenParameters?.includes('towerHeight')) array.push(createFilter('towerHeight', 500, 10));
+      if (!hiddenParameters?.includes('packingDensity')) array.push(createFilter('packingDensity', 100, 0));
       return array;
     }
     return [];
@@ -734,6 +770,15 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('cooling')) array.push(100);
       if (!hiddenParameters?.includes('solar')) array.push(100);
       if (!hiddenParameters?.includes('net')) array.push(100);
+      return array;
+    } else if (projectType === DesignProblem.CSP_DESIGN) {
+      const array: number[] = [];
+      if (!hiddenParameters?.includes('heliostatHeight')) array.push(0.1);
+      if (!hiddenParameters?.includes('heliostatLength')) array.push(0.1);
+      if (!hiddenParameters?.includes('heliostatWidth')) array.push(0.1);
+      if (!hiddenParameters?.includes('heliostatNumber')) array.push(1);
+      if (!hiddenParameters?.includes('towerHeight')) array.push(1);
+      if (!hiddenParameters?.includes('packingDensity')) array.push(1);
       return array;
     }
     return [];
@@ -1207,6 +1252,77 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
         </div>
       );
     }
+    if (projectType === DesignProblem.CSP_DESIGN) {
+      return (
+        <div>
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              selectParameter(e.target.checked, 'heliostatLength');
+            }}
+            checked={!hiddenParameters?.includes('heliostatLength')}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.HeliostatLength', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              selectParameter(e.target.checked, 'heliostatWidth');
+            }}
+            checked={!hiddenParameters?.includes('heliostatWidth')}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.HeliostatWidth', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              selectParameter(e.target.checked, 'heliostatHeight');
+            }}
+            checked={!hiddenParameters?.includes('heliostatHeight')}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.HeliostatHeight', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              selectParameter(e.target.checked, 'heliostatNumber');
+            }}
+            checked={!hiddenParameters?.includes('heliostatNumber')}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.HeliostatNumber', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              selectParameter(e.target.checked, 'towerHeight');
+            }}
+            checked={!hiddenParameters?.includes('towerHeight')}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.TowerHeight', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              selectParameter(e.target.checked, 'packingDensity');
+            }}
+            checked={!hiddenParameters?.includes('packingDensity')}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.PackingDensity', lang)}</span>
+          </Checkbox>
+          <br />
+        </div>
+      );
+    }
   };
 
   const createAxisOptions = () => {
@@ -1288,6 +1404,30 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
         </>
       );
     }
+    if (projectType === DesignProblem.CSP_DESIGN) {
+      return (
+        <>
+          <Option key={'heliostatLength'} value={'heliostatLength'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.HeliostatLength', lang)}</span>
+          </Option>
+          <Option key={'heliostatWidth'} value={'heliostatWidth'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.HeliostatWidth', lang)}</span>
+          </Option>
+          <Option key={'heliostatHeight'} value={'heliostatHeight'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.HeliostatHeight', lang)}</span>
+          </Option>
+          <Option key={'heliostatNumber'} value={'heliostatNumber'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.HeliostatNumber', lang)}</span>
+          </Option>
+          <Option key={'towerHeight'} value={'towerHeight'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.TowerHeight', lang)}</span>
+          </Option>
+          <Option key={'packingDensity'} value={'packingDensity'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.PackingDensity', lang)}</span>
+          </Option>
+        </>
+      );
+    }
   };
 
   const scatterData = useMemo(() => {
@@ -1302,6 +1442,14 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           data.push(d);
         }
       } else if (projectType === DesignProblem.BUILDING_DESIGN) {
+        for (const design of projectDesigns) {
+          if (design.invisible || design === selectedDesign) continue;
+          const d = {} as { x: number; y: number };
+          ProjectUtil.setScatterData(xAxisRef.current, 'x', d, design);
+          ProjectUtil.setScatterData(yAxisRef.current, 'y', d, design);
+          data.push(d);
+        }
+      } else if (projectType === DesignProblem.CSP_DESIGN) {
         for (const design of projectDesigns) {
           if (design.invisible || design === selectedDesign) continue;
           const d = {} as { x: number; y: number };
@@ -1326,6 +1474,14 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           data.push(d);
         }
       } else if (projectType === DesignProblem.BUILDING_DESIGN) {
+        for (const design of projectDesigns) {
+          if (design !== selectedDesign) continue;
+          const d = {} as { x: number; y: number };
+          ProjectUtil.setScatterData(xAxisRef.current, 'x', d, design);
+          ProjectUtil.setScatterData(yAxisRef.current, 'y', d, design);
+          data.push(d);
+        }
+      } else if (projectType === DesignProblem.CSP_DESIGN) {
         for (const design of projectDesigns) {
           if (design !== selectedDesign) continue;
           const d = {} as { x: number; y: number };
@@ -1417,6 +1573,34 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
         case 'buildingOrientation':
           bound.min = getMin('buildingOrientation', -180);
           bound.max = getMax('buildingOrientation', 180);
+          break;
+      }
+    } else if (projectType === DesignProblem.CSP_DESIGN) {
+      // todo: genAI range scatter plot
+      switch (axisName) {
+        case 'heliostatLength':
+          bound.min = getMin('heliostatLength', 0);
+          bound.max = getMax('heliostatLength', 20);
+          break;
+        case 'heliostatWidth':
+          bound.min = getMin('heliostatWidth', 0);
+          bound.max = getMax('heliostatWidth', 20);
+          break;
+        case 'heliostatHeight':
+          bound.min = getMin('heliostatHeight', 0);
+          bound.max = getMax('heliostatHeight', 7);
+          break;
+        case 'heliostatNumber':
+          bound.min = getMin('heliostatNumber', 0);
+          bound.max = getMax('heliostatNumber', 5000);
+          break;
+        case 'towerHeight':
+          bound.min = getMin('towerHeight', 10);
+          bound.max = getMax('towerHeight', 500);
+          break;
+        case 'packingDensity':
+          bound.min = getMin('packingDensity', 0);
+          bound.max = getMax('packingDensity', 100);
           break;
       }
     }
@@ -1554,6 +1738,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                     xAxisRef.current === 'sellingPrice'
                   )
                     return '$' + value;
+                  if (xAxisRef.current === 'packingDensity') return value.toFixed(0);
                   return value;
                 }}
               />
@@ -1573,6 +1758,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                     yAxisRef.current === 'sellingPrice'
                   )
                     return '$' + value;
+                  if (xAxisRef.current === 'packingDensity') return value.toFixed(0);
                   return value;
                 }}
               />
@@ -2329,7 +2515,8 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                             fontWeight: design.title === cloudFile ? 'bold' : 'normal',
                           }}
                         >
-                          {projectType === DesignProblem.BUILDING_DESIGN && (
+                          {(projectType === DesignProblem.BUILDING_DESIGN ||
+                            projectType === DesignProblem.CSP_DESIGN) && (
                             <img
                               src={SparkImage}
                               alt={'spark'}
@@ -2341,7 +2528,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                           <span
                             style={{ cursor: 'pointer', fontSize: '10px', paddingLeft: '4px' }}
                             title={
-                              projectType === DesignProblem.BUILDING_DESIGN
+                              projectType === DesignProblem.BUILDING_DESIGN || projectType === DesignProblem.CSP_DESIGN
                                 ? t(pop ? 'projectPanel.ClickToClosePopup' : 'projectPanel.ClickForMoreInfo', lang)
                                 : undefined
                             }
@@ -2401,7 +2588,9 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
             <SolutionSpaceHeader>
               <span style={{ paddingLeft: '20px' }}>{t('projectPanel.SolutionSpace', lang)}</span>
               <span>
-                {(projectType === DesignProblem.SOLAR_PANEL_ARRAY || projectType === DesignProblem.BUILDING_DESIGN) && (
+                {(projectType === DesignProblem.SOLAR_PANEL_ARRAY ||
+                  projectType === DesignProblem.BUILDING_DESIGN ||
+                  projectType === DesignProblem.CSP_DESIGN) && (
                   <Popover
                     title={t('projectPanel.ChooseSolutionSpace', lang)}
                     onOpenChange={(visible) => {
@@ -2462,7 +2651,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
               id={'design-space'}
               width={relativeWidth * window.innerWidth}
               height={totalHeight / 2 - 120}
-              data={data}
+              data={solutionSpaceData}
               types={types}
               minima={minima}
               maxima={maxima}

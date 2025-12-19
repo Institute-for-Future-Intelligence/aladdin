@@ -304,7 +304,7 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
         design.prompt = genAIData.prompt;
         design.data = genAIData.data;
       }
-      GenAIUtil.calculateSolutionSpace(design);
+      GenAIUtil.calculateBuildingSolutionSpace(design);
       break;
     }
     case DesignProblem.CSP_DESIGN: {
@@ -313,7 +313,7 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
         design.prompt = genAIData.prompt;
         design.data = genAIData.data;
       }
-      GenAIUtil.calculateSolutionSpace(design);
+      GenAIUtil.calculateCSPSolutionSpace(design);
       break;
     }
   }

@@ -2003,6 +2003,12 @@ export const i18n_en = {
       Cooling: 'Cooling',
       Solar: 'Solar',
       Net: 'Net',
+      HeliostatLength: 'Heliostat Length',
+      HeliostatWidth: 'Heliostat Width',
+      HeliostatHeight: 'Heliostat Height',
+      HeliostatNumber: 'Number of Heliostat',
+      TowerHeight: 'Tower Height',
+      PackingDensity: 'Packing Density',
     },
   },
 };

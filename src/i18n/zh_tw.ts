@@ -1975,6 +1975,12 @@ export const i18n_zh_tw = {
       Cooling: '空調',
       Solar: '光伏',
       Net: '净能耗',
+      HeliostatLength: '定日鏡長度',
+      HeliostatWidth: '定日鏡寬度',
+      HeliostatHeight: '定日鏡高度',
+      HeliostatNumber: '定日鏡數量',
+      TowerHeight: '吸熱塔高度',
+      PackingDensity: '佈置密度',
     },
   },
 };
