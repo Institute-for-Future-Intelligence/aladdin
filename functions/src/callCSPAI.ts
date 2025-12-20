@@ -72,19 +72,23 @@ Output requirements (strict)
   - The average distance between neighboring heliostats should be approximately 3 to 10 meters by default.
 
 6. Non-overlap Constraint
-  - Heliostat positions must not overlap.
+  - Heliostat positions must not overlap with each other.
   - Choose layout formulas and parameters carefully to ensure physical feasibility.
+  - The layout of heliostats must leave with radial offset to leave an exclusion zone around the tower, radius is about towerRadius * 6.
 
 7. Center Constraint (Critical)
   - The geometric center of the layout function (e.g., spiral origin or layout centroid) must be exactly at [0, 0].
   - All layout formulas must be defined relative to this origin.
 
+8. When moving the position of the tower, do not move the center of the function together.
+
+9. Document the thinking process.
 ===
 
 Heliostat properties (Implicit Defaults)
 Use these defaults when designing spacing and layout logic:
   - size: [2, 4] (length * width, meters)
-  - poleHeight: 2.2
+  - poleHeight: 4.2
   - poleRadius: 0.1
 
 === 
