@@ -99,6 +99,8 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
     console.log('thinking:', json.thinking);
 
     useStore.getState().set((state) => {
+      let [minX, maxX] = [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER];
+      let [minY, maxY] = [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER];
       if (jsonWorld) {
         state.world.date = jsonWorld.date ?? '06/22/2025, 12:00:00 PM';
         state.world.address = jsonWorld.address ?? 'Natick, MA';
@@ -128,6 +130,11 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
                 e.hvacId,
                 hasBattery,
               );
+
+              minX = Math.min(minX, f.cx - f.lx / 2);
+              maxX = Math.max(maxX, f.cx + f.lx / 2);
+              minY = Math.min(minY, f.cy - f.ly / 2);
+              maxY = Math.max(maxY, f.cy + f.ly / 2);
               state.elements.push(f);
               break;
             }
@@ -346,6 +353,13 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
           }
         }
       }
+
+      console.log('bounding', minX, maxX, minY, maxY);
+      const panCenter = [(minX + maxX) / 2, (minY + maxY) / 2, 0];
+      const l = Math.max(maxX - minX, maxY - minY) * 1.5;
+      state.viewState.cameraPosition = [panCenter[0] - l, panCenter[1] - l, l / 2];
+      state.viewState.panCenter = [...panCenter];
+      state.cameraChangeFlag = !state.cameraChangeFlag;
     });
   };
 
