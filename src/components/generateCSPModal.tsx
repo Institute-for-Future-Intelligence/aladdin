@@ -162,7 +162,11 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
 
       state.elements.push(foundation);
 
+      const [tx, ty] = [towerFoundation.cx, towerFoundation.cy];
       for (const p of points) {
+        if (Math.hypot(p[0] - tx, p[1] - ty) < towerRadius * 8) {
+          continue;
+        }
         const heliostat = {
           type: ObjectType.Heliostat,
           reflectance: Constants.DEFAULT_HELIOSTAT_REFLECTANCE,

@@ -74,7 +74,6 @@ Output requirements (strict)
 6. Non-overlap Constraint
   - Heliostat positions must not overlap with each other.
   - Choose layout formulas and parameters carefully to ensure physical feasibility.
-  - The layout of heliostats must leave with radial offset to leave an exclusion zone around the tower, radius is about towerRadius * 6.
 
 7. Center Constraint (Critical)
   - The geometric center of the layout function (e.g., spiral origin or layout centroid) must be exactly at [0, 0].
