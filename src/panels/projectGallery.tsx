@@ -79,7 +79,7 @@ import { UndoableChange } from '../undo/UndoableChange';
 import { FidgetSpinner } from 'react-loader-spinner';
 import GenerateBuildingModal from 'src/components/generateBuildingModal';
 import SparkImage from 'src/assets/spark.png';
-import GenerateCSPModal from 'src/components/generateCSPModal';
+import GenerateSolarPowerTowerModal from 'src/components/generateSolarPowerTowerModal';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -195,7 +195,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [updateHiddenFlag, setUpdateHiddenFlag] = useState<boolean>(false);
   const [generateBuildingDialogVisible, setGenerateBuildingDialogVisible] = useState(false);
-  const [generateCSPDialogVisible, setGenerateCSPDialogVisible] = useState(false);
+  const [generateSolarPowerTowerDialogVisible, setGenerateSolarPowerTowerDialogVisible] = useState(false);
 
   const descriptionTextAreaEditableRef = useRef<boolean>(false);
   const descriptionRef = useRef<string | null>(projectDescription ?? null);
@@ -216,7 +216,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
 
   function getDefaultScatterPlotAxisName(projectType: DesignProblem) {
     if (projectType === DesignProblem.BUILDING_DESIGN) return 'floorArea';
-    if (projectType === DesignProblem.CSP_DESIGN) return 'heliostatLength';
+    if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) return 'heliostatLength';
     return 'rowWidth';
   }
 
@@ -468,7 +468,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           }
           data.push(d);
         }
-      } else if (projectType === DesignProblem.CSP_DESIGN) {
+      } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
         for (const design of projectDesigns) {
           const d = {} as DatumEntry;
           if (!hiddenParameters?.includes('heliostatLength')) d['heliostatLength'] = design.heliostatLength;
@@ -583,7 +583,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('solar')) array.push(getMin('solar', 0));
       if (!hiddenParameters?.includes('net')) array.push(getMin('net', 0));
       return array;
-    } else if (projectType === DesignProblem.CSP_DESIGN) {
+    } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
       const array: number[] = [];
       if (!hiddenParameters?.includes('heliostatLength')) array.push(getMin('heliostatLength', 0));
       if (!hiddenParameters?.includes('heliostatWidth')) array.push(getMin('heliostatWidth', 0));
@@ -628,7 +628,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('solar')) array.push(getMax('solar', 100000));
       if (!hiddenParameters?.includes('net')) array.push(getMax('net', 100000));
       return array;
-    } else if (projectType === DesignProblem.CSP_DESIGN) {
+    } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
       const array: number[] = [];
       if (!hiddenParameters?.includes('heliostatLength')) array.push(getMax('heliostatLength', 20));
       if (!hiddenParameters?.includes('heliostatWidth')) array.push(getMax('heliostatWidth', 20));
@@ -726,7 +726,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('solar')) array.push(createFilter('solar', 100000, 0));
       if (!hiddenParameters?.includes('net')) array.push(createFilter('net', 100000, 0));
       return array;
-    } else if (projectType === DesignProblem.CSP_DESIGN) {
+    } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
       const array: Filter[] = [];
       if (!hiddenParameters?.includes('heliostatLength')) array.push(createFilter('heliostatLength', 20, 0));
       if (!hiddenParameters?.includes('heliostatWidth')) array.push(createFilter('heliostatWidth', 20, 0));
@@ -767,7 +767,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('solar')) array.push(100);
       if (!hiddenParameters?.includes('net')) array.push(100);
       return array;
-    } else if (projectType === DesignProblem.CSP_DESIGN) {
+    } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
       const array: number[] = [];
       if (!hiddenParameters?.includes('heliostatLength')) array.push(0.1);
       if (!hiddenParameters?.includes('heliostatWidth')) array.push(0.1);
@@ -1247,7 +1247,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
         </div>
       );
     }
-    if (projectType === DesignProblem.CSP_DESIGN) {
+    if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
       return (
         <div>
           <Checkbox
@@ -1388,7 +1388,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
         </>
       );
     }
-    if (projectType === DesignProblem.CSP_DESIGN) {
+    if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
       return (
         <>
           <Option key={'heliostatLength'} value={'heliostatLength'}>
@@ -1430,7 +1430,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           ProjectUtil.setScatterData(yAxisRef.current, 'y', d, design);
           data.push(d);
         }
-      } else if (projectType === DesignProblem.CSP_DESIGN) {
+      } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
         for (const design of projectDesigns) {
           if (design.invisible || design === selectedDesign) continue;
           const d = {} as { x: number; y: number };
@@ -1462,7 +1462,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           ProjectUtil.setScatterData(yAxisRef.current, 'y', d, design);
           data.push(d);
         }
-      } else if (projectType === DesignProblem.CSP_DESIGN) {
+      } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
         for (const design of projectDesigns) {
           if (design !== selectedDesign) continue;
           const d = {} as { x: number; y: number };
@@ -1556,7 +1556,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           bound.max = getMax('buildingOrientation', 180);
           break;
       }
-    } else if (projectType === DesignProblem.CSP_DESIGN) {
+    } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
       // todo: genAI range scatter plot
       switch (axisName) {
         case 'heliostatLength':
@@ -1973,11 +1973,11 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                   </>
                 )}
 
-                {projectType === DesignProblem.CSP_DESIGN && (
+                {projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN && (
                   <>
                     {generating ? (
                       <span
-                        title={t('message.GeneratingCSP', lang)}
+                        title={t('message.GeneratingSolarPowerTower', lang)}
                         onClick={(e) => {
                           e.stopPropagation();
                         }}
@@ -1990,7 +1990,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                         style={{ border: 'none', padding: '4px' }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          setGenerateCSPDialogVisible(true);
+                          setGenerateSolarPowerTowerDialogVisible(true);
                         }}
                       >
                         <img src={GenaiImage} alt={'spark'} title={t('projectPanel.GenerateCSP', lang)} />
@@ -1999,20 +1999,21 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                   </>
                 )}
 
-                {projectType !== DesignProblem.BUILDING_DESIGN && projectType !== DesignProblem.CSP_DESIGN && (
-                  <Button
-                    style={{ border: 'none', padding: '4px' }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      curateCurrentDesign();
-                    }}
-                  >
-                    <ImportOutlined
-                      style={{ fontSize: '24px', color: 'gray' }}
-                      title={t('projectPanel.CurateCurrentDesign', lang)}
-                    />
-                  </Button>
-                )}
+                {projectType !== DesignProblem.BUILDING_DESIGN &&
+                  projectType !== DesignProblem.SOLAR_POWER_TOWER_DESIGN && (
+                    <Button
+                      style={{ border: 'none', padding: '4px' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        curateCurrentDesign();
+                      }}
+                    >
+                      <ImportOutlined
+                        style={{ fontSize: '24px', color: 'gray' }}
+                        title={t('projectPanel.CurateCurrentDesign', lang)}
+                      />
+                    </Button>
+                  )}
                 {selectedDesign && selectedDesign.title === cloudFile && (
                   <Button
                     style={{ border: 'none', padding: '4px' }}
@@ -2410,12 +2411,16 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                     <Popover
                       trigger={'click'}
                       onOpenChange={(open: boolean) => {
-                        if (projectType === DesignProblem.BUILDING_DESIGN || projectType === DesignProblem.CSP_DESIGN) {
+                        if (
+                          projectType === DesignProblem.BUILDING_DESIGN ||
+                          projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN
+                        ) {
                           setPop(open);
                         }
                       }}
                       content={
-                        (projectType === DesignProblem.BUILDING_DESIGN || projectType === DesignProblem.CSP_DESIGN) && (
+                        (projectType === DesignProblem.BUILDING_DESIGN ||
+                          projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) && (
                           <Space direction="vertical" style={{ width: '600px' }}>
                             <Space style={{ fontWeight: 'bold' }}>
                               {design.title
@@ -2493,7 +2498,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                           }}
                         >
                           {(projectType === DesignProblem.BUILDING_DESIGN ||
-                            projectType === DesignProblem.CSP_DESIGN) && (
+                            projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) && (
                             <img
                               src={SparkImage}
                               alt={'spark'}
@@ -2505,7 +2510,8 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                           <span
                             style={{ cursor: 'pointer', fontSize: '10px', paddingLeft: '4px' }}
                             title={
-                              projectType === DesignProblem.BUILDING_DESIGN || projectType === DesignProblem.CSP_DESIGN
+                              projectType === DesignProblem.BUILDING_DESIGN ||
+                              projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN
                                 ? t(pop ? 'projectPanel.ClickToClosePopup' : 'projectPanel.ClickForMoreInfo', lang)
                                 : undefined
                             }
@@ -2567,7 +2573,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
               <span>
                 {(projectType === DesignProblem.SOLAR_PANEL_ARRAY ||
                   projectType === DesignProblem.BUILDING_DESIGN ||
-                  projectType === DesignProblem.CSP_DESIGN) && (
+                  projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) && (
                   <Popover
                     title={t('projectPanel.ChooseSolutionSpace', lang)}
                     onOpenChange={(visible) => {
@@ -2649,7 +2655,10 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           setDialogVisible={setGenerateBuildingDialogVisible}
           isDialogVisible={() => generateBuildingDialogVisible}
         />
-        <GenerateCSPModal setDialogVisible={setGenerateCSPDialogVisible} isDialogVisible={generateCSPDialogVisible} />
+        <GenerateSolarPowerTowerModal
+          setDialogVisible={setGenerateSolarPowerTowerDialogVisible}
+          isDialogVisible={generateSolarPowerTowerDialogVisible}
+        />
       </ColumnWrapper>
     </Container>
   );

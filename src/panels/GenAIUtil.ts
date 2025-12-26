@@ -929,7 +929,7 @@ export class GenAIUtil {
     } as BatteryStorageModel;
   }
 
-  static calculateCSPSolutionSpace(design: Design) {
+  static calculateSolarPowerTowerSolutionSpace(design: Design) {
     let filedArea = 1;
     for (const e of useStore.getState().elements) {
       if (e.type === ObjectType.Foundation) {

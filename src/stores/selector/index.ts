@@ -1022,7 +1022,8 @@ export const reasoningEffort = (state: CommonStoreState) => state.projectState.r
 
 export const generateBuildingPrompt = (state: CommonStoreState) => state.projectState.generateBuildingPrompt;
 
-export const generateCSPPrompt = (state: CommonStoreState) => state.projectState.generateCSPPrompt;
+export const generateSolarPowerTowerPrompt = (state: CommonStoreState) =>
+  state.projectState.generateSolarPowerTowerPrompt;
 
 export const independentPrompt = (state: CommonStoreState) => state.projectState.independentPrompt;
 

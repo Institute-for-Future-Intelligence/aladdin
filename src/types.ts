@@ -156,7 +156,7 @@ export interface ProjectState {
   thumbnailWidth: number | null;
   reasoningEffort: string;
   generateBuildingPrompt: string;
-  generateCSPPrompt: string;
+  generateSolarPowerTowerPrompt: string;
   independentPrompt: boolean;
 }
 
@@ -197,7 +197,7 @@ export enum DesignProblem {
   SOLAR_PANEL_TILT_ANGLE = 'Solar Panel Tilt Angle',
   SOLAR_PANEL_ARRAY = 'Solar Panel Array',
   BUILDING_DESIGN = 'Building Design',
-  CSP_DESIGN = 'CSP Design',
+  SOLAR_POWER_TOWER_DESIGN = 'Solar Power Tower Design',
 }
 
 export enum ObjectiveFunctionType {

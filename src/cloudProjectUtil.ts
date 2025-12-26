@@ -243,11 +243,15 @@ export const updateGenerateBuildingPrompt = async (
   }
 };
 
-export const updateGenerateCSPPrompt = async (userid: string, projectTitle: string, generateCSPPrompt: string) => {
+export const updateGenerateSolarPowerTowerPrompt = async (
+  userid: string,
+  projectTitle: string,
+  generateSolarPowerTowerPrompt: string,
+) => {
   const lang = { lng: useStore.getState().language };
   try {
     await updateDoc(doc(firestore, 'users', userid, 'projects', projectTitle), {
-      generateCSPPrompt,
+      generateSolarPowerTowerPrompt,
     });
   } catch (error) {
     showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
@@ -307,13 +311,13 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
       GenAIUtil.calculateBuildingSolutionSpace(design);
       break;
     }
-    case DesignProblem.CSP_DESIGN: {
+    case DesignProblem.SOLAR_POWER_TOWER_DESIGN: {
       const genAIData = useStore.getState().genAIData;
       if (genAIData) {
         design.prompt = genAIData.prompt;
         design.data = genAIData.data;
       }
-      GenAIUtil.calculateCSPSolutionSpace(design);
+      GenAIUtil.calculateSolarPowerTowerSolutionSpace(design);
       break;
     }
   }

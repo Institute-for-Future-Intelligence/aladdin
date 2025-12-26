@@ -84,7 +84,7 @@ const VisualizationControlPanel = React.memo(() => {
                 title={i18n.t('visualizationControlPanel.ClickUpOrDownArrowButtonsToChange', lang)}
                 min={1}
                 max={50}
-                step={5}
+                step={1}
                 style={{ width: 65 }}
                 precision={0}
                 value={heatFluxScaleFactor ?? 20}

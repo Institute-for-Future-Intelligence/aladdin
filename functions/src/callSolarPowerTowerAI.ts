@@ -69,7 +69,8 @@ Output requirements (strict)
   - +Y → North
 
 5. Spacing Constraint
-  - The average distance between neighboring heliostats should be approximately 3 to 10 meters by default.
+  - The minimum distance between neighboring heliostats is at least the heliostat length or width, whichever is larger.
+  - The maximum distance between neighboring heliostats is at most four times of the heliostat length or width, whichever is larger.
 
 6. Non-overlap Constraint
   - Heliostat positions must not overlap with each other.
@@ -90,7 +91,7 @@ Use these defaults when designing spacing and layout logic:
   - poleHeight: 4.2
   - poleRadius: 0.1
 
-=== 
+===
 
 Solar Receiver Tower Properties (Implicit Defaults)
   - center: [0, 0]
@@ -100,7 +101,7 @@ Solar Receiver Tower Properties (Implicit Defaults)
 Adjust tower height and radius proportionally to the total number of heliostats:
   - More heliostats → larger tower dimensions
 
-=== 
+===
 
 Output Format (Very Important)
 
@@ -124,7 +125,7 @@ User requirements:
 
 `;
 
-export const callCSPAI = async (
+export const callSolarPowerTowerAI = async (
   apiKey: string | undefined,
   inputMessage: [],
   fromBrowser = false,

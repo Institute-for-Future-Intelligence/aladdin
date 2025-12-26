@@ -319,9 +319,10 @@ export const i18n_zh_tw = {
       SigningInAnonymousAccount:
         '你確定匿名登入嗎？一旦退出，匿名帳號將無法恢復。匿名登入主要是為無法實名登入的使用者提供臨時方便。',
       GeneratingBuilding: '正在生成建築...',
-      GeneratingCSP: '正在生成CSP...',
+      GeneratingSolarPowerTower: '正在生成光熱發電塔...',
       GeneratingABuildingMayTakeAWhile: '生成一個建築可能需要一些時間且無法取消。按確定鍵前請仔細考慮好給AI的輸入。',
-      GeneratingCSPMayTakeAWhile: '生成CSP可能需要一些時間且無法取消。按確定鍵前請仔細考慮好給AI的輸入。',
+      GeneratingSolarPowerTowerMayTakeAWhile:
+        '生成一個光熱發電塔可能需要一些時間且無法取消。按確定鍵前請仔細考慮好給AI的輸入。',
       GeneratedResultNotAccepted: '抱歉，回傳結果無法解讀。',
     },
 
@@ -1712,9 +1713,9 @@ export const i18n_zh_tw = {
       SelectYAxis: '選擇Y軸',
       BuildingDesign: '建築設計',
       GenerateBuilding: '用AI設計建築',
-      GenerateCSP: '用AI設計CSP',
+      GenerateSolarPowerTower: '用AI設計光熱發電塔',
       WhatBuildingDoYouWant: '你想要什麽樣的建築?',
-      WhatCSPDoYouWant: '你想要什么样的CSP？',
+      WhatSolarPowerTowerDoYouWant: '你想要什么样的光熱發電塔？',
       Listening: '傾聽中...',
       ReasoningEffort: '推理努力程度',
       GenAIPrompt: '生成此分子的提示',
@@ -1724,7 +1725,7 @@ export const i18n_zh_tw = {
       ReasoningInClipBoard: '您現在可以粘貼推理了。',
       UserPrompt: '用户提示',
       AIReasoning: 'AI推理',
-      CSPDesign: 'CSP設計',
+      SolarPowerTowerDesign: '光熱發電塔設計',
     },
 
     accountSettingsPanel: {

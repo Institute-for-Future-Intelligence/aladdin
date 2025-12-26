@@ -321,11 +321,11 @@ export const i18n_en = {
       SigningInAnonymousAccount:
         'Are you sure you want to sign in anonymously? An anonymous account will be lost if you sign out. It should be used only for temporary purposes and on the same computer.',
       GeneratingBuilding: 'Generating building...',
-      GeneratingCSP: 'Generating CSP...',
+      GeneratingSolarPowerTower: 'Generating solar power tower...',
       GeneratingABuildingMayTakeAWhile:
         'Generating a building may take a long time and cannot be cancelled. Think about your prompt carefully before pressing the OK button.',
-      GeneratingCSPMayTakeAWhile:
-        'Generating CSP may take a long time and cannot be cancelled. Think about your prompt carefully before pressing the OK button.',
+      GeneratingSolarPowerTowerMayTakeAWhile:
+        'Generating a solar power tower may take a long time and cannot be cancelled. Think about your prompt carefully before pressing the OK button.',
       GeneratedResultNotAccepted: 'Sorry, the generated result is not accepted.',
     },
 
@@ -1741,9 +1741,9 @@ export const i18n_en = {
       SelectYAxis: 'Select Y Axis',
       BuildingDesign: 'Building Design',
       GenerateBuilding: 'Generate a building using AI',
-      GenerateCSP: 'Generate CSP using AI',
+      GenerateSolarPowerTower: 'Generate a solar power tower plant using AI',
       WhatBuildingDoYouWant: 'What building do you want?',
-      WhatCSPDoYouWant: 'What CSP do you want?',
+      WhatSolarPowerTowerDoYouWant: 'What solar power tower do you want?',
       Listening: 'Listening...',
       ReasoningEffort: 'Reasoning Effort',
       GenAIPrompt: 'Prompt used to generate this molecule',
@@ -1753,7 +1753,7 @@ export const i18n_en = {
       ReasoningInClipBoard: 'The reasoning was copied and is ready to paste.',
       UserPrompt: 'User Prompt',
       AIReasoning: 'AI Reasoning',
-      CSPDesign: 'CSP Design',
+      SolarPowerTowerDesign: 'Solar Power Tower Design',
     },
 
     accountSettingsPanel: {

@@ -17,10 +17,10 @@ import i18n from 'src/i18n/i18n';
 import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
-import { callCSPAI } from 'functions/src/callCSPAI';
+import { callSolarPowerTowerAI } from 'functions/src/callSolarPowerTowerAI';
 import { FoundationTexture, ObjectType, SolarStructure } from 'src/types';
 import * as Constants from '../constants';
-import { updateGenerateCSPPrompt } from 'src/cloudProjectUtil';
+import { updateGenerateSolarPowerTowerPrompt } from 'src/cloudProjectUtil';
 import { HeliostatModel } from 'src/models/HeliostatModel';
 import { FoundationModel } from 'src/models/FoundationModel';
 import short from 'short-uuid';
@@ -35,15 +35,19 @@ export interface GenerateBuildingModalProps {
 
 const { TextArea } = Input;
 
-const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: GenerateBuildingModalProps) => {
+const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVisible }: GenerateBuildingModalProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const reasoningEffort = useStore(Selector.reasoningEffort) ?? 'medium';
-  const generateCSPPrompt = useStore(Selector.generateCSPPrompt) ?? 'Generate CSP with Fermat spiral';
+  const generatePrompt =
+    useStore(Selector.generateSolarPowerTowerPrompt) ??
+    'Generate a solar power tower plant with a Fermat spiral layout for heliostats';
   const setGenerating = usePrimitiveStore(Selector.setGenerating);
   const setChanged = usePrimitiveStore(Selector.setChanged);
 
-  const [prompt, setPrompt] = useState<string>('Generate CSP with Fermat spiral');
+  const [prompt, setPrompt] = useState<string>(
+    'Generate a solar power tower plant with a Fermat spiral layout for heliostats',
+  );
   const [listening, setListening] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({
@@ -61,8 +65,8 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
   }, [language]);
 
   useEffect(() => {
-    setPrompt(generateCSPPrompt);
-  }, [generateCSPPrompt]);
+    setPrompt(generatePrompt);
+  }, [generatePrompt]);
 
   const createInput = () => {
     const input = [];
@@ -208,7 +212,7 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
       console.log('calling...', input); // for debugging
       const res = (await callAzure({
         text: input,
-        type: 'CSP',
+        type: 'solar power tower',
         reasoningEffort,
       })) as any;
       return res.data.text;
@@ -224,7 +228,7 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
     try {
       const input = createInput();
       console.log('calling...', input); // for debugging
-      const response = await callCSPAI(apiKey, input as [], true, reasoningEffort);
+      const response = await callSolarPowerTowerAI(apiKey, input as [], true, reasoningEffort);
       const result = response.choices[0].message.content;
       console.log('res', response);
       return result;
@@ -301,19 +305,19 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
 
   const onOk = async () => {
     setCommonStore((state) => {
-      state.projectState.generateCSPPrompt = prompt;
+      state.projectState.generateSolarPowerTowerPrompt = prompt;
     });
     handleGenerativeAI().then(() => {
       setChanged(true);
       const userid = useStore.getState().user.uid;
       const projectTitle = useStore.getState().projectState.title;
-      if (userid && projectTitle) updateGenerateCSPPrompt(userid, projectTitle, prompt);
+      if (userid && projectTitle) updateGenerateSolarPowerTowerPrompt(userid, projectTitle, prompt);
     });
     close();
   };
 
   const onCancel = () => {
-    setPrompt(generateCSPPrompt);
+    setPrompt(generatePrompt);
     close();
   };
 
@@ -337,7 +341,7 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
           onMouseOver={() => setDragEnabled(true)}
           onMouseOut={() => setDragEnabled(false)}
         >
-          <img src={GenaiImage} width={'16px'} alt={'genai'} /> {t('projectPanel.GenerateCSP', lang)}
+          <img src={GenaiImage} width={'16px'} alt={'genai'} /> {t('projectPanel.GenerateSolarPowerTower', lang)}
         </div>
       }
       open={isDialogVisible}
@@ -366,7 +370,7 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
     >
       <Space direction={'vertical'} style={{ width: '100%', paddingBottom: '10px', paddingTop: '10px' }}>
         <Space>
-          {i18n.t('projectPanel.WhatCSPDoYouWant', lang)}
+          {i18n.t('projectPanel.WhatSolarPowerTowerDoYouWant', lang)}
           {!error && (
             <>
               {listening ? (
@@ -421,11 +425,11 @@ const GenerateCSPModal = React.memo(({ setDialogVisible, isDialogVisible }: Gene
           />
         </Space>
         <span style={{ fontSize: '12px' }}>
-          <WarningOutlined /> {t('message.GeneratingCSPMayTakeAWhile', lang)}
+          <WarningOutlined /> {t('message.GeneratingSolarPowerTowerMayTakeAWhile', lang)}
         </span>
       </Space>
     </Modal>
   );
 });
 
-export default GenerateCSPModal;
+export default GenerateSolarPowerTowerModal;

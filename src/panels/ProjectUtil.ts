@@ -63,7 +63,7 @@ export class ProjectUtil {
       if (!hidden?.includes('solar')) a.push('solar');
       if (!hidden?.includes('net')) a.push('net');
       return a;
-    } else if (projectType === DesignProblem.CSP_DESIGN) {
+    } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
       const a: string[] = [];
       if (!hidden?.includes('heliostatLength')) a.push('heliostatLength');
       if (!hidden?.includes('heliostatWidth')) a.push('heliostatWidth');
@@ -104,7 +104,7 @@ export class ProjectUtil {
       if (!hidden?.includes('solar')) a.push(i18n.t('solutionSpace.Solar', l));
       if (!hidden?.includes('net')) a.push(i18n.t('solutionSpace.Net', l));
       return a;
-    } else if (projectType === DesignProblem.CSP_DESIGN) {
+    } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
       const a: string[] = [];
       if (!hidden?.includes('heliostatLength')) a.push(i18n.t('solutionSpace.HeliostatLength', l));
       if (!hidden?.includes('heliostatWidth')) a.push(i18n.t('solutionSpace.HeliostatWidth', l));
@@ -145,7 +145,7 @@ export class ProjectUtil {
       if (!hidden?.includes('solar')) a.push('number');
       if (!hidden?.includes('net')) a.push('number');
       return a;
-    } else if (projectType === DesignProblem.CSP_DESIGN) {
+    } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
       const a: string[] = [];
       if (!hidden?.includes('heliostatLength')) a.push('number');
       if (!hidden?.includes('heliostatWidth')) a.push('number');
@@ -186,7 +186,7 @@ export class ProjectUtil {
       if (!hidden?.includes('solar')) a.push(1);
       if (!hidden?.includes('net')) a.push(1);
       return a;
-    } else if (projectType === DesignProblem.CSP_DESIGN) {
+    } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
       const a: number[] = [];
       if (!hidden?.includes('heliostatLength')) a.push(1);
       if (!hidden?.includes('heliostatWidth')) a.push(1);
@@ -227,7 +227,7 @@ export class ProjectUtil {
       if (!hidden?.includes('solar')) a.push(false);
       if (!hidden?.includes('net')) a.push(false);
       return a;
-    } else if (projectType === DesignProblem.CSP_DESIGN) {
+    } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
       const a: boolean[] = [];
       if (!hidden?.includes('heliostatLength')) a.push(false);
       if (!hidden?.includes('heliostatWidth')) a.push(false);
@@ -268,7 +268,7 @@ export class ProjectUtil {
       if (!hidden?.includes('solar')) a.push('kWh');
       if (!hidden?.includes('net')) a.push('kWh');
       return a;
-    } else if (projectType === DesignProblem.CSP_DESIGN) {
+    } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
       const a: string[] = [];
       if (!hidden?.includes('heliostatLength')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));
       if (!hidden?.includes('heliostatWidth')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));

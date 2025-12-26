@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -43,7 +43,7 @@ export interface StaticSolarRadiationSimulationProps {
   city: string | null;
 }
 
-// note that this cannot be used for anything related to CSP as CPS must move to track or reflect the sun
+// note that this cannot be used for anything related to CSP as CSP reflectors must move to reflect the sun
 // for the same reason, this cannot be used for PV with trackers.
 
 const StaticSolarRadiationSimulation = React.memo(({ city }: StaticSolarRadiationSimulationProps) => {

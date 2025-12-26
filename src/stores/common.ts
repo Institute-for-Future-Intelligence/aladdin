@@ -656,7 +656,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             thumbnailWidth: 200,
             reasoningEffort: 'medium',
             generateBuildingPrompt: 'Generate a colonial style house.',
-            generateCSPPrompt: 'Generate CPS with Fermat spiral.',
+            generateSolarPowerTowerPrompt: 'Generate a solar power tower with a Fermat spiral layout for heliostats.',
             independentPrompt: false,
           } as ProjectState,
           projectImages: new Map<string, HTMLImageElement>(),
@@ -693,7 +693,8 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.projectState.owner = null;
               state.projectState.reasoningEffort = 'medium';
               state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
-              state.projectState.generateCSPPrompt = 'Generate CSP with Fermat spiral.';
+              state.projectState.generateSolarPowerTowerPrompt =
+                'Generate a solar power tower with a Fermat spiral layout for heliostats.';
               state.projectState.independentPrompt = false;
               // when a project is closed, the current cloud file is detached
               const designs = state.projectState.designs;
