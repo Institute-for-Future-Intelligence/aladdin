@@ -1993,7 +1993,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                           setGenerateSolarPowerTowerDialogVisible(true);
                         }}
                       >
-                        <img src={GenaiImage} alt={'spark'} title={t('projectPanel.GenerateCSP', lang)} />
+                        <img src={GenaiImage} alt={'spark'} title={t('projectPanel.GenerateSolarPowerTower', lang)} />
                       </Button>
                     )}
                   </>
