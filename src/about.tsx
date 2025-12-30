@@ -4,10 +4,8 @@
 
 import React from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import Team from './team';
-import { useStore } from './stores/common';
-import * as Selector from './stores/selector';
-import i18n from './i18n/i18n';
 
 const Container = styled.div`
   position: absolute;
@@ -24,27 +22,29 @@ const Container = styled.div`
   box-shadow: 3px 3px 3px 3px black;
 `;
 
+const CloseButton = styled.div`
+  position: absolute;
+  bottom: 10px;
+  font-size: small;
+  color: antiquewhite;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
 const About = React.memo(({ close }: { close: () => void }) => {
-  const language = useStore(Selector.language);
+  const { t } = useTranslation();
+
   return (
     <Container>
       <Team top={10} color={'antiquewhite'} />
-      <div
-        style={{
-          position: 'absolute',
-          fontSize: 'small',
-          color: 'antiquewhite',
-          cursor: 'pointer',
-          bottom: '10px',
-        }}
-        onMouseDown={() => {
-          close();
-        }}
-      >
-        {i18n.t('word.Close', { lng: language })}
-      </div>
+      <CloseButton onClick={close}>{t('word.Close')}</CloseButton>
     </Container>
   );
 });
+
+About.displayName = 'About';
 
 export default About;
