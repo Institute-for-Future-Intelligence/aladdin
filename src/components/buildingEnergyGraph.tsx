@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -238,7 +238,7 @@ const BuildingEnergyGraph = ({
                   bottom: 30,
                 }}
               >
-                <Tooltip formatter={(value: number) => value.toFixed(fractionDigits) + ' ' + unitY} />
+                <Tooltip formatter={(value) => Number(value).toFixed(fractionDigits) + ' ' + unitY} />
                 <CartesianGrid
                   vertical={verticalGridLines}
                   horizontal={horizontalGridLines}

@@ -281,7 +281,7 @@ const LineGraph = ({
                   ) : (
                     composedChartLines
                   )}
-                  <Tooltip formatter={(value: number) => value.toFixed(fractionDigits) + ' ' + unitY} />
+                  <Tooltip formatter={(value) => Number(value).toFixed(fractionDigits) + ' ' + unitY} />
                   <CartesianGrid
                     vertical={verticalGridLines}
                     horizontal={horizontalGridLines}
@@ -321,7 +321,7 @@ const LineGraph = ({
                     bottom: 30,
                   }}
                 >
-                  <Tooltip formatter={(value: number) => value.toFixed(fractionDigits) + ' ' + unitY} />
+                  <Tooltip formatter={(value) => Number(value).toFixed(fractionDigits) + ' ' + unitY} />
                   <CartesianGrid
                     vertical={verticalGridLines}
                     horizontal={horizontalGridLines}
@@ -362,7 +362,7 @@ const LineGraph = ({
                     bottom: 30,
                   }}
                 >
-                  <Tooltip formatter={(value: number) => value.toFixed(fractionDigits) + ' ' + unitY} />
+                  <Tooltip formatter={(value) => Number(value).toFixed(fractionDigits) + ' ' + unitY} />
                   <CartesianGrid
                     vertical={verticalGridLines}
                     horizontal={horizontalGridLines}

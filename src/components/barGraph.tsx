@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -149,7 +149,7 @@ const BarGraph = React.memo(
                     bottom: 30,
                   }}
                 >
-                  <Tooltip formatter={(value: number) => value.toFixed(fractionDigits) + ' ' + unitY} />
+                  <Tooltip formatter={(value) => Number(value).toFixed(fractionDigits) + ' ' + unitY} />
                   <CartesianGrid
                     vertical={verticalGridLines}
                     horizontal={horizontalGridLines}

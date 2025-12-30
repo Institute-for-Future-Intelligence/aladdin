@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2024. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -180,7 +180,7 @@ const SutBiaxialLineGraph = React.memo(
                     bottom: 30,
                   }}
                 >
-                  <Tooltip formatter={(value: number) => value.toFixed(fractionDigits)} />
+                  <Tooltip formatter={(value) => Number(value).toFixed(fractionDigits)} />
                   <CartesianGrid
                     vertical={verticalGridLines}
                     horizontal={horizontalGridLines}

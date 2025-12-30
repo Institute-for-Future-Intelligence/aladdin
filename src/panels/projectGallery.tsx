@@ -1739,7 +1739,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                   return value;
                 }}
               />
-              <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(value: number) => value.toFixed(2)} />
+              <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(value) => Number(value).toFixed(2)} />
               <Scatter
                 name="All"
                 data={scatterData}

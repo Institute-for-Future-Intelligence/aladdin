@@ -45,7 +45,7 @@
     "react-loader-spinner": "^6.1.6",
     "react-share": "^5.2.2",
     "react-timeago": "^7.2.0",
-    "recharts": "^3.6.0",
+    "recharts": "^2.15.4",
     "save-svg-as-png": "^1.4.17",
     "short-uuid": "^4.2.0",
     "styled-components": "^6.1.10",

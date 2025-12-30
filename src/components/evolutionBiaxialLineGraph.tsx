@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo, useRef, useState } from 'react';
@@ -201,7 +201,7 @@ const EvolutionBiaxialLineGraph = ({
                 }}
               >
                 <Tooltip
-                  formatter={(value: number) => value.toFixed(fractionDigits)}
+                  formatter={(value) => Number(value).toFixed(fractionDigits)}
                   content={({ active, payload }) => {
                     if (!active || !payload) return null;
                     return payload.map((p) => {
