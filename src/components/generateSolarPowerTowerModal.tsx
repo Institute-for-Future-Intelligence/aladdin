@@ -25,9 +25,6 @@ import { HeliostatModel } from 'src/models/HeliostatModel';
 import { FoundationModel } from 'src/models/FoundationModel';
 import short from 'short-uuid';
 
-import { create, all } from 'mathjs';
-const math = create(all);
-
 export interface GenerateBuildingModalProps {
   setDialogVisible: (visible: boolean) => void;
   isDialogVisible: boolean;
@@ -100,108 +97,112 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
     console.log('thinking:', json.thinking);
     console.log(json.fn);
 
-    const fn = math.evaluate(json.fn);
-    const N = json.N;
-    const heliostatProperties = json.heliostat;
-    const towerProperties = json.tower;
+    try {
+      const fn = new Function(json.fn);
+      const heliostatProperties = json.heliostat;
+      const towerProperties = json.tower;
+      const points = fn();
+      console.log('function run successfully, points:', points);
 
-    const points = [...Array(N).keys()].map((i) => fn(i + 1)._data);
+      useStore.getState().set((state) => {
+        state.elements = [];
 
-    useStore.getState().set((state) => {
-      state.elements = [];
-
-      const towerRadius = Math.max(1, towerProperties.radius ?? 1);
-      const towerHeight = Math.max(10, towerProperties.height ?? 20);
-      const towerFoundation = {
-        type: ObjectType.Foundation,
-        cx: towerProperties.center[0] ?? 0,
-        cy: towerProperties.center[1] ?? 0,
-        cz: 1.5,
-        lx: towerRadius * 10,
-        ly: towerRadius * 10,
-        lz: 3,
-        normal: [0, 0, 1],
-        rotation: [0, 0, 0],
-        parentId: Constants.GROUND_ID,
-        color: Constants.DEFAULT_FOUNDATION_COLOR,
-        textureType: FoundationTexture.NoTexture,
-        rValue: Constants.DEFAULT_GROUND_FLOOR_R_VALUE,
-        solarUpdraftTower: {},
-        solarAbsorberPipe: {},
-        hvacSystem: { ...Constants.DEFAULT_HVAC_SYSTEM },
-        solarStructure: SolarStructure.FocusTower,
-        solarPowerTower: { towerHeight, towerRadius },
-        notBuilding: true,
-        id: short.generate() as string,
-      } as FoundationModel;
-      state.elements.push(towerFoundation);
-
-      let maxX = 0;
-      let maxY = 0;
-      for (const p of points) {
-        maxX = math.max(Math.abs(p[0]), maxX);
-        maxY = math.max(Math.abs(p[1]), maxY);
-      }
-
-      const foundation = {
-        type: ObjectType.Foundation,
-        cx: 0,
-        cy: 0,
-        cz: 0.05,
-        lx: (maxX + Math.max(1, maxX * 0.05)) * 2,
-        ly: (maxY + Math.max(1, maxY * 0.05)) * 2,
-        lz: 0.1,
-        normal: [0, 0, 1],
-        rotation: [0, 0, 0],
-        parentId: Constants.GROUND_ID,
-        color: Constants.DEFAULT_FOUNDATION_COLOR,
-        textureType: FoundationTexture.NoTexture,
-        rValue: Constants.DEFAULT_GROUND_FLOOR_R_VALUE,
-        solarUpdraftTower: {},
-        solarAbsorberPipe: {},
-        solarPowerTower: {},
-        hvacSystem: { ...Constants.DEFAULT_HVAC_SYSTEM },
-        id: short.generate() as string,
-      } as FoundationModel;
-
-      state.elements.push(foundation);
-
-      const [tx, ty] = [towerFoundation.cx, towerFoundation.cy];
-      for (const p of points) {
-        if (Math.hypot(p[0] - tx, p[1] - ty) < towerRadius * 8) {
-          continue;
-        }
-        const heliostat = {
-          type: ObjectType.Heliostat,
-          reflectance: Constants.DEFAULT_HELIOSTAT_REFLECTANCE,
-          relativeAzimuth: 0,
-          tiltAngle: 0,
-          drawSunBeam: false,
-          poleHeight: heliostatProperties.poleHeight
-            ? heliostatProperties.poleHeight - 2
-            : Constants.DEFAULT_HELIOSTAT_POLE_HEIGHT, // extra pole height in addition to half of the width or height, whichever is larger
-          poleRadius: heliostatProperties.poleRadius ?? Constants.DEFAULT_HELIOSTAT_POLE_RADIUS,
-          cx: p[0] / foundation.lx,
-          cy: p[1] / foundation.ly,
-          cz: 0.5,
-          lx: heliostatProperties.size[0] ?? 2,
-          ly: heliostatProperties.size[1] ?? 4,
-          lz: 0.1,
-          showLabel: false,
+        const towerRadius = Math.max(1, towerProperties.radius ?? 1);
+        const towerHeight = Math.max(10, towerProperties.height ?? 20);
+        const towerFoundation = {
+          type: ObjectType.Foundation,
+          cx: towerProperties.center[0] ?? 0,
+          cy: towerProperties.center[1] ?? 0,
+          cz: 1.5,
+          lx: towerRadius * 10,
+          ly: towerRadius * 10,
+          lz: 3,
           normal: [0, 0, 1],
           rotation: [0, 0, 0],
-          parentId: foundation.id,
-          foundationId: foundation.id,
-          towerId: towerFoundation.id,
+          parentId: Constants.GROUND_ID,
+          color: Constants.DEFAULT_FOUNDATION_COLOR,
+          textureType: FoundationTexture.NoTexture,
+          rValue: Constants.DEFAULT_GROUND_FLOOR_R_VALUE,
+          solarUpdraftTower: {},
+          solarAbsorberPipe: {},
+          hvacSystem: { ...Constants.DEFAULT_HVAC_SYSTEM },
+          solarStructure: SolarStructure.FocusTower,
+          solarPowerTower: { towerHeight, towerRadius },
+          notBuilding: true,
           id: short.generate() as string,
-        } as HeliostatModel;
-        state.elements.push(heliostat);
-      }
+        } as FoundationModel;
+        state.elements.push(towerFoundation);
 
-      state.viewState.cameraPosition = [0, -maxY * 2, maxY * 2];
-      state.viewState.panCenter = [0, 0, 0];
-      state.cameraChangeFlag = !state.cameraChangeFlag;
-    });
+        let maxX = 0;
+        let maxY = 0;
+        for (const p of points) {
+          maxX = Math.max(Math.abs(p[0]), maxX);
+          maxY = Math.max(Math.abs(p[1]), maxY);
+        }
+
+        const foundation = {
+          type: ObjectType.Foundation,
+          cx: 0,
+          cy: 0,
+          cz: 0.05,
+          lx: (maxX + Math.max(1, maxX * 0.05)) * 2,
+          ly: (maxY + Math.max(1, maxY * 0.05)) * 2,
+          lz: 0.1,
+          normal: [0, 0, 1],
+          rotation: [0, 0, 0],
+          parentId: Constants.GROUND_ID,
+          color: Constants.DEFAULT_FOUNDATION_COLOR,
+          textureType: FoundationTexture.NoTexture,
+          rValue: Constants.DEFAULT_GROUND_FLOOR_R_VALUE,
+          solarUpdraftTower: {},
+          solarAbsorberPipe: {},
+          solarPowerTower: {},
+          hvacSystem: { ...Constants.DEFAULT_HVAC_SYSTEM },
+          id: short.generate() as string,
+        } as FoundationModel;
+
+        state.elements.push(foundation);
+
+        const [tx, ty] = [towerFoundation.cx, towerFoundation.cy];
+        for (const p of points) {
+          if (Math.hypot(p[0] - tx, p[1] - ty) < towerRadius * 8) {
+            continue;
+          }
+          const heliostat = {
+            type: ObjectType.Heliostat,
+            reflectance: Constants.DEFAULT_HELIOSTAT_REFLECTANCE,
+            relativeAzimuth: 0,
+            tiltAngle: 0,
+            drawSunBeam: false,
+            poleHeight: heliostatProperties.poleHeight
+              ? heliostatProperties.poleHeight - 2
+              : Constants.DEFAULT_HELIOSTAT_POLE_HEIGHT, // extra pole height in addition to half of the width or height, whichever is larger
+            poleRadius: heliostatProperties.poleRadius ?? Constants.DEFAULT_HELIOSTAT_POLE_RADIUS,
+            cx: p[0] / foundation.lx,
+            cy: p[1] / foundation.ly,
+            cz: 0.5,
+            lx: heliostatProperties.size[0] ?? 2,
+            ly: heliostatProperties.size[1] ?? 4,
+            lz: 0.1,
+            showLabel: false,
+            normal: [0, 0, 1],
+            rotation: [0, 0, 0],
+            parentId: foundation.id,
+            foundationId: foundation.id,
+            towerId: towerFoundation.id,
+            id: short.generate() as string,
+          } as HeliostatModel;
+          state.elements.push(heliostat);
+        }
+
+        state.viewState.cameraPosition = [0, -maxY * 2, maxY * 2];
+        state.viewState.panCenter = [0, 0, 0];
+        state.cameraChangeFlag = !state.cameraChangeFlag;
+      });
+    } catch (e) {
+      console.error('Error processing result:', e);
+      showError('Failed to process CSP generation result: ' + e);
+    }
   };
 
   const callFromFirebaseFunction = async () => {

@@ -47,7 +47,7 @@ You must strictly follow the rules below.
 
 Objective
 Given a user-defined layout concept (e.g. Fermat spiral, radial, honeycomb, circular rings, etc.), generate:
-A single MathJS-compatible function that computes heliostat positions
+A function that computes heliostat positions
 A complete set of layout parameters for heliostats and the receiver tower
 The output will be parsed programmatically — format correctness is critical.
 
@@ -55,8 +55,8 @@ The output will be parsed programmatically — format correctness is critical.
 
 Output requirements (strict)
 1. Function Definition
-  - Output a function in Mathjs-compatible syntax: fn(n) = [x, y]
-  - The function returns the [x, y] coordinates (in meters) of the n-th heliostat.
+  - Output a function can be parsed by JS new Function();
+  - The function returns an array of array, each element is the [x, y] coordinates (in meters) of the n-th heliostat.
 
 2. Indexing
   - N is an integer in the range: n = 1, 2, ..., N
@@ -115,10 +115,8 @@ Do NOT output:
 
 Critical Constraint
 
-The returned function MUST be directly executable in Mathjs without modification!!!
-DO NOT use "if" in the returned function!!!
-The function MUST be a single expression!!!
-
+The returned function MUST be directly executable in JS new Function() without modification!!!
+DO NOT include "function()" in the function!!!
 ===
 
 User requirements:
