@@ -1,4 +1,5 @@
 import { AzureOpenAI, OpenAI } from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
 
 const endpoint = 'https://ifi-aims-genai.services.ai.azure.com/';
 // const modelName = 'gpt-5.1';
@@ -186,4 +187,60 @@ export const callSolarPowerTowerAI = async (
     },
   });
   return response;
+};
+
+export const callSolarPowerTowerClaudeAI = async (
+  apiKey: string | undefined,
+  inputMessage: [],
+  fromBrowser = false,
+) => {
+  const anthropic = new Anthropic({ apiKey, dangerouslyAllowBrowser: fromBrowser });
+
+  const res = await anthropic.beta.messages.create({
+    model: 'claude-opus-4-5',
+    max_tokens: 10000, // require streaming API if this is large.
+    system: RULES,
+    messages: [...inputMessage],
+    betas: ['structured-outputs-2025-11-13'],
+    // thinking: {
+    //   type: 'enabled',
+    //   budget_tokens: 2000,
+    // },
+    output_format: {
+      type: 'json_schema',
+      schema: {
+        type: 'object',
+        properties: {
+          thinking: {
+            type: 'string',
+          },
+          fn: { type: 'string' },
+          N: { type: 'number' },
+          heliostat: {
+            type: 'object',
+            properties: {
+              size: { type: 'array', items: { type: 'number' } },
+              poleHeight: { type: 'number' },
+              poleRadius: { type: 'number' },
+            },
+            required: ['size', 'poleHeight', 'poleRadius'],
+            additionalProperties: false,
+          },
+          tower: {
+            type: 'object',
+            properties: {
+              center: { type: 'array', items: { type: 'number' } },
+              height: { type: 'number' },
+              radius: { type: 'number' },
+            },
+            required: ['center', 'height', 'radius'],
+            additionalProperties: false,
+          },
+        },
+        required: ['fn', 'N', 'heliostat', 'tower', 'thinking'],
+        additionalProperties: false,
+      },
+    },
+  });
+  return res;
 };

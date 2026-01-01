@@ -17,7 +17,7 @@ import i18n from 'src/i18n/i18n';
 import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
-import { callSolarPowerTowerAI } from 'functions/src/callSolarPowerTowerAI';
+import { callSolarPowerTowerAI, callSolarPowerTowerClaudeAI } from 'functions/src/callSolarPowerTowerAI';
 import { FoundationTexture, ObjectType, SolarStructure } from 'src/types';
 import * as Constants from '../constants';
 import { updateGenerateSolarPowerTowerPrompt } from 'src/cloudProjectUtil';
@@ -225,13 +225,17 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
   };
 
   const callFromBrowser = async () => {
-    const apiKey = import.meta.env.VITE_AZURE_API_KEY;
     try {
       const input = createInput();
       console.log('calling...', input); // for debugging
-      const response = await callSolarPowerTowerAI(apiKey, input as [], true, reasoningEffort);
-      const result = response.choices[0].message.content;
-      console.log('res', response);
+      const response = await callSolarPowerTowerClaudeAI(import.meta.env.VITE_CLAUDE_API_KEY, input as [], true);
+      const result = (response.content[0] as any).text;
+
+      /** OpenAI */
+      // const response = await callSolarPowerTowerAI(import.meta.env.VITE_AZURE_API_KEY, input as [], true, reasoningEffort);
+      // const result = response.choices[0].message.content;
+
+      console.log('response', response);
       return result;
     } catch (e) {
       console.log(e);
@@ -252,6 +256,7 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
     setGenerating(true);
     try {
       const result = await generate();
+      // const result = hardCodedResult; // for testing only
 
       if (result) {
         processResult(result);
@@ -434,3 +439,25 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
 });
 
 export default GenerateSolarPowerTowerModal;
+
+var hardCodedResult = `{
+    "thinking": "Hard coded result for testing purposes.",
+    "N": 800,
+    "heliostat": {
+        "size": [
+            2,
+            4
+        ],
+        "poleHeight": 4.2,
+        "poleRadius": 0.1
+    },
+    "tower": {
+        "center": [
+            0,
+            0
+        ],
+        "height": 20,
+        "radius": 1.5
+    },
+    "fn": "",
+}`;
