@@ -1,5 +1,5 @@
 /*
- * @Copyright 2025. Institute for Future Intelligence, Inc.
+ * @Copyright 2025-2026. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -24,6 +24,7 @@ import { updateGenerateSolarPowerTowerPrompt } from 'src/cloudProjectUtil';
 import { HeliostatModel } from 'src/models/HeliostatModel';
 import { FoundationModel } from 'src/models/FoundationModel';
 import short from 'short-uuid';
+import { DEFAULT_LATITUDE, DEFAULT_LONGITUDE } from '../constants';
 
 export interface GenerateBuildingModalProps {
   setDialogVisible: (visible: boolean) => void;
@@ -99,6 +100,7 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
 
     try {
       const fn = new Function(json.fn);
+      const world = json.world;
       const heliostatProperties = json.heliostat;
       const towerProperties = json.tower;
       const points = fn();
@@ -106,6 +108,13 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
 
       useStore.getState().set((state) => {
         state.elements = [];
+
+        if (world) {
+          state.world.date = world.date ?? '06/22/2025, 12:00:00 PM';
+          state.world.address = world.address ?? 'Tucson, AZ';
+          state.world.latitude = world.latitude === undefined ? DEFAULT_LATITUDE : world.latitude;
+          state.world.longitude = world.longitude === undefined ? DEFAULT_LONGITUDE : world.longitude;
+        }
 
         const towerRadius = Math.max(1, towerProperties.radius ?? 1);
         const towerHeight = Math.max(10, towerProperties.height ?? 20);
@@ -440,7 +449,7 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
 
 export default GenerateSolarPowerTowerModal;
 
-var hardCodedResult = `{
+const hardCodedResult = `{
     "thinking": "Hard coded result for testing purposes.",
     "N": 800,
     "heliostat": {

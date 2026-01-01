@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2025-2026. Institute for Future Intelligence, Inc.
+ */
+
 import { AzureOpenAI, OpenAI } from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
 
@@ -102,6 +106,15 @@ Solar Receiver Tower Properties (Implicit Defaults)
 Adjust tower height and radius proportionally to the total number of heliostats:
   - More heliostats → larger tower dimensions
 
+Location
+If not specified, the default address is Tucson, Arizona, USA.
+  - address
+  - latitude and longitude
+
+Date and time
+  - a string in a format MM/dd/yyyy, hh:mm:ss a. If not specified, set the default date and time to 06/22/2025, 12:00:00 PM
+
+
 ===
 
 Output Format (Very Important)
@@ -159,6 +172,17 @@ export const callSolarPowerTowerAI = async (
             },
             fn: { type: 'string' },
             N: { type: 'number' },
+            world: {
+              type: 'object',
+              properties: {
+                date: { type: 'string' },
+                address: { type: 'string' },
+                latitude: { type: 'number' },
+                longitude: { type: 'number' },
+              },
+              required: ['date', 'address', 'latitude', 'longitude'],
+              additionalProperties: false,
+            },
             heliostat: {
               type: 'object',
               properties: {
@@ -216,6 +240,17 @@ export const callSolarPowerTowerClaudeAI = async (
           },
           fn: { type: 'string' },
           N: { type: 'number' },
+          world: {
+            type: 'object',
+            properties: {
+              date: { type: 'string' },
+              address: { type: 'string' },
+              latitude: { type: 'number' },
+              longitude: { type: 'number' },
+            },
+            required: ['date', 'address', 'latitude', 'longitude'],
+            additionalProperties: false,
+          },
           heliostat: {
             type: 'object',
             properties: {
