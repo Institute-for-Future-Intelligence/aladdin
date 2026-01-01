@@ -236,14 +236,21 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
   const callFromBrowser = async () => {
     try {
       const input = createInput();
-      console.log('calling Claude...', input); // for debugging
-      const response = await callSolarPowerTowerClaudeAI(import.meta.env.VITE_CLAUDE_API_KEY, input as [], true);
-      const result = (response.content[0] as any).text;
 
-      /** OpenAI */
-      // console.log('calling OpenAI...', input); // for debugging
-      // const response = await callSolarPowerTowerAI(import.meta.env.VITE_AZURE_API_KEY, input as [], true, reasoningEffort);
-      // const result = response.choices[0].message.content;
+      /* Claude */
+      // console.log('calling Claude...', input); // for debugging
+      // const response = await callSolarPowerTowerClaudeAI(import.meta.env.VITE_CLAUDE_API_KEY, input as [], true);
+      // const result = (response.content[0] as any).text;
+
+      /* OpenAI */
+      console.log('calling OpenAI...', input); // for debugging
+      const response = await callSolarPowerTowerAI(
+        import.meta.env.VITE_AZURE_API_KEY,
+        input as [],
+        true,
+        reasoningEffort,
+      );
+      const result = response.choices[0].message.content;
 
       console.log('response', response);
       return result;

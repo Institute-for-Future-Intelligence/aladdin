@@ -135,6 +135,8 @@ DO NOT include "function()" in the function!!!
 
 User requirements:
 
+Must define all the variables in the JS code to avoid undefined errors.
+
 `;
 
 export const callSolarPowerTowerAI = async (
@@ -204,7 +206,7 @@ export const callSolarPowerTowerAI = async (
               additionalProperties: false,
             },
           },
-          required: ['fn', 'N', 'heliostat', 'tower', 'thinking'],
+          required: ['fn', 'N', 'world', 'heliostat', 'tower', 'thinking'],
           additionalProperties: false,
         },
       },
@@ -272,7 +274,7 @@ export const callSolarPowerTowerClaudeAI = async (
             additionalProperties: false,
           },
         },
-        required: ['fn', 'N', 'heliostat', 'tower', 'thinking'],
+        required: ['fn', 'N', 'world', 'heliostat', 'tower', 'thinking'],
         additionalProperties: false,
       },
     },
