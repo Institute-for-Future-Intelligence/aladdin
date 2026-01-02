@@ -49,7 +49,7 @@ Output requirements (strict)
 
 6. When moving the position of the tower, do not move the center of the function together.
 
-7. Document the thinking process.
+7. Document the thinking process. No need to include the function in the thinking.
 ===
 
 Heliostat properties (Implicit Defaults)

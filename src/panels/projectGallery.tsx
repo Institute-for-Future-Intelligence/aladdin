@@ -2461,7 +2461,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                               </span>
                             </div>
                             {design?.data && (
-                              <div>
+                              <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
                                 <span style={{ display: 'inline', fontWeight: 'bold' }}>
                                   {t('projectPanel.AIReasoning', lang)}:{' '}
                                 </span>
