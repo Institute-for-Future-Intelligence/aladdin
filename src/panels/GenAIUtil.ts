@@ -936,7 +936,7 @@ export class GenAIUtil {
         const f = e as FoundationModel;
         filedArea = Math.max(filedArea, f.lx * f.ly);
         if (f.notBuilding && f.solarStructure === SolarStructure.FocusTower) {
-          design['towerHeight'] = f.solarPowerTower?.receiverHeight ?? 10;
+          design['towerHeight'] = f.solarPowerTower?.towerHeight ?? 10;
         }
       } else {
         design['heliostatLength'] = e.lx;
