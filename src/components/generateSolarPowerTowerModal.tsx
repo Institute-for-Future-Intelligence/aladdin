@@ -278,13 +278,14 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
   const callFromFirebaseFunction = async () => {
     try {
       const functions = getFunctions(app, 'us-east4');
-      const callAzure = httpsCallable(functions, 'callAzure', { timeout: 300000 });
+      const callAI = httpsCallable(functions, 'callAI', { timeout: 300000 });
       const input = createInput();
       console.log('calling...', input); // for debugging
-      const res = (await callAzure({
+      const res = (await callAI({
         text: input,
         type: 'solar power tower',
         reasoningEffort,
+        aIModel,
       })) as any;
       return res.data.text;
     } catch (e) {
