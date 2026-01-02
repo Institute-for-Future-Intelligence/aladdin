@@ -1746,6 +1746,7 @@ export const i18n_en = {
       WhatSolarPowerTowerDoYouWant: 'What solar power tower do you want?',
       Listening: 'Listening...',
       ReasoningEffort: 'Reasoning Effort',
+      AIModel: 'AI Model',
       GenAIPrompt: 'Prompt used to generate this molecule',
       CopyPrompt: 'Copy this prompt',
       PromptInClipBoard: 'The prompt was copied and is ready to paste.',

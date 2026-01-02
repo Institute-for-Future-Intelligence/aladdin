@@ -29,6 +29,7 @@ import {
   DEFAULT_VIEW_AMBIENT_LIGHT_INTENSITY,
   DEFAULT_VIEW_DIRECT_LIGHT_INTENSITY,
 } from '../constants';
+import { AI_MODELS_NAME } from 'functions/src/callSolarPowerTowerAI';
 
 export interface GenerateBuildingModalProps {
   setDialogVisible: (visible: boolean) => void;
@@ -414,6 +415,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
         processResult(result);
         useStore.getState().set((state) => {
           state.genAIData = {
+            aIModel: AI_MODELS_NAME['OpenAI o4-mini'],
             prompt: prompt.trim(),
             data: result,
           };

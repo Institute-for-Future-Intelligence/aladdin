@@ -1020,6 +1020,8 @@ export const countHeatmapCells = (state: CommonStoreState) => state.countHeatmap
 
 export const reasoningEffort = (state: CommonStoreState) => state.projectState.reasoningEffort;
 
+export const aIModel = (state: CommonStoreState) => state.projectState.aIModel;
+
 export const generateBuildingPrompt = (state: CommonStoreState) => state.projectState.generateBuildingPrompt;
 
 export const generateSolarPowerTowerPrompt = (state: CommonStoreState) =>

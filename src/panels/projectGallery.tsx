@@ -2432,6 +2432,15 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                                 : 'Unknown'}
                             </Space>
 
+                            {design.aIModel && (
+                              <div>
+                                <span style={{ display: 'inline', fontWeight: 'bold' }}>
+                                  {t('projectPanel.AIModel', lang)}:{' '}
+                                </span>
+                                <span style={{ display: 'inline' }}>{design.aIModel}</span>
+                              </div>
+                            )}
+
                             <div>
                               <span style={{ display: 'inline', fontWeight: 'bold' }}>
                                 {t('projectPanel.UserPrompt', lang)}:{' '}

@@ -54,6 +54,7 @@ export const fetchProject = async (
         dotSizeScatterPlot: data.dotSizeScatterPlot,
         thumbnailWidth: data.thumbnailWidth,
         reasoningEffort: data.reasoningEffort,
+        aIModel: data.aIModel,
         independentPrompt: !!data.independentPrompt,
         generateBuildingPrompt: data.generateBuildingPrompt,
       } as ProjectState);
@@ -305,6 +306,7 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
     case DesignProblem.BUILDING_DESIGN: {
       const genAIData = useStore.getState().genAIData;
       if (genAIData) {
+        design.aIModel = genAIData.aIModel;
         design.prompt = genAIData.prompt;
         design.data = genAIData.data;
       }
@@ -314,6 +316,7 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
     case DesignProblem.SOLAR_POWER_TOWER_DESIGN: {
       const genAIData = useStore.getState().genAIData;
       if (genAIData) {
+        design.aIModel = genAIData.aIModel;
         design.prompt = genAIData.prompt;
         design.data = genAIData.data;
       }

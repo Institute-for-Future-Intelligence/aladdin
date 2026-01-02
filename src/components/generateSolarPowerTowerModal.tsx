@@ -17,7 +17,11 @@ import i18n from 'src/i18n/i18n';
 import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
-import { callSolarPowerTowerAI, callSolarPowerTowerClaudeAI } from 'functions/src/callSolarPowerTowerAI';
+import {
+  callSolarPowerTowerOpenAI,
+  callSolarPowerTowerClaudeAI,
+  AI_MODELS_NAME,
+} from 'functions/src/callSolarPowerTowerAI';
 import { FoundationTexture, ObjectType, SolarStructure } from 'src/types';
 import * as Constants from '../constants';
 import { updateGenerateSolarPowerTowerPrompt } from 'src/cloudProjectUtil';
@@ -45,6 +49,7 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const reasoningEffort = useStore(Selector.reasoningEffort) ?? 'medium';
+  const aIModel = useStore(Selector.aIModel) ?? AI_MODELS_NAME['OpenAI o4-mini'];
   const generatePrompt =
     useStore(Selector.generateSolarPowerTowerPrompt) ??
     'Generate a solar power tower plant with a Fermat spiral layout for heliostats';
@@ -293,23 +298,24 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
     try {
       const input = createInput();
 
-      /* Claude */
-      // console.log('calling Claude...', input); // for debugging
-      // const response = await callSolarPowerTowerClaudeAI(import.meta.env.VITE_CLAUDE_API_KEY, input as [], true);
-      // const result = (response.content[0] as any).text;
-
-      /* OpenAI */
-      console.log('calling OpenAI...', input); // for debugging
-      const response = await callSolarPowerTowerAI(
-        import.meta.env.VITE_AZURE_API_KEY,
-        input as [],
-        true,
-        reasoningEffort,
-      );
-      const result = response.choices[0].message.content;
-
-      console.log('response', response);
-      return result;
+      if (aIModel === AI_MODELS_NAME['OpenAI o4-mini']) {
+        console.log('calling OpenAI...', input); // for debugging
+        const response = await callSolarPowerTowerOpenAI(
+          import.meta.env.VITE_AZURE_API_KEY,
+          input as [],
+          true,
+          reasoningEffort,
+        );
+        const result = response.choices[0].message.content;
+        console.log('OpenAI response:', response);
+        return result;
+      } else if (aIModel === AI_MODELS_NAME['Claude Opus-4.5']) {
+        console.log('calling Claude...', input); // for debugging
+        const response = await callSolarPowerTowerClaudeAI(import.meta.env.VITE_CLAUDE_API_KEY, input as [], true);
+        const result = (response.content[0] as any).text;
+        console.log('Claude response:', response);
+        return result;
+      }
     } catch (e) {
       console.log(e);
       showError('' + e, 10);
@@ -336,6 +342,7 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
         if (success) {
           useStore.getState().set((state) => {
             state.genAIData = {
+              aIModel: aIModel,
               prompt: prompt.trim(),
               data: result,
             };
@@ -504,6 +511,20 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
               { value: 'low', label: t('word.Low', lang) },
               { value: 'medium', label: t('word.Medium', lang) },
               { value: 'high', label: t('word.High', lang) },
+            ]}
+          />
+          {t('projectPanel.AIModel', lang) + ':'}
+          <Select
+            value={aIModel}
+            style={{ width: '150px', marginRight: '10px' }}
+            onChange={(value) => {
+              setCommonStore((state) => {
+                state.projectState.aIModel = value;
+              });
+            }}
+            options={[
+              { value: AI_MODELS_NAME['OpenAI o4-mini'], label: 'OpenAI o4-mini' },
+              { value: AI_MODELS_NAME['Claude Opus-4.5'], label: 'Claude Opus-4.5' },
             ]}
           />
         </Space>

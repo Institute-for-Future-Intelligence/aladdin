@@ -4,7 +4,7 @@
 
 import { onCall } from 'firebase-functions/v2/https';
 import { callBuildingAI } from './callBuildingAI';
-import { callSolarPowerTowerAI } from './callSolarPowerTowerAI';
+import { callSolarPowerTowerOpenAI } from './callSolarPowerTowerAI';
 
 exports.callAzure = onCall(
   { secrets: ['AZURE_OPENAI_API_KEY'], timeoutSeconds: 300, region: 'us-east4' },
@@ -21,7 +21,7 @@ exports.callAzure = onCall(
         console.log('Returned:', response.choices[0].message.content);
         return { text: response.choices[0].message.content };
       } else if (type === 'solar power tower') {
-        const response = await callSolarPowerTowerAI(apiKey, prompt, false, reasoningEffort);
+        const response = await callSolarPowerTowerOpenAI(apiKey, prompt, false, reasoningEffort);
         console.log('Prompt:', prompt);
         console.log('Reasoning Effort:', reasoningEffort);
         console.log('Returned:', response.choices[0].message.content);

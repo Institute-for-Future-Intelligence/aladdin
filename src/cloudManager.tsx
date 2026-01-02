@@ -64,6 +64,7 @@ import {
 } from 'firebase/firestore';
 import { FirebaseError } from 'firebase/app';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { AI_MODELS_NAME } from 'functions/src/callSolarPowerTowerAI';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
@@ -266,6 +267,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             counter: f.counter,
             action: '',
             reasoningEffort: f.reasoningEffort,
+            aIModel: f.aIModel,
             independentPrompt: f.independentPrompt,
             generateBuildingPrompt: f.generateBuildingPrompt,
           });
@@ -784,7 +786,8 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           hiddenParameters: data.hiddenParameters ?? ProjectUtil.getDefaultHiddenParameters(data.type),
           counter: data.counter ?? 0,
           independentPrompt: !!data.independentPrompt,
-          reasoningEffort: data.reasoningEffrot ?? 'medium',
+          reasoningEffort: data.reasoningEffort ?? 'medium',
+          aIModel: data.aIModel ?? AI_MODELS_NAME['OpenAI o4-mini'],
           generateBuildingPrompt: data.generateBuildingPrompt ?? 'Generate a colonial style house.',
           generateSolarPowerTowerPrompt:
             data.generateSolarPowerTowerPrompt ??
@@ -864,6 +867,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           state.projectView = false;
           state.projectState.independentPrompt = false;
           state.projectState.reasoningEffort = 'medium';
+          state.projectState.aIModel = AI_MODELS_NAME['OpenAI o4-mini'];
           state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
           state.projectState.generateSolarPowerTowerPrompt =
             'Generate a solar power tower with a Fermat spiral layout for heliostats.';
@@ -1534,6 +1538,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
               state.projectState.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectState.type);
               state.projectState.independentPrompt = false;
               state.projectState.reasoningEffort = 'medium';
+              state.projectState.aIModel = AI_MODELS_NAME['OpenAI o4-mini'];
               state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
               state.projectState.generateSolarPowerTowerPrompt =
                 'Generate a solar power tower with a Fermat spiral layout for heliostats.';
@@ -1593,6 +1598,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             const thumbnailWidth = useStore.getState().projectState.thumbnailWidth ?? 200;
             const newDesigns: Design[] = changeDesignTitles(t, designs) ?? [];
             const reasoningEffort = useStore.getState().projectState.reasoningEffort ?? 'medium';
+            const aIModel = useStore.getState().projectState.aIModel ?? AI_MODELS_NAME['OpenAI o4-mini'];
             const generateBuildingPrompt =
               useStore.getState().projectState.generateBuildingPrompt ?? 'Generate a colonial style house.';
             const generateSolarPowerTowerPrompt =
@@ -1630,6 +1636,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                   hiddenParameters: useStore.getState().projectState.hiddenParameters,
                   independentPrompt: !!useStore.getState().projectState.independentPrompt,
                   reasoningEffort,
+                  aIModel,
                   generateBuildingPrompt: generateBuildingPrompt,
                   generateSolarPowerTowerPrompt: generateSolarPowerTowerPrompt,
                 });

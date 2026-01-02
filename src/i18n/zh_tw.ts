@@ -1718,6 +1718,7 @@ export const i18n_zh_tw = {
       WhatSolarPowerTowerDoYouWant: '你想要什么样的光熱發電塔？',
       Listening: '傾聽中...',
       ReasoningEffort: '推理努力程度',
+      AIModel: 'AI模型',
       GenAIPrompt: '生成此分子的提示',
       CopyPrompt: '拷貝此提示',
       PromptInClipBoard: '您現在可以粘貼提示了。',

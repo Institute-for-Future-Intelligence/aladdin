@@ -155,6 +155,7 @@ export interface ProjectState {
   dotSizeScatterPlot: number | null;
   thumbnailWidth: number | null;
   reasoningEffort: string;
+  aIModel: string;
   generateBuildingPrompt: string;
   generateSolarPowerTowerPrompt: string;
   independentPrompt: boolean;
