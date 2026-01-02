@@ -33,6 +33,14 @@ export interface GenerateBuildingModalProps {
 
 const { TextArea } = Input;
 
+const hardCodedResult = `{
+    "thinking": "Hard coded result for testing purposes.",
+    "N": 800,
+    "heliostat": {"size": [2,4],"poleHeight": 4.2,"poleRadius": 0.1},
+    "tower": {"center": [0,0],"height": 20,"radius": 1.5},
+    "fn": "while(true){n++}"
+}`;
+
 const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVisible }: GenerateBuildingModalProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
@@ -90,7 +98,53 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
     return input;
   };
 
-  const processResult = (text: string) => {
+  const executeInWorker = (functionCode: string): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      const worker = new Worker(new URL('../workers/functionExecutor.worker.ts', import.meta.url), {
+        type: 'module',
+      });
+
+      let isCompleted = false;
+
+      // Set 3 second timeout
+      const timeoutId = setTimeout(() => {
+        if (!isCompleted) {
+          isCompleted = true;
+          worker.terminate();
+          reject(new Error('Worker execution timed out after 2 seconds.'));
+        }
+      }, 2000);
+
+      worker.onmessage = (e: MessageEvent) => {
+        if (!isCompleted) {
+          isCompleted = true;
+          clearTimeout(timeoutId);
+          const { success, data, error } = e.data;
+          worker.terminate();
+
+          if (success) {
+            resolve(data);
+          } else {
+            reject(new Error(error));
+          }
+        }
+      };
+
+      worker.onerror = (error) => {
+        console.error('Worker onerror:', error);
+        if (!isCompleted) {
+          isCompleted = true;
+          clearTimeout(timeoutId);
+          worker.terminate();
+          reject(error);
+        }
+      };
+
+      worker.postMessage({ functionCode });
+    });
+  };
+
+  const processResult = async (text: string): Promise<boolean> => {
     const json = JSON.parse(text);
 
     console.log('prompt:', prompt);
@@ -99,12 +153,13 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
     console.log(json.fn);
 
     try {
-      const fn = new Function(json.fn);
       const world = json.world;
       const heliostatProperties = json.heliostat;
       const towerProperties = json.tower;
-      const points = fn();
-      console.log('function run successfully, points:', points);
+
+      // Execute function in Web Worker
+      const points = await executeInWorker(json.fn);
+      console.log('points:', points);
 
       useStore.getState().set((state) => {
         state.elements = [];
@@ -208,9 +263,10 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
         state.viewState.panCenter = [0, 0, 0];
         state.cameraChangeFlag = !state.cameraChangeFlag;
       });
+      return true;
     } catch (e) {
       console.error('Error processing result:', e);
-      showError('Failed to process CSP generation result: ' + e);
+      return false;
     }
   };
 
@@ -276,19 +332,23 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
       // const result = hardCodedResult; // for testing only
 
       if (result) {
-        processResult(result);
-        useStore.getState().set((state) => {
-          state.genAIData = {
-            prompt: prompt.trim(),
-            data: result,
-          };
-        });
-        setTimeout(() => {
-          usePrimitiveStore.getState().set((state) => {
-            state.curateDesignToProjectFlag = true;
-            state.genAIModelCreated = true;
+        const success = await processResult(result);
+        if (success) {
+          useStore.getState().set((state) => {
+            state.genAIData = {
+              prompt: prompt.trim(),
+              data: result,
+            };
           });
-        }, 1500);
+          setTimeout(() => {
+            usePrimitiveStore.getState().set((state) => {
+              state.curateDesignToProjectFlag = true;
+              state.genAIModelCreated = true;
+            });
+          }, 1500);
+        } else {
+          showError('Failed to generate solar power tower plant from the AI response. Please try again.', 10);
+        }
       }
     } finally {
       setGenerating(false);
@@ -456,25 +516,3 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
 });
 
 export default GenerateSolarPowerTowerModal;
-
-const hardCodedResult = `{
-    "thinking": "Hard coded result for testing purposes.",
-    "N": 800,
-    "heliostat": {
-        "size": [
-            2,
-            4
-        ],
-        "poleHeight": 4.2,
-        "poleRadius": 0.1
-    },
-    "tower": {
-        "center": [
-            0,
-            0
-        ],
-        "height": 20,
-        "radius": 1.5
-    },
-    "fn": "",
-}`;
