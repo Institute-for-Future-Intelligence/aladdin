@@ -480,6 +480,14 @@ export const updateDesign = async (
                 updatedDesigns[index].net = _designs[index].net;
                 updatedDesigns[index].modelChanged = !!usePrimitiveStore.getState().modelChanged;
               }
+            } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
+              const prompt = updatedDesigns[index].prompt;
+              const data = updatedDesigns[index].data;
+              updatedDesigns[index] = createDesign(projectType, designTitle, thumbnail);
+              if (prompt && data) {
+                updatedDesigns[index].prompt = prompt;
+                updatedDesigns[index].data = data;
+              }
             } else {
               updatedDesigns[index] = createDesign(projectType, designTitle, thumbnail);
             }
