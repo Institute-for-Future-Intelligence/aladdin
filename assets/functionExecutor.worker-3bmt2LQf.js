@@ -1,0 +1,1 @@
+(function(){"use strict";self.onmessage=e=>{const{functionCode:t}=e.data;try{const c=new Function(t)();console.log("Worker executed function successfully"),self.postMessage({success:!0,data:c})}catch(s){self.postMessage({success:!1,error:s instanceof Error?s.message:String(s)})}}})();
