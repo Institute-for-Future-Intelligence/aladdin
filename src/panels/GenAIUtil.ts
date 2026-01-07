@@ -415,7 +415,7 @@ export class GenAIUtil {
     return correctedElements;
   }
 
-  static makeFoundation(
+  static makeFoundationForBuildingDesign(
     id: string,
     center: number[],
     size: number[],
@@ -928,6 +928,8 @@ export class GenAIUtil {
       connectedHvacIds: hvacId ? [hvacId] : [],
     } as BatteryStorageModel;
   }
+
+  static calculateUrbanDesignSolutionSpace(design: Design) {}
 
   static calculateSolarPowerTowerSolutionSpace(design: Design) {
     let filedArea = 1;

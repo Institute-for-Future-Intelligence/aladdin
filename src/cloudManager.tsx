@@ -270,6 +270,8 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             aIModel: f.aIModel,
             independentPrompt: f.independentPrompt,
             generateBuildingPrompt: f.generateBuildingPrompt,
+            generateSolarPowerTowerPrompt: f.generateSolarPowerTowerPrompt,
+            generateUrbanDesignPrompt: f.generateUrbanDesignPrompt,
           });
         });
         arr.sort((a, b) => b.timestamp - a.timestamp);
@@ -792,6 +794,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           generateSolarPowerTowerPrompt:
             data.generateSolarPowerTowerPrompt ??
             'Generate a solar power tower with a Fermat spiral layout for heliostats.',
+          generateUrbanDesignPrompt: data.generateUrbanDesignPrompt ?? 'Generate an urban design.',
         } as ProjectState);
       });
 
@@ -871,6 +874,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
           state.projectState.generateSolarPowerTowerPrompt =
             'Generate a solar power tower with a Fermat spiral layout for heliostats.';
+          state.projectState.generateUrbanDesignPrompt = 'Generate an urban design.';
         }
       });
     } catch (error) {
@@ -1542,6 +1546,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
               state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
               state.projectState.generateSolarPowerTowerPrompt =
                 'Generate a solar power tower with a Fermat spiral layout for heliostats.';
+              state.projectState.generateUrbanDesignPrompt = 'Generate an urban design.';
             });
           } catch (error) {
             showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
@@ -1604,6 +1609,8 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             const generateSolarPowerTowerPrompt =
               useStore.getState().projectState.generateSolarPowerTowerPrompt ??
               'Generate a solar power tower with a Fermat spiral layout for heliostats.';
+            const generateUrbanDesignPrompt =
+              useStore.getState().projectState.generateUrbanDesignPrompt ?? 'Generate an urban design.';
             for (const [i, d] of designs.entries()) {
               copyDesign(d.title, newDesigns[i].title, owner, user.uid);
             }
@@ -1639,6 +1646,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                   aIModel,
                   generateBuildingPrompt: generateBuildingPrompt,
                   generateSolarPowerTowerPrompt: generateSolarPowerTowerPrompt,
+                  generateUrbanDesignPrompt: generateUrbanDesignPrompt,
                 });
                 setCommonStore((state) => {
                   state.projectView = true;

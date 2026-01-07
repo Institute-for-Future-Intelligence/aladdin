@@ -158,6 +158,7 @@ export interface ProjectState {
   aIModel: string;
   generateBuildingPrompt: string;
   generateSolarPowerTowerPrompt: string;
+  generateUrbanDesignPrompt: string;
   independentPrompt: boolean;
 }
 
@@ -199,6 +200,7 @@ export enum DesignProblem {
   SOLAR_PANEL_ARRAY = 'Solar Panel Array',
   BUILDING_DESIGN = 'Building Design',
   SOLAR_POWER_TOWER_DESIGN = 'Solar Power Tower Design',
+  URBAN_DESIGN = 'Urban Design',
 }
 
 export enum ObjectiveFunctionType {

@@ -80,6 +80,7 @@ import { FidgetSpinner } from 'react-loader-spinner';
 import GenerateBuildingModal from 'src/components/generateBuildingModal';
 import SparkImage from 'src/assets/spark.png';
 import GenerateSolarPowerTowerModal from 'src/components/generateSolarPowerTowerModal';
+import GenerateUrbanDesignModal from 'src/components/generateUrbanDesignModal';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -196,6 +197,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const [updateHiddenFlag, setUpdateHiddenFlag] = useState<boolean>(false);
   const [generateBuildingDialogVisible, setGenerateBuildingDialogVisible] = useState(false);
   const [generateSolarPowerTowerDialogVisible, setGenerateSolarPowerTowerDialogVisible] = useState(false);
+  const [generateUrbanDesignDialogVisible, setGenerateUrbanDesignDialogVisible] = useState(false);
 
   const descriptionTextAreaEditableRef = useRef<boolean>(false);
   const descriptionRef = useRef<string | null>(projectDescription ?? null);
@@ -1909,6 +1911,49 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     );
   };
 
+  const generatedByAIButton = (projectType: DesignProblem) => {
+    let generatingTitle = '';
+    let generateTitle = '';
+    if (projectType === DesignProblem.BUILDING_DESIGN) {
+      generatingTitle = t('message.GeneratingBuilding', lang);
+      generateTitle = t('projectPanel.GenerateBuilding', lang);
+    } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
+      generatingTitle = t('message.GeneratingSolarPowerTower', lang);
+      generateTitle = t('projectPanel.GenerateSolarPowerTower', lang);
+    } else if (projectType === DesignProblem.URBAN_DESIGN) {
+      generatingTitle = t('message.GeneratingUrbanDesign', lang);
+      generateTitle = t('projectPanel.GenerateUrbanDesign', lang);
+    }
+
+    if (generating) {
+      return (
+        <span title={generatingTitle} onClick={(e) => e.stopPropagation()}>
+          <FidgetSpinner width={24} height={24} />
+        </span>
+      );
+    } else {
+      return (
+        <Button
+          style={{ border: 'none', padding: '4px' }}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
+              setGenerateSolarPowerTowerDialogVisible(true);
+              return;
+            } else if (projectType === DesignProblem.URBAN_DESIGN) {
+              setGenerateUrbanDesignDialogVisible(true);
+              return;
+            } else if (projectType === DesignProblem.BUILDING_DESIGN) {
+              setGenerateBuildingDialogVisible(true);
+            }
+          }}
+        >
+          <img src={GenaiImage} alt={'spark'} title={generateTitle} />
+        </Button>
+      );
+    }
+  };
+
   const descriptionItems: CollapseProps['items'] = [
     {
       key: '1',
@@ -1947,73 +1992,23 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                   </Button>
                 )}
 
-                {projectType === DesignProblem.BUILDING_DESIGN && (
-                  <>
-                    {generating ? (
-                      <span
-                        title={t('message.GeneratingBuilding', lang)}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        <FidgetSpinner width={24} height={24} />
-                      </span>
-                    ) : (
-                      <Button
-                        disabled={false}
-                        style={{ border: 'none', padding: '4px' }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setGenerateBuildingDialogVisible(true);
-                        }}
-                      >
-                        <img src={GenaiImage} alt={'spark'} title={t('projectPanel.GenerateBuilding', lang)} />
-                      </Button>
-                    )}
-                  </>
-                )}
+                {generatedByAIButton(projectType)}
 
-                {projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN && (
-                  <>
-                    {generating ? (
-                      <span
-                        title={t('message.GeneratingSolarPowerTower', lang)}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        <FidgetSpinner width={24} height={24} />
-                      </span>
-                    ) : (
-                      <Button
-                        disabled={false}
-                        style={{ border: 'none', padding: '4px' }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setGenerateSolarPowerTowerDialogVisible(true);
-                        }}
-                      >
-                        <img src={GenaiImage} alt={'spark'} title={t('projectPanel.GenerateSolarPowerTower', lang)} />
-                      </Button>
-                    )}
-                  </>
+                {(projectType === DesignProblem.SOLAR_PANEL_ARRAY ||
+                  projectType === DesignProblem.SOLAR_PANEL_TILT_ANGLE) && (
+                  <Button
+                    style={{ border: 'none', padding: '4px' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      curateCurrentDesign();
+                    }}
+                  >
+                    <ImportOutlined
+                      style={{ fontSize: '24px', color: 'gray' }}
+                      title={t('projectPanel.CurateCurrentDesign', lang)}
+                    />
+                  </Button>
                 )}
-
-                {projectType !== DesignProblem.BUILDING_DESIGN &&
-                  projectType !== DesignProblem.SOLAR_POWER_TOWER_DESIGN && (
-                    <Button
-                      style={{ border: 'none', padding: '4px' }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        curateCurrentDesign();
-                      }}
-                    >
-                      <ImportOutlined
-                        style={{ fontSize: '24px', color: 'gray' }}
-                        title={t('projectPanel.CurateCurrentDesign', lang)}
-                      />
-                    </Button>
-                  )}
                 {selectedDesign && selectedDesign.title === cloudFile && (
                   <Button
                     style={{ border: 'none', padding: '4px' }}
@@ -2413,14 +2408,16 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                       onOpenChange={(open: boolean) => {
                         if (
                           projectType === DesignProblem.BUILDING_DESIGN ||
-                          projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN
+                          projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN ||
+                          projectType === DesignProblem.URBAN_DESIGN
                         ) {
                           setPop(open);
                         }
                       }}
                       content={
                         (projectType === DesignProblem.BUILDING_DESIGN ||
-                          projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) && (
+                          projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN ||
+                          projectType === DesignProblem.URBAN_DESIGN) && (
                           <Space direction="vertical" style={{ width: '600px' }}>
                             <Space style={{ fontWeight: 'bold' }}>
                               {design.title
@@ -2507,7 +2504,8 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                           }}
                         >
                           {(projectType === DesignProblem.BUILDING_DESIGN ||
-                            projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) && (
+                            projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN ||
+                            projectType === DesignProblem.URBAN_DESIGN) && (
                             <img
                               src={SparkImage}
                               alt={'spark'}
@@ -2520,7 +2518,8 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
                             style={{ cursor: 'pointer', fontSize: '10px', paddingLeft: '4px' }}
                             title={
                               projectType === DesignProblem.BUILDING_DESIGN ||
-                              projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN
+                              projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN ||
+                              projectType === DesignProblem.URBAN_DESIGN
                                 ? t(pop ? 'projectPanel.ClickToClosePopup' : 'projectPanel.ClickForMoreInfo', lang)
                                 : undefined
                             }
@@ -2667,6 +2666,10 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
         <GenerateSolarPowerTowerModal
           setDialogVisible={setGenerateSolarPowerTowerDialogVisible}
           isDialogVisible={generateSolarPowerTowerDialogVisible}
+        />
+        <GenerateUrbanDesignModal
+          setDialogVisible={setGenerateUrbanDesignDialogVisible}
+          isDialogVisible={() => generateUrbanDesignDialogVisible}
         />
       </ColumnWrapper>
     </Container>

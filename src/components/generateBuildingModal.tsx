@@ -119,7 +119,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
           switch (e.type) {
             case ObjectType.Foundation: {
               const hasBattery = jsonElements.find((el) => el.type === ObjectType.BatteryStorage && el.pId === e.id);
-              const f = GenAIUtil.makeFoundation(
+              const f = GenAIUtil.makeFoundationForBuildingDesign(
                 e.id,
                 e.center,
                 e.size,

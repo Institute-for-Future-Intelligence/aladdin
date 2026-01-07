@@ -320,9 +320,12 @@ export const i18n_zh_tw = {
         '你確定匿名登入嗎？一旦退出，匿名帳號將無法恢復。匿名登入主要是為無法實名登入的使用者提供臨時方便。',
       GeneratingBuilding: '正在生成建築...',
       GeneratingSolarPowerTower: '正在生成光熱發電塔...',
+      GeneratingUrbanDesign: '正在生成城市設計...',
       GeneratingABuildingMayTakeAWhile: '生成一個建築可能需要一些時間且無法取消。按確定鍵前請仔細考慮好給AI的輸入。',
       GeneratingSolarPowerTowerMayTakeAWhile:
         '生成一個光熱發電塔可能需要一些時間且無法取消。按確定鍵前請仔細考慮好給AI的輸入。',
+      GeneratingUrbanDesignMayTakeAWhile:
+        '生成一個城市設計可能需要一些時間且無法取消。在按確定鍵前請仔細考慮好給AI的輸入。',
       GeneratedResultNotAccepted: '抱歉，回傳結果無法解讀。',
     },
 
@@ -1714,8 +1717,10 @@ export const i18n_zh_tw = {
       BuildingDesign: '建築設計',
       GenerateBuilding: '用AI設計建築',
       GenerateSolarPowerTower: '用AI設計光熱發電塔',
+      GenerateUrbanDesign: '用AI設計城市',
       WhatBuildingDoYouWant: '你想要什麽樣的建築?',
       WhatSolarPowerTowerDoYouWant: '你想要什么样的光熱發電塔？',
+      WhatUrbanDesignDoYouWant: '你想要什麽樣的城市設計?',
       Listening: '傾聽中...',
       ReasoningEffort: '推理努力程度',
       AIModel: 'AI模型',
@@ -1727,6 +1732,7 @@ export const i18n_zh_tw = {
       UserPrompt: '用户提示',
       AIReasoning: 'AI推理',
       SolarPowerTowerDesign: '光熱發電塔設計',
+      UrbanDesign: '城市設計',
     },
 
     accountSettingsPanel: {

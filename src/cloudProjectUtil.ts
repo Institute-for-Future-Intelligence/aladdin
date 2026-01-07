@@ -57,6 +57,8 @@ export const fetchProject = async (
         aIModel: data.aIModel,
         independentPrompt: !!data.independentPrompt,
         generateBuildingPrompt: data.generateBuildingPrompt,
+        generateSolarPowerTowerPrompt: data.generateSolarPowerTowerPrompt,
+        generateUrbanDesignPrompt: data.generateUrbanDesignPrompt,
       } as ProjectState);
     } else {
       showError(i18n.t('message.CannotOpenProject', lang) + ': ' + project);
@@ -321,6 +323,16 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
         design.data = genAIData.data;
       }
       GenAIUtil.calculateSolarPowerTowerSolutionSpace(design);
+      break;
+    }
+    case DesignProblem.URBAN_DESIGN: {
+      const genAIData = useStore.getState().genAIData;
+      if (genAIData) {
+        design.aIModel = genAIData.aIModel;
+        design.prompt = genAIData.prompt;
+        design.data = genAIData.data;
+      }
+      GenAIUtil.calculateUrbanDesignSolutionSpace(design);
       break;
     }
   }

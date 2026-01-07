@@ -321,10 +321,13 @@ export const i18n_tr = {
         'Are you sure you want to sign in anonymously? An anonymous account will be lost if you sign out. It should be used only for temporary purposes and on the same computer.',
       GeneratingBuilding: 'Generating building...',
       GeneratingSolarPowerTower: 'Generating solar power tower...',
+      GeneratingUrbanDesign: 'Generating urban design...',
       GeneratingABuildingMayTakeAWhile:
         'Generating a building may take a long time and cannot be cancelled. Think about your prompt carefully before pressing the OK button.',
       GeneratingSolarPowerTowerMayTakeAWhile:
         'Generating a solar power tower may take a long time and cannot be cancelled. Think about your prompt carefully before pressing the OK button.',
+      GeneratingUrbanDesignMayTakeAWhile:
+        'Generating an urban design may take a long time and cannot be cancelled. Think about your prompt carefully before pressing the OK button.',
       GeneratedResultNotAccepted: 'Sorry, the generated result is not accepted.',
     },
 
@@ -1742,8 +1745,10 @@ export const i18n_tr = {
       BuildingDesign: 'Building Design',
       GenerateBuilding: 'Generate a building using AI',
       GenerateSolarPowerTower: 'Generate a solar power tower plant using AI',
+      GenerateUrbanDesign: 'Generate an urban design using AI',
       WhatBuildingDoYouWant: 'What building do you want?',
       WhatSolarPowerTowerDoYouWant: 'What solar power tower do you want?',
+      WhatUrbanDesignDoYouWant: 'What urban design do you want?',
       Listening: 'Listening...',
       ReasoningEffort: 'Reasoning Effort',
       AIModel: 'AI Model',
@@ -1755,6 +1760,7 @@ export const i18n_tr = {
       UserPrompt: 'User Prompt',
       AIReasoning: 'AI Reasoning',
       SolarPowerTowerDesign: 'Solar Power Tower Design',
+      UrbanDesign: 'Urban Design',
     },
 
     accountSettingsPanel: {

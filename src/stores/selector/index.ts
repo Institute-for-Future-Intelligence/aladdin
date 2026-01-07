@@ -1027,6 +1027,8 @@ export const generateBuildingPrompt = (state: CommonStoreState) => state.project
 export const generateSolarPowerTowerPrompt = (state: CommonStoreState) =>
   state.projectState.generateSolarPowerTowerPrompt;
 
+export const generateUrbanDesignPrompt = (state: CommonStoreState) => state.projectState.generateUrbanDesignPrompt;
+
 export const independentPrompt = (state: CommonStoreState) => state.projectState.independentPrompt;
 
 export const setPrimitiveStore = (state: PrimitiveStoreState) => state.setPrimitiveStore;

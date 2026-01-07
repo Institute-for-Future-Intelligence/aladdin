@@ -659,6 +659,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             aIModel: AI_MODELS_NAME['OpenAI o4-mini'],
             generateBuildingPrompt: 'Generate a colonial style house.',
             generateSolarPowerTowerPrompt: 'Generate a solar power tower with a Fermat spiral layout for heliostats.',
+            generateUrbanDesignPrompt: 'Generate Urban Design',
             independentPrompt: false,
           } as ProjectState,
           projectImages: new Map<string, HTMLImageElement>(),
@@ -698,6 +699,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
               state.projectState.generateSolarPowerTowerPrompt =
                 'Generate a solar power tower with a Fermat spiral layout for heliostats.';
+              state.projectState.generateUrbanDesignPrompt = 'Generate Urban Design';
               state.projectState.independentPrompt = false;
               // when a project is closed, the current cloud file is detached
               const designs = state.projectState.designs;
