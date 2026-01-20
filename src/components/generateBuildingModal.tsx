@@ -17,7 +17,7 @@ import i18n from 'src/i18n/i18n';
 import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
-import { callBuildingAI } from 'functions/src/callBuildingAI';
+import { callBuildingAI, callBuildingClaudeAI } from 'functions/src/callBuildingAI';
 import { ObjectType } from 'src/types';
 import { GenAIUtil } from 'src/panels/GenAIUtil';
 import { RoofType } from 'src/models/RoofModel';
@@ -45,6 +45,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
   const generateBuildingPrompt = useStore(Selector.generateBuildingPrompt);
   const setGenerating = usePrimitiveStore(Selector.setGenerating);
   const setChanged = usePrimitiveStore(Selector.setChanged);
+  const aIModel = useStore(Selector.aIModel) ?? AI_MODELS_NAME['OpenAI o4-mini'];
 
   const [prompt, setPrompt] = useState<string>('Generate a colonial style house');
   const [listening, setListening] = useState<boolean>(false);
@@ -90,7 +91,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
     const json = JSON.parse(text);
 
     console.log('prompt:', prompt);
-    console.log('raw:', JSON.parse(text).elements);
+    console.log('raw:', JSON.parse(text));
 
     const jsonWorld = json.world;
     const jsonView = json.view;
@@ -339,17 +340,20 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
               break;
             }
             case ObjectType.BatteryStorage: {
-              const b = GenAIUtil.makeBatteryStorage(
-                e.id,
-                e.pId,
-                e.center,
-                e.size,
-                e.color,
-                e.chargingEfficiency,
-                e.dischargingEfficiency,
-                e.hvacId,
-              );
-              state.elements.push(b);
+              const f = jsonElements.find((el) => el.id === e.pId);
+              if (f) {
+                const b = GenAIUtil.makeBatteryStorage(
+                  e.id,
+                  e.pId,
+                  [e.center[0], e.center[1], f.size[2] / 2],
+                  e.size,
+                  e.color,
+                  e.chargingEfficiency,
+                  e.dischargingEfficiency,
+                  e.hvacId,
+                );
+                state.elements.push(b);
+              }
             }
           }
         }
@@ -374,6 +378,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
         text: input,
         type: 'building',
         reasoningEffort,
+        aIModel,
       })) as any;
       return res.data.text;
     } catch (e) {
@@ -384,19 +389,41 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
   };
 
   const callFromBrowser = async () => {
-    const apiKey = import.meta.env.VITE_AZURE_API_KEY;
     try {
       const input = createInput();
-      console.log('calling...', input); // for debugging
-      const response = await callBuildingAI(apiKey, input as [], true, reasoningEffort);
-      const result = response.choices[0].message.content;
-      console.log('res', response);
-      return result;
+
+      if (aIModel === AI_MODELS_NAME['OpenAI o4-mini']) {
+        console.log('calling OpenAI...', input); // for debugging
+        const response = await callBuildingAI(import.meta.env.VITE_AZURE_API_KEY, input as [], true, reasoningEffort);
+        const result = response.choices[0].message.content;
+        console.log('OpenAI response:', response);
+        return result;
+      } else if (aIModel === AI_MODELS_NAME['Claude Opus-4.5']) {
+        console.log('calling Claude...', input); // for debugging
+        const response = await callBuildingClaudeAI(import.meta.env.VITE_CLAUDE_API_KEY, input as [], true);
+        const result = (response.content[0] as any).text;
+        console.log('Claude response:', response);
+        return result;
+      }
     } catch (e) {
       console.log(e);
       showError('' + e, 10);
       return null;
     }
+
+    // const apiKey = import.meta.env.VITE_AZURE_API_KEY;
+    // try {
+    //   const input = createInput();
+    //   console.log('calling...', input); // for debugging
+    //   const response = await callBuildingAI(apiKey, input as [], true, reasoningEffort);
+    //   const result = response.choices[0].message.content;
+    //   console.log('res', response);
+    //   return result;
+    // } catch (e) {
+    //   console.log(e);
+    //   showError('' + e, 10);
+    //   return null;
+    // }
   };
 
   const generate = async () => {
@@ -568,21 +595,39 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
           }}
         />
         <Space>
-          {t('projectPanel.ReasoningEffort', lang) + ':'}
+          {t('projectPanel.AIModel', lang) + ':'}
           <Select
-            value={reasoningEffort}
-            style={{ width: '100px', marginRight: '10px' }}
+            value={aIModel}
+            style={{ width: '150px', marginRight: '10px' }}
             onChange={(value) => {
               setCommonStore((state) => {
-                state.projectState.reasoningEffort = value;
+                state.projectState.aIModel = value;
               });
             }}
             options={[
-              { value: 'low', label: t('word.Low', lang) },
-              { value: 'medium', label: t('word.Medium', lang) },
-              { value: 'high', label: t('word.High', lang) },
+              { value: AI_MODELS_NAME['OpenAI o4-mini'], label: 'OpenAI o4-mini' },
+              { value: AI_MODELS_NAME['Claude Opus-4.5'], label: 'Claude Opus-4.5' },
             ]}
           />
+          {aIModel === AI_MODELS_NAME['OpenAI o4-mini'] && (
+            <>
+              {t('projectPanel.ReasoningEffort', lang) + ':'}
+              <Select
+                value={reasoningEffort}
+                style={{ width: '100px', marginRight: '10px' }}
+                onChange={(value) => {
+                  setCommonStore((state) => {
+                    state.projectState.reasoningEffort = value;
+                  });
+                }}
+                options={[
+                  { value: 'low', label: t('word.Low', lang) },
+                  { value: 'medium', label: t('word.Medium', lang) },
+                  { value: 'high', label: t('word.High', lang) },
+                ]}
+              />
+            </>
+          )}
         </Space>
         <span style={{ fontSize: '12px' }}>
           <WarningOutlined /> {t('message.GeneratingABuildingMayTakeAWhile', lang)}

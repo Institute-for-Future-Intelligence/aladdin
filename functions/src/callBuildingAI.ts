@@ -2,6 +2,7 @@
  * @Copyright 2025. Institute for Future Intelligence, Inc.
  */
 
+import Anthropic from '@anthropic-ai/sdk';
 import { AzureOpenAI, OpenAI } from 'openai';
 
 const endpoint = 'https://ifi-aims-genai.services.ai.azure.com/';
@@ -180,6 +181,154 @@ Build houses described by the user using the defined elements and return the res
 When evaluating their energy efficiencies, consider the geographical location and climate conditions.
 Document the thinking process.
 If the user's prompts are irrelevant, just build and return a simple house.
+`;
+
+const DATA_STRUCTURE = `
+
+## Output Format
+Return strict JSON only, with this structure:
+
+{
+  "thinking": "Your reasoning process",
+  "world": {
+    "date": "MM/dd/yyyy, hh:mm:ss",
+    "address": "Address string",
+    "latitude": number,
+    "longitude": number
+  },
+  "view": {
+    "directLightIntensity": number (0-1),
+    "ambientLightIntensity": number (0-1)
+  },
+  "elements": [
+    // Array of elements, each one of the types below
+  ]
+}
+
+## Element Type Definitions
+
+### Foundation
+{
+  "type": "Foundation",
+  "id": "unique ID",
+  "center": [x, y, z],
+  "size": [width, depth, height],
+  "color": "#RRGGBB",
+  "rotation": degrees,
+  "rValue": R-value,
+  "heatingSetpoint": heating temperature,
+  "coolingSetpoint": cooling temperature,
+  "coefficientOfPerformanceAC": AC performance coefficient,
+  "hvacId": "associated HVAC ID"
+}
+
+### Wall
+{
+  "type": "Wall",
+  "id": "unique ID",
+  "pId": "parent ID (Foundation)",
+  "thickness": thickness,
+  "height": height,
+  "color": "#RRGGBB",
+  "rValue": R-value,
+  "airPermeability": air permeability,
+  "leftPoint": [x, y],
+  "rightPoint": [x, y],
+  "leftConnectId": "left connecting wall ID",
+  "rightConnectId": "right connecting wall ID",
+  "overhang": overhang length
+}
+
+### Roof
+{
+  "type": "Roof",
+  "id": "unique ID",
+  "fId": "Foundation ID",
+  "wId": "Wall ID",
+  "roofType": "Gable" | "Pyramid" | "Hip" | "Mansard" | "Gambrel",
+  "thickness": thickness,
+  "rise": rise height,
+  "color": "#RRGGBB",
+  "rValue": R-value,
+  "airPermeability": air permeability,
+  "ridgeLength": ridge length
+}
+
+### Door
+{
+  "type": "Door",
+  "id": "unique ID",
+  "pId": "parent wall ID",
+  "fId": "Foundation ID",
+  "center": [x, y],
+  "size": [width, height],
+  "filled": true/false,
+  "color": "#RRGGBB",
+  "frameColor": "#RRGGBB",
+  "uValue": U-value,
+  "airPermeability": air permeability,
+  "doorType": "door type",
+  "textureType": "texture type"
+}
+
+### Window
+{
+  "type": "Window",
+  "id": "unique ID",
+  "pId": "parent wall ID",
+  "fId": "Foundation ID",
+  "center": [x, y],
+  "size": [width, height],
+  "opacity": opacity (0-1),
+  "uValue": U-value,
+  "airPermeability": air permeability,
+  "color": "#RRGGBB",
+  "tint": "tint color",
+  "windowType": "window type",
+  "shutter": true/false,
+  "shutterColor": "#RRGGBB",
+  "shutterWidth": shutter width,
+  "horizontalMullion": true/false,
+  "horizontalMullionSpacing": horizontal mullion spacing,
+  "verticalMullion": true/false,
+  "verticalMullionSpacing": vertical mullion spacing,
+  "mullionColor": "#RRGGBB",
+  "mullionWidth": mullion width
+}
+
+### Solar Panel
+{
+  "type": "Solar Panel",
+  "id": "unique ID",
+  "pId": "parent ID",
+  "fId": "Foundation ID",
+  "pvModelName": "model name",
+  "orientation": "orientation",
+  "center": [x, y],
+  "size": [width, height],
+  "batteryId": "associated battery ID"
+}
+
+### Battery Storage
+{
+  "type": "Battery Storage",
+  "id": "unique ID",
+  "pId": "parent ID",
+  "center": [x, y, z],
+  "size": [width, depth, height],
+  "color": "#RRGGBB",
+  "chargingEfficiency": charging efficiency (0-1),
+  "dischargingEfficiency": discharging efficiency (0-1),
+  "hvacId": "associated HVAC ID"
+}
+
+## Important Rules
+1. Output JSON only - no other text, no markdown code fences
+2. All fields are required
+3. IDs must be unique and meaningful
+4. Colors use hexadecimal format
+5. Element ID references must be correctly linked
+
 `;
 
 export const callBuildingAI = async (
@@ -471,4 +620,17 @@ export const callBuildingAI = async (
     },
   });
   return response;
+};
+
+export const callBuildingClaudeAI = async (apiKey: string | undefined, inputMessage: [], fromBrowser = false) => {
+  const anthropic = new Anthropic({ apiKey, dangerouslyAllowBrowser: fromBrowser });
+
+  const res = await anthropic.beta.messages.create({
+    model: 'claude-opus-4-5',
+    max_tokens: 10000, // require streaming API if this is large.
+    system: RULES + DATA_STRUCTURE,
+    messages: [...inputMessage],
+    betas: ['structured-outputs-2025-11-13'],
+  });
+  return res;
 };

@@ -3,7 +3,7 @@
  */
 
 import { onCall } from 'firebase-functions/v2/https';
-import { callBuildingAI } from './callBuildingAI';
+import { callBuildingAI, callBuildingClaudeAI } from './callBuildingAI';
 import { AI_MODELS_NAME, callSolarPowerTowerClaudeAI, callSolarPowerTowerOpenAI } from './callSolarPowerTowerAI';
 
 exports.callAI = onCall(
@@ -16,11 +16,20 @@ exports.callAI = onCall(
     const aIModel = req.data.aIModel ?? AI_MODELS_NAME['OpenAI o4-mini'];
     try {
       if (type === 'building') {
-        const response = await callBuildingAI(azureApiKey, prompt, false, reasoningEffort);
-        console.log('Prompt:', prompt);
-        console.log('Reasoning Effort:', reasoningEffort);
-        console.log('Returned:', response.choices[0].message.content);
-        return { text: response.choices[0].message.content };
+        if (aIModel === AI_MODELS_NAME['OpenAI o4-mini']) {
+          const response = await callBuildingAI(azureApiKey, prompt, false, reasoningEffort);
+          console.log('Prompt:', prompt);
+          console.log('Reasoning Effort:', reasoningEffort);
+          console.log('Returned:', response.choices[0].message.content);
+          return { text: response.choices[0].message.content };
+        } else {
+          const claudeApiKey = process.env.CLAUDE_API_KEY;
+          const response = await callBuildingClaudeAI(claudeApiKey, prompt, false);
+          console.log('Prompt:', prompt);
+          console.log('Reasoning Effort:', reasoningEffort);
+          console.log('Returned:', (response.content[0] as any).text);
+          return { text: (response.content[0] as any).text };
+        }
       } else if (type === 'solar power tower') {
         if (aIModel === AI_MODELS_NAME['OpenAI o4-mini']) {
           const response = await callSolarPowerTowerOpenAI(azureApiKey, prompt, false, reasoningEffort);

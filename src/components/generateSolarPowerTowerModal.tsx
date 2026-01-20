@@ -499,21 +499,6 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
           }}
         />
         <Space>
-          {t('projectPanel.ReasoningEffort', lang) + ':'}
-          <Select
-            value={reasoningEffort}
-            style={{ width: '100px', marginRight: '10px' }}
-            onChange={(value) => {
-              setCommonStore((state) => {
-                state.projectState.reasoningEffort = value;
-              });
-            }}
-            options={[
-              { value: 'low', label: t('word.Low', lang) },
-              { value: 'medium', label: t('word.Medium', lang) },
-              { value: 'high', label: t('word.High', lang) },
-            ]}
-          />
           {t('projectPanel.AIModel', lang) + ':'}
           <Select
             value={aIModel}
@@ -528,6 +513,25 @@ const GenerateSolarPowerTowerModal = React.memo(({ setDialogVisible, isDialogVis
               { value: AI_MODELS_NAME['Claude Opus-4.5'], label: 'Claude Opus-4.5' },
             ]}
           />
+          {aIModel === AI_MODELS_NAME['OpenAI o4-mini'] && (
+            <>
+              {t('projectPanel.ReasoningEffort', lang) + ':'}
+              <Select
+                value={reasoningEffort}
+                style={{ width: '100px', marginRight: '10px' }}
+                onChange={(value) => {
+                  setCommonStore((state) => {
+                    state.projectState.reasoningEffort = value;
+                  });
+                }}
+                options={[
+                  { value: 'low', label: t('word.Low', lang) },
+                  { value: 'medium', label: t('word.Medium', lang) },
+                  { value: 'high', label: t('word.High', lang) },
+                ]}
+              />
+            </>
+          )}
         </Space>
         <span style={{ fontSize: '12px' }}>
           <WarningOutlined /> {t('message.GeneratingSolarPowerTowerMayTakeAWhile', lang)}
