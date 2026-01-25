@@ -28,7 +28,6 @@ import { updateGenerateSolarPowerTowerPrompt } from 'src/cloudProjectUtil';
 import { HeliostatModel } from 'src/models/HeliostatModel';
 import { FoundationModel } from 'src/models/FoundationModel';
 import short from 'short-uuid';
-import { DEFAULT_LATITUDE, DEFAULT_LONGITUDE } from '../constants';
 
 export interface GenerateSolarPowerTowerProps {
   setDialogVisible: (visible: boolean) => void;
@@ -173,8 +172,8 @@ const GenerateSolarPowerTowerModal = React.memo(
           if (world) {
             state.world.date = world.date ?? '06/22/2025, 12:00:00 PM';
             state.world.address = world.address ?? 'Tucson, AZ';
-            state.world.latitude = world.latitude === undefined ? DEFAULT_LATITUDE : world.latitude;
-            state.world.longitude = world.longitude === undefined ? DEFAULT_LONGITUDE : world.longitude;
+            state.world.latitude = world.latitude === undefined ? 32.254 : world.latitude;
+            state.world.longitude = world.longitude === undefined ? -110.9742 : world.longitude;
           }
 
           const towerRadius = Math.max(1, towerProperties.radius ?? 1);

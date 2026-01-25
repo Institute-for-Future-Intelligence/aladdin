@@ -1,5 +1,5 @@
 /*
- * @Copyright 2025. Institute for Future Intelligence, Inc.
+ * @Copyright 2025-2026. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -18,7 +18,6 @@ import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
 import { CuboidTexture, FoundationTexture, ObjectType } from 'src/types';
-import { GenAIUtil } from 'src/panels/GenAIUtil';
 import { updateGenerateBuildingPrompt } from 'src/cloudProjectUtil';
 import { Util } from '../Util';
 import { AI_MODELS_NAME } from 'functions/src/callSolarPowerTowerAI';
@@ -775,11 +774,19 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
     console.log('thinking', json.thinking);
 
     const city = json.city;
+    const world = city.world;
     const roads = city.roads;
     const width = roads.width;
 
     useStore.getState().set((state) => {
       state.elements = [];
+
+      if (world) {
+        state.world.date = world.date ?? '06/22/2026, 12:00:00 PM';
+        state.world.address = world.address ?? 'New York City, USA';
+        state.world.latitude = world.latitude === undefined ? 40.7128 : world.latitude;
+        state.world.longitude = world.longitude === undefined ? -74.006 : world.longitude;
+      }
 
       // generate rivers
       if (city.rivers && city.rivers.length > 0) {

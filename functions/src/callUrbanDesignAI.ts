@@ -44,6 +44,14 @@ const RULES = `
 
 城市包括河流（可省略），道路，公园，地标建筑，和区域。
 
+### Location
+If not specified, the default address is New York City, USA.
+  - address
+  - latitude and longitude
+
+### Date and time
+  - a string in a format MM/dd/yyyy, hh:mm:ss a. If not specified, set the default date and time to 06/22/2025, 12:00:00 PM
+
 ### 通用规则
 - 城市范围大约为：1500 x 2000， 不需要很精确
 - 城市中心落在原点[0, 0]
@@ -103,6 +111,14 @@ const RULES = `
 
 {
   "city": {
+    "world": {
+      "date": <date>,
+       "address": <address>,
+       "latitude": <lat>,
+       "longitude": <lng>,
+      },
+    },
+
     "bounds": [1500, 2000],
 
     "roads": {
@@ -244,6 +260,17 @@ export const callUrbanDesignClaudeAI = async (apiKey: string | undefined, inputM
           city: {
             type: 'object',
             properties: {
+              world: {
+                type: 'object',
+                properties: {
+                  date: { type: 'string' },
+                  address: { type: 'string' },
+                  latitude: { type: 'number' },
+                  longitude: { type: 'number' },
+                },
+                required: ['date', 'address', 'latitude', 'longitude'],
+                additionalProperties: false,
+              },
               rivers: {
                 type: 'array',
                 items: {
@@ -327,7 +354,7 @@ export const callUrbanDesignClaudeAI = async (apiKey: string | undefined, inputM
                 additionalProperties: false,
               },
             },
-            required: ['roads', 'buildings', 'parks', 'rivers'],
+            required: ['roads', 'buildings', 'parks', 'rivers', 'world'],
             additionalProperties: false,
           },
         },
