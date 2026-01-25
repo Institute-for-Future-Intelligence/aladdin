@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2026. Institute for Future Intelligence, Inc.
  */
 
 export const i18n_zh_cn = {
@@ -327,6 +327,8 @@ export const i18n_zh_cn = {
       GeneratingUrbanDesignMayTakeAWhile:
         '生成一个城市设计可能需要一些时间且无法取消。在按确定键前请仔细考虑好给AI的输入。',
       GeneratedResultNotAccepted: '抱歉，返回结果无法解读。',
+      NumberOfDesignsInProjectExceeds: '此项目的设计数目超过',
+      RemoveSomeDesignsFromProjectToContinue: '如要继续请从此项目里删除一些设计',
     },
 
     menu: {

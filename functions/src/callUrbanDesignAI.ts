@@ -1,14 +1,8 @@
 /*
- * @Copyright 2025. Institute for Future Intelligence, Inc.
+ * @Copyright 2025-2026. Institute for Future Intelligence, Inc.
  */
 
 import Anthropic from '@anthropic-ai/sdk';
-import { AzureOpenAI, OpenAI } from 'openai';
-
-const endpoint = 'https://ifi-aims-genai.services.ai.azure.com/';
-const modelName = 'o4-mini';
-const deployment = 'o4-mini';
-const apiVersion = '2024-12-01-preview';
 
 // const RULES = `Role
 // You are an expert in urban design, computational geometry, and procedural layout generation.
@@ -110,7 +104,7 @@ const RULES = `
 {
   "city": {
     "bounds": [1500, 2000],
-    
+
     "roads": {
       "width": <道路宽度>,
       "lines": [
@@ -122,7 +116,7 @@ const RULES = `
     "parks": [
       {"vertices": [[x1, y1], [x2, y2], ...]}
     ],
-    
+
     "buildings": {
       "defaults": {
         "size": [<宽>, <深>],

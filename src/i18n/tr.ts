@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2026. Institute for Future Intelligence, Inc.
  */
 
 export const i18n_tr = {
@@ -329,6 +329,8 @@ export const i18n_tr = {
       GeneratingUrbanDesignMayTakeAWhile:
         'Generating an urban design may take a long time and cannot be cancelled. Think about your prompt carefully before pressing the OK button.',
       GeneratedResultNotAccepted: 'Sorry, the generated result is not accepted.',
+      NumberOfDesignsInProjectExceeds: 'Number of designs in this project exceeds',
+      RemoveSomeDesignsFromProjectToContinue: 'Remove some designs from this project to continue',
     },
 
     menu: {

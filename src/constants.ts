@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2026. Institute for Future Intelligence, Inc.
  */
 
 import { Color, Euler, Vector2, Vector3 } from 'three';
@@ -23,7 +23,7 @@ import {
 import { Rectangle } from './models/Rectangle';
 import { GroundModel } from './models/GroundModel';
 
-export const VERSION = '1.9.7';
+export const VERSION = '1.9.8';
 
 // used for check old file that need to update light intensity.
 export const LIGHT_INTENSITY_CHANGED_VERSION = '1.5.0';

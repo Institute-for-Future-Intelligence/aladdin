@@ -1,5 +1,5 @@
 /*
- * @Copyright 2023-2025. Institute for Future Intelligence, Inc.
+ * @Copyright 2023-2026. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -1938,13 +1938,40 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           onClick={(e) => {
             e.stopPropagation();
             if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
-              setGenerateSolarPowerTowerDialogVisible(true);
+              if (projectDesigns !== null && projectDesigns?.length >= 20) {
+                showInfo(
+                  t('message.NumberOfDesignsInProjectExceeds', lang) +
+                    ' 20. ' +
+                    t('message.RemoveSomeDesignsFromProjectToContinue', lang) +
+                    '.',
+                );
+              } else {
+                setGenerateSolarPowerTowerDialogVisible(true);
+              }
               return;
             } else if (projectType === DesignProblem.URBAN_DESIGN) {
-              setGenerateUrbanDesignDialogVisible(true);
+              if (projectDesigns !== null && projectDesigns?.length >= 20) {
+                showInfo(
+                  t('message.NumberOfDesignsInProjectExceeds', lang) +
+                    ' 20. ' +
+                    t('message.RemoveSomeDesignsFromProjectToContinue', lang) +
+                    '.',
+                );
+              } else {
+                setGenerateUrbanDesignDialogVisible(true);
+              }
               return;
             } else if (projectType === DesignProblem.BUILDING_DESIGN) {
-              setGenerateBuildingDialogVisible(true);
+              if (projectDesigns !== null && projectDesigns?.length >= 10) {
+                showInfo(
+                  t('message.NumberOfDesignsInProjectExceeds', lang) +
+                    ' 10. ' +
+                    t('message.RemoveSomeDesignsFromProjectToContinue', lang) +
+                    '.',
+                );
+              } else {
+                setGenerateBuildingDialogVisible(true);
+              }
             }
           }}
         >

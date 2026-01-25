@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2026. Institute for Future Intelligence, Inc.
+ */
+
 interface Block {
   boundary: [number, number][];
   size: [number, number];
