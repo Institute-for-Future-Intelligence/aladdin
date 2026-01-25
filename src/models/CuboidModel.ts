@@ -11,4 +11,5 @@ export interface CuboidModel extends ElementModel, Groupable, Stackable {
   textureTypes?: CuboidTexture[];
   faceColors?: string[]; // if defined, these colors supersede the color attribute
   transparency?: number;
+  instanced?: boolean;
 }
