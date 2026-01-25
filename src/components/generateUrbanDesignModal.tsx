@@ -854,7 +854,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
           type: ObjectType.PolygonCuboid,
           vertices: park.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
           height: 0.5,
-          color: getRandomGreenColor(),
+          color: 'green',
           transparency: 0,
         } as PolygonCuboidModel;
         state.elements.push(polygonCuboid);
