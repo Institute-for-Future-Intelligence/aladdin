@@ -794,7 +794,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           generateSolarPowerTowerPrompt:
             data.generateSolarPowerTowerPrompt ??
             'Generate a solar power tower with a Fermat spiral layout for heliostats.',
-          generateUrbanDesignPrompt: data.generateUrbanDesignPrompt ?? 'Generate an urban design.',
+          generateUrbanDesignPrompt: data.generateUrbanDesignPrompt ?? 'Generate a city plan like Manhattan.',
         } as ProjectState);
       });
 
@@ -874,7 +874,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
           state.projectState.generateSolarPowerTowerPrompt =
             'Generate a solar power tower with a Fermat spiral layout for heliostats.';
-          state.projectState.generateUrbanDesignPrompt = 'Generate an urban design.';
+          state.projectState.generateUrbanDesignPrompt = 'Generate a city plan like Manhattan.';
         }
       });
     } catch (error) {
@@ -1546,7 +1546,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
               state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
               state.projectState.generateSolarPowerTowerPrompt =
                 'Generate a solar power tower with a Fermat spiral layout for heliostats.';
-              state.projectState.generateUrbanDesignPrompt = 'Generate an urban design.';
+              state.projectState.generateUrbanDesignPrompt = 'Generate a city plan like Manhattan.';
             });
           } catch (error) {
             showError(i18n.t('message.CannotCreateNewProject', lang) + ': ' + error);
@@ -1610,7 +1610,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
               useStore.getState().projectState.generateSolarPowerTowerPrompt ??
               'Generate a solar power tower with a Fermat spiral layout for heliostats.';
             const generateUrbanDesignPrompt =
-              useStore.getState().projectState.generateUrbanDesignPrompt ?? 'Generate an urban design.';
+              useStore.getState().projectState.generateUrbanDesignPrompt ?? 'Generate a city plan like Manhattan.';
             for (const [i, d] of designs.entries()) {
               copyDesign(d.title, newDesigns[i].title, owner, user.uid);
             }

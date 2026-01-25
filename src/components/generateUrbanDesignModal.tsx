@@ -88,7 +88,8 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   // const reasoningEffort = useStore(Selector.reasoningEffort) ?? 'medium';
-  const generateUrbanDesignPrompt = useStore(Selector.generateUrbanDesignPrompt) ?? 'Generate an urban design.';
+  const generateUrbanDesignPrompt =
+    useStore(Selector.generateUrbanDesignPrompt) ?? 'Generate a city plan like Manhattan.';
   const setGenerating = usePrimitiveStore(Selector.setGenerating);
   const setChanged = usePrimitiveStore(Selector.setChanged);
 
