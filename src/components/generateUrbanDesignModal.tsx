@@ -886,6 +886,9 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
         state.elements.push(cuboid);
       }
 
+      let maxX = 0;
+      let maxY = 0;
+
       /** generate block buildings */
       const buildings = generateBlockBuildings(city, landmarks);
       for (const building of buildings) {
@@ -910,7 +913,15 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
           instanced: true,
         } as CuboidModel;
         state.elements.push(cuboid);
+
+        maxX = Math.max(Math.abs(cx), maxX);
+        maxY = Math.max(Math.abs(cy), maxY);
       }
+
+      /** update camera */
+      state.viewState.cameraPosition = [0, -maxY * 2, maxY * 2];
+      state.viewState.panCenter = [0, 0, 0];
+      state.cameraChangeFlag = !state.cameraChangeFlag;
     });
   };
 
