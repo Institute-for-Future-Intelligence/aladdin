@@ -606,7 +606,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
             }}
             options={[
               { value: AI_MODELS_NAME['OpenAI o4-mini'], label: 'OpenAI o4-mini' },
-              { value: AI_MODELS_NAME['Claude Opus-4.5'], label: 'Claude Opus-4.5' },
+              // { value: AI_MODELS_NAME['Claude Opus-4.5'], label: 'Claude Opus-4.5' },
             ]}
           />
           {aIModel === AI_MODELS_NAME['OpenAI o4-mini'] && (
