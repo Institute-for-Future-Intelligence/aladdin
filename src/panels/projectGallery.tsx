@@ -1950,10 +1950,10 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
               }
               return;
             } else if (projectType === DesignProblem.URBAN_DESIGN) {
-              if (projectDesigns !== null && projectDesigns?.length >= 20) {
+              if (projectDesigns !== null && projectDesigns?.length >= 10) {
                 showInfo(
                   t('message.NumberOfDesignsInProjectExceeds', lang) +
-                    ' 20. ' +
+                    ' 10. ' +
                     t('message.RemoveSomeDesignsFromProjectToContinue', lang) +
                     '.',
                 );
