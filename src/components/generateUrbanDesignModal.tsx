@@ -139,7 +139,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
             type: ObjectType.Prism,
             vertices: river.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
             height: 0.75,
-            color: 'blue',
+            color: '#5d97e7',
             transparency: 0,
           } as PrismModel;
           state.elements.push(polygonCuboid);
@@ -216,7 +216,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
           type: ObjectType.Prism,
           vertices: park.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
           height: 0.5,
-          color: 'green',
+          color: '#4a9700',
           transparency: 0,
         } as PrismModel;
         state.elements.push(prism);

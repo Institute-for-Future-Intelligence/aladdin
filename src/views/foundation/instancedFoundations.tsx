@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2026. Institute for Future Intelligence, Inc.
+ */
+
 import { Instance, Instances } from '@react-three/drei';
 import React from 'react';
 import { InstancedModel } from 'src/models/InstancedModel';
@@ -27,7 +31,7 @@ const InstancedFoundations = ({ foundations }: InstancedFoundationsProps) => {
               position={[cx, cy, cz]}
               scale={[lx, ly, lz]}
               rotation={[0, 0, rotation[2]]}
-              color={'grey'}
+              color={'#5f5f5f'}
             />
           );
         })}
