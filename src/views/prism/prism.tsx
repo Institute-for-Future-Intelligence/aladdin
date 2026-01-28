@@ -3,16 +3,16 @@
  */
 
 import React, { useMemo } from 'react';
-import { PolygonCuboidModel } from '../../models/PolygonCuboidModel';
+import { PrismModel } from '../../models/PolygonCuboidModel';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
 import { Shape, ExtrudeGeometry } from 'three';
 
-export interface PolygonCuboidProps {
-  model: PolygonCuboidModel;
+export interface PrismProps {
+  model: PrismModel;
 }
 
-const PolygonCuboid = ({ model }: PolygonCuboidProps) => {
+const Prism = ({ model }: PrismProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
   const { id, vertices, height, color = 'gray', transparency = 0 } = model;
@@ -45,17 +45,12 @@ const PolygonCuboid = ({ model }: PolygonCuboidProps) => {
   }
 
   return (
-    <group name={`Polygon Cuboid ${id}`}>
-      <mesh
-        geometry={geometry}
-        castShadow={shadowEnabled}
-        receiveShadow={shadowEnabled}
-        // rotation={[-Math.PI / 2, 0, 0]} // Rotate to align with XY plane
-      >
+    <group name={`prism ${id}`}>
+      <mesh geometry={geometry} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
         <meshStandardMaterial color={color} transparent={transparency > 0} opacity={1 - transparency} />
       </mesh>
     </group>
   );
 };
 
-export default React.memo(PolygonCuboid);
+export default React.memo(Prism);

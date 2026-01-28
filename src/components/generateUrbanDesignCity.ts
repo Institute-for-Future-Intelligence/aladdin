@@ -1,40 +1,84 @@
 /*
- * @Copyright 2026. Institute for Future Intelligence, Inc.
+ * @Copyright 2025-2026. Institute for Future Intelligence, Inc.
  */
 
-interface Block {
+import { Point2 } from '../models/Point2';
+import { Util } from '../Util';
+
+// ================================================================================
+// TYPES - Input (from AI response)
+// ================================================================================
+
+interface Zone {
   boundary: [number, number][];
-  size: [number, number];
+  length: [number, number];
+  width: [number, number];
   height: [number, number];
   spacing: number;
   coverage: number;
-  layout: 'fill' | 'perimeter' | 'scatter';
+  layout: 'grid' | 'perimeter' | 'cluster';
 }
 
-interface Roads {
-  width: number;
-  lines: [number, number][][];
+interface River {
+  vertices: [number, number][];
+}
+
+interface Park {
+  vertices: [number, number][];
 }
 
 interface Landmark {
   center: [number, number];
   size: [number, number, number];
-  rotation: number;
+  rotation?: number;
 }
 
-interface Polygon {
-  vertices: [number, number][];
+interface RoadNode {
+  id: string;
+  position: [number, number];
 }
 
-interface Park extends Polygon {}
+interface RoadEdge {
+  id: string;
+  from: string;
+  to: string;
+  level: 1 | 2;
+  points?: [number, number][];
+}
 
-interface River extends Polygon {}
+interface RoadNetwork {
+  nodes: RoadNode[];
+  edges: RoadEdge[];
+}
+
+// ================================================================================
+// TYPES - Output
+// ================================================================================
 
 interface Building {
   center: [number, number];
   size: [number, number, number];
   rotation: number;
+  color: string;
 }
+
+// Road segment for rendering (position, length, angle format)
+interface RoadRenderSegment {
+  position: [number, number];
+  length: number;
+  width: number;
+  angle: number;
+}
+
+interface Road {
+  edgeId: string;
+  level: 1 | 2;
+  segments: RoadRenderSegment[];
+}
+
+// ================================================================================
+// TYPES - Internal
+// ================================================================================
 
 interface BBox {
   minX: number;
@@ -43,324 +87,207 @@ interface BBox {
   maxY: number;
 }
 
-interface RoadMask {
-  polygons: [number, number][][];
+interface ZoneSettings {
+  boundary: Point2[];
+  length: [number, number];
+  width: [number, number];
+  height: [number, number];
+  spacing: number;
+  coverage: number;
+  color: string;
+  layout: 'grid' | 'perimeter' | 'cluster';
 }
 
-interface BuildingCandidate {
-  center: [number, number];
+// Road segment for collision detection (p1, p2 format)
+interface RoadSegment {
+  p1: [number, number];
+  p2: [number, number];
   width: number;
-  length: number;
-  rotation: number;
 }
 
-/**
- * 处理所有河流
- */
-export function generateCityRivers(rivers: River[]): River[] {
-  const adjustedRivers: River[] = [];
+// ================================================================================
+// CONSTANTS
+// ================================================================================
 
-  for (const river of rivers) {
-    adjustedRivers.push(river);
-  }
+const ROAD_WIDTH: Record<1 | 2, number> = {
+  1: 20, // 主干道 (main road)
+  2: 10, // 支路 (secondary road)
+};
 
-  return adjustedRivers;
+// ================================================================================
+// HELPER FUNCTIONS - Math & Geometry
+// ================================================================================
+
+function randomInRange(min: number, max: number): number {
+  return min + Math.random() * (max - min);
 }
 
-/**
- * 处理所有公园，暂时不调整与道路重叠的公园位置
- */
-export function generateCityParks(parks: Park[], roads: Roads): Park[] {
-  const adjustedParks: Park[] = [];
-
-  for (const park of parks) {
-    // const adjusted = adjustParkPosition(park, roads, adjustedParks);
-    adjustedParks.push(park);
-  }
-
-  return adjustedParks;
+function angle(p1: [number, number], p2: [number, number]): number {
+  return Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
 }
 
-export function generateLandmarkBuildings(city: any): Landmark[] {
-  const allLandmarks: Landmark[] = [];
-
-  // 处理地标建筑（优先）
-  const landmarks: Landmark[] = [];
-  for (const lm of city.buildings.landmarks) {
-    const landmark: Landmark = { ...lm };
-
-    // 调整地标位置，避开道路
-    const adjusted = adjustLandmarkPosition(landmark, city.roads);
-    // const adjusted = landmark
-    landmarks.push(adjusted);
-  }
-  allLandmarks.push(...landmarks);
-
-  return allLandmarks;
+function distance(a: [number, number], b: [number, number]): number {
+  const dx = b[0] - a[0];
+  const dy = b[1] - a[1];
+  return Math.sqrt(dx * dx + dy * dy);
 }
 
-/**
- * 根据布局模式生成建筑
- */
-export function generateBlockBuildings(city: any, landmarks: Building[]): Building[] {
-  const allBuildings: Building[] = [];
-
-  // 处理所有区块
-  for (const block of city.buildings.blocks) {
-    const mergedBlock = { ...city.buildings.defaults, ...block };
-
-    // 根据布局模式生成建筑
-    let buildings: Building[];
-    switch (mergedBlock.layout) {
-      case 'perimeter':
-        buildings = generatePerimeterBuildings(mergedBlock, city.roads);
-        break;
-      case 'fill':
-        buildings = generateFillBuildings(mergedBlock, city.roads);
-        break;
-      case 'scatter':
-        buildings = generateScatterBuildings(mergedBlock, city.roads);
-        break;
-      default:
-        buildings = generateFillBuildings(mergedBlock, city.roads);
-    }
-
-    // 过滤与地标重叠的建筑
-    buildings = filterOverlappingWithLandmarks(buildings, [...landmarks, ...allBuildings]);
-    // 过滤与公园重叠的建筑
-    buildings = filterOverlappingWithParks(buildings, city.parks);
-
-    allBuildings.push(...buildings);
-  }
-
-  return allBuildings;
+function distance2D(x1: number, y1: number, x2: number, y2: number): number {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  return Math.sqrt(dx * dx + dy * dy);
 }
 
-function getBoundingBox(polygon: [number, number][]): BBox {
-  const xs = polygon.map((p) => p[0]);
-  const ys = polygon.map((p) => p[1]);
-  return {
-    minX: Math.min(...xs),
-    maxX: Math.max(...xs),
-    minY: Math.min(...ys),
-    maxY: Math.max(...ys),
-  };
+function midpoint(a: [number, number], b: [number, number]): [number, number] {
+  return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
 }
 
-/**
- * 过滤与公园重叠的建筑
- */
-function filterOverlappingWithParks(buildings: Building[], parks: Park[]): Building[] {
-  if (parks.length === 0) {
-    return buildings;
-  }
-
-  // 预计算公园矩形
-  const parkRects = parks.map((p) => getParkRect(p));
-
-  return buildings.filter((building) => {
-    const buildingRect = getBuildingRect({
-      center: building.center,
-      width: building.size[0],
-      length: building.size[1],
-      rotation: building.rotation,
-    });
-
-    for (const parkRect of parkRects) {
-      if (polygonsIntersect(buildingRect, parkRect)) {
-        return false;
-      }
-    }
-
-    return true;
-  });
+function normalize(v: Point2): Point2 {
+  const len = Math.sqrt(v.x * v.x + v.y * v.y);
+  return len > 0 ? { x: v.x / len, y: v.y / len } : { x: 0, y: 0 };
 }
 
-/**
- * 获取公园的边界框矩形(四个角点)
- */
-function getParkRect(park: Park): [number, number][] {
-  const bbox = getBoundingBox(park.vertices);
-  return [
-    [bbox.minX, bbox.minY],
-    [bbox.maxX, bbox.minY],
-    [bbox.maxX, bbox.maxY],
-    [bbox.minX, bbox.maxY],
-  ];
-}
-
-/**
- * 将线段扩展为指定宽度的矩形
- */
-function expandLineToRect(p1: [number, number], p2: [number, number], width: number): [number, number][] {
+function pointToSegmentDistance(px: number, py: number, p1: [number, number], p2: [number, number]): number {
   const dx = p2[0] - p1[0];
   const dy = p2[1] - p1[1];
-  const len = Math.sqrt(dx * dx + dy * dy);
+  const lenSq = dx * dx + dy * dy;
 
-  if (len === 0) return [];
+  if (lenSq === 0) return distance2D(px, py, p1[0], p1[1]);
 
-  // 单位法向量
-  const nx = -dy / len;
-  const ny = dx / len;
+  let t = ((px - p1[0]) * dx + (py - p1[1]) * dy) / lenSq;
+  t = Math.max(0, Math.min(1, t));
 
-  const hw = width / 2;
+  const nearX = p1[0] + t * dx;
+  const nearY = p1[1] + t * dy;
 
-  // 四个角点
-  return [
-    [p1[0] + nx * hw, p1[1] + ny * hw],
-    [p1[0] - nx * hw, p1[1] - ny * hw],
-    [p2[0] - nx * hw, p2[1] - ny * hw],
-    [p2[0] + nx * hw, p2[1] + ny * hw],
-  ];
+  return distance2D(px, py, nearX, nearY);
 }
 
-/**
- * 判断点是否在多边形内（射线法）
- */
-function pointInPolygon(point: [number, number], polygon: [number, number][]): boolean {
-  const [x, y] = point;
-  let inside = false;
+// ================================================================================
+// HELPER FUNCTIONS - Polygon Operations
+// ================================================================================
 
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const [xi, yi] = polygon[i];
-    const [xj, yj] = polygon[j];
+function calculateBoundingBox(polygon: Point2[]): BBox {
+  let minX = Infinity,
+    maxX = -Infinity;
+  let minY = Infinity,
+    maxY = -Infinity;
 
-    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
-      inside = !inside;
+  for (const p of polygon) {
+    minX = Math.min(minX, p.x);
+    maxX = Math.max(maxX, p.x);
+    minY = Math.min(minY, p.y);
+    maxY = Math.max(maxY, p.y);
+  }
+
+  return { minX, maxX, minY, maxY };
+}
+
+function getPolygonEdges(polygon: Point2[]): [Point2, Point2][] {
+  const edges: [Point2, Point2][] = [];
+  for (let i = 0; i < polygon.length; i++) {
+    edges.push([polygon[i], polygon[(i + 1) % polygon.length]]);
+  }
+  return edges;
+}
+
+function polygonsOverlap(poly1: Point2[], poly2: Point2[]): boolean {
+  for (const v of poly1) {
+    if (Util.isPointInside(v.x, v.y, poly2)) return true;
+  }
+  for (const v of poly2) {
+    if (Util.isPointInside(v.x, v.y, poly1)) return true;
+  }
+
+  const edges1 = getPolygonEdges(poly1);
+  const edges2 = getPolygonEdges(poly2);
+
+  for (const [a1, b1] of edges1) {
+    for (const [a2, b2] of edges2) {
+      if (Util.lineIntersection(a1, b1, a2, b2)) return true;
     }
   }
 
-  return inside;
+  return false;
 }
 
-/**
- * 将线段裁剪到多边形内部
- */
-function clipLineToPolygon(line: [number, number][], polygon: [number, number][]): [number, number][][] {
-  const result: [number, number][][] = [];
-  let currentSegment: [number, number][] = [];
+function insetPolygon(polygon: Point2[], dist: number): Point2[] {
+  const n = polygon.length;
+  if (n < 3) return [];
 
-  for (let i = 0; i < line.length; i++) {
-    const point = line[i];
-    const inside = pointInPolygon(point, polygon);
-
-    if (inside) {
-      if (currentSegment.length === 0 && i > 0) {
-        // 从外部进入，计算交点
-        const intersection = findEdgeIntersection(line[i - 1], point, polygon);
-        if (intersection) currentSegment.push(intersection);
-      }
-      currentSegment.push(point);
-    } else {
-      if (currentSegment.length > 0) {
-        // 从内部离开，计算交点
-        const intersection = findEdgeIntersection(currentSegment[currentSegment.length - 1], point, polygon);
-        if (intersection) currentSegment.push(intersection);
-        result.push(currentSegment);
-        currentSegment = [];
-      }
-    }
+  // Calculate signed area to determine winding order
+  // Positive = counterclockwise, Negative = clockwise
+  let signedArea = 0;
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    signedArea += polygon[i].x * polygon[j].y;
+    signedArea -= polygon[j].x * polygon[i].y;
   }
+  // CCW (positive area): normal points outward, need negative dist to go inward
+  // CW (negative area): normal points inward, need positive dist to go inward
+  const signedDist = signedArea >= 0 ? -dist : dist;
 
-  if (currentSegment.length > 1) {
-    result.push(currentSegment);
+  const result: Point2[] = [];
+
+  for (let i = 0; i < n; i++) {
+    const prev = polygon[(i - 1 + n) % n];
+    const curr = polygon[i];
+    const next = polygon[(i + 1) % n];
+
+    const v1 = normalize({ x: curr.x - prev.x, y: curr.y - prev.y });
+    const v2 = normalize({ x: next.x - curr.x, y: next.y - curr.y });
+
+    const n1: Point2 = { x: v1.y, y: -v1.x };
+    const n2: Point2 = { x: v2.y, y: -v2.x };
+
+    const bisector = normalize({ x: n1.x + n2.x, y: n1.y + n2.y });
+
+    const dot = n1.x * bisector.x + n1.y * bisector.y;
+    const adjustedDist = Math.abs(dot) > 0.001 ? signedDist / dot : signedDist;
+
+    result.push({
+      x: curr.x + bisector.x * adjustedDist,
+      y: curr.y + bisector.y * adjustedDist,
+    });
   }
 
   return result;
 }
 
-/**
- * 计算线段与多边形边界的交点
- * @param p1 线段起点（多边形外部）
- * @param p2 线段终点（多边形内部）
- * @param polygon 多边形顶点数组
- * @returns 交点坐标，如果没有交点则返回null
- */
-function findEdgeIntersection(
-  p1: [number, number],
-  p2: [number, number],
-  polygon: [number, number][],
-): [number, number] | null {
-  let closestIntersection: [number, number] | null = null;
-  let minDist = Infinity;
+function lineToPolygon(p1: [number, number], p2: [number, number], width: number): Point2[] {
+  const dx = p2[0] - p1[0];
+  const dy = p2[1] - p1[1];
+  const len = Math.sqrt(dx * dx + dy * dy);
+  if (len === 0) return [];
 
-  for (let i = 0; i < polygon.length; i++) {
-    const e1 = polygon[i];
-    const e2 = polygon[(i + 1) % polygon.length];
+  const nx = (-dy / len) * (width / 2);
+  const ny = (dx / len) * (width / 2);
 
-    const intersection = lineSegmentIntersection(p1, p2, e1, e2);
-
-    if (intersection) {
-      const dist = distance(p1, intersection);
-      if (dist < minDist) {
-        minDist = dist;
-        closestIntersection = intersection;
-      }
-    }
-  }
-
-  return closestIntersection;
+  return [
+    { x: p1[0] + nx, y: p1[1] + ny },
+    { x: p2[0] + nx, y: p2[1] + ny },
+    { x: p2[0] - nx, y: p2[1] - ny },
+    { x: p1[0] - nx, y: p1[1] - ny },
+  ];
 }
 
-/**
- * 计算两条线段的交点
- * @returns 交点坐标，如果不相交则返回null
- */
-function lineSegmentIntersection(
-  p1: [number, number],
-  p2: [number, number],
-  p3: [number, number],
-  p4: [number, number],
-): [number, number] | null {
-  const d1x = p2[0] - p1[0];
-  const d1y = p2[1] - p1[1];
-  const d2x = p4[0] - p3[0];
-  const d2y = p4[1] - p3[1];
+// ================================================================================
+// HELPER FUNCTIONS - Building Operations
+// ================================================================================
 
-  const cross = d1x * d2y - d1y * d2x;
-
-  // 平行或共线
-  if (Math.abs(cross) < 1e-10) {
-    return null;
-  }
-
-  const dx = p3[0] - p1[0];
-  const dy = p3[1] - p1[1];
-
-  const t = (dx * d2y - dy * d2x) / cross;
-  const u = (dx * d1y - dy * d1x) / cross;
-
-  // 检查交点是否在两条线段上
-  if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
-    return [p1[0] + t * d1x, p1[1] + t * d1y];
-  }
-
-  return null;
-}
-
-/**
- * 从多边形中减去其他多边形（使用多边形布尔运算）
- * 简化实现：使用网格采样法
- */
-function subtractPolygons(base: [number, number][], holes: [number, number][][]): [number, number][][] {
-  // 实际项目中建议使用成熟的多边形布尔运算库
-  // 如：polygon-clipping, clipper-lib, turf.js
-
-  // 简化实现：基于轮廓追踪
-  return polygonDifference(base, holes);
-}
-
-/**
- * 获取建筑的矩形轮廓（考虑旋转）
- */
-function getBuildingRect(c: BuildingCandidate): [number, number][] {
-  const hw = c.width / 2;
-  const hl = c.length / 2;
-  const rad = (c.rotation * Math.PI) / 180;
+function getBuildingCorners(
+  center: [number, number],
+  width: number,
+  length: number,
+  rotationDegrees: number,
+): Point2[] {
+  const [cx, cy] = center;
+  const hw = width / 2;
+  const hl = length / 2;
+  const rad = (rotationDegrees * Math.PI) / 180;
   const cos = Math.cos(rad);
   const sin = Math.sin(rad);
 
-  // 局部坐标的四个角
   const localCorners: [number, number][] = [
     [-hw, -hl],
     [hw, -hl],
@@ -368,1027 +295,871 @@ function getBuildingRect(c: BuildingCandidate): [number, number][] {
     [-hw, hl],
   ];
 
-  // 旋转并平移到世界坐标
-  return localCorners.map(([dx, dy]) => [c.center[0] + dx * cos - dy * sin, c.center[1] + dx * sin + dy * cos]);
-}
-
-/**
- * 调整地标位置，避开道路
- */
-function adjustLandmarkPosition(landmark: Building, roads: Roads): Building {
-  const rect = getBuildingRect({
-    center: landmark.center,
-    width: landmark.size[0],
-    length: landmark.size[1],
-    rotation: landmark.rotation,
-  });
-
-  // 检查是否与道路重叠
-  const roadMask = createRoadMask(roads, getBoundingBox(rect));
-  let overlapping = false;
-
-  for (const roadPoly of roadMask.polygons) {
-    if (polygonsIntersect(rect, roadPoly)) {
-      overlapping = true;
-      break;
-    }
-  }
-
-  if (!overlapping) {
-    return landmark;
-  }
-
-  // 找到最近的合法位置
-  const newCenter = findNearestValidPosition(landmark, roads);
-
-  return {
-    ...landmark,
-    center: newCenter,
-  };
-}
-
-function createRoadMask(roads: Roads, bbox: BBox): RoadMask {
-  // 将每条道路线段扩展为宽度为roads.width的多边形
-  const roadPolygons: any[] = [];
-
-  for (const line of roads.lines) {
-    for (let i = 0; i < line.length - 1; i++) {
-      const p1 = line[i];
-      const p2 = line[i + 1];
-      // 沿线段两侧扩展 width/2，生成矩形
-      const rect = expandLineToRect(p1, p2, roads.width);
-      roadPolygons.push(rect);
-    }
-  }
-
-  return { polygons: roadPolygons };
-}
-
-/**
- * 将多边形投影到轴上
- */
-function projectPolygon(polygon: [number, number][], axis: number[]): { min: number; max: number } {
-  let min = Infinity;
-  let max = -Infinity;
-
-  for (const point of polygon) {
-    const dot = point[0] * axis[0] + point[1] * axis[1];
-    min = Math.min(min, dot);
-    max = Math.max(max, dot);
-  }
-
-  return { min, max };
-}
-
-/**
- * 判断两个多边形是否相交（SAT分离轴算法）
- */
-function polygonsIntersect(polyA: [number, number][], polyB: [number, number][]): boolean {
-  const polygons = [polyA, polyB];
-
-  for (const polygon of polygons) {
-    for (let i = 0; i < polygon.length; i++) {
-      const j = (i + 1) % polygon.length;
-
-      // 计算边的法向量（分离轴）
-      const edge = [polygon[j][0] - polygon[i][0], polygon[j][1] - polygon[i][1]];
-      const axis = [-edge[1], edge[0]];
-
-      // 投影两个多边形到轴上
-      const projA = projectPolygon(polyA, axis);
-      const projB = projectPolygon(polyB, axis);
-
-      // 如果投影不重叠，则多边形不相交
-      if (projA.max < projB.min || projB.max < projA.min) {
-        return false;
-      }
-    }
-  }
-
-  return true;
-}
-
-/**
- * 寻找最近的不与道路重叠的位置
- */
-function findNearestValidPosition(landmark: Building, roads: Roads): [number, number] {
-  const [cx, cy] = landmark.center;
-  const searchRadius = Math.max(landmark.size[0], landmark.size[1]) * 2;
-  const step = 5;
-
-  let bestPosition = landmark.center;
-  let minDistance = Infinity;
-
-  // 螺旋搜索
-  for (let r = step; r <= searchRadius; r += step) {
-    for (let angle = 0; angle < 360; angle += 15) {
-      const rad = (angle * Math.PI) / 180;
-      const testCenter: [number, number] = [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
-
-      const testRect = getBuildingRect({
-        center: testCenter,
-        width: landmark.size[0],
-        length: landmark.size[1],
-        rotation: landmark.rotation,
-      });
-
-      const roadMask = createRoadMask(roads, getBoundingBox(testRect));
-      let valid = true;
-
-      for (const roadPoly of roadMask.polygons) {
-        if (polygonsIntersect(testRect, roadPoly)) {
-          valid = false;
-          break;
-        }
-      }
-
-      if (valid) {
-        const dist = distance(landmark.center, testCenter);
-        if (dist < minDistance) {
-          minDistance = dist;
-          bestPosition = testCenter;
-        }
-      }
-    }
-
-    // 找到合法位置后，完成当前半径的搜索再返回
-    if (minDistance < Infinity && minDistance <= r) {
-      break;
-    }
-  }
-
-  return bestPosition;
-}
-
-/**
- * Perimeter模式：沿道路两侧生成建筑
- */
-function generatePerimeterBuildings(block: Block, roads: Roads): Building[] {
-  const [buildingW, buildingL] = block.size;
-  const candidates: BuildingCandidate[] = [];
-
-  // 1. 收集区块内的道路段
-  const roadSegments: [[number, number], [number, number]][] = [];
-
-  for (const line of roads.lines) {
-    for (let i = 0; i < line.length - 1; i++) {
-      const p1 = line[i];
-      const p2 = line[i + 1];
-
-      // 检查线段是否与区块相交
-      if (segmentIntersectsPolygon(p1, p2, block.boundary)) {
-        roadSegments.push([p1, p2]);
-      }
-    }
-  }
-
-  // 2. 沿每条道路段的两侧生成建筑
-  for (const [p1, p2] of roadSegments) {
-    const edgeLength = distance(p1, p2);
-    const edgeAngle = angle(p1, p2);
-
-    // 道路的法向量（两侧）
-    const dx = p2[0] - p1[0];
-    const dy = p2[1] - p1[1];
-    const len = Math.sqrt(dx * dx + dy * dy);
-    const nx = -dy / len;
-    const ny = dx / len;
-
-    // 建筑中心到道路中心的距离
-    const offsetDist = roads.width / 2 + buildingL / 2 + block.spacing;
-
-    // 沿道路放置建筑
-    const step = buildingW + block.spacing;
-    const count = Math.floor((edgeLength - block.spacing) / step);
-    const startOffset = (edgeLength - count * step + block.spacing) / 2;
-
-    for (let j = 0; j < count; j++) {
-      const t = (startOffset + j * step + buildingW / 2) / edgeLength;
-      const roadPoint = lerp(p1, p2, t);
-
-      // 道路两侧各放一个建筑
-      const sides = [1, -1];
-      for (const side of sides) {
-        const center: [number, number] = [roadPoint[0] + nx * offsetDist * side, roadPoint[1] + ny * offsetDist * side];
-
-        candidates.push({
-          center,
-          width: buildingW + (Math.random() - 0.5) * buildingW * 0.1,
-          length: buildingL + (Math.random() - 0.5) * buildingL * 0.1,
-          rotation: edgeAngle,
-        });
-      }
-    }
-  }
-
-  // 3. 过滤：必须在区块内
-  let filtered = candidates.filter((c) => {
-    const corners = getBuildingCorners(c);
-    return corners.every((corner) => pointInPolygon(corner, block.boundary));
-  });
-
-  // 4. 过滤：不能与道路重叠
-  const roadMask = createRoadMask(roads, getBoundingBox(block.boundary));
-  filtered = filtered.filter((c) => {
-    const rect = getBuildingRect(c);
-    for (const roadPoly of roadMask.polygons) {
-      if (polygonsIntersect(rect, roadPoly)) {
-        return false;
-      }
-    }
-    return true;
-  });
-
-  // 5. 过滤：移除互相重叠的建筑
-  filtered = removeOverlappingBuildings(filtered);
-
-  // 6. 应用覆盖率
-  filtered = applyCoverage(filtered, block);
-
-  // 7. 转换为Building
-  return filtered.map((c) => ({
-    center: c.center,
-    size: [c.width, c.length, randomInRange(block.height)],
-    rotation: c.rotation,
+  return localCorners.map(([lx, ly]) => ({
+    x: cx + lx * cos - ly * sin,
+    y: cy + lx * sin + ly * cos,
   }));
 }
 
-/**
- * 检查线段是否与多边形相交或在多边形内
- */
-function segmentIntersectsPolygon(p1: [number, number], p2: [number, number], polygon: [number, number][]): boolean {
-  // 检查端点是否在多边形内
-  if (pointInPolygon(p1, polygon) || pointInPolygon(p2, polygon)) {
-    return true;
+function isBuildingInsideBoundary(
+  center: [number, number],
+  width: number,
+  length: number,
+  rotationDegrees: number,
+  boundary: Point2[],
+): boolean {
+  const corners = getBuildingCorners(center, width, length, rotationDegrees);
+  for (const corner of corners) {
+    if (!Util.isPointInside(corner.x, corner.y, boundary)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function overlapsWithPolygons(building: Building, polygons: Point2[][]): boolean {
+  const buildingPolygon = getBuildingCorners(building.center, building.size[0], building.size[1], building.rotation);
+
+  for (const polygon of polygons) {
+    if (polygonsOverlap(buildingPolygon, polygon)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function applyCoverageConstraint(buildings: Building[], targetArea: number): Building[] {
+  const shuffled = [...buildings].sort(() => Math.random() - 0.5);
+  const selected: Building[] = [];
+  let currentArea = 0;
+
+  for (const building of shuffled) {
+    const footprint = building.size[0] * building.size[1];
+    if (currentArea + footprint <= targetArea * 1.1) {
+      selected.push(building);
+      currentArea += footprint;
+    }
+    if (currentArea >= targetArea) break;
   }
 
-  // 检查线段是否与多边形边相交
-  for (let i = 0; i < polygon.length; i++) {
-    const e1 = polygon[i];
-    const e2 = polygon[(i + 1) % polygon.length];
-    if (lineSegmentIntersection(p1, p2, e1, e2)) {
+  return selected;
+}
+
+function findNearestValidPosition(
+  building: Building,
+  obstaclePolygons: Point2[][],
+  maxSearchRadius: number = 200,
+  stepSize: number = 5,
+): [number, number] | null {
+  const [cx, cy] = building.center;
+  const { size, rotation } = building;
+
+  // Check if the original position is valid
+  if (!overlapsWithPolygons(building, obstaclePolygons)) {
+    return building.center;
+  }
+
+  // Spiral search for nearest valid position
+  for (let radius = stepSize; radius <= maxSearchRadius; radius += stepSize) {
+    const numPoints = Math.max(8, Math.floor((2 * Math.PI * radius) / stepSize));
+
+    for (let i = 0; i < numPoints; i++) {
+      const ang = (2 * Math.PI * i) / numPoints;
+      const newX = cx + radius * Math.cos(ang);
+      const newY = cy + radius * Math.sin(ang);
+
+      const testBuilding: Building = {
+        center: [newX, newY],
+        size,
+        rotation,
+        color: building.color,
+      };
+
+      if (!overlapsWithPolygons(testBuilding, obstaclePolygons)) {
+        return [newX, newY];
+      }
+    }
+  }
+
+  return null;
+}
+
+// ================================================================================
+// HELPER FUNCTIONS - Road Processing
+// ================================================================================
+
+function generateRoadPolygons(roads: RoadNetwork): Point2[][] {
+  const polygons: Point2[][] = [];
+
+  if (!roads || !roads.nodes || !roads.edges) return polygons;
+
+  const nodeMap = new Map<string, [number, number]>();
+  for (const node of roads.nodes) {
+    nodeMap.set(node.id, node.position);
+  }
+
+  for (const edge of roads.edges) {
+    const fromPos = nodeMap.get(edge.from);
+    const toPos = nodeMap.get(edge.to);
+    if (!fromPos || !toPos) continue;
+
+    const width = ROAD_WIDTH[edge.level] || 10;
+    const path: [number, number][] = [fromPos, ...(edge.points || []), toPos];
+
+    for (let i = 0; i < path.length - 1; i++) {
+      const poly = lineToPolygon(path[i], path[i + 1], width);
+      if (poly.length > 0) {
+        polygons.push(poly);
+      }
+    }
+  }
+
+  return polygons;
+}
+
+function getRoadSegments(roads: RoadNetwork): RoadSegment[] {
+  const segments: RoadSegment[] = [];
+
+  if (!roads || !roads.nodes || !roads.edges) return segments;
+
+  const nodeMap = new Map<string, [number, number]>();
+  for (const node of roads.nodes) {
+    nodeMap.set(node.id, node.position);
+  }
+
+  for (const edge of roads.edges) {
+    const fromPos = nodeMap.get(edge.from);
+    const toPos = nodeMap.get(edge.to);
+    if (!fromPos || !toPos) continue;
+
+    const width = ROAD_WIDTH[edge.level] || 10;
+    const path: [number, number][] = [fromPos, ...(edge.points || []), toPos];
+
+    for (let i = 0; i < path.length - 1; i++) {
+      segments.push({
+        p1: path[i],
+        p2: path[i + 1],
+        width,
+      });
+    }
+  }
+
+  return segments;
+}
+
+function segmentIntersectsOrNearZone(segment: RoadSegment, boundary: Point2[], margin: number): boolean {
+  const { p1, p2 } = segment;
+
+  // Check if segment endpoints are inside the zone
+  if (Util.isPointInside(p1[0], p1[1], boundary)) return true;
+  if (Util.isPointInside(p2[0], p2[1], boundary)) return true;
+
+  // Check if segment intersects zone boundary
+  const edges = getPolygonEdges(boundary);
+  for (const [a, b] of edges) {
+    if (Util.lineIntersection({ x: p1[0], y: p1[1] }, { x: p2[0], y: p2[1] }, a, b)) {
       return true;
     }
   }
 
-  return false;
+  // Check distance from segment to zone centroid
+  const bbox = calculateBoundingBox(boundary);
+  const cx = (bbox.minX + bbox.maxX) / 2;
+  const cy = (bbox.minY + bbox.maxY) / 2;
+  const dist = pointToSegmentDistance(cx, cy, p1, p2);
+
+  return dist < margin;
 }
 
-/**
- * 移除互相重叠的建筑（保留先生成的）
- */
-function removeOverlappingBuildings(candidates: BuildingCandidate[]): BuildingCandidate[] {
-  const result: BuildingCandidate[] = [];
-  const resultRects: [number, number][][] = [];
+function placeBuildingsAlongRoad(segment: RoadSegment, boundary: Point2[], settings: ZoneSettings): Building[] {
+  const buildings: Building[] = [];
+  const { p1, p2, width: roadWidth } = segment;
 
-  for (const c of candidates) {
-    const rect = getBuildingRect(c);
-    let overlapping = false;
+  const [minWidth, maxWidth] = settings.width;
+  const [minLength, maxLength] = settings.length;
+  const [minHeight, maxHeight] = settings.height;
+  const spacing = settings.spacing;
 
-    for (const existingRect of resultRects) {
-      if (polygonsIntersect(rect, existingRect)) {
-        overlapping = true;
-        break;
-      }
-    }
+  const dx = p2[0] - p1[0];
+  const dy = p2[1] - p1[1];
+  const segmentLength = Math.sqrt(dx * dx + dy * dy);
+  if (segmentLength === 0) return buildings;
 
-    if (!overlapping) {
-      result.push(c);
-      resultRects.push(rect);
-    }
-  }
+  // Direction along the road
+  const dirX = dx / segmentLength;
+  const dirY = dy / segmentLength;
 
-  return result;
-}
+  // Perpendicular direction (left side)
+  const perpX = -dirY;
+  const perpY = dirX;
 
-/**
- * 计算多边形面积（Shoelace公式）
- */
-function calculatePolygonArea(polygon: [number, number][]): number {
-  let area = 0;
-  const n = polygon.length;
+  // Road angle in degrees
+  const roadAngle = (Math.atan2(dy, dx) * 180) / Math.PI;
 
-  for (let i = 0; i < n; i++) {
-    const j = (i + 1) % n;
-    area += polygon[i][0] * polygon[j][1];
-    area -= polygon[j][0] * polygon[i][1];
-  }
+  // Setback from road center
+  const setback = roadWidth / 2 + maxLength / 2 + spacing;
 
-  return Math.abs(area) / 2;
-}
+  // Place buildings along both sides of the road
+  const sides = [1, -1];
 
-/**
- * 对小街区应用覆盖率
- */
-// function applyCoverageForSubBlock(
-//   candidates: BuildingCandidate[],
-//   boundary: [number, number][],
-//   coverage: number,
-// ): BuildingCandidate[] {
-//   const blockArea = calculatePolygonArea(boundary);
-//   const targetArea = blockArea * coverage;
+  for (const side of sides) {
+    const offsetX = perpX * setback * side;
+    const offsetY = perpY * setback * side;
 
-//   let currentArea = 0;
-//   const result: BuildingCandidate[] = [];
+    const buildingsPerSide = Math.floor((segmentLength + spacing) / (maxWidth + spacing));
+    if (buildingsPerSide <= 0) continue;
 
-//   for (const c of candidates) {
-//     const buildingArea = c.width * c.length;
-//     if (currentArea + buildingArea <= targetArea) {
-//       result.push(c);
-//       currentArea += buildingArea;
-//     }
-//   }
+    const actualSpacing = (segmentLength - buildingsPerSide * maxWidth) / (buildingsPerSide + 1);
 
-//   return result;
-// }
+    for (let i = 0; i < buildingsPerSide; i++) {
+      const t = (actualSpacing + maxWidth / 2 + i * (maxWidth + actualSpacing)) / segmentLength;
+      const cx = p1[0] + t * dx + offsetX;
+      const cy = p1[1] + t * dy + offsetY;
 
-/**
- * Fill模式：沿街排列 + 向内延伸填充
- */
-function generateFillBuildings(block: Block, roads: Roads): Building[] {
-  const [buildingW, buildingL] = block.size;
-  const candidates: BuildingCandidate[] = [];
-  const bbox = getBoundingBox(block.boundary);
-  const roadMask = createRoadMask(roads, bbox);
+      const bWidth = randomInRange(minWidth, maxWidth);
+      const bLength = randomInRange(minLength, maxLength);
+      const bHeight = randomInRange(minHeight, maxHeight);
 
-  // 1. 收集区块内的道路段及其角度
-  const roadSegments: {
-    p1: [number, number];
-    p2: [number, number];
-    angle: number;
-    normal: [number, number];
-  }[] = [];
+      if (!Util.isPointInside(cx, cy, boundary)) continue;
 
-  for (const line of roads.lines) {
-    for (let i = 0; i < line.length - 1; i++) {
-      const p1 = line[i];
-      const p2 = line[i + 1];
-
-      if (segmentIntersectsPolygon(p1, p2, block.boundary)) {
-        const dx = p2[0] - p1[0];
-        const dy = p2[1] - p1[1];
-        const len = Math.sqrt(dx * dx + dy * dy);
-
-        roadSegments.push({
-          p1,
-          p2,
-          angle: angle(p1, p2),
-          normal: [-dy / len, dx / len],
+      if (isBuildingInsideBoundary([cx, cy], bWidth, bLength, roadAngle, boundary)) {
+        buildings.push({
+          center: [cx, cy],
+          size: [bWidth, bLength, bHeight],
+          rotation: roadAngle,
+          color: settings.color,
         });
       }
     }
   }
 
-  // 2. 沿每条道路向内延伸填充
-  for (const seg of roadSegments) {
-    const edgeLength = distance(seg.p1, seg.p2);
-    const stepAlong = buildingW + block.spacing; // 沿道路方向步长
-    const stepInward = buildingL + block.spacing; // 向内方向步长
+  return buildings;
+}
 
-    const countAlong = Math.floor((edgeLength - block.spacing) / stepAlong);
-    const startOffset = (edgeLength - countAlong * stepAlong + block.spacing) / 2;
+// ================================================================================
+// LAYOUT GENERATORS
+// ================================================================================
 
-    // 计算可以向内延伸多少排
-    const maxInwardDist = Math.max(bbox.maxX - bbox.minX, bbox.maxY - bbox.minY);
-    const maxRows = Math.ceil(maxInwardDist / stepInward);
+function generateGridLayout(settings: ZoneSettings, roadSegments: RoadSegment[]): Building[] {
+  const buildings: Building[] = [];
+  const bbox = calculateBoundingBox(settings.boundary);
+  const zoneMargin = Math.max(bbox.maxX - bbox.minX, bbox.maxY - bbox.minY);
 
-    // 道路两侧都填充
-    const sides = [1, -1];
-    for (const side of sides) {
-      // 从道路边缘向内逐排填充
-      for (let row = 0; row < maxRows; row++) {
-        const inwardDist = roads.width / 2 + buildingL / 2 + block.spacing + row * stepInward;
-
-        for (let j = 0; j < countAlong; j++) {
-          const t = (startOffset + j * stepAlong + buildingW / 2) / edgeLength;
-          const roadPoint = lerp(seg.p1, seg.p2, t);
-
-          const center: [number, number] = [
-            roadPoint[0] + seg.normal[0] * inwardDist * side,
-            roadPoint[1] + seg.normal[1] * inwardDist * side,
-          ];
-
-          candidates.push({
-            center,
-            width: buildingW + (Math.random() - 0.5) * buildingW * 0.1,
-            length: buildingL + (Math.random() - 0.5) * buildingL * 0.1,
-            rotation: seg.angle,
-          });
-        }
-      }
+  // Step 1: Place buildings along roads first
+  for (const segment of roadSegments) {
+    if (segmentIntersectsOrNearZone(segment, settings.boundary, zoneMargin)) {
+      const roadBuildings = placeBuildingsAlongRoad(segment, settings.boundary, settings);
+      buildings.push(...roadBuildings);
     }
   }
 
-  // 3. 过滤和去重
-  return filterAndFinalize(candidates, block, roadMask);
-}
+  // Remove overlapping road-aligned buildings
+  const roadAlignedBuildings: Building[] = [];
+  for (const building of buildings) {
+    const buildingPoly = getBuildingCorners(building.center, building.size[0], building.size[1], building.rotation);
+    let overlaps = false;
 
-/**
- * Scatter模式：沿街排列 + 内部随机散布
- */
-function generateScatterBuildings(block: Block, roads: Roads): Building[] {
-  const [buildingW, buildingL] = block.size;
-  const candidates: BuildingCandidate[] = [];
-  const bbox = getBoundingBox(block.boundary);
-  const roadMask = createRoadMask(roads, bbox);
+    for (const existing of roadAlignedBuildings) {
+      const existingPoly = getBuildingCorners(existing.center, existing.size[0], existing.size[1], existing.rotation);
+      if (polygonsOverlap(buildingPoly, existingPoly)) {
+        overlaps = true;
+        break;
+      }
+    }
 
-  // 1. 沿道路生成沿街建筑（与 Perimeter 类似）
-  for (const line of roads.lines) {
-    for (let i = 0; i < line.length - 1; i++) {
-      const p1 = line[i];
-      const p2 = line[i + 1];
+    if (!overlaps) {
+      roadAlignedBuildings.push(building);
+    }
+  }
 
-      if (!segmentIntersectsPolygon(p1, p2, block.boundary)) {
+  // Step 2: Fill interior with grid layout
+  const [minWidth, maxWidth] = settings.width;
+  const [minLength, maxLength] = settings.length;
+  const [minHeight, maxHeight] = settings.height;
+  const spacing = settings.spacing;
+
+  const stepX = maxWidth + spacing;
+  const stepY = maxLength + spacing;
+
+  const startX = bbox.minX + maxWidth / 2 + spacing / 2;
+  const startY = bbox.minY + maxLength / 2 + spacing / 2;
+
+  // Convert road-aligned buildings to polygons for collision detection
+  const roadBuildingPolygons: Point2[][] = roadAlignedBuildings.map((b) =>
+    getBuildingCorners(b.center, b.size[0], b.size[1], b.rotation),
+  );
+
+  const gridBuildings: Building[] = [];
+  for (let x = startX; x < bbox.maxX - maxWidth / 2; x += stepX) {
+    for (let y = startY; y < bbox.maxY - maxLength / 2; y += stepY) {
+      const width = randomInRange(minWidth, maxWidth);
+      const length = randomInRange(minLength, maxLength);
+      const height = randomInRange(minHeight, maxHeight);
+
+      if (!isBuildingInsideBoundary([x, y], width, length, 0, settings.boundary)) {
         continue;
       }
 
-      const edgeLength = distance(p1, p2);
-      const edgeAngle = angle(p1, p2);
+      const testBuilding: Building = {
+        center: [x, y],
+        size: [width, length, height],
+        rotation: 0,
+        color: settings.color,
+      };
 
-      const dx = p2[0] - p1[0];
-      const dy = p2[1] - p1[1];
-      const len = Math.sqrt(dx * dx + dy * dy);
-      const nx = -dy / len;
-      const ny = dx / len;
+      // Check overlap with road-aligned buildings
+      if (overlapsWithPolygons(testBuilding, roadBuildingPolygons)) {
+        continue;
+      }
 
-      const offsetDist = roads.width / 2 + buildingL / 2 + block.spacing;
-      const step = buildingW + block.spacing;
-      const count = Math.floor((edgeLength - block.spacing) / step);
-      const startOffset = (edgeLength - count * step + block.spacing) / 2;
+      // Check overlap with other grid buildings
+      const testPoly = getBuildingCorners([x, y], width, length, 0);
+      let overlapsGrid = false;
+      for (const existing of gridBuildings) {
+        const existingPoly = getBuildingCorners(existing.center, existing.size[0], existing.size[1], existing.rotation);
+        if (polygonsOverlap(testPoly, existingPoly)) {
+          overlapsGrid = true;
+          break;
+        }
+      }
 
-      for (let j = 0; j < count; j++) {
-        const t = (startOffset + j * step + buildingW / 2) / edgeLength;
-        const roadPoint = lerp(p1, p2, t);
+      if (!overlapsGrid) {
+        gridBuildings.push(testBuilding);
+      }
+    }
+  }
 
-        const sides = [1, -1];
-        for (const side of sides) {
-          const center: [number, number] = [
-            roadPoint[0] + nx * offsetDist * side,
-            roadPoint[1] + ny * offsetDist * side,
-          ];
+  return [...roadAlignedBuildings, ...gridBuildings];
+}
 
-          candidates.push({
-            center,
-            width: buildingW + (Math.random() - 0.5) * buildingW * 0.1,
-            length: buildingL + (Math.random() - 0.5) * buildingL * 0.1,
-            rotation: edgeAngle,
-          });
+function generatePerimeterLayout(settings: ZoneSettings, roadSegments: RoadSegment[]): Building[] {
+  const buildings: Building[] = [];
+  const bbox = calculateBoundingBox(settings.boundary);
+  const zoneMargin = Math.max(bbox.maxX - bbox.minX, bbox.maxY - bbox.minY);
+
+  // Step 1: Place buildings along roads first
+  for (const segment of roadSegments) {
+    if (segmentIntersectsOrNearZone(segment, settings.boundary, zoneMargin)) {
+      const roadBuildings = placeBuildingsAlongRoad(segment, settings.boundary, settings);
+      buildings.push(...roadBuildings);
+    }
+  }
+
+  // Remove overlapping road-aligned buildings
+  const roadAlignedBuildings: Building[] = [];
+  for (const building of buildings) {
+    const buildingPoly = getBuildingCorners(building.center, building.size[0], building.size[1], building.rotation);
+    let overlaps = false;
+
+    for (const existing of roadAlignedBuildings) {
+      const existingPoly = getBuildingCorners(existing.center, existing.size[0], existing.size[1], existing.rotation);
+      if (polygonsOverlap(buildingPoly, existingPoly)) {
+        overlaps = true;
+        break;
+      }
+    }
+
+    if (!overlaps) {
+      roadAlignedBuildings.push(building);
+    }
+  }
+
+  // Step 2: Generate multiple inner rings of buildings
+  const [minWidth, maxWidth] = settings.width;
+  const [minLength, maxLength] = settings.length;
+  const [minHeight, maxHeight] = settings.height;
+  const spacing = settings.spacing;
+
+  // Convert road-aligned buildings to polygons for collision detection
+  const roadBuildingPolygons: Point2[][] = roadAlignedBuildings.map((b) =>
+    getBuildingCorners(b.center, b.size[0], b.size[1], b.rotation),
+  );
+
+  const allInnerBuildings: Building[] = [];
+
+  // Ring spacing: building depth + gap between rings
+  const ringSpacing = maxLength * 2 + spacing * 2;
+
+  // Generate 1 inner ring (total 2 rings including road-aligned)
+  const insetDistance = ringSpacing;
+  const innerBoundary = insetPolygon(settings.boundary, insetDistance);
+
+  if (innerBoundary.length >= 3) {
+    // Convert existing inner buildings to polygons for collision detection
+    const existingPolygons: Point2[][] = [...roadBuildingPolygons];
+
+    // Place buildings along each edge of this ring's boundary
+    for (let i = 0; i < innerBoundary.length; i++) {
+      const p1 = innerBoundary[i];
+      const p2 = innerBoundary[(i + 1) % innerBoundary.length];
+
+      const edgeLength = distance2D(p1.x, p1.y, p2.x, p2.y);
+      const edgeAngle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+      const edgeAngleDegrees = (edgeAngle * 180) / Math.PI;
+
+      const buildingsPerEdge = Math.floor((edgeLength + spacing) / (maxWidth + spacing));
+      if (buildingsPerEdge <= 0) continue;
+
+      const actualSpacing = (edgeLength - buildingsPerEdge * maxWidth) / (buildingsPerEdge + 1);
+
+      for (let j = 0; j < buildingsPerEdge; j++) {
+        const t = (actualSpacing + maxWidth / 2 + j * (maxWidth + actualSpacing)) / edgeLength;
+        const cx = p1.x + t * (p2.x - p1.x);
+        const cy = p1.y + t * (p2.y - p1.y);
+
+        const width = randomInRange(minWidth, maxWidth);
+        const length = randomInRange(minLength, maxLength);
+        const height = randomInRange(minHeight, maxHeight);
+
+        // Check if inside original boundary
+        if (!isBuildingInsideBoundary([cx, cy], width, length, edgeAngleDegrees, settings.boundary)) {
+          continue;
+        }
+
+        const testBuilding: Building = {
+          center: [cx, cy],
+          size: [width, length, height],
+          rotation: edgeAngleDegrees,
+          color: settings.color,
+        };
+
+        // Check overlap with all existing buildings
+        if (overlapsWithPolygons(testBuilding, existingPolygons)) {
+          continue;
+        }
+
+        // Check overlap with other buildings in current ring
+        const testPoly = getBuildingCorners([cx, cy], width, length, edgeAngleDegrees);
+        let overlapsOther = false;
+        for (const existing of allInnerBuildings) {
+          const existingPoly = getBuildingCorners(
+            existing.center,
+            existing.size[0],
+            existing.size[1],
+            existing.rotation,
+          );
+          if (polygonsOverlap(testPoly, existingPoly)) {
+            overlapsOther = true;
+            break;
+          }
+        }
+
+        if (!overlapsOther) {
+          allInnerBuildings.push(testBuilding);
         }
       }
     }
   }
 
-  // 2. 内部随机散布（远离道路的区域）
-  const innerCandidates = generateInnerScatterCandidates(block, roads, bbox);
-  candidates.push(...innerCandidates);
+  // Step 3: Fill remaining center space with one large building
+  // Inset from the inner ring boundary, not the original zone boundary
+  const centerBoundary = innerBoundary.length >= 3 ? insetPolygon(innerBoundary, ringSpacing) : [];
 
-  // 3. 过滤和去重
-  return filterAndFinalize(candidates, block, roadMask);
-}
+  if (centerBoundary.length >= 3) {
+    // Calculate centroid of the center boundary
+    let centroidX = 0;
+    let centroidY = 0;
+    for (const p of centerBoundary) {
+      centroidX += p.x;
+      centroidY += p.y;
+    }
+    centroidX /= centerBoundary.length;
+    centroidY /= centerBoundary.length;
 
-/**
- * 生成内部随机散布的建筑候选
- */
-function generateInnerScatterCandidates(block: Block, roads: Roads, bbox: BBox): BuildingCandidate[] {
-  const [buildingW, buildingL] = block.size;
-  const candidates: BuildingCandidate[] = [];
-
-  // 估算需要的建筑数量
-  const blockArea = calculatePolygonArea(block.boundary);
-  const buildingArea = buildingW * buildingL;
-  const targetCount = Math.floor(((blockArea * block.coverage) / buildingArea) * 0.5); // 内部只占一半
-
-  // 最小距离（避免与道路和其他建筑太近）
-  const minDistFromRoad = roads.width / 2 + buildingL + block.spacing * 2;
-  const minDist = Math.max(buildingW, buildingL) + block.spacing;
-
-  // 泊松圆盘采样
-  const points = poissonDiskSampling(bbox, minDist, targetCount * 2);
-
-  for (const p of points) {
-    // 检查是否远离道路
-    const distToRoad = getMinDistanceToRoads(p, roads);
-    if (distToRoad < minDistFromRoad) {
-      continue;
+    // Calculate the maximum size that fits in the center boundary
+    // Find minimum distance from centroid to any edge
+    let minDistToEdge = Infinity;
+    for (let i = 0; i < centerBoundary.length; i++) {
+      const p1 = centerBoundary[i];
+      const p2 = centerBoundary[(i + 1) % centerBoundary.length];
+      const dist = pointToSegmentDistance(centroidX, centroidY, [p1.x, p1.y], [p2.x, p2.y]);
+      minDistToEdge = Math.min(minDistToEdge, dist);
     }
 
-    candidates.push({
-      center: p,
-      width: buildingW + (Math.random() - 0.5) * buildingW * 0.2,
-      length: buildingL + (Math.random() - 0.5) * buildingL * 0.2,
-      rotation: Math.random() * 360,
-    });
-  }
+    // Leave some margin
+    const margin = spacing;
+    const maxCenterSize = (minDistToEdge - margin) * 2;
 
-  return candidates;
-}
+    if (maxCenterSize >= minWidth && maxCenterSize >= minLength) {
+      const centerWidth = Math.min(maxCenterSize, maxWidth * 2);
+      const centerLength = Math.min(maxCenterSize, maxLength * 2);
+      const centerHeight = randomInRange(minHeight, maxHeight);
 
-/**
- * 计算点到所有道路的最小距离
- */
-function getMinDistanceToRoads(point: [number, number], roads: Roads): number {
-  let minDist = Infinity;
-
-  for (const line of roads.lines) {
-    for (let i = 0; i < line.length - 1; i++) {
-      const dist = pointToSegmentDistance(point, line[i], line[i + 1]);
-      minDist = Math.min(minDist, dist);
-    }
-  }
-
-  return minDist;
-}
-
-/**
- * 计算点到线段的距离
- */
-function pointToSegmentDistance(point: [number, number], p1: [number, number], p2: [number, number]): number {
-  const dx = p2[0] - p1[0];
-  const dy = p2[1] - p1[1];
-  const lengthSq = dx * dx + dy * dy;
-
-  if (lengthSq === 0) {
-    return distance(point, p1);
-  }
-
-  // 投影参数 t
-  let t = ((point[0] - p1[0]) * dx + (point[1] - p1[1]) * dy) / lengthSq;
-  t = Math.max(0, Math.min(1, t));
-
-  // 最近点
-  const closest: [number, number] = [p1[0] + t * dx, p1[1] + t * dy];
-
-  return distance(point, closest);
-}
-
-/**
- * 过滤候选建筑并生成最终结果
- */
-function filterAndFinalize(candidates: BuildingCandidate[], block: Block, roadMask: RoadMask): Building[] {
-  // 1. 过滤：建筑四角必须在区块内
-  let filtered = candidates.filter((c) => {
-    const corners = getBuildingCorners(c);
-    return corners.every((corner) => pointInPolygon(corner, block.boundary));
-  });
-
-  // 2. 过滤：不能与道路重叠
-  filtered = filtered.filter((c) => {
-    const rect = getBuildingRect(c);
-    for (const roadPoly of roadMask.polygons) {
-      if (polygonsIntersect(rect, roadPoly)) {
-        return false;
-      }
-    }
-    return true;
-  });
-
-  // 3. 移除互相重叠的建筑
-  filtered = removeOverlappingBuildings(filtered);
-
-  // 4. 应用覆盖率
-  filtered = applyCoverage(filtered, block);
-
-  // 5. 转换为Building
-  return filtered.map((c) => ({
-    center: c.center,
-    size: [c.width, c.length, randomInRange(block.height)],
-    rotation: c.rotation,
-  }));
-}
-
-/**
- * Fill或Scatter模式：在整个区块内生成，避开道路
- */
-function generateFillOrScatterBuildings(block: Block, roads: Roads): Building[] {
-  const bbox = getBoundingBox(block.boundary);
-  const roadMask = createRoadMask(roads, bbox);
-
-  let candidates: BuildingCandidate[];
-
-  if (block.layout === 'fill') {
-    candidates = generateFillCandidates(block, bbox);
-  } else {
-    candidates = generateScatterCandidates(block, bbox);
-  }
-
-  // 过滤：在边界内且不与道路重叠
-  candidates = candidates.filter((c) => {
-    const corners = getBuildingCorners(c);
-    const allInside = corners.every((corner) => pointInPolygon(corner, block.boundary));
-    if (!allInside) return false;
-
-    const rect = getBuildingRect(c);
-    for (const roadPoly of roadMask.polygons) {
-      if (polygonsIntersect(rect, roadPoly)) {
-        return false;
-      }
-    }
-    return true;
-  });
-
-  // 应用覆盖率
-  candidates = applyCoverage(candidates, block);
-
-  return candidates.map((c) => ({
-    center: c.center,
-    size: [c.width, c.length, randomInRange(block.height)],
-    rotation: c.rotation,
-  }));
-}
-
-function generateFillCandidates(block: Block, bbox: BBox): BuildingCandidate[] {
-  const candidates: BuildingCandidate[] = [];
-  const [buildingW, buildingL] = block.size;
-  const step = Math.max(buildingW, buildingL) + block.spacing;
-
-  for (let x = bbox.minX + buildingW / 2 + block.spacing; x < bbox.maxX - buildingW / 2; x += step) {
-    for (let y = bbox.minY + buildingL / 2 + block.spacing; y < bbox.maxY - buildingL / 2; y += step) {
-      candidates.push({
-        center: [x, y],
-        width: buildingW + (Math.random() - 0.5) * buildingW * 0.1,
-        length: buildingL + (Math.random() - 0.5) * buildingL * 0.1,
+      const centerBuilding: Building = {
+        center: [centroidX, centroidY],
+        size: [centerWidth, centerLength, centerHeight],
         rotation: 0,
-      });
+        color: settings.color,
+      };
+
+      // Check if the center building doesn't overlap with existing buildings
+      const allExistingPolygons: Point2[][] = [
+        ...roadBuildingPolygons,
+        ...allInnerBuildings.map((b) => getBuildingCorners(b.center, b.size[0], b.size[1], b.rotation)),
+      ];
+
+      if (!overlapsWithPolygons(centerBuilding, allExistingPolygons)) {
+        allInnerBuildings.push(centerBuilding);
+      }
     }
   }
 
-  return candidates;
+  return [...roadAlignedBuildings, ...allInnerBuildings];
 }
 
-/**
- * 泊松圆盘采样
- * 生成均匀分布的随机点，任意两点间距不小于minDist
- */
-function poissonDiskSampling(bbox: BBox, minDist: number, targetCount: number): [number, number][] {
-  const cellSize = minDist / Math.sqrt(2);
+function generateClusterLayout(settings: ZoneSettings, roadSegments: RoadSegment[]): Building[] {
+  const buildings: Building[] = [];
+  const bbox = calculateBoundingBox(settings.boundary);
+  const zoneMargin = Math.max(bbox.maxX - bbox.minX, bbox.maxY - bbox.minY);
+
+  // Step 1: Place buildings along roads first
+  for (const segment of roadSegments) {
+    if (segmentIntersectsOrNearZone(segment, settings.boundary, zoneMargin)) {
+      const roadBuildings = placeBuildingsAlongRoad(segment, settings.boundary, settings);
+      buildings.push(...roadBuildings);
+    }
+  }
+
+  // Remove overlapping road-aligned buildings
+  const roadAlignedBuildings: Building[] = [];
+  for (const building of buildings) {
+    const buildingPoly = getBuildingCorners(building.center, building.size[0], building.size[1], building.rotation);
+    let overlaps = false;
+
+    for (const existing of roadAlignedBuildings) {
+      const existingPoly = getBuildingCorners(existing.center, existing.size[0], existing.size[1], existing.rotation);
+      if (polygonsOverlap(buildingPoly, existingPoly)) {
+        overlaps = true;
+        break;
+      }
+    }
+
+    if (!overlaps) {
+      roadAlignedBuildings.push(building);
+    }
+  }
+
+  // Step 2: Fill interior with cluster layout using Poisson disk sampling
+  const [minWidth, maxWidth] = settings.width;
+  const [minLength, maxLength] = settings.length;
+  const [minHeight, maxHeight] = settings.height;
+  const spacing = settings.spacing;
+
+  // Convert road-aligned buildings to polygons for collision detection
+  const roadBuildingPolygons: Point2[][] = roadAlignedBuildings.map((b) =>
+    getBuildingCorners(b.center, b.size[0], b.size[1], b.rotation),
+  );
+
+  const minDist = Math.max(maxWidth, maxLength) + spacing;
+  const cellSize = minDist / Math.SQRT2;
   const gridWidth = Math.ceil((bbox.maxX - bbox.minX) / cellSize);
   const gridHeight = Math.ceil((bbox.maxY - bbox.minY) / cellSize);
 
-  // 网格存储已放置的点
-  const grid: (number | null)[][] = Array(gridWidth)
+  const grid: number[][] = Array(gridWidth)
     .fill(null)
-    .map(() => Array(gridHeight).fill(null));
-
+    .map(() => Array(gridHeight).fill(-1));
   const points: [number, number][] = [];
-  const activeList: [number, number][] = [];
+  const activeList: number[] = [];
 
-  // 随机初始点
-  const firstPoint: [number, number] = [
-    bbox.minX + Math.random() * (bbox.maxX - bbox.minX),
-    bbox.minY + Math.random() * (bbox.maxY - bbox.minY),
+  const toGrid = (x: number, y: number): [number, number] => [
+    Math.floor((x - bbox.minX) / cellSize),
+    Math.floor((y - bbox.minY) / cellSize),
   ];
 
-  points.push(firstPoint);
-  activeList.push(firstPoint);
-  setGridCell(grid, bbox, cellSize, firstPoint, 0);
+  // Helper to check if a point is too close to road-aligned buildings
+  const isTooCloseToRoadBuildings = (x: number, y: number): boolean => {
+    for (const poly of roadBuildingPolygons) {
+      // Check if point is inside the building polygon
+      if (Util.isPointInside(x, y, poly)) return true;
 
-  const maxAttempts = 30;
+      // Check distance to building edges
+      for (let i = 0; i < poly.length; i++) {
+        const p1 = poly[i];
+        const p2 = poly[(i + 1) % poly.length];
+        const dist = pointToSegmentDistance(x, y, [p1.x, p1.y], [p2.x, p2.y]);
+        if (dist < minDist / 2) return true;
+      }
+    }
+    return false;
+  };
 
-  while (activeList.length > 0 && points.length < targetCount) {
-    const randIndex = Math.floor(Math.random() * activeList.length);
-    const point = activeList[randIndex];
+  // Find initial point that doesn't overlap with road-aligned buildings
+  let initialPoint: [number, number] | null = null;
+  for (let attempt = 0; attempt < 100; attempt++) {
+    const x = bbox.minX + Math.random() * (bbox.maxX - bbox.minX);
+    const y = bbox.minY + Math.random() * (bbox.maxY - bbox.minY);
+    if (Util.isPointInside(x, y, settings.boundary) && !isTooCloseToRoadBuildings(x, y)) {
+      initialPoint = [x, y];
+      break;
+    }
+  }
+
+  if (initialPoint) {
+    points.push(initialPoint);
+    activeList.push(0);
+    const [gx, gy] = toGrid(initialPoint[0], initialPoint[1]);
+    if (gx >= 0 && gx < gridWidth && gy >= 0 && gy < gridHeight) {
+      grid[gx][gy] = 0;
+    }
+  }
+
+  const k = 30;
+
+  while (activeList.length > 0) {
+    const randomIndex = Math.floor(Math.random() * activeList.length);
+    const pointIndex = activeList[randomIndex];
+    const [px, py] = points[pointIndex];
+
     let found = false;
-
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      // 在环形区域内随机采样
-      const angle = Math.random() * 2 * Math.PI;
+    for (let attempt = 0; attempt < k; attempt++) {
+      const ang = Math.random() * 2 * Math.PI;
       const radius = minDist + Math.random() * minDist;
+      const newX = px + radius * Math.cos(ang);
+      const newY = py + radius * Math.sin(ang);
 
-      const newPoint: [number, number] = [point[0] + radius * Math.cos(angle), point[1] + radius * Math.sin(angle)];
+      if (!Util.isPointInside(newX, newY, settings.boundary)) continue;
+      if (isTooCloseToRoadBuildings(newX, newY)) continue;
 
-      // 检查边界
-      if (newPoint[0] < bbox.minX || newPoint[0] >= bbox.maxX || newPoint[1] < bbox.minY || newPoint[1] >= bbox.maxY) {
-        continue;
+      const [gx, gy] = toGrid(newX, newY);
+      if (gx < 0 || gx >= gridWidth || gy < 0 || gy >= gridHeight) continue;
+
+      let valid = true;
+      for (let dx = -2; dx <= 2 && valid; dx++) {
+        for (let dy = -2; dy <= 2 && valid; dy++) {
+          const nx = gx + dx;
+          const ny = gy + dy;
+          if (nx >= 0 && nx < gridWidth && ny >= 0 && ny < gridHeight) {
+            const neighborIdx = grid[nx][ny];
+            if (neighborIdx !== -1) {
+              const [npx, npy] = points[neighborIdx];
+              if (distance2D(newX, newY, npx, npy) < minDist) {
+                valid = false;
+              }
+            }
+          }
+        }
       }
 
-      // 检查与周围点的距离
-      if (isValidPoint(newPoint, grid, bbox, cellSize, minDist, points)) {
-        points.push(newPoint);
-        activeList.push(newPoint);
-        setGridCell(grid, bbox, cellSize, newPoint, points.length - 1);
+      if (valid) {
+        points.push([newX, newY]);
+        const newIdx = points.length - 1;
+        activeList.push(newIdx);
+        grid[gx][gy] = newIdx;
         found = true;
         break;
       }
     }
 
     if (!found) {
-      activeList.splice(randIndex, 1);
+      activeList.splice(randomIndex, 1);
     }
   }
 
-  return points;
-}
+  const clusterBuildings: Building[] = [];
+  for (const [x, y] of points) {
+    const rotation = Math.random() * 360;
+    const width = randomInRange(minWidth, maxWidth);
+    const length = randomInRange(minLength, maxLength);
+    const height = randomInRange(minHeight, maxHeight);
 
-function setGridCell(
-  grid: (number | null)[][],
-  bbox: BBox,
-  cellSize: number,
-  point: [number, number],
-  index: number,
-): void {
-  const gx = Math.floor((point[0] - bbox.minX) / cellSize);
-  const gy = Math.floor((point[1] - bbox.minY) / cellSize);
-  if (gx >= 0 && gx < grid.length && gy >= 0 && gy < grid[0].length) {
-    grid[gx][gy] = index;
-  }
-}
-
-function isValidPoint(
-  point: [number, number],
-  grid: (number | null)[][],
-  bbox: BBox,
-  cellSize: number,
-  minDist: number,
-  points: [number, number][],
-): boolean {
-  const gx = Math.floor((point[0] - bbox.minX) / cellSize);
-  const gy = Math.floor((point[1] - bbox.minY) / cellSize);
-
-  // 检查周围5x5网格
-  for (let dx = -2; dx <= 2; dx++) {
-    for (let dy = -2; dy <= 2; dy++) {
-      const nx = gx + dx;
-      const ny = gy + dy;
-
-      if (nx < 0 || nx >= grid.length || ny < 0 || ny >= grid[0].length) {
-        continue;
-      }
-
-      const idx = grid[nx][ny];
-      if (idx !== null) {
-        const neighbor = points[idx];
-        const dist = Math.sqrt((point[0] - neighbor[0]) ** 2 + (point[1] - neighbor[1]) ** 2);
-        if (dist < minDist) {
-          return false;
-        }
-      }
+    if (!isBuildingInsideBoundary([x, y], width, length, rotation, settings.boundary)) {
+      continue;
     }
+
+    const testBuilding: Building = {
+      center: [x, y],
+      size: [width, length, height],
+      rotation,
+      color: settings.color,
+    };
+
+    // Check overlap with road-aligned buildings
+    if (overlapsWithPolygons(testBuilding, roadBuildingPolygons)) {
+      continue;
+    }
+
+    clusterBuildings.push(testBuilding);
   }
 
-  return true;
+  return [...roadAlignedBuildings, ...clusterBuildings];
 }
 
-function generateScatterCandidates(block: Block, bbox: BBox): BuildingCandidate[] {
-  const [buildingW, buildingL] = block.size;
-  const blockArea = calculatePolygonArea(block.boundary);
-  const buildingArea = buildingW * buildingL;
-  const targetCount = Math.floor(((blockArea * block.coverage) / buildingArea) * 1.5); // 多生成一些，后面会过滤
+// ================================================================================
+// ROAD GENERATION FOR RENDERING
+// ================================================================================
 
-  const minDist = Math.max(buildingW, buildingL) + block.spacing;
-  const points = poissonDiskSampling(bbox, minDist, targetCount);
-
-  return points.map((p) => ({
-    center: p,
-    width: buildingW + (Math.random() - 0.5) * buildingW * 0.2,
-    length: buildingL + (Math.random() - 0.5) * buildingL * 0.2,
-    rotation: Math.random() * 360,
-  }));
+function generateSegment(start: [number, number], end: [number, number], width: number): RoadRenderSegment {
+  return {
+    position: midpoint(start, end),
+    length: distance(start, end),
+    width,
+    angle: angle(start, end),
+  };
 }
 
-/**
- * 过滤与地标重叠的普通建筑
- */
-function filterOverlappingWithLandmarks(buildings: Building[], landmarks: Landmark[]): Building[] {
-  if (landmarks.length === 0) {
-    return buildings;
+function generateRoad(edge: RoadEdge, nodeMap: Map<string, RoadNode>): Road {
+  const fromNode = nodeMap.get(edge.from);
+  const toNode = nodeMap.get(edge.to);
+
+  if (!fromNode || !toNode) {
+    throw new Error(`Invalid edge: ${edge.id}`);
   }
 
-  // 预计算地标矩形
-  const landmarkRects = landmarks.map((lm) =>
-    getBuildingRect({
-      center: lm.center,
-      width: lm.size[0],
-      length: lm.size[1],
-      rotation: lm.rotation,
-    }),
+  const width = ROAD_WIDTH[edge.level];
+  const path: [number, number][] = [fromNode.position, ...(edge.points || []), toNode.position];
+
+  const segments: RoadRenderSegment[] = [];
+  for (let i = 0; i < path.length - 1; i++) {
+    segments.push(generateSegment(path[i], path[i + 1], width));
+  }
+
+  return {
+    edgeId: edge.id,
+    level: edge.level,
+    segments,
+  };
+}
+
+// ================================================================================
+// EXPORTS
+// ================================================================================
+
+export function generateRoads(network: RoadNetwork): Road[] {
+  const nodeMap = new Map<string, RoadNode>();
+  for (const node of network.nodes) {
+    nodeMap.set(node.id, node);
+  }
+
+  return network.edges.map((edge) => generateRoad(edge, nodeMap));
+}
+
+export function generateBuildings(city: any, processedLandmarks?: Building[]): Building[] {
+  const buildings: Building[] = [];
+  const zones = city.zones || [];
+
+  const parkPolygons: Point2[][] = (city.parks || []).map((p: Park) =>
+    p.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
   );
 
-  return buildings.filter((building) => {
-    const buildingRect = getBuildingRect({
-      center: building.center,
-      width: building.size[0],
-      length: building.size[1],
-      rotation: building.rotation,
-    });
+  const riverPolygons: Point2[][] = (city.rivers || []).map((r: River) =>
+    r.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
+  );
 
-    for (const landmarkRect of landmarkRects) {
-      if (polygonsIntersect(buildingRect, landmarkRect)) {
-        return false;
-      }
+  const roadPolygons: Point2[][] = generateRoadPolygons(city.roads);
+  const roadSegments: RoadSegment[] = getRoadSegments(city.roads);
+
+  const landmarkPolygons: Point2[][] = processedLandmarks
+    ? processedLandmarks.map((lm: Building) => getBuildingCorners(lm.center, lm.size[0], lm.size[1], lm.rotation))
+    : (city.landmarks || []).map((lm: Landmark) =>
+        getBuildingCorners(lm.center, lm.size[0], lm.size[1], lm.rotation ?? 0),
+      );
+
+  for (const zone of zones) {
+    if (!zone.boundary || zone.boundary.length < 3) continue;
+
+    const settings: ZoneSettings = {
+      boundary: zone.boundary.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
+      length: zone.length ?? [20, 30],
+      width: zone.width ?? [15, 25],
+      height: zone.height ?? [20, 50],
+      spacing: zone.spacing ?? 5,
+      coverage: zone.coverage ?? 0.6,
+      layout: zone.layout ?? 'grid',
+      color: zone.color ?? 'grey',
+    };
+
+    const zoneArea = Math.abs(Util.getPolygonArea(settings.boundary));
+    const targetArea = zoneArea * settings.coverage;
+
+    let candidates: Building[];
+    switch (settings.layout) {
+      case 'grid':
+        candidates = generateGridLayout(settings, roadSegments);
+        break;
+      case 'perimeter':
+        candidates = generatePerimeterLayout(settings, roadSegments);
+        break;
+      case 'cluster':
+        candidates = generateClusterLayout(settings, roadSegments);
+        break;
+      default:
+        candidates = generateGridLayout(settings, roadSegments);
     }
 
-    return true;
-  });
-}
+    const validBuildings = candidates.filter(
+      (b) =>
+        !overlapsWithPolygons(b, parkPolygons) &&
+        !overlapsWithPolygons(b, riverPolygons) &&
+        !overlapsWithPolygons(b, roadPolygons) &&
+        !overlapsWithPolygons(b, landmarkPolygons),
+    );
 
-/**
- * 多边形差集运算
- * 生产环境建议使用 polygon-clipping 或 clipper 库
- */
-function polygonDifference(subject: [number, number][], clips: [number, number][][]): [number, number][][] {
-  // 简化实现：使用网格法识别连通区域
-  const bbox = getBoundingBox(subject);
-  const gridSize = 5; // 网格精度
+    const selectedBuildings = applyCoverageConstraint(validBuildings, targetArea);
 
-  const gridW = Math.ceil((bbox.maxX - bbox.minX) / gridSize);
-  const gridH = Math.ceil((bbox.maxY - bbox.minY) / gridSize);
+    for (const building of selectedBuildings) {
+      const buildingPoly = getBuildingCorners(building.center, building.size[0], building.size[1], building.rotation);
+      let overlaps = false;
 
-  // 标记网格：0=外部，1=内部可用，2=被道路占用
-  const grid: number[][] = Array(gridW)
-    .fill(null)
-    .map(() => Array(gridH).fill(0));
-
-  for (let i = 0; i < gridW; i++) {
-    for (let j = 0; j < gridH; j++) {
-      const x = bbox.minX + (i + 0.5) * gridSize;
-      const y = bbox.minY + (j + 0.5) * gridSize;
-      const point: [number, number] = [x, y];
-
-      if (!pointInPolygon(point, subject)) {
-        grid[i][j] = 0;
-        continue;
-      }
-
-      let inClip = false;
-      for (const clip of clips) {
-        if (pointInPolygon(point, clip)) {
-          inClip = true;
+      for (const existing of buildings) {
+        const existingPoly = getBuildingCorners(existing.center, existing.size[0], existing.size[1], existing.rotation);
+        if (polygonsOverlap(buildingPoly, existingPoly)) {
+          overlaps = true;
           break;
         }
       }
 
-      grid[i][j] = inClip ? 2 : 1;
-    }
-  }
-
-  // 使用洪水填充找到连通区域，然后提取轮廓
-  const regions = findConnectedRegions(grid, gridW, gridH);
-
-  // 将网格区域转换回多边形
-  return regions.map((region) => gridRegionToPolygon(region, bbox, gridSize));
-}
-
-/**
- * 洪水填充找连通区域
- */
-function findConnectedRegions(grid: number[][], width: number, height: number): [number, number][][] {
-  const visited: boolean[][] = Array(width)
-    .fill(null)
-    .map(() => Array(height).fill(false));
-  const regions: [number, number][][] = [];
-
-  for (let i = 0; i < width; i++) {
-    for (let j = 0; j < height; j++) {
-      if (grid[i][j] === 1 && !visited[i][j]) {
-        const region: [number, number][] = [];
-        const queue: [number, number][] = [[i, j]];
-
-        while (queue.length > 0) {
-          const [ci, cj] = queue.shift()!;
-          if (ci < 0 || ci >= width || cj < 0 || cj >= height) continue;
-          if (visited[ci][cj] || grid[ci][cj] !== 1) continue;
-
-          visited[ci][cj] = true;
-          region.push([ci, cj]);
-
-          queue.push([ci + 1, cj], [ci - 1, cj], [ci, cj + 1], [ci, cj - 1]);
-        }
-
-        if (region.length > 0) {
-          regions.push(region);
-        }
+      if (!overlaps) {
+        buildings.push(building);
       }
     }
   }
 
-  return regions;
+  return buildings;
 }
 
-/**
- * 将网格区域转换为多边形轮廓
- */
-function gridRegionToPolygon(region: [number, number][], bbox: BBox, gridSize: number): [number, number][] {
-  // 使用 Marching Squares 算法提取轮廓
-  // 简化：返回凸包或边界框
+export function generateCityRivers(rivers: River[]): River[] {
+  return rivers || [];
+}
 
-  const points = region.map(
-    ([i, j]) => [bbox.minX + (i + 0.5) * gridSize, bbox.minY + (j + 0.5) * gridSize] as [number, number],
+export function generateCityParks(parks: Park[]): Park[] {
+  return parks || [];
+}
+
+export function generateLandmarkBuildings(city: any): Building[] {
+  const landmarks: Landmark[] = city.landmarks || [];
+
+  const parkPolygons: Point2[][] = (city.parks || []).map((p: Park) =>
+    p.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
   );
 
-  return convexHull(points);
-}
+  const riverPolygons: Point2[][] = (city.rivers || []).map((r: River) =>
+    r.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
+  );
 
-/**
- * 计算凸包（Graham扫描法）
- */
-function convexHull(points: [number, number][]): [number, number][] {
-  if (points.length < 3) return points;
+  const roadPolygons: Point2[][] = generateRoadPolygons(city.roads);
 
-  // 找最低点
-  let start = 0;
-  for (let i = 1; i < points.length; i++) {
-    if (points[i][1] < points[start][1] || (points[i][1] === points[start][1] && points[i][0] < points[start][0])) {
-      start = i;
-    }
-  }
-  [points[0], points[start]] = [points[start], points[0]];
+  const allObstacles: Point2[][] = [...parkPolygons, ...riverPolygons, ...roadPolygons];
 
-  const pivot = points[0];
+  const buildings: Building[] = [];
+  for (const lm of landmarks) {
+    const building: Building = {
+      center: lm.center,
+      size: lm.size,
+      rotation: lm.rotation ?? 0,
+      color: 'grey',
+    };
 
-  // 按极角排序
-  points.slice(1).sort((a, b) => {
-    const angleA = Math.atan2(a[1] - pivot[1], a[0] - pivot[0]);
-    const angleB = Math.atan2(b[1] - pivot[1], b[0] - pivot[0]);
-    return angleA - angleB;
-  });
+    const validPosition = findNearestValidPosition(building, allObstacles);
 
-  const hull: [number, number][] = [points[0], points[1]];
-
-  for (let i = 2; i < points.length; i++) {
-    while (hull.length > 1 && crossProduct(hull[hull.length - 2], hull[hull.length - 1], points[i]) <= 0) {
-      hull.pop();
-    }
-    hull.push(points[i]);
-  }
-
-  return hull;
-}
-
-function crossProduct(o: [number, number], a: [number, number], b: [number, number]): number {
-  return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
-}
-
-/**
- * 数组随机打乱（Fisher-Yates算法）
- */
-function shuffle<T>(array: T[]): T[] {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-
-function applyCoverage(candidates: BuildingCandidate[], block: Block): BuildingCandidate[] {
-  const blockArea = calculatePolygonArea(block.boundary);
-  const targetArea = blockArea * block.coverage;
-
-  let currentArea = 0;
-  const result: BuildingCandidate[] = [];
-
-  // 随机打乱顺序后按覆盖率截取
-  shuffle(candidates);
-
-  for (const c of candidates) {
-    const buildingArea = c.width * c.length;
-    if (currentArea + buildingArea <= targetArea) {
-      result.push(c);
-      currentArea += buildingArea;
+    if (validPosition) {
+      buildings.push({
+        center: validPosition,
+        size: lm.size,
+        rotation: lm.rotation ?? 0,
+        color: 'grey',
+      });
     }
   }
 
-  return result;
-}
-
-// 随机范围
-function randomInRange([min, max]: [number, number]): number {
-  return min + Math.random() * (max - min);
-}
-
-// 随机变化（±10%）
-function randomVariance(): number {
-  return (Math.random() - 0.5) * 0.2;
-}
-
-// 两点距离
-function distance(p1: [number, number], p2: [number, number]): number {
-  return Math.sqrt((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2);
-}
-
-// 线性插值
-function lerp(p1: [number, number], p2: [number, number], t: number): [number, number] {
-  return [p1[0] + (p2[0] - p1[0]) * t, p1[1] + (p2[1] - p1[1]) * t];
-}
-
-// 计算角度
-function angle(p1: [number, number], p2: [number, number]): number {
-  return (Math.atan2(p2[1] - p1[1], p2[0] - p1[0]) * 180) / Math.PI;
-}
-
-// 获取建筑四角坐标
-function getBuildingCorners(c: BuildingCandidate): [number, number][] {
-  const hw = c.width / 2;
-  const hl = c.length / 2;
-  const rad = (c.rotation * Math.PI) / 180;
-  const cos = Math.cos(rad);
-  const sin = Math.sin(rad);
-
-  const corners = [
-    [-hw, -hl],
-    [hw, -hl],
-    [hw, hl],
-    [-hw, hl],
-  ];
-
-  return corners.map(([dx, dy]) => [c.center[0] + dx * cos - dy * sin, c.center[1] + dx * sin + dy * cos]);
+  return buildings;
 }

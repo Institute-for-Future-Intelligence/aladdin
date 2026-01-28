@@ -40,13 +40,15 @@ import { RulerModel } from './models/RulerModel';
 import RulerWrapper from './views/ruler/rulerWrapper';
 import Protractor from './views/protractor/protractor';
 import { ProtractorModel } from './models/ProtractorModel';
-import CuboidArray from './views/cuboid/cuboidArray';
-import PolygonCuboid from './views/polygonCuboid/polygonCuboid';
-import { PolygonCuboidModel } from './models/PolygonCuboidModel';
+import InstancedCuboids from './views/cuboid/instancedCuboids';
+import { PrismModel } from './models/PolygonCuboidModel';
+import Prism from './views/prism/prism';
+import InstancedFoundations from './views/foundation/instancedFoundations';
 
 const ElementsRenderer: React.FC = React.memo(() => {
   const elements = useStore(Selector.elements);
-  const instancedCube = elements.filter((e) => e.type === ObjectType.Cuboid && (e as CuboidModel).instanced);
+  const instancedCube = elements.filter((e) => e.type === ObjectType.InstancedCuboid);
+  const instancedFoundation = elements.filter((e) => e.type === ObjectType.InstancedFoundation);
 
   const groupRef = useRef<Group>(null);
 
@@ -66,8 +68,8 @@ const ElementsRenderer: React.FC = React.memo(() => {
     <group ref={groupRef} name={'Content'}>
       {elements.map((e) => {
         switch (e.type) {
-          case ObjectType.PolygonCuboid:
-            return <PolygonCuboid key={e.id} model={e as PolygonCuboidModel} />;
+          case ObjectType.Prism:
+            return <Prism key={e.id} model={e as PrismModel} />;
           case ObjectType.Protractor:
             return <Protractor key={e.id} {...(e as ProtractorModel)} />;
           case ObjectType.Ruler:
@@ -91,7 +93,6 @@ const ElementsRenderer: React.FC = React.memo(() => {
           case ObjectType.Cuboid:
             // only base cuboid will be rendered here
             if (e.parentId !== GROUND_ID) return null;
-            if ((e as CuboidModel).instanced) return null;
             return <CuboidRenderer key={e.id} elements={elements} cuboidModel={e as CuboidModel} />;
           case ObjectType.Human:
             return <Human key={e.id} {...(e as HumanModel)} />;
@@ -122,7 +123,8 @@ const ElementsRenderer: React.FC = React.memo(() => {
         return null;
       })}
 
-      {instancedCube.length > 0 && <CuboidArray cuboids={instancedCube} />}
+      {instancedCube.length > 0 && <InstancedCuboids cuboids={instancedCube} />}
+      {instancedFoundation.length > 0 && <InstancedFoundations foundations={instancedFoundation} />}
       <EndWaiting />
       <ClearDeletedRoofIdSet />
     </group>

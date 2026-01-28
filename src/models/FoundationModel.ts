@@ -35,7 +35,3 @@ export interface FoundationModel extends ElementModel, Groupable {
   volumetricHeatCapacity: number;
   hvacSystem: HvacSystem;
 }
-
-export interface BuildingParts {
-  foundationModel: FoundationModel;
-}

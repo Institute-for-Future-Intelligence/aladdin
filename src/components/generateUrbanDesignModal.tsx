@@ -22,59 +22,19 @@ import { updateGenerateBuildingPrompt } from 'src/cloudProjectUtil';
 import { Util } from '../Util';
 import { AI_MODELS_NAME } from 'functions/src/callSolarPowerTowerAI';
 import { callUrbanDesignClaudeAI } from 'functions/src/callUrbanDesignAI';
-import { FoundationModel } from 'src/models/FoundationModel';
 import { CuboidModel } from 'src/models/CuboidModel';
-import { PolygonCuboidModel } from 'src/models/PolygonCuboidModel';
+import { PrismModel } from 'src/models/PolygonCuboidModel';
 import short from 'short-uuid';
 import * as Constants from '../constants';
 import {
-  generateBlockBuildings,
-  generateCityParks,
+  generateBuildings,
   generateCityRivers,
   generateLandmarkBuildings,
+  generateRoads,
 } from './generateUrbanDesignCity';
+import { InstancedModel } from 'src/models/InstancedModel';
 import { Color } from 'three';
-
-interface BBox {
-  minX: number;
-  maxX: number;
-  minY: number;
-  maxY: number;
-}
-
-interface BuildingCandidate {
-  center: [number, number];
-  width: number;
-  length: number;
-  rotation: number;
-}
-
-interface RoadMask {
-  polygons: [number, number][][];
-}
-
-// 输入：区块定义
-interface Block {
-  boundary: [number, number][]; // 多边形顶点
-  size: [number, number]; // [width, length]
-  height: [number, number]; // [min, max]
-  spacing: number;
-  coverage: number; // 0-1
-  layout: 'fill' | 'perimeter' | 'scatter';
-}
-
-// 输入：道路数据
-interface Roads {
-  width: number;
-  lines: [number, number][][];
-}
-
-// 输出：建筑立方体
-interface Building {
-  center: [number, number];
-  size: [number, number, number]; // [width, length, height]
-  rotation: number;
-}
+import { FoundationModel } from 'src/models/FoundationModel';
 
 export interface GenerateUrbanDesignProps {
   setDialogVisible: (visible: boolean) => void;
@@ -135,602 +95,8 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
   };
 
   const processResult = (text: string) => {
-    // const json = JSON.parse(text);
-
-    // console.log('prompt:', prompt);
-    // console.log('raw:', JSON.parse(text).elements);
-
-    // const jsonElements = json.elements;
-
-    // console.log('validated:', jsonElements);
-    // console.log('thinking:', json.thinking);
-
-    // useStore.getState().set((state) => {
-    //   let [minX, maxX] = [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER];
-    //   let [minY, maxY] = [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER];
-    //   if (jsonElements.length > 0) {
-    //     state.elements = [];
-    //     for (const e of jsonElements) {
-    //       switch (e.type) {
-    //         case ObjectType.Foundation: {
-    //           const [cx, cy] = e.center ?? [0, 0];
-    //           const [lx, ly, lz] = e.size ?? [10, 10, 0.1];
-    //           minX = Math.min(minX, cx - lx / 2);
-    //           maxX = Math.max(maxX, cx + lx / 2);
-    //           minY = Math.min(minY, cy - ly / 2);
-    //           maxY = Math.max(maxY, cy + ly / 2);
-    //           const foundation = {
-    //             id: short.generate() as string,
-    //             parentId: Constants.GROUND_ID,
-    //             type: ObjectType.Foundation,
-    //             cx,
-    //             cy,
-    //             cz: lz / 2,
-    //             lx,
-    //             ly,
-    //             lz,
-    //             rotation: [0, 0, Util.toRadians(e.rotation ?? 0)],
-    //             normal: [0, 0, 1],
-    //             color: '#808080',
-    //             textureType: FoundationTexture.NoTexture,
-    //           } as FoundationModel;
-    //           state.elements.push(foundation);
-    //           break;
-    //         }
-    //         case ObjectType.Cuboid: {
-    //           const [cx, cy] = e.center ?? [0, 0];
-    //           const [lx, ly, lz] = e.size ?? [10, 10, 1];
-    //           minX = Math.min(minX, cx - lx / 2);
-    //           maxX = Math.max(maxX, cx + lx / 2);
-    //           minY = Math.min(minY, cy - ly / 2);
-    //           maxY = Math.max(maxY, cy + ly / 2);
-    //           const cuboid = {
-    //             id: short.generate() as string,
-    //             parentId: Constants.GROUND_ID,
-    //             type: ObjectType.Cuboid,
-    //             cx,
-    //             cy,
-    //             cz: lz / 2,
-    //             lx,
-    //             ly,
-    //             lz,
-    //             rotation: [0, 0, Util.toRadians(e.rotation ?? 0)],
-    //             normal: [0, 0, 1],
-    //             color: '#808080',
-    //             faceColors: new Array(6).fill(Constants.DEFAULT_CUBOID_COLOR),
-    //             textureTypes: new Array(6).fill(CuboidTexture.NoTexture),
-    //           } as CuboidModel;
-    //           state.elements.push(cuboid);
-    //           break;
-    //         }
-    //       }
-    //     }
-    //   }
-
-    //   console.log('bounding', minX, maxX, minY, maxY);
-    //   const panCenter = [(minX + maxX) / 2, (minY + maxY) / 2, 0];
-    //   const l = Math.max(maxX - minX, maxY - minY) * 1.5;
-    //   state.viewState.cameraPosition = [panCenter[0] - l, panCenter[1] - l, l / 2];
-    //   state.viewState.panCenter = [...panCenter];
-    //   state.cameraChangeFlag = !state.cameraChangeFlag;
-    // });
-
     processCity(text);
   };
-
-  /**
-   * 获取边的内向法线单位向量
-   */
-  function getNormalInward(p1: [number, number], p2: [number, number], polygon: [number, number][]): [number, number] {
-    const dx = p2[0] - p1[0];
-    const dy = p2[1] - p1[1];
-    const len = Math.sqrt(dx * dx + dy * dy);
-
-    // 两个可能的法向量
-    const n1: [number, number] = [-dy / len, dx / len];
-    const n2: [number, number] = [dy / len, -dx / len];
-
-    // 边的中点
-    const mid: [number, number] = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
-
-    // 测试哪个方向指向内部
-    const testPoint1: [number, number] = [mid[0] + n1[0] * 0.1, mid[1] + n1[1] * 0.1];
-    const testPoint2: [number, number] = [mid[0] + n2[0] * 0.1, mid[1] + n2[1] * 0.1];
-
-    if (pointInPolygon(testPoint1, polygon)) {
-      return n1;
-    }
-    return n2;
-  }
-
-  /**
-   * 将线段扩展为指定宽度的矩形
-   */
-  function expandLineToRect(p1: [number, number], p2: [number, number], width: number): [number, number][] {
-    const dx = p2[0] - p1[0];
-    const dy = p2[1] - p1[1];
-    const len = Math.sqrt(dx * dx + dy * dy);
-
-    if (len === 0) return [];
-
-    // 单位法向量
-    const nx = -dy / len;
-    const ny = dx / len;
-
-    const hw = width / 2;
-
-    // 四个角点
-    return [
-      [p1[0] + nx * hw, p1[1] + ny * hw],
-      [p1[0] - nx * hw, p1[1] - ny * hw],
-      [p2[0] - nx * hw, p2[1] - ny * hw],
-      [p2[0] + nx * hw, p2[1] + ny * hw],
-    ];
-  }
-
-  /**
-   * 泊松圆盘采样
-   * 生成均匀分布的随机点，任意两点间距不小于minDist
-   */
-  function poissonDiskSampling(bbox: BBox, minDist: number, targetCount: number): [number, number][] {
-    const cellSize = minDist / Math.sqrt(2);
-    const gridWidth = Math.ceil((bbox.maxX - bbox.minX) / cellSize);
-    const gridHeight = Math.ceil((bbox.maxY - bbox.minY) / cellSize);
-
-    // 网格存储已放置的点
-    const grid: (number | null)[][] = Array(gridWidth)
-      .fill(null)
-      .map(() => Array(gridHeight).fill(null));
-
-    const points: [number, number][] = [];
-    const activeList: [number, number][] = [];
-
-    // 随机初始点
-    const firstPoint: [number, number] = [
-      bbox.minX + Math.random() * (bbox.maxX - bbox.minX),
-      bbox.minY + Math.random() * (bbox.maxY - bbox.minY),
-    ];
-
-    points.push(firstPoint);
-    activeList.push(firstPoint);
-    setGridCell(grid, bbox, cellSize, firstPoint, 0);
-
-    const maxAttempts = 30;
-
-    while (activeList.length > 0 && points.length < targetCount) {
-      const randIndex = Math.floor(Math.random() * activeList.length);
-      const point = activeList[randIndex];
-      let found = false;
-
-      for (let attempt = 0; attempt < maxAttempts; attempt++) {
-        // 在环形区域内随机采样
-        const angle = Math.random() * 2 * Math.PI;
-        const radius = minDist + Math.random() * minDist;
-
-        const newPoint: [number, number] = [point[0] + radius * Math.cos(angle), point[1] + radius * Math.sin(angle)];
-
-        // 检查边界
-        if (
-          newPoint[0] < bbox.minX ||
-          newPoint[0] >= bbox.maxX ||
-          newPoint[1] < bbox.minY ||
-          newPoint[1] >= bbox.maxY
-        ) {
-          continue;
-        }
-
-        // 检查与周围点的距离
-        if (isValidPoint(newPoint, grid, bbox, cellSize, minDist, points)) {
-          points.push(newPoint);
-          activeList.push(newPoint);
-          setGridCell(grid, bbox, cellSize, newPoint, points.length - 1);
-          found = true;
-          break;
-        }
-      }
-
-      if (!found) {
-        activeList.splice(randIndex, 1);
-      }
-    }
-
-    return points;
-  }
-
-  function setGridCell(
-    grid: (number | null)[][],
-    bbox: BBox,
-    cellSize: number,
-    point: [number, number],
-    index: number,
-  ): void {
-    const gx = Math.floor((point[0] - bbox.minX) / cellSize);
-    const gy = Math.floor((point[1] - bbox.minY) / cellSize);
-    if (gx >= 0 && gx < grid.length && gy >= 0 && gy < grid[0].length) {
-      grid[gx][gy] = index;
-    }
-  }
-
-  function isValidPoint(
-    point: [number, number],
-    grid: (number | null)[][],
-    bbox: BBox,
-    cellSize: number,
-    minDist: number,
-    points: [number, number][],
-  ): boolean {
-    const gx = Math.floor((point[0] - bbox.minX) / cellSize);
-    const gy = Math.floor((point[1] - bbox.minY) / cellSize);
-
-    // 检查周围5x5网格
-    for (let dx = -2; dx <= 2; dx++) {
-      for (let dy = -2; dy <= 2; dy++) {
-        const nx = gx + dx;
-        const ny = gy + dy;
-
-        if (nx < 0 || nx >= grid.length || ny < 0 || ny >= grid[0].length) {
-          continue;
-        }
-
-        const idx = grid[nx][ny];
-        if (idx !== null) {
-          const neighbor = points[idx];
-          const dist = Math.sqrt((point[0] - neighbor[0]) ** 2 + (point[1] - neighbor[1]) ** 2);
-          if (dist < minDist) {
-            return false;
-          }
-        }
-      }
-    }
-
-    return true;
-  }
-
-  /**
-   * 判断点是否在多边形内（射线法）
-   */
-  function pointInPolygon(point: [number, number], polygon: [number, number][]): boolean {
-    const [x, y] = point;
-    let inside = false;
-
-    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-      const [xi, yi] = polygon[i];
-      const [xj, yj] = polygon[j];
-
-      if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
-        inside = !inside;
-      }
-    }
-
-    return inside;
-  }
-
-  /**
-   * 获取建筑的矩形轮廓（考虑旋转）
-   */
-  function getBuildingRect(c: BuildingCandidate): [number, number][] {
-    const hw = c.width / 2;
-    const hl = c.length / 2;
-    const rad = (c.rotation * Math.PI) / 180;
-    const cos = Math.cos(rad);
-    const sin = Math.sin(rad);
-
-    // 局部坐标的四个角
-    const localCorners: [number, number][] = [
-      [-hw, -hl],
-      [hw, -hl],
-      [hw, hl],
-      [-hw, hl],
-    ];
-
-    // 旋转并平移到世界坐标
-    return localCorners.map(([dx, dy]) => [c.center[0] + dx * cos - dy * sin, c.center[1] + dx * sin + dy * cos]);
-  }
-
-  /**
-   * 判断两个多边形是否相交（SAT分离轴算法）
-   */
-  function polygonsIntersect(polyA: [number, number][], polyB: [number, number][]): boolean {
-    const polygons = [polyA, polyB];
-
-    for (const polygon of polygons) {
-      for (let i = 0; i < polygon.length; i++) {
-        const j = (i + 1) % polygon.length;
-
-        // 计算边的法向量（分离轴）
-        const edge = [polygon[j][0] - polygon[i][0], polygon[j][1] - polygon[i][1]];
-        const axis = [-edge[1], edge[0]];
-
-        // 投影两个多边形到轴上
-        const projA = projectPolygon(polyA, axis);
-        const projB = projectPolygon(polyB, axis);
-
-        // 如果投影不重叠，则多边形不相交
-        if (projA.max < projB.min || projB.max < projA.min) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  }
-
-  /**
-   * 将多边形投影到轴上
-   */
-  function projectPolygon(polygon: [number, number][], axis: number[]): { min: number; max: number } {
-    let min = Infinity;
-    let max = -Infinity;
-
-    for (const point of polygon) {
-      const dot = point[0] * axis[0] + point[1] * axis[1];
-      min = Math.min(min, dot);
-      max = Math.max(max, dot);
-    }
-
-    return { min, max };
-  }
-
-  /**
-   * 计算多边形面积（Shoelace公式）
-   */
-  function calculatePolygonArea(polygon: [number, number][]): number {
-    let area = 0;
-    const n = polygon.length;
-
-    for (let i = 0; i < n; i++) {
-      const j = (i + 1) % n;
-      area += polygon[i][0] * polygon[j][1];
-      area -= polygon[j][0] * polygon[i][1];
-    }
-
-    return Math.abs(area) / 2;
-  }
-
-  /**
-   * 数组随机打乱（Fisher-Yates算法）
-   */
-  function shuffle<T>(array: T[]): T[] {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  }
-
-  function getBoundingBox(polygon: [number, number][]): BBox {
-    const xs = polygon.map((p) => p[0]);
-    const ys = polygon.map((p) => p[1]);
-    return {
-      minX: Math.min(...xs),
-      maxX: Math.max(...xs),
-      minY: Math.min(...ys),
-      maxY: Math.max(...ys),
-    };
-  }
-
-  function createRoadMask(roads: Roads, bbox: BBox): RoadMask {
-    // 将每条道路线段扩展为宽度为roads.width的多边形
-    const roadPolygons: any[] = [];
-
-    for (const line of roads.lines) {
-      for (let i = 0; i < line.length - 1; i++) {
-        const p1 = line[i];
-        const p2 = line[i + 1];
-        // 沿线段两侧扩展 width/2，生成矩形
-        const rect = expandLineToRect(p1, p2, roads.width);
-        roadPolygons.push(rect);
-      }
-    }
-
-    return { polygons: roadPolygons };
-  }
-
-  function generateFillLayout(block: Block, bbox: BBox): BuildingCandidate[] {
-    const candidates: BuildingCandidate[] = [];
-    const [buildingW, buildingL] = block.size;
-    const step = Math.max(buildingW, buildingL) + block.spacing;
-
-    // 网格遍历
-    for (let x = bbox.minX + buildingW / 2; x < bbox.maxX; x += step) {
-      for (let y = bbox.minY + buildingL / 2; y < bbox.maxY; y += step) {
-        candidates.push({
-          center: [x, y],
-          width: buildingW + randomVariance(),
-          length: buildingL + randomVariance(),
-          rotation: 0,
-        });
-      }
-    }
-
-    return candidates;
-  }
-
-  function generatePerimeterLayout(block: Block, bbox: BBox): BuildingCandidate[] {
-    const candidates: BuildingCandidate[] = [];
-    const [buildingW, buildingL] = block.size;
-    const boundary = block.boundary;
-
-    // 沿边界多边形的每条边放置建筑
-    for (let i = 0; i < boundary.length; i++) {
-      const p1 = boundary[i];
-      const p2 = boundary[(i + 1) % boundary.length];
-
-      // 计算边的方向和长度
-      const edgeLength = distance(p1, p2);
-      const edgeAngle = angle(p1, p2);
-
-      // 沿边放置建筑
-      const step = buildingW + block.spacing;
-      const count = Math.floor(edgeLength / step);
-
-      for (let j = 0; j < count; j++) {
-        const t = ((j + 0.5) * step) / edgeLength;
-        const center = lerp(p1, p2, t);
-
-        // 建筑向内偏移
-        const inward = getNormalInward(p1, p2, boundary);
-        const offset = buildingL / 2 + block.spacing;
-
-        candidates.push({
-          center: [center[0] + inward[0] * offset, center[1] + inward[1] * offset],
-          width: buildingW,
-          length: buildingL,
-          rotation: edgeAngle, // 建筑朝向与边平行
-        });
-      }
-    }
-
-    return candidates;
-  }
-
-  function generateScatterLayout(block: Block, bbox: BBox): BuildingCandidate[] {
-    const candidates: BuildingCandidate[] = [];
-    const [buildingW, buildingL] = block.size;
-
-    // 估算建筑数量
-    const blockArea = calculatePolygonArea(block.boundary);
-    const buildingArea = buildingW * buildingL;
-    const targetCount = Math.floor((blockArea * block.coverage) / buildingArea);
-
-    // 随机放置，使用泊松圆盘采样避免重叠
-    const minDist = Math.max(buildingW, buildingL) + block.spacing;
-    const points = poissonDiskSampling(bbox, minDist, targetCount);
-
-    for (const p of points) {
-      candidates.push({
-        center: p,
-        width: buildingW + randomVariance(),
-        length: buildingL + randomVariance(),
-        rotation: Math.random() * 360, // 随机朝向
-      });
-    }
-
-    return candidates;
-  }
-
-  function isInsidePolygon(candidate: BuildingCandidate, polygon: [number, number][]): boolean {
-    // 检查建筑四个角点是否都在多边形内
-    const corners = getBuildingCorners(candidate);
-    return corners.every((corner) => pointInPolygon(corner, polygon));
-  }
-
-  function isOverlappingRoad(candidate: BuildingCandidate, roadMask: RoadMask): boolean {
-    const buildingRect = getBuildingRect(candidate);
-
-    for (const roadPoly of roadMask.polygons) {
-      if (polygonsIntersect(buildingRect, roadPoly)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  function applyCoverage(candidates: BuildingCandidate[], block: Block): BuildingCandidate[] {
-    const blockArea = calculatePolygonArea(block.boundary);
-    const targetArea = blockArea * block.coverage;
-
-    let currentArea = 0;
-    const result: BuildingCandidate[] = [];
-
-    // 随机打乱顺序后按覆盖率截取
-    shuffle(candidates);
-
-    for (const c of candidates) {
-      const buildingArea = c.width * c.length;
-      if (currentArea + buildingArea <= targetArea) {
-        result.push(c);
-        currentArea += buildingArea;
-      }
-    }
-
-    return result;
-  }
-
-  // 随机范围
-  function randomInRange([min, max]: [number, number]): number {
-    return min + Math.random() * (max - min);
-  }
-
-  // 随机变化（±10%）
-  function randomVariance(): number {
-    return (Math.random() - 0.5) * 0.2;
-  }
-
-  // 两点距离
-  function distance(p1: [number, number], p2: [number, number]): number {
-    return Math.sqrt((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2);
-  }
-
-  // 线性插值
-  function lerp(p1: [number, number], p2: [number, number], t: number): [number, number] {
-    return [p1[0] + (p2[0] - p1[0]) * t, p1[1] + (p2[1] - p1[1]) * t];
-  }
-
-  // 计算角度
-  function angle(p1: [number, number], p2: [number, number]): number {
-    return (Math.atan2(p2[1] - p1[1], p2[0] - p1[0]) * 180) / Math.PI;
-  }
-
-  // 获取建筑四角坐标
-  function getBuildingCorners(c: BuildingCandidate): [number, number][] {
-    const hw = c.width / 2;
-    const hl = c.length / 2;
-    const rad = (c.rotation * Math.PI) / 180;
-    const cos = Math.cos(rad);
-    const sin = Math.sin(rad);
-
-    const corners = [
-      [-hw, -hl],
-      [hw, -hl],
-      [hw, hl],
-      [-hw, hl],
-    ];
-
-    return corners.map(([dx, dy]) => [c.center[0] + dx * cos - dy * sin, c.center[1] + dx * sin + dy * cos]);
-  }
-
-  function generateBuildings(block: Block, roads: Roads): Building[] {
-    // 1. 计算区块包围盒
-    const bbox = getBoundingBox(block.boundary);
-
-    // 2. 生成道路遮罩区域
-    const roadMask = createRoadMask(roads, bbox);
-
-    // 3. 根据布局模式生成候选位置
-    let candidates: BuildingCandidate[];
-    console.log('layout', block.layout);
-    switch (block.layout) {
-      case 'fill':
-        candidates = generateFillLayout(block, bbox);
-        break;
-      case 'perimeter':
-        candidates = generatePerimeterLayout(block, bbox);
-        break;
-      case 'scatter':
-        candidates = generateScatterLayout(block, bbox);
-        break;
-    }
-
-    // 4. 过滤：移除超出边界或与道路重叠的建筑
-    candidates = candidates.filter((c) => isInsidePolygon(c, block.boundary) && !isOverlappingRoad(c, roadMask));
-
-    // 5. 根据覆盖率裁剪数量
-    candidates = applyCoverage(candidates, block);
-
-    // 6. 生成最终建筑数据
-    return candidates.map((c) => ({
-      center: c.center,
-      size: [c.width, c.length, randomInRange(block.height)],
-      rotation: c.rotation,
-    }));
-  }
-
-  function getRandomColor() {
-    const color = new Color(Math.random(), Math.random(), Math.random());
-    return '#' + color.getHexString();
-  }
 
   function getRandomLandmarkColor() {
     const landmarkColors = [
@@ -745,38 +111,14 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
     return landmarkColors[Math.floor(Math.random() * landmarkColors.length)];
   }
 
-  function getRandomGreenColor() {
-    const color = new Color();
-
-    const h = 0.29 + Math.random() * 0.11; // 色相：0.25-0.4（绿色范围）
-    const s = 0.5 + Math.random() * 0.5; // 饱和度：0.5-1.0
-    const l = 0.3 + Math.random() * 0.4; // 亮度：0.3-0.7
-
-    color.setHSL(h, s, l);
-    return '#' + color.getHexString();
-  }
-
-  function getRandomBlueColor() {
-    const color = new Color();
-
-    const h = 0.52 + Math.random() * 0.08; // 色相：0.52-0.60（蓝色范围）
-    const s = 0.6 + Math.random() * 0.4; // 饱和度：0.6-1.0
-    const l = 0.4 + Math.random() * 0.3; // 亮度：0.4-0.7
-
-    color.setHSL(h, s, l);
-    return '#' + color.getHexString();
-  }
-
   const processCity = (text: string) => {
     const json = JSON.parse(text);
 
-    console.log('raw', JSON.parse(text).city);
+    console.log('raw', JSON.parse(text));
     console.log('thinking', json.thinking);
 
+    const world = json.world;
     const city = json.city;
-    const world = city.world;
-    const roads = city.roads;
-    const width = roads.width;
 
     useStore.getState().set((state) => {
       state.elements = [];
@@ -794,93 +136,93 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
         for (const river of rivers) {
           const polygonCuboid = {
             id: short.generate() as string,
-            type: ObjectType.PolygonCuboid,
+            type: ObjectType.Prism,
             vertices: river.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
-            height: 0.5,
+            height: 0.75,
             color: 'blue',
-            transparency: 0.3,
-          } as PolygonCuboidModel;
+            transparency: 0,
+          } as PrismModel;
           state.elements.push(polygonCuboid);
         }
       }
 
       // generate roads
-      for (const points of roads.lines) {
-        for (let i = 1; i < points.length; i++) {
-          const start = points[i - 1];
-          const end = points[i];
-
-          const center = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2];
-          const rotation = Math.atan2(end[1] - start[1], end[0] - start[0]);
-          const dist = Math.hypot(start[0] - end[0], start[1] - end[1]);
-
+      const roads = generateRoads(city.roads);
+      for (const road of roads) {
+        for (const seg of road.segments) {
+          const center = seg.position;
+          const dist = seg.length;
           const foundation = {
             id: short.generate() as string,
-            parentId: Constants.GROUND_ID,
-            type: ObjectType.Foundation,
+            type: ObjectType.InstancedFoundation,
             cx: center[0],
             cy: center[1],
             cz: 0.5,
             lx: dist,
-            ly: width,
+            ly: seg.width,
             lz: 1,
-            rotation: [0, 0, rotation],
-            normal: [0, 0, 1],
+            rotation: [0, 0, seg.angle],
             color: '#808080',
-            textureType: FoundationTexture.NoTexture,
-          } as FoundationModel;
+          } as InstancedModel;
           state.elements.push(foundation);
         }
       }
 
       // // show boundaries
-      // let cz = 10;
-      // for (const block of city.buildings.blocks) {
-      //   const boundary = block.boundary;
-      //   const color = getRandomColor();
-      //   for (let i = 0; i < boundary.length; i++) {
-      //     const start = boundary[i];
-      //     const end = boundary[(i + 1) % boundary.length];
+      // {
+      //   const getRandomColor = () => {
+      //     const color = new Color(Math.random(), Math.random(), Math.random());
+      //     return '#' + color.getHexString();
+      //   };
 
-      //     const center = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2];
-      //     const rotation = Math.atan2(end[1] - start[1], end[0] - start[0]);
-      //     const dist = Math.hypot(start[0] - end[0], start[1] - end[1]);
+      //   let cz = 10;
+      //   for (const zone of city.zones) {
+      //     const boundary = zone.boundary;
+      //     const color = getRandomColor();
+      //     for (let i = 0; i < boundary.length; i++) {
+      //       const start = boundary[i];
+      //       const end = boundary[(i + 1) % boundary.length];
 
-      //     const foundation = {
-      //       id: short.generate() as string,
-      //       parentId: Constants.GROUND_ID,
-      //       type: ObjectType.Foundation,
-      //       cx: center[0],
-      //       cy: center[1],
-      //       cz: cz,
-      //       lx: dist,
-      //       ly: 5,
-      //       lz: 5,
-      //       rotation: [0, 0, rotation],
-      //       normal: [0, 0, 1],
-      //       color: color,
-      //       textureType: FoundationTexture.NoTexture,
-      //     } as FoundationModel;
-      //     state.elements.push(foundation);
+      //       const center = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2];
+      //       const rotation = Math.atan2(end[1] - start[1], end[0] - start[0]);
+      //       const dist = Math.hypot(start[0] - end[0], start[1] - end[1]);
+
+      //       const foundation = {
+      //         id: short.generate() as string,
+      //         parentId: Constants.GROUND_ID,
+      //         type: ObjectType.Foundation,
+      //         cx: center[0],
+      //         cy: center[1],
+      //         cz: cz,
+      //         lx: dist,
+      //         ly: 3,
+      //         lz: 5,
+      //         rotation: [0, 0, rotation],
+      //         normal: [0, 0, 1],
+      //         color: color,
+      //         textureType: FoundationTexture.NoTexture,
+      //       } as FoundationModel;
+      //       state.elements.push(foundation);
+      //     }
+      //     cz += 5;
       //   }
-      //   cz += 5;
       // }
 
-      /** generate parks */
-      const parks = generateCityParks(city.parks, roads);
-      for (const park of parks) {
-        const polygonCuboid = {
+      // /** generate parks */
+      // const parks = generateCityParks(city.parks, roads);
+      for (const park of city.parks) {
+        const prism = {
           id: short.generate() as string,
-          type: ObjectType.PolygonCuboid,
+          type: ObjectType.Prism,
           vertices: park.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
           height: 0.5,
           color: 'green',
           transparency: 0,
-        } as PolygonCuboidModel;
-        state.elements.push(polygonCuboid);
+        } as PrismModel;
+        state.elements.push(prism);
       }
 
-      /** generate landmarks */
+      // /** generate landmarks */
       const landmarks = generateLandmarkBuildings(city);
       for (const landmark of landmarks) {
         const [cx, cy] = landmark.center;
@@ -909,16 +251,15 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
       let maxX = 0;
       let maxY = 0;
 
-      /** generate block buildings */
-      const buildings = generateBlockBuildings(city, landmarks);
+      /** generate buildings */
+      const buildings = generateBuildings(city, landmarks);
       for (const building of buildings) {
         const [cx, cy] = building.center;
         const [lx, ly, lz] = building.size;
 
         const cuboid = {
           id: short.generate() as string,
-          parentId: Constants.GROUND_ID,
-          type: ObjectType.Cuboid,
+          type: ObjectType.InstancedCuboid,
           cx,
           cy,
           cz: lz / 2,
@@ -926,12 +267,8 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
           ly,
           lz,
           rotation: [0, 0, Util.toRadians(building.rotation ?? 0)],
-          normal: [0, 0, 1],
-          color: '#808080',
-          faceColors: new Array(6).fill(Constants.DEFAULT_CUBOID_COLOR),
-          textureTypes: new Array(6).fill(CuboidTexture.NoTexture),
-          instanced: true,
-        } as CuboidModel;
+          color: building.color,
+        } as InstancedModel;
         state.elements.push(cuboid);
 
         maxX = Math.max(Math.abs(cx), maxX);
@@ -1007,21 +344,12 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
     try {
       const result = await generate();
 
-      // Manhattan
-      // const result = `{"thinking":"Manhattan is a long narrow island with a distinctive grid pattern. Key features: 1) Regular grid of streets running east-west and avenues running north-south, 2) Broadway cutting diagonally, 3) Central Park as a large rectangle, 4) Downtown area (southern tip) with more irregular streets, 5) Midtown with tallest skyscrapers, 6) Financial district downtown, 7) Various neighborhoods with different building densities. I'll create: elongated shape roughly 1500x2000, grid pattern with numbered streets, diagonal Broadway, Central Park in upper-middle, tall buildings in midtown and downtown, shorter buildings in residential areas.","city":{"roads":{"width":12,"lines":[[[750,-1000],[-750,-1000],[-750,1000],[750,1000],[750,-1000]],[[-750,-800],[750,-800]],[[-750,-600],[750,-600]],[[-750,-400],[750,-400]],[[-750,-200],[750,-200]],[[-750,0],[750,0]],[[-750,200],[750,200]],[[-750,400],[750,400]],[[-750,600],[750,600]],[[-750,800],[750,800]],[[-500,-1000],[-500,1000]],[[-250,-1000],[-250,1000]],[[0,-1000],[0,1000]],[[250,-1000],[250,1000]],[[500,-1000],[500,1000]],[[-750,-1000],[500,600],[750,1000]],[[-750,-950],[-600,-1000]],[[-750,-850],[-500,-1000]],[[-600,-800],[-400,-1000]],[[-400,-600],[-200,-1000]]]},"buildings":{"defaults":{"size":[25,30],"height":[15,40],"spacing":3,"layout":"fill","coverage":0.7},"blocks":[{"boundary":[[-750,-1000],[750,-1000],[750,-600],[-750,-600]],"height":[40,120],"coverage":0.8},{"boundary":[[-750,-600],[750,-600],[750,-200],[-750,-200]],"height":[60,180],"coverage":0.85},{"boundary":[[-750,-200],[750,-200],[750,200],[-300,200],[-300,600],[-750,600]],"height":[20,50],"coverage":0.6},{"boundary":[[300,200],[750,200],[750,600],[300,600]],"height":[25,60],"coverage":0.65},{"boundary":[[-750,600],[750,600],[750,1000],[-750,1000]],"height":[12,35],"coverage":0.55}],"landmarks":[{"center":[150,-450],"size":[60,60,320],"rotation":0},{"center":[-100,-350],"size":[55,55,280],"rotation":15},{"center":[380,-500],"size":[50,50,250],"rotation":0},{"center":[-350,-750],"size":[45,70,200],"rotation":0},{"center":[500,-850],"size":[40,55,180],"rotation":12},{"center":[-200,-900],"size":[50,50,150],"rotation":0},{"center":[0,-150],"size":[80,60,220],"rotation":0}]},"parks":[{"center":[0,400],"size":[500,350],"rotation":0},{"center":[600,850],"size":[120,200],"rotation":0},{"center":[-600,-950],"size":[80,60],"rotation":0}]}}`
-      // Barcelona
-      // const result = `{"thinking":"Barcelona is known for its distinctive Example district with the famous grid pattern designed by Ildefons Cerdà, featuring chamfered corners (octagonal blocks). The city also has the old Gothic Quarter with narrow winding streets, Las Ramblas as a main boulevard, Diagonal Avenue cutting across, and landmarks like Sagrada Familia. Let me create a layout that captures these elements: 1) Eixample grid with chamfered blocks, 2) Old town irregular pattern, 3) Major avenues like Diagonal and Gran Via, 4) Parks like Ciutadella, 5) Landmarks scattered asymmetrically.","city":{"roads":{"width":20,"lines":[[[750,-1000],[750,1000]],[[-750,-1000],[-750,1000]],[[450,-1000],[450,1000]],[[150,-1000],[150,1000]],[[-150,-1000],[-150,1000]],[[-450,-1000],[-450,1000]],[[-750,-700],[750,-700]],[[-750,-400],[750,-400]],[[-750,-100],[750,-100]],[[-750,200],[750,200]],[[-750,500],[750,500]],[[-750,800],[750,800]],[[-750,-1000],[750,1000]],[[-750,1000],[750,-1000]],[[-100,-1000],[-100,-600],[-50,-550],[50,-550],[100,-600],[100,-750],[50,-800],[-50,-800],[-100,-750],[-100,-1000]],[[-250,-600],[-150,-500],[150,-500],[250,-600]],[[0,-100],[0,200]],[[0,200],[-200,200],[-300,300],[-300,600]],[[0,200],[200,200],[300,300],[300,600]]]},"buildings":{"defaults":{"size":[25,25],"height":[20,35],"spacing":8,"layout":"fill","coverage":0.7},"blocks":[{"boundary":[[-750,-1000],[750,-1000],[750,-400],[-750,-400]],"size":[12,12],"height":[15,25],"spacing":4,"layout":"fill","coverage":0.8},{"boundary":[[-750,-400],[750,-400],[750,1000],[-750,1000]],"size":[28,28],"height":[22,40],"spacing":10,"layout":"perimeter","coverage":0.65},{"boundary":[[-200,-200],[200,-200],[200,100],[-200,100]],"height":[30,55],"spacing":6,"coverage":0.75},{"boundary":[[-750,600],[-450,600],[-450,1000],[-750,1000]],"height":[15,22],"spacing":12,"layout":"scatter","coverage":0.4},{"boundary":[[450,-400],[750,-400],[750,200],[450,200]],"height":[40,70],"spacing":8,"coverage":0.6}],"landmarks":[{"center":[380,650],"size":[60,80,170],"rotation":45},{"center":[-520,-750],"size":[80,100,45],"rotation":12},{"center":[180,-650],"size":[50,50,95],"rotation":0},{"center":[-350,350],"size":[40,60,85],"rotation":-30},{"center":[600,-150],"size":[55,55,110],"rotation":22}]},"parks":[{"center":[-550,750],"size":[300,350],"rotation":0},{"center":[550,850],"size":[200,250],"rotation":15},{"center":[0,-750],"size":[150,200],"rotation":0},{"center":[-300,-200],"size":[120,180],"rotation":-10}]}}`
-      // Paris
-      // const result = `{"thinking":"The user wants a Paris-like city. Paris is characterized by: 1) Radial road pattern emanating from central points like Arc de Triomphe, 2) Haussmann-style boulevards, 3) The Seine river cutting through, 4) Uniform mid-rise buildings (5-7 stories, ~20-25m), 5) Notable landmarks like Eiffel Tower, Arc de Triomphe, Notre Dame, 6) Parks like Tuileries, Luxembourg Gardens, 7) Circular plazas with radiating avenues. I'll create: - A central circular plaza (like Place de l'Étoile) with radiating boulevards - A river (Seine) represented by a wide road/gap - Grid-like blocks in some areas mixed with radial patterns - Uniform building heights in most areas (Haussmann style ~20-25m) - A few landmarks (Eiffel Tower area, a cathedral, monuments) - Parks (Tuileries-like, Luxembourg-like)","city":{"roads":{"width":25,"lines":[[[0,-200],[0,800]],[[0,-200],[0,-900]],[[0,-200],[400,100]],[[0,-200],[-400,100]],[[0,-200],[500,-500]],[[0,-200],[-500,-500]],[[0,-200],[300,-600]],[[0,-200],[-300,-600]],[[0,-200],[600,-300]],[[0,-200],[-600,-300]],[[0,-200],[200,300]],[[0,-200],[-200,300]],[[-700,400],[700,400]],[[-700,0],[700,0]],[[-700,-400],[700,-400]],[[-700,-700],[700,-700]],[[-700,700],[700,700]],[[-500,-900],[-500,800]],[[500,-900],[500,800]],[[-250,-900],[-250,800]],[[250,-900],[250,800]],[[-700,200],[-200,200],[-100,250],[100,250],[200,200],[700,200]],[[-700,550],[-200,550],[-50,600],[50,600],[200,550],[700,550]],[[150,-200],[150,-200],[212,-130],[240,-50],[225,30],[170,90],[90,125],[0,140],[-90,125],[-170,90],[-225,30],[-240,-50],[-212,-130],[-150,-200]]]},"buildings":{"defaults":{"size":[20,25],"height":[18,25],"spacing":3,"layout":"perimeter","coverage":0.75},"blocks":[{"boundary":[[-700,-900],[-500,-900],[-500,-700],[-700,-700]],"height":[15,22],"coverage":0.7},{"boundary":[[-500,-900],[-250,-900],[-250,-700],[-500,-700]],"height":[18,25],"coverage":0.75},{"boundary":[[-250,-900],[0,-900],[0,-700],[-250,-700]],"height":[20,28],"coverage":0.8},{"boundary":[[0,-900],[250,-900],[250,-700],[0,-700]],"height":[20,28],"coverage":0.8},{"boundary":[[250,-900],[500,-900],[500,-700],[250,-700]],"height":[18,25],"coverage":0.75},{"boundary":[[500,-900],[700,-900],[700,-700],[500,-700]],"height":[15,22],"coverage":0.7},{"boundary":[[-700,-700],[-300,-700],[-300,-400],[-700,-400]],"height":[18,24],"coverage":0.72},{"boundary":[[300,-700],[700,-700],[700,-400],[300,-400]],"height":[18,24],"coverage":0.72},{"boundary":[[-700,-400],[-300,-400],[-400,100],[-700,0]],"height":[20,26],"coverage":0.78},{"boundary":[[300,-400],[700,-400],[700,0],[400,100]],"height":[20,26],"coverage":0.78},{"boundary":[[-700,400],[-500,400],[-500,800],[-700,800]],"height":[15,20],"spacing":5,"coverage":0.6},{"boundary":[[500,400],[700,400],[700,800],[500,800]],"height":[15,20],"spacing":5,"coverage":0.6},{"boundary":[[-500,550],[-200,550],[-200,800],[-500,800]],"height":[12,18],"coverage":0.55},{"boundary":[[200,550],[500,550],[500,800],[200,800]],"height":[12,18],"coverage":0.55}],"landmarks":[{"center":[-450,280],"size":[25,25,320],"rotation":0},{"center":[0,-200],"size":[60,60,50],"rotation":45},{"center":[350,-550],"size":[80,45,70],"rotation":15},{"center":[-280,700],"size":[50,90,45],"rotation":-5}]},"parks":[{"center":[-50,470],"size":[280,120],"rotation":0},{"center":[420,680],"size":[140,180],"rotation":10},{"center":[-550,-550],"size":[100,120],"rotation":-8},{"center":[0,750],"size":[350,80],"rotation":0}]}}`
-      // London
-      // const result = `{"thinking":"London is characterized by: 1) Organic, medieval street pattern in the center (City of London), 2) The Thames River curving through the city, 3) Mix of historic low-rise and modern skyscrapers in the financial district, 4) Grand boulevards and squares (Trafalgar, Parliament Square), 5) Large royal parks (Hyde Park, Regent's Park, St James's Park), 6) Distinct neighborhoods with varying densities, 7) The Shard, Gherkin, and other iconic towers clustered in specific areas. I'll create: curved roads following the Thames, organic winding streets in old city core, more regular grids in newer areas, several large parks, and landmark skyscrapers in the financial district.","city":{"roads":{"width":12,"lines":[[[750,-1000],[750,1000]],[[-750,-1000],[-750,1000]],[[0,-1000],[0,1000]],[[-750,-400],[750,-400]],[[-750,0],[750,0]],[[-750,400],[750,400]],[[-750,800],[750,800]],[[-750,-800],[750,-800]],[[-750,-200],[-400,-200],[-200,-50],[100,-50],[300,-150],[500,-150],[750,-200]],[[-750,200],[-400,200],[-100,250],[200,300],[450,250],[750,200]],[[375,-1000],[375,1000]],[[-375,-1000],[-375,1000]],[[-750,600],[750,600]],[[-750,-600],[750,-600]],[[200,-400],[200,0]],[[-200,-400],[-200,0]],[[500,0],[500,400]],[[-500,0],[-500,400]],[[-300,-800],[-250,-600],[-200,-400]],[[300,-800],[350,-600],[400,-400]],[[-600,400],[-550,600],[-500,800]],[[100,400],[150,600],[200,800]],[[600,400],[550,600],[500,800]],[[-750,-1000],[750,-1000]],[[-750,1000],[750,1000]]]},"buildings":{"defaults":{"size":[25,30],"height":[15,40],"spacing":8,"layout":"fill","coverage":0.55},"blocks":[{"boundary":[[-200,-250],[200,-250],[200,100],[-200,100]],"height":[80,180],"coverage":0.65},{"boundary":[[-400,-600],[400,-600],[400,-250],[-400,-250]],"height":[20,50],"spacing":10,"coverage":0.5},{"boundary":[[-750,-800],[-400,-800],[-400,-400],[-750,-400]],"height":[12,30],"coverage":0.45},{"boundary":[[400,-800],[750,-800],[750,-400],[400,-400]],"height":[12,30],"coverage":0.45},{"boundary":[[-750,450],[750,450],[750,1000],[-750,1000]],"height":[10,25],"spacing":12,"coverage":0.4},{"boundary":[[-750,-1000],[-500,-1000],[-500,-800],[-750,-800]],"height":[25,60],"coverage":0.5},{"boundary":[[500,-1000],[750,-1000],[750,-800],[500,-800]],"height":[25,60],"coverage":0.5}],"landmarks":[{"center":[50,-100],"size":[45,45,310],"rotation":15},{"center":[-120,-180],"size":[55,55,180],"rotation":0},{"center":[150,-50],"size":[40,40,160],"rotation":45},{"center":[-50,50],"size":[50,50,140],"rotation":30},{"center":[100,-220],"size":[35,35,120],"rotation":10},{"center":[0,700],"size":[80,40,100],"rotation":0},{"center":[400,-500],"size":[60,60,85],"rotation":22}]},"parks":[{"center":[-550,100],"size":[300,350],"rotation":5},{"center":[550,650],"size":[250,200],"rotation":-8},{"center":[-200,700],"size":[200,180],"rotation":0},{"center":[300,300],"size":[180,220],"rotation":12}]}}`
-      // Chicago
-      // const result = `{"thinking":"Chicago is known for its grid-based street layout, lakefront (Lake Michigan on the east), downtown Loop area with skyscrapers, diverse neighborhoods, and the Chicago River running through it. Key features: 1) Strong grid pattern with major arterial roads, 2) Downtown Loop area with tall buildings, 3) Lake Michigan shoreline on the east, 4) Chicago River with branches, 5) Grant Park and Millennium Park along the lakefront, 6) Neighborhoods radiating from downtown with decreasing building heights, 7) Industrial areas to the south and west. I'll create a city with these characteristics.","city":{"roads":{"width":20,"lines":[[[750,1000],[750,-1000]],[[-750,1000],[-750,-1000]],[[0,1000],[0,-1000]],[[375,1000],[375,-1000]],[[-375,1000],[-375,-1000]],[[-750,750],[750,750]],[[-750,375],[750,375]],[[-750,0],[750,0]],[[-750,-375],[750,-375]],[[-750,-750],[750,-750]],[[-750,500],[750,500]],[[-750,250],[750,250]],[[-750,-250],[750,-250]],[[-750,-500],[750,-500]],[[200,200],[350,50],[400,-150],[300,-350]],[[-100,150],[-200,-100],[-150,-300]],[[750,200],[600,100],[500,-100],[550,-350],[750,-400]],[[500,800],[550,600],[480,400]],[[-400,700],[-500,500],[-450,300]],[[100,600],[200,400],[150,200],[250,0]],[[-200,500],[-100,300],[-150,100]],[[300,300],[450,150],[400,0],[500,-200]],[[-300,200],[-400,0],[-350,-200]],[[-750,900],[750,900]],[[-750,-900],[750,-900]]]},"buildings":{"defaults":{"size":[25,30],"height":[15,45],"spacing":8,"layout":"fill","coverage":0.55},"blocks":[{"boundary":[[-300,400],[300,400],[300,-400],[-300,-400]],"height":[80,220],"coverage":0.7},{"boundary":[[-500,600],[500,600],[500,400],[-500,400]],"height":[40,100],"coverage":0.6},{"boundary":[[-500,-400],[500,-400],[500,-600],[-500,-600]],"height":[40,100],"coverage":0.6},{"boundary":[[500,400],[750,400],[750,-400],[500,-400]],"height":[25,60],"coverage":0.5},{"boundary":[[-750,400],[-500,400],[-500,-400],[-750,-400]],"height":[25,60],"coverage":0.5},{"boundary":[[-750,1000],[750,1000],[750,600],[-750,600]],"height":[12,35],"coverage":0.45},{"boundary":[[-750,-600],[750,-600],[750,-1000],[-750,-1000]],"height":[10,30],"coverage":0.4}],"landmarks":[{"center":[50,100],"size":[60,60,280],"rotation":0},{"center":[-120,-80],"size":[55,55,250],"rotation":15},{"center":[180,-150],"size":[50,50,230],"rotation":-10},{"center":[-80,200],"size":[45,50,200],"rotation":5},{"center":[200,50],"size":[40,45,180],"rotation":-20},{"center":[-200,100],"size":[42,48,175],"rotation":12},{"center":[80,-250],"size":[38,42,160],"rotation":-8},{"center":[-150,-220],"size":[35,40,150],"rotation":25}]},"parks":[{"center":[650,0],"size":[180,700],"rotation":0},{"center":[0,550],"size":[250,80],"rotation":0},{"center":[-550,650],"size":[150,120],"rotation":15},{"center":[400,-700],"size":[200,150],"rotation":-10},{"center":[-400,-750],"size":[180,130],"rotation":5}]}}`
-
       // test
       // const result = ``;
-      // const result = `{"thinking":"Barcelona is famous for its Eixample district with the iconic grid pattern designed by Ildefons Cerdà, featuring chamfered corners (octagonal blocks). The city also has the old Gothic Quarter (Barri Gòtic) with narrow winding streets, Las Ramblas as a central boulevard, the waterfront, and landmarks like Sagrada Familia, Casa Batlló, Park Güell area. Let me create a Barcelona-inspired layout with: 1. A grid pattern with chamfered corners in the Eixample area 2. An old town area with irregular streets 3. A main diagonal avenue (like Diagonal) 4. A waterfront area 5. Parks including a large one 6. Landmarks placed asymmetrically","city":{"rivers":[],"roads":{"width":25,"lines":[[[-750,-1000],[-750,800]],[[-500,-1000],[-500,800]],[[-250,-1000],[-250,800]],[[0,-1000],[0,800]],[[250,-1000],[250,800]],[[500,-1000],[500,800]],[[750,-1000],[750,800]],[[-750,-800],[750,-800]],[[-750,-550],[750,-550]],[[-750,-300],[750,-300]],[[-750,-50],[750,-50]],[[-750,200],[750,200]],[[-750,450],[750,450]],[[-750,700],[750,700]],[[-750,-400],[750,800]],[[-750,200],[750,-800]],[[-750,900],[-750,1000],[750,1000],[750,900]],[[-200,850],[-350,950]],[[200,850],[350,950]],[[-100,-950],[-150,-1000]],[[100,-950],[150,-1000]]]},"parks":[{"vertices":[[-700,750],[-500,750],[-500,950],[-700,950]]},{"vertices":[[400,100],[600,100],[650,250],[550,350],[400,300]]},{"vertices":[[-150,-700],[150,-700],[150,-500],[-150,-500]]}],"buildings":{"defaults":{"size":[30,30],"height":[25,45],"spacing":8,"layout":"perimeter","coverage":0.65},"blocks":[{"boundary":[[-700,-750],[-550,-750],[-550,-600],[-700,-600]],"height":[20,35],"layout":"perimeter"},{"boundary":[[-500,-750],[-300,-750],[-300,-600],[-500,-600]],"height":[20,35],"layout":"perimeter"},{"boundary":[[-250,-750],[-50,-750],[-50,-600],[-250,-600]],"height":[20,35],"layout":"perimeter"},{"boundary":[[50,-750],[200,-750],[200,-600],[50,-600]],"height":[20,35],"layout":"perimeter"},{"boundary":[[250,-750],[450,-750],[450,-600],[250,-600]],"height":[20,35],"layout":"perimeter"},{"boundary":[[500,-750],[700,-750],[700,-600],[500,-600]],"height":[20,35],"layout":"perimeter"},{"boundary":[[-700,-500],[-550,-500],[-550,-350],[-700,-350]],"height":[25,45],"layout":"perimeter"},{"boundary":[[-450,-500],[-300,-500],[-300,-350],[-450,-350]],"height":[25,45],"layout":"perimeter"},{"boundary":[[-200,-500],[-50,-500],[-50,-350],[-200,-350]],"height":[25,45],"layout":"perimeter"},{"boundary":[[50,-500],[200,-500],[200,-350],[50,-350]],"height":[25,45],"layout":"perimeter"},{"boundary":[[300,-500],[450,-500],[450,-350],[300,-350]],"height":[25,45],"layout":"perimeter"},{"boundary":[[550,-500],[700,-500],[700,-350],[550,-350]],"height":[25,45],"layout":"perimeter"},{"boundary":[[-700,-250],[-550,-250],[-550,-100],[-700,-100]],"height":[30,55],"layout":"perimeter"},{"boundary":[[-450,-250],[-300,-250],[-300,-100],[-450,-100]],"height":[30,55],"layout":"perimeter"},{"boundary":[[-200,-250],[-50,-250],[-50,-100],[-200,-100]],"height":[30,55],"layout":"perimeter"},{"boundary":[[50,-250],[200,-250],[200,-100],[50,-100]],"height":[30,55],"layout":"perimeter"},{"boundary":[[300,-250],[450,-250],[450,-100],[300,-100]],"height":[30,55],"layout":"perimeter"},{"boundary":[[550,-250],[700,-250],[700,-100],[550,-100]],"height":[30,55],"layout":"perimeter"},{"boundary":[[-700,0],[-550,0],[-550,150],[-700,150]],"height":[30,50],"layout":"perimeter"},{"boundary":[[-450,0],[-300,0],[-300,150],[-450,150]],"height":[30,50],"layout":"perimeter"},{"boundary":[[-200,0],[-50,0],[-50,150],[-200,150]],"height":[35,60],"layout":"perimeter"},{"boundary":[[50,0],[200,0],[200,150],[50,150]],"height":[35,60],"layout":"perimeter"},{"boundary":[[300,0],[350,0],[350,150],[300,150]],"height":[25,40],"layout":"perimeter"},{"boundary":[[550,0],[700,0],[700,150],[550,150]],"height":[25,40],"layout":"perimeter"},{"boundary":[[-700,250],[-550,250],[-550,400],[-700,400]],"height":[25,45],"layout":"perimeter"},{"boundary":[[-450,250],[-300,250],[-300,400],[-450,400]],"height":[25,45],"layout":"perimeter"},{"boundary":[[-200,250],[-50,250],[-50,400],[-200,400]],"height":[30,50],"layout":"perimeter"},{"boundary":[[50,250],[200,250],[200,400],[50,400]],"height":[30,50],"layout":"perimeter"},{"boundary":[[300,250],[450,250],[450,400],[300,400]],"height":[25,40],"layout":"perimeter"},{"boundary":[[550,400],[700,400],[700,650],[550,650]],"height":[20,35],"layout":"perimeter"},{"boundary":[[-700,500],[-550,500],[-550,650],[-700,650]],"height":[20,35],"layout":"perimeter"},{"boundary":[[-450,500],[-300,500],[-300,650],[-450,650]],"height":[20,35],"layout":"perimeter"},{"boundary":[[-200,500],[-50,500],[-50,650],[-200,650]],"height":[20,35],"layout":"perimeter"},{"boundary":[[50,500],[200,500],[200,650],[50,650]],"height":[20,35],"layout":"perimeter"},{"boundary":[[300,500],[450,500],[450,650],[300,650]],"height":[20,35],"layout":"perimeter"},{"boundary":[[-450,750],[-300,750],[-300,900],[-450,900]],"height":[15,25],"spacing":12,"layout":"scatter","coverage":0.4},{"boundary":[[-250,750],[250,750],[250,900],[-250,900]],"height":[15,25],"spacing":12,"layout":"scatter","coverage":0.35},{"boundary":[[300,750],[500,750],[500,900],[300,900]],"height":[15,25],"spacing":12,"layout":"scatter","coverage":0.4},{"boundary":[[550,750],[700,750],[700,900],[550,900]],"height":[15,25],"spacing":12,"layout":"scatter","coverage":0.4}],"landmarks":[{"center":[320,-180],"size":[60,60,170],"rotation":0},{"center":[-380,80],"size":[45,45,95],"rotation":15},{"center":[150,320],"size":[50,50,120],"rotation":-10},{"center":[-550,-650],"size":[40,55,80],"rotation":5},{"center":[620,-450],"size":[35,35,75],"rotation":20},{"center":[-80,600],"size":[55,40,90],"rotation":-25}]}}}`;
-      // const result = `{"thinking":"Manhattan is a dense urban grid with a distinctive layout. Key features: 1) Grid pattern streets running north-south (avenues) and east-west (streets), 2) Broadway cutting diagonally, 3) Central Park as a large rectangular green space, 4) Dense high-rise buildings especially in Midtown and Financial District, 5) Lower density in residential areas. I'll create a elongated island shape with the characteristic grid, Central Park in the upper-middle section, and varying building heights - tallest in Midtown and Financial District areas.","city":{"roads":{"width":15,"lines":[[[-700,-1000],[-700,1000]],[[-500,-1000],[-500,1000]],[[-300,-1000],[-300,1000]],[[-100,-1000],[-100,1000]],[[100,-1000],[100,1000]],[[300,-1000],[300,1000]],[[500,-1000],[500,1000]],[[700,-1000],[700,1000]],[[-750,-900],[750,-900]],[[-750,-700],[750,-700]],[[-750,-500],[750,-500]],[[-750,-300],[750,-300]],[[-750,-100],[750,-100]],[[-750,100],[750,100]],[[-750,300],[750,300]],[[-750,500],[750,500]],[[-750,700],[750,700]],[[-750,900],[750,900]],[[-700,-1000],[-400,200],[100,600],[500,1000]],[[-600,-800],[-600,-600],[-400,-600],[-400,-400],[-200,-400],[-200,-200]],[[400,400],[400,600],[200,600],[200,800]]]},"buildings":{"defaults":{"size":[40,40],"height":[30,80],"spacing":8,"layout":"fill","coverage":0.75},"blocks":[{"boundary":[[-700,-1000],[700,-1000],[700,-500],[-700,-500]],"height":[80,250],"coverage":0.85},{"boundary":[[-700,-500],[700,-500],[700,-100],[-700,-100]],"height":[50,150],"coverage":0.8},{"boundary":[[-700,-100],[700,-100],[700,100],[-300,100],[-300,500],[-700,500]],"height":[40,100],"coverage":0.7},{"boundary":[[300,-100],[700,-100],[700,500],[300,500]],"height":[40,100],"coverage":0.7},{"boundary":[[-700,500],[700,500],[700,1000],[-700,1000]],"height":[25,60],"coverage":0.65}],"landmarks":[{"center":[50,-750],"size":[60,60,320],"rotation":0},{"center":[-200,-700],"size":[50,50,280],"rotation":15},{"center":[300,-650],"size":[45,45,260],"rotation":-10},{"center":[-400,-800],"size":[55,55,240],"rotation":5},{"center":[150,-600],"size":[50,60,220],"rotation":0},{"center":[-100,-350],"size":[70,50,180],"rotation":0},{"center":[250,-300],"size":[55,55,160],"rotation":12},{"center":[-350,-250],"size":[45,60,150],"rotation":-8}]},"parks":[{"vertices":[[-300,100],[300,100],[300,500],[-300,500]]},{"vertices":[[-650,750],[-450,750],[-450,850],[-650,850]]},{"vertices":[[400,600],[550,600],[550,750],[400,750]]}]}}`;
+      // const result = `{"thinking":"Creating a Boston-style city plan. Boston is known for its irregular, organic street pattern that evolved from colonial-era cow paths and historical development, unlike the grid patterns of newer American cities. Key features: 1) Irregular, winding streets especially in older areas like Beacon Hill and North End, 2) Boston Common and Public Garden as central green spaces, 3) Charles River on the north side, 4) Boston Harbor on the east, 5) Back Bay area with more regular grid pattern (filled land), 6) Mix of colonial brick buildings and modern towers in Financial District, 7) Narrow winding streets in historic neighborhoods. I'll create an organic road network with winding streets, include the Charles River, Boston Harbor, Boston Common, and various neighborhoods with different characteristics - historic areas with cluster layout, Back Bay with grid, and downtown with taller modern buildings.","world":{"date":"06/22/2025, 12:00:00 PM","address":"Boston, Massachusetts, USA","latitude":42.3601,"longitude":-71.0589},"city":{"rivers":[{"vertices":[[-1000,600],[-1000,1000],[1000,1000],[1000,550],[700,500],[300,580],[-200,520],[-600,600]]},{"vertices":[[700,-1000],[1000,-1000],[1000,300],[900,250],[850,0],[880,-300],[820,-600],[750,-900]]}],"roads":{"nodes":[{"id":"n1","position":[-800,-800]},{"id":"n2","position":[-450,-820]},{"id":"n3","position":[-100,-780]},{"id":"n4","position":[250,-830]},{"id":"n5","position":[550,-750]},{"id":"n6","position":[-820,-500]},{"id":"n7","position":[-480,-450]},{"id":"n8","position":[-120,-480]},{"id":"n9","position":[220,-420]},{"id":"n10","position":[520,-470]},{"id":"n11","position":[-780,-180]},{"id":"n12","position":[-400,-150]},{"id":"n13","position":[-50,-200]},{"id":"n14","position":[280,-120]},{"id":"n15","position":[580,-180]},{"id":"n16","position":[-750,120]},{"id":"n17","position":[-380,150]},{"id":"n18","position":[0,100]},{"id":"n19","position":[350,80]},{"id":"n20","position":[620,50]},{"id":"n21","position":[-720,380]},{"id":"n22","position":[-350,420]},{"id":"n23","position":[50,360]},{"id":"n24","position":[400,320]},{"id":"n25","position":[650,280]},{"id":"c1","position":[-620,-700]},{"id":"c2","position":[-280,-750]},{"id":"c3","position":[80,-680]},{"id":"c4","position":[400,-720]},{"id":"c5","position":[-650,-320]},{"id":"c6","position":[-300,-340]},{"id":"c7","position":[80,-300]},{"id":"c8","position":[400,-280]},{"id":"c9","position":[-580,-30]},{"id":"c10","position":[-200,0]},{"id":"c11","position":[170,-20]},{"id":"c12","position":[480,-40]},{"id":"c13","position":[-550,260]},{"id":"c14","position":[-150,280]},{"id":"c15","position":[230,220]},{"id":"c16","position":[530,180]},{"id":"w1","position":[-550,-580]},{"id":"w2","position":[-200,-420]},{"id":"w3","position":[150,-350]},{"id":"w4","position":[-450,-80]},{"id":"w5","position":[-100,50]},{"id":"w6","position":[250,150]}],"edges":[{"id":"e1","from":"n1","to":"c1","level":"1","points":[]},{"id":"e2","from":"c1","to":"n2","level":"1","points":[]},{"id":"e3","from":"n2","to":"c2","level":"1","points":[]},{"id":"e4","from":"c2","to":"n3","level":"1","points":[]},{"id":"e5","from":"n3","to":"c3","level":"1","points":[]},{"id":"e6","from":"c3","to":"n4","level":"1","points":[]},{"id":"e7","from":"n4","to":"c4","level":"1","points":[]},{"id":"e8","from":"c4","to":"n5","level":"1","points":[]},{"id":"e9","from":"n6","to":"c5","level":"1","points":[]},{"id":"e10","from":"c5","to":"n7","level":"1","points":[]},{"id":"e11","from":"n7","to":"c6","level":"1","points":[]},{"id":"e12","from":"c6","to":"n8","level":"1","points":[]},{"id":"e13","from":"n8","to":"c7","level":"1","points":[]},{"id":"e14","from":"c7","to":"n9","level":"1","points":[]},{"id":"e15","from":"n9","to":"c8","level":"1","points":[]},{"id":"e16","from":"c8","to":"n10","level":"1","points":[]},{"id":"e17","from":"n11","to":"c9","level":"1","points":[]},{"id":"e18","from":"c9","to":"n12","level":"1","points":[]},{"id":"e19","from":"n12","to":"c10","level":"1","points":[]},{"id":"e20","from":"c10","to":"n13","level":"1","points":[]},{"id":"e21","from":"n13","to":"c11","level":"1","points":[]},{"id":"e22","from":"c11","to":"n14","level":"1","points":[]},{"id":"e23","from":"n14","to":"c12","level":"1","points":[]},{"id":"e24","from":"c12","to":"n15","level":"1","points":[]},{"id":"e25","from":"n16","to":"c13","level":"1","points":[]},{"id":"e26","from":"c13","to":"n17","level":"1","points":[]},{"id":"e27","from":"n17","to":"c14","level":"1","points":[]},{"id":"e28","from":"c14","to":"n18","level":"1","points":[]},{"id":"e29","from":"n18","to":"c15","level":"1","points":[]},{"id":"e30","from":"c15","to":"n19","level":"1","points":[]},{"id":"e31","from":"n19","to":"c16","level":"1","points":[]},{"id":"e32","from":"c16","to":"n20","level":"1","points":[]},{"id":"e33","from":"n21","to":"n22","level":"1","points":[]},{"id":"e34","from":"n22","to":"n23","level":"1","points":[]},{"id":"e35","from":"n23","to":"n24","level":"1","points":[]},{"id":"e36","from":"n24","to":"n25","level":"1","points":[]},{"id":"e37","from":"n1","to":"n6","level":"1","points":[]},{"id":"e38","from":"n6","to":"n11","level":"1","points":[]},{"id":"e39","from":"n11","to":"n16","level":"1","points":[]},{"id":"e40","from":"n16","to":"n21","level":"1","points":[]},{"id":"e41","from":"n2","to":"n7","level":"1","points":[]},{"id":"e42","from":"n7","to":"n12","level":"1","points":[]},{"id":"e43","from":"n12","to":"n17","level":"1","points":[]},{"id":"e44","from":"n17","to":"n22","level":"1","points":[]},{"id":"e45","from":"n3","to":"n8","level":"1","points":[]},{"id":"e46","from":"n8","to":"n13","level":"1","points":[]},{"id":"e47","from":"n13","to":"n18","level":"1","points":[]},{"id":"e48","from":"n18","to":"n23","level":"1","points":[]},{"id":"e49","from":"n4","to":"n9","level":"1","points":[]},{"id":"e50","from":"n9","to":"n14","level":"1","points":[]},{"id":"e51","from":"n14","to":"n19","level":"1","points":[]},{"id":"e52","from":"n19","to":"n24","level":"1","points":[]},{"id":"e53","from":"n5","to":"n10","level":"1","points":[]},{"id":"e54","from":"n10","to":"n15","level":"1","points":[]},{"id":"e55","from":"n15","to":"n20","level":"1","points":[]},{"id":"e56","from":"n20","to":"n25","level":"1","points":[]},{"id":"e57","from":"c1","to":"w1","level":"2","points":[]},{"id":"e58","from":"w1","to":"c5","level":"2","points":[]},{"id":"e59","from":"c5","to":"c9","level":"2","points":[]},{"id":"e60","from":"c9","to":"c13","level":"2","points":[]},{"id":"e61","from":"c2","to":"c6","level":"2","points":[]},{"id":"e62","from":"c6","to":"c10","level":"2","points":[]},{"id":"e63","from":"c10","to":"c14","level":"2","points":[]},{"id":"e64","from":"c3","to":"c7","level":"2","points":[]},{"id":"e65","from":"c7","to":"c11","level":"2","points":[]},{"id":"e66","from":"c11","to":"c15","level":"2","points":[]},{"id":"e67","from":"c4","to":"c8","level":"2","points":[]},{"id":"e68","from":"c8","to":"c12","level":"2","points":[]},{"id":"e69","from":"c12","to":"c16","level":"2","points":[]},{"id":"e70","from":"n7","to":"w1","level":"2","points":[]},{"id":"e71","from":"w1","to":"n8","level":"2","points":[]},{"id":"e72","from":"n8","to":"w2","level":"2","points":[]},{"id":"e73","from":"w2","to":"n9","level":"2","points":[]},{"id":"e74","from":"n9","to":"w3","level":"2","points":[]},{"id":"e75","from":"w3","to":"n10","level":"2","points":[]},{"id":"e76","from":"n12","to":"w4","level":"2","points":[]},{"id":"e77","from":"w4","to":"n13","level":"2","points":[]},{"id":"e78","from":"n13","to":"w5","level":"2","points":[]},{"id":"e79","from":"w5","to":"n18","level":"2","points":[]},{"id":"e80","from":"n18","to":"w6","level":"2","points":[]},{"id":"e81","from":"w6","to":"n19","level":"2","points":[]}]},"parks":[{"vertices":[[-500,80],[-500,380],[-150,380],[-150,80]]},{"vertices":[[-150,80],[-150,320],[120,320],[120,80]]},{"vertices":[[-800,300],[-800,500],[-600,500],[-600,300]]}],"zones":[{"boundary":[[-800,-820],[-450,-820],[-450,-500],[-800,-500]],"length":[12,24],"width":[10,20],"height":[14,38],"layout":"cluster","coverage":0.38,"color":"#8B4513"},{"boundary":[[-450,-820],[-100,-820],[-100,-480],[-450,-480]],"length":[13,26],"width":[10,21],"height":[16,42],"layout":"cluster","coverage":0.4,"color":"#A0522D"},{"boundary":[[-100,-780],[250,-780],[250,-420],[-100,-420]],"length":[14,28],"width":[11,23],"height":[20,52],"layout":"cluster","coverage":0.43,"color":"#8B5A2B"},{"boundary":[[250,-830],[550,-830],[550,-470],[250,-470]],"length":[16,32],"width":[13,26],"height":[35,90],"layout":"grid","coverage":0.5,"color":"#5A5A5A"},{"boundary":[[-820,-500],[-480,-500],[-480,-180],[-820,-180]],"length":[11,22],"width":[9,18],"height":[12,32],"layout":"cluster","coverage":0.35,"color":"#9A7B5A"},{"boundary":[[-480,-450],[-120,-450],[-120,-200],[-480,-200]],"length":[13,26],"width":[11,22],"height":[18,48],"layout":"cluster","coverage":0.42,"color":"#7A5A3A"},{"boundary":[[-120,-480],[220,-480],[220,-120],[-120,-120]],"length":[18,36],"width":[14,30],"height":[50,140],"layout":"grid","coverage":0.55,"color":"#3D3D3D"},{"boundary":[[220,-420],[520,-420],[520,-180],[220,-180]],"length":[20,42],"width":[16,34],"height":[70,180],"layout":"grid","coverage":0.58,"color":"#333333"},{"boundary":[[-780,-180],[-400,-180],[-400,120],[-780,120]],"length":[12,24],"width":[10,20],"height":[15,40],"layout":"cluster","coverage":0.38,"color":"#8A6A4A"},{"boundary":[[120,-200],[280,-200],[280,80],[120,80]],"length":[20,40],"width":[16,34],"height":[80,200],"layout":"grid","coverage":0.6,"color":"#2D2D2D"},{"boundary":[[280,-120],[580,-120],[580,50],[280,50]],"length":[22,46],"width":[18,38],"height":[100,260],"layout":"grid","coverage":0.62,"color":"#282828"},{"boundary":[[-720,120],[-500,120],[-500,380],[-720,380]],"length":[14,28],"width":[11,24],"height":[20,55],"layout":"perimeter","coverage":0.45,"color":"#7B5B3B"},{"boundary":[[120,80],[400,80],[400,320],[120,320]],"length":[16,34],"width":[13,28],"height":[35,95],"layout":"grid","coverage":0.5,"color":"#4A4A4A"},{"boundary":[[400,80],[620,80],[620,280],[400,280]],"length":[18,38],"width":[15,32],"height":[45,120],"layout":"grid","coverage":0.52,"color":"#424242"},{"boundary":[[-720,380],[-350,380],[-350,550],[-720,550]],"length":[13,26],"width":[10,22],"height":[18,48],"layout":"perimeter","coverage":0.42,"color":"#6B4B2B"},{"boundary":[[-350,320],[50,320],[50,500],[-350,500]],"length":[14,30],"width":[12,25],"height":[22,60],"layout":"cluster","coverage":0.44,"color":"#7A5A3A"},{"boundary":[[50,360],[400,360],[400,500],[50,500]],"length":[15,32],"width":[12,26],"height":[28,75],"layout":"grid","coverage":0.48,"color":"#555555"}],"landmarks":[{"center":[420,-280],"size":[48,48,228],"rotation":0.08},{"center":[180,-320],"size":[42,42,165],"rotation":0},{"center":[500,-50],"size":[45,45,195],"rotation":0.05},{"center":[350,180],"size":[38,38,110],"rotation":0.1},{"center":[-50,-350],"size":[35,50,85],"rotation":0.25},{"center":[-350,-600],"size":[22,35,40],"rotation":0.3},{"center":[-650,-350],"size":[18,30,32],"rotation":0.2},{"center":[-550,450],"size":[30,30,55],"rotation":0}]}}`;
+      // const result = `{"thinking":"Creating a Manhattan-style city plan. Manhattan is a long narrow island with rivers on both sides (Hudson River on west, East River on east). Key features: 1) Grid street pattern with avenues running north-south and streets running east-west, 2) Broadway cutting diagonally, 3) Central Park in the upper middle area, 4) Financial district in the south, 5) Midtown with tall buildings, 6) Various neighborhoods. I'll place rivers on east and west sides running north-south, create a strong grid road network, include Central Park, Broadway diagonal, and multiple zones with perimeter layout as requested. Landmarks will include Empire State Building area, One World Trade Center area, Chrysler Building area, etc.","world":{"date":"06/22/2025, 12:00:00 PM","address":"Manhattan, New York City, USA","latitude":40.7831,"longitude":-73.9712},"city":{"rivers":[{"vertices":[[-1000,-1000],[-920,-1000],[-900,-700],[-880,-400],[-870,-100],[-880,200],[-890,500],[-900,800],[-920,1000],[-1000,1000]]},{"vertices":[[1000,-1000],[920,-1000],[900,-700],[910,-400],[900,-100],[910,200],[900,500],[920,800],[940,1000],[1000,1000]]}],"roads":{"nodes":[{"id":"n1","position":[-850,-900]},{"id":"n2","position":[-400,-900]},{"id":"n3","position":[0,-900]},{"id":"n4","position":[400,-900]},{"id":"n5","position":[850,-900]},{"id":"n6","position":[-850,-600]},{"id":"n7","position":[-400,-600]},{"id":"n8","position":[0,-600]},{"id":"n9","position":[400,-600]},{"id":"n10","position":[850,-600]},{"id":"n11","position":[-850,-300]},{"id":"n12","position":[-400,-300]},{"id":"n13","position":[0,-300]},{"id":"n14","position":[400,-300]},{"id":"n15","position":[850,-300]},{"id":"n16","position":[-850,0]},{"id":"n17","position":[-400,0]},{"id":"n18","position":[0,0]},{"id":"n19","position":[400,0]},{"id":"n20","position":[850,0]},{"id":"n21","position":[-850,300]},{"id":"n22","position":[-400,300]},{"id":"n23","position":[0,300]},{"id":"n24","position":[400,300]},{"id":"n25","position":[850,300]},{"id":"n26","position":[-850,600]},{"id":"n27","position":[-400,600]},{"id":"n28","position":[0,600]},{"id":"n29","position":[400,600]},{"id":"n30","position":[850,600]},{"id":"n31","position":[-850,900]},{"id":"n32","position":[-400,900]},{"id":"n33","position":[0,900]},{"id":"n34","position":[400,900]},{"id":"n35","position":[850,900]},{"id":"n36","position":[-200,-900]},{"id":"n37","position":[200,-900]},{"id":"n38","position":[-200,-600]},{"id":"n39","position":[200,-600]},{"id":"n40","position":[-200,-300]},{"id":"n41","position":[200,-300]},{"id":"n42","position":[-200,0]},{"id":"n43","position":[200,0]},{"id":"n44","position":[-200,300]},{"id":"n45","position":[200,300]},{"id":"n46","position":[-200,600]},{"id":"n47","position":[200,600]},{"id":"n48","position":[-200,900]},{"id":"n49","position":[200,900]},{"id":"n50","position":[-600,-900]},{"id":"n51","position":[600,-900]},{"id":"n52","position":[-600,-600]},{"id":"n53","position":[600,-600]},{"id":"n54","position":[-600,-300]},{"id":"n55","position":[600,-300]},{"id":"n56","position":[-600,0]},{"id":"n57","position":[600,0]},{"id":"n58","position":[-600,300]},{"id":"n59","position":[600,300]},{"id":"n60","position":[-600,600]},{"id":"n61","position":[600,600]},{"id":"n62","position":[-600,900]},{"id":"n63","position":[600,900]},{"id":"b1","position":[-700,-850]},{"id":"b2","position":[-100,-450]},{"id":"b3","position":[300,150]},{"id":"b4","position":[700,750]}],"edges":[{"id":"e1","from":"n1","to":"n2","level":"1","points":[]},{"id":"e2","from":"n2","to":"n36","level":"1","points":[]},{"id":"e3","from":"n36","to":"n3","level":"1","points":[]},{"id":"e4","from":"n3","to":"n37","level":"1","points":[]},{"id":"e5","from":"n37","to":"n4","level":"1","points":[]},{"id":"e6","from":"n4","to":"n5","level":"1","points":[]},{"id":"e7","from":"n6","to":"n7","level":"1","points":[]},{"id":"e8","from":"n7","to":"n38","level":"1","points":[]},{"id":"e9","from":"n38","to":"n8","level":"1","points":[]},{"id":"e10","from":"n8","to":"n39","level":"1","points":[]},{"id":"e11","from":"n39","to":"n9","level":"1","points":[]},{"id":"e12","from":"n9","to":"n10","level":"1","points":[]},{"id":"e13","from":"n11","to":"n12","level":"1","points":[]},{"id":"e14","from":"n12","to":"n40","level":"1","points":[]},{"id":"e15","from":"n40","to":"n13","level":"1","points":[]},{"id":"e16","from":"n13","to":"n41","level":"1","points":[]},{"id":"e17","from":"n41","to":"n14","level":"1","points":[]},{"id":"e18","from":"n14","to":"n15","level":"1","points":[]},{"id":"e19","from":"n16","to":"n17","level":"1","points":[]},{"id":"e20","from":"n17","to":"n42","level":"1","points":[]},{"id":"e21","from":"n42","to":"n18","level":"1","points":[]},{"id":"e22","from":"n18","to":"n43","level":"1","points":[]},{"id":"e23","from":"n43","to":"n19","level":"1","points":[]},{"id":"e24","from":"n19","to":"n20","level":"1","points":[]},{"id":"e25","from":"n21","to":"n22","level":"1","points":[]},{"id":"e26","from":"n22","to":"n44","level":"1","points":[]},{"id":"e27","from":"n44","to":"n23","level":"1","points":[]},{"id":"e28","from":"n23","to":"n45","level":"1","points":[]},{"id":"e29","from":"n45","to":"n24","level":"1","points":[]},{"id":"e30","from":"n24","to":"n25","level":"1","points":[]},{"id":"e31","from":"n26","to":"n27","level":"1","points":[]},{"id":"e32","from":"n27","to":"n46","level":"1","points":[]},{"id":"e33","from":"n46","to":"n28","level":"1","points":[]},{"id":"e34","from":"n28","to":"n47","level":"1","points":[]},{"id":"e35","from":"n47","to":"n29","level":"1","points":[]},{"id":"e36","from":"n29","to":"n30","level":"1","points":[]},{"id":"e37","from":"n31","to":"n32","level":"1","points":[]},{"id":"e38","from":"n32","to":"n48","level":"1","points":[]},{"id":"e39","from":"n48","to":"n33","level":"1","points":[]},{"id":"e40","from":"n33","to":"n49","level":"1","points":[]},{"id":"e41","from":"n49","to":"n34","level":"1","points":[]},{"id":"e42","from":"n34","to":"n35","level":"1","points":[]},{"id":"e43","from":"n1","to":"n6","level":"1","points":[]},{"id":"e44","from":"n6","to":"n11","level":"1","points":[]},{"id":"e45","from":"n11","to":"n16","level":"1","points":[]},{"id":"e46","from":"n16","to":"n21","level":"1","points":[]},{"id":"e47","from":"n21","to":"n26","level":"1","points":[]},{"id":"e48","from":"n26","to":"n31","level":"1","points":[]},{"id":"e49","from":"n2","to":"n7","level":"1","points":[]},{"id":"e50","from":"n7","to":"n12","level":"1","points":[]},{"id":"e51","from":"n12","to":"n17","level":"1","points":[]},{"id":"e52","from":"n17","to":"n22","level":"1","points":[]},{"id":"e53","from":"n22","to":"n27","level":"1","points":[]},{"id":"e54","from":"n27","to":"n32","level":"1","points":[]},{"id":"e55","from":"n3","to":"n8","level":"1","points":[]},{"id":"e56","from":"n8","to":"n13","level":"1","points":[]},{"id":"e57","from":"n13","to":"n18","level":"1","points":[]},{"id":"e58","from":"n18","to":"n23","level":"1","points":[]},{"id":"e59","from":"n23","to":"n28","level":"1","points":[]},{"id":"e60","from":"n28","to":"n33","level":"1","points":[]},{"id":"e61","from":"n4","to":"n9","level":"1","points":[]},{"id":"e62","from":"n9","to":"n14","level":"1","points":[]},{"id":"e63","from":"n14","to":"n19","level":"1","points":[]},{"id":"e64","from":"n19","to":"n24","level":"1","points":[]},{"id":"e65","from":"n24","to":"n29","level":"1","points":[]},{"id":"e66","from":"n29","to":"n34","level":"1","points":[]},{"id":"e67","from":"n5","to":"n10","level":"1","points":[]},{"id":"e68","from":"n10","to":"n15","level":"1","points":[]},{"id":"e69","from":"n15","to":"n20","level":"1","points":[]},{"id":"e70","from":"n20","to":"n25","level":"1","points":[]},{"id":"e71","from":"n25","to":"n30","level":"1","points":[]},{"id":"e72","from":"n30","to":"n35","level":"1","points":[]},{"id":"e73","from":"n36","to":"n38","level":"1","points":[]},{"id":"e74","from":"n38","to":"n40","level":"1","points":[]},{"id":"e75","from":"n40","to":"n42","level":"1","points":[]},{"id":"e76","from":"n42","to":"n44","level":"1","points":[]},{"id":"e77","from":"n44","to":"n46","level":"1","points":[]},{"id":"e78","from":"n46","to":"n48","level":"1","points":[]},{"id":"e79","from":"n37","to":"n39","level":"1","points":[]},{"id":"e80","from":"n39","to":"n41","level":"1","points":[]},{"id":"e81","from":"n41","to":"n43","level":"1","points":[]},{"id":"e82","from":"n43","to":"n45","level":"1","points":[]},{"id":"e83","from":"n45","to":"n47","level":"1","points":[]},{"id":"e84","from":"n47","to":"n49","level":"1","points":[]},{"id":"e85","from":"n1","to":"n50","level":"2","points":[]},{"id":"e86","from":"n50","to":"n2","level":"2","points":[]},{"id":"e87","from":"n4","to":"n51","level":"2","points":[]},{"id":"e88","from":"n51","to":"n5","level":"2","points":[]},{"id":"e89","from":"n6","to":"n52","level":"2","points":[]},{"id":"e90","from":"n52","to":"n7","level":"2","points":[]},{"id":"e91","from":"n9","to":"n53","level":"2","points":[]},{"id":"e92","from":"n53","to":"n10","level":"2","points":[]},{"id":"e93","from":"n11","to":"n54","level":"2","points":[]},{"id":"e94","from":"n54","to":"n12","level":"2","points":[]},{"id":"e95","from":"n14","to":"n55","level":"2","points":[]},{"id":"e96","from":"n55","to":"n15","level":"2","points":[]},{"id":"e97","from":"n16","to":"n56","level":"2","points":[]},{"id":"e98","from":"n56","to":"n17","level":"2","points":[]},{"id":"e99","from":"n19","to":"n57","level":"2","points":[]},{"id":"e100","from":"n57","to":"n20","level":"2","points":[]},{"id":"e101","from":"n21","to":"n58","level":"2","points":[]},{"id":"e102","from":"n58","to":"n22","level":"2","points":[]},{"id":"e103","from":"n24","to":"n59","level":"2","points":[]},{"id":"e104","from":"n59","to":"n25","level":"2","points":[]},{"id":"e105","from":"n26","to":"n60","level":"2","points":[]},{"id":"e106","from":"n60","to":"n27","level":"2","points":[]},{"id":"e107","from":"n29","to":"n61","level":"2","points":[]},{"id":"e108","from":"n61","to":"n30","level":"2","points":[]},{"id":"e109","from":"n31","to":"n62","level":"2","points":[]},{"id":"e110","from":"n62","to":"n32","level":"2","points":[]},{"id":"e111","from":"n34","to":"n63","level":"2","points":[]},{"id":"e112","from":"n63","to":"n35","level":"2","points":[]},{"id":"e113","from":"n50","to":"n52","level":"2","points":[]},{"id":"e114","from":"n52","to":"n54","level":"2","points":[]},{"id":"e115","from":"n54","to":"n56","level":"2","points":[]},{"id":"e116","from":"n56","to":"n58","level":"2","points":[]},{"id":"e117","from":"n58","to":"n60","level":"2","points":[]},{"id":"e118","from":"n60","to":"n62","level":"2","points":[]},{"id":"e119","from":"n51","to":"n53","level":"2","points":[]},{"id":"e120","from":"n53","to":"n55","level":"2","points":[]},{"id":"e121","from":"n55","to":"n57","level":"2","points":[]},{"id":"e122","from":"n57","to":"n59","level":"2","points":[]},{"id":"e123","from":"n59","to":"n61","level":"2","points":[]},{"id":"e124","from":"n61","to":"n63","level":"2","points":[]},{"id":"broadway1","from":"n1","to":"b1","level":"1","points":[]},{"id":"broadway2","from":"b1","to":"n7","level":"1","points":[]},{"id":"broadway3","from":"n7","to":"b2","level":"1","points":[]},{"id":"broadway4","from":"b2","to":"n13","level":"1","points":[]},{"id":"broadway5","from":"n13","to":"b3","level":"1","points":[]},{"id":"broadway6","from":"b3","to":"n24","level":"1","points":[]},{"id":"broadway7","from":"n24","to":"b4","level":"1","points":[]},{"id":"broadway8","from":"b4","to":"n35","level":"1","points":[]}]},"parks":[{"vertices":[[-350,350],[-350,850],[350,850],[350,350]]}],"zones":[{"boundary":[[-850,-900],[-400,-900],[-400,-600],[-850,-600]],"length":[20,40],"width":[15,30],"height":[80,200],"layout":"perimeter","coverage":0.55,"color":"#4A4A4A"},{"boundary":[[-400,-900],[0,-900],[0,-600],[-400,-600]],"length":[18,35],"width":[12,25],"height":[60,150],"layout":"perimeter","coverage":0.5,"color":"#5C5C5C"},{"boundary":[[0,-900],[400,-900],[400,-600],[0,-600]],"length":[18,35],"width":[12,25],"height":[60,150],"layout":"perimeter","coverage":0.5,"color":"#525252"},{"boundary":[[400,-900],[850,-900],[850,-600],[400,-600]],"length":[20,40],"width":[15,30],"height":[70,180],"layout":"perimeter","coverage":0.55,"color":"#484848"},{"boundary":[[-850,-600],[-400,-600],[-400,-300],[-850,-300]],"length":[15,30],"width":[12,25],"height":[40,100],"layout":"perimeter","coverage":0.45,"color":"#6B6B6B"},{"boundary":[[-400,-600],[0,-600],[0,-300],[-400,-300]],"length":[15,30],"width":[12,25],"height":[50,120],"layout":"perimeter","coverage":0.5,"color":"#5E5E5E"},{"boundary":[[0,-600],[400,-600],[400,-300],[0,-300]],"length":[15,30],"width":[12,25],"height":[50,120],"layout":"perimeter","coverage":0.5,"color":"#606060"},{"boundary":[[400,-600],[850,-600],[850,-300],[400,-300]],"length":[15,30],"width":[12,25],"height":[40,100],"layout":"perimeter","coverage":0.45,"color":"#686868"},{"boundary":[[-850,-300],[-400,-300],[-400,0],[-850,0]],"length":[20,45],"width":[15,35],"height":[100,280],"layout":"perimeter","coverage":0.6,"color":"#3C3C3C"},{"boundary":[[-400,-300],[0,-300],[0,0],[-400,0]],"length":[25,50],"width":[18,40],"height":[150,350],"layout":"perimeter","coverage":0.65,"color":"#2F2F2F"},{"boundary":[[0,-300],[400,-300],[400,0],[0,0]],"length":[25,50],"width":[18,40],"height":[150,350],"layout":"perimeter","coverage":0.65,"color":"#333333"},{"boundary":[[400,-300],[850,-300],[850,0],[400,0]],"length":[20,45],"width":[15,35],"height":[100,280],"layout":"perimeter","coverage":0.6,"color":"#3A3A3A"},{"boundary":[[-850,0],[-400,0],[-400,300],[-850,300]],"length":[18,35],"width":[14,28],"height":[60,150],"layout":"perimeter","coverage":0.5,"color":"#555555"},{"boundary":[[-400,0],[0,0],[0,300],[-400,300]],"length":[20,40],"width":[15,30],"height":[80,200],"layout":"perimeter","coverage":0.55,"color":"#4D4D4D"},{"boundary":[[0,0],[400,0],[400,300],[0,300]],"length":[20,40],"width":[15,30],"height":[80,200],"layout":"perimeter","coverage":0.55,"color":"#505050"},{"boundary":[[400,0],[850,0],[850,300],[400,300]],"length":[18,35],"width":[14,28],"height":[60,150],"layout":"perimeter","coverage":0.5,"color":"#585858"},{"boundary":[[-850,300],[-400,300],[-400,600],[-850,600]],"length":[15,30],"width":[12,22],"height":[30,80],"layout":"perimeter","coverage":0.4,"color":"#707070"},{"boundary":[[400,300],[850,300],[850,600],[400,600]],"length":[15,30],"width":[12,22],"height":[30,80],"layout":"perimeter","coverage":0.4,"color":"#6E6E6E"},{"boundary":[[-850,600],[-400,600],[-400,900],[-850,900]],"length":[12,25],"width":[10,20],"height":[20,60],"layout":"perimeter","coverage":0.35,"color":"#787878"},{"boundary":[[-400,850],[350,850],[350,900],[-400,900]],"length":[12,25],"width":[10,20],"height":[25,70],"layout":"perimeter","coverage":0.35,"color":"#757575"},{"boundary":[[400,600],[850,600],[850,900],[400,900]],"length":[12,25],"width":[10,20],"height":[20,60],"layout":"perimeter","coverage":0.35,"color":"#7A7A7A"}],"landmarks":[{"center":[-100,-150],"size":[60,60,380],"rotation":0},{"center":[150,-200],"size":[50,50,320],"rotation":0.05},{"center":[-250,-100],"size":[45,45,280],"rotation":0},{"center":[50,-50],"size":[55,55,300],"rotation":0.1},{"center":[300,-150],"size":[40,40,250],"rotation":0},{"center":[-150,-400],"size":[70,70,420],"rotation":0},{"center":[200,-500],"size":[50,50,200],"rotation":0.08},{"center":[-50,100],"size":[45,45,220],"rotation":0},{"center":[100,-700],"size":[80,80,350],"rotation":0.02},{"center":[-300,-750],"size":[55,55,180],"rotation":0}]}}`;
+      // const result = `{"thinking":"Boston is a historic American city with a famously irregular street pattern, unlike the grid systems of many US cities. Key features include: 1) The Charles River separating Boston from Cambridge, curving through the north. 2) Boston Harbor to the east. 3) The Boston Common and Public Garden - America's oldest public park. 4) Historic neighborhoods like Beacon Hill, Back Bay, North End, South End. 5) Irregular, winding streets that follow old cow paths and colonial-era roads. 6) The Freedom Trail connecting historic sites. 7) Prominent landmarks like the State House with its gold dome, Faneuil Hall, Old North Church. I'll create a layout that captures Boston's organic street pattern, the Charles River curving along the north, some waterfront to the east, the Common/Public Garden in the center-west area, and various distinct neighborhoods with different building characteristics.","world":{"date":"06/22/2025, 12:00:00 PM","address":"Boston, Massachusetts, USA","latitude":42.3601,"longitude":-71.0589},"city":{"rivers":[{"vertices":[[-1000,600],[-800,650],[-500,700],[-200,720],[100,680],[400,620],[700,580],[1000,550],[1000,700],[-1000,700]]}],"roads":{"nodes":[{"id":"n1","position":[-800,400]},{"id":"n2","position":[-500,350]},{"id":"n3","position":[-200,300]},{"id":"n4","position":[100,280]},{"id":"n5","position":[400,250]},{"id":"n6","position":[700,200]},{"id":"n7","position":[-600,100]},{"id":"n8","position":[-300,50]},{"id":"n9","position":[0,0]},{"id":"n10","position":[300,-50]},{"id":"n11","position":[600,-100]},{"id":"n12","position":[-700,-200]},{"id":"n13","position":[-400,-250]},{"id":"n14","position":[-100,-300]},{"id":"n15","position":[200,-350]},{"id":"n16","position":[500,-400]},{"id":"n17","position":[800,-300]},{"id":"n18","position":[-500,-500]},{"id":"n19","position":[-150,-550]},{"id":"n20","position":[150,-600]},{"id":"n21","position":[450,-650]},{"id":"n22","position":[750,-550]},{"id":"n23","position":[-800,-700]},{"id":"n24","position":[-400,-750]},{"id":"n25","position":[0,-800]},{"id":"n26","position":[400,-850]},{"id":"n27","position":[800,-750]},{"id":"n28","position":[-900,200]},{"id":"n29","position":[900,50]},{"id":"n30","position":[-600,500]},{"id":"n31","position":[-200,480]},{"id":"n32","position":[200,450]},{"id":"n33","position":[500,400]},{"id":"n34","position":[850,350]},{"id":"n35","position":[-350,200]},{"id":"n36","position":[50,150]},{"id":"n37","position":[-250,-150]},{"id":"n38","position":[100,-180]},{"id":"n39","position":[400,-200]},{"id":"n40","position":[-650,-450]},{"id":"n41","position":[300,-500]},{"id":"n42","position":[650,-400]},{"id":"n43","position":[-100,-700]},{"id":"n44","position":[250,-720]},{"id":"n45","position":[600,-700]}],"edges":[{"id":"e1","from":"n1","to":"n2","level":"1","points":[[-650,380]]},{"id":"e2","from":"n2","to":"n3","level":"1","points":[[-350,320]]},{"id":"e3","from":"n3","to":"n4","level":"1","points":[[-50,285]]},{"id":"e4","from":"n4","to":"n5","level":"1","points":[[250,260]]},{"id":"e5","from":"n5","to":"n6","level":"1","points":[[550,220]]},{"id":"e6","from":"n7","to":"n8","level":"1","points":[[-450,70]]},{"id":"e7","from":"n8","to":"n9","level":"1","points":[[-150,20]]},{"id":"e8","from":"n9","to":"n10","level":"1","points":[[150,-30]]},{"id":"e9","from":"n10","to":"n11","level":"1","points":[[450,-80]]},{"id":"e10","from":"n12","to":"n13","level":"1","points":[[-550,-230]]},{"id":"e11","from":"n13","to":"n14","level":"1","points":[[-250,-280]]},{"id":"e12","from":"n14","to":"n15","level":"1","points":[[50,-330]]},{"id":"e13","from":"n15","to":"n16","level":"1","points":[[350,-380]]},{"id":"e14","from":"n16","to":"n17","level":"1","points":[[650,-350]]},{"id":"e15","from":"n18","to":"n19","level":"1","points":[[-325,-530]]},{"id":"e16","from":"n19","to":"n20","level":"1","points":[[0,-580]]},{"id":"e17","from":"n20","to":"n21","level":"1","points":[[300,-630]]},{"id":"e18","from":"n21","to":"n22","level":"1","points":[[600,-600]]},{"id":"e19","from":"n23","to":"n24","level":"1","points":[[-600,-730]]},{"id":"e20","from":"n24","to":"n25","level":"1","points":[[-200,-780]]},{"id":"e21","from":"n25","to":"n26","level":"1","points":[[200,-830]]},{"id":"e22","from":"n26","to":"n27","level":"1","points":[[600,-800]]},{"id":"e23","from":"n28","to":"n1","level":"1","points":[[-850,300]]},{"id":"e24","from":"n1","to":"n7","level":"1","points":[[-720,250]]},{"id":"e25","from":"n7","to":"n12","level":"1","points":[[-660,-50]]},{"id":"e26","from":"n12","to":"n18","level":"1","points":[[-620,-350]]},{"id":"e27","from":"n18","to":"n23","level":"1","points":[[-650,-600]]},{"id":"e28","from":"n2","to":"n35","level":"1","points":[[-420,280]]},{"id":"e29","from":"n35","to":"n8","level":"1","points":[[-320,130]]},{"id":"e30","from":"n8","to":"n37","level":"1","points":[[-280,-50]]},{"id":"e31","from":"n37","to":"n13","level":"1","points":[[-320,-200]]},{"id":"e32","from":"n13","to":"n40","level":"1","points":[[-520,-350]]},{"id":"e33","from":"n40","to":"n24","level":"1","points":[[-530,-600]]},{"id":"e34","from":"n3","to":"n36","level":"1","points":[[-80,220]]},{"id":"e35","from":"n36","to":"n9","level":"1","points":[[30,80]]},{"id":"e36","from":"n9","to":"n38","level":"1","points":[[50,-90]]},{"id":"e37","from":"n38","to":"n14","level":"1","points":[[0,-240]]},{"id":"e38","from":"n14","to":"n19","level":"1","points":[[-130,-420]]},{"id":"e39","from":"n19","to":"n43","level":"1","points":[[-120,-630]]},{"id":"e40","from":"n43","to":"n25","level":"1","points":[[-50,-750]]},{"id":"e41","from":"n4","to":"n36","level":"2","points":[[80,210]]},{"id":"e42","from":"n36","to":"n38","level":"2","points":[[80,-20]]},{"id":"e43","from":"n38","to":"n15","level":"2","points":[[150,-270]]},{"id":"e44","from":"n15","to":"n41","level":"2","points":[[250,-430]]},{"id":"e45","from":"n41","to":"n20","level":"2","points":[[220,-550]]},{"id":"e46","from":"n20","to":"n44","level":"2","points":[[200,-660]]},{"id":"e47","from":"n44","to":"n25","level":"2","points":[[130,-760]]},{"id":"e48","from":"n5","to":"n39","level":"1","points":[[400,20]]},{"id":"e49","from":"n39","to":"n10","level":"2","points":[[350,-120]]},{"id":"e50","from":"n10","to":"n16","level":"1","points":[[400,-220]]},{"id":"e51","from":"n16","to":"n42","level":"1","points":[[580,-400]]},{"id":"e52","from":"n42","to":"n21","level":"2","points":[[550,-530]]},{"id":"e53","from":"n21","to":"n45","level":"2","points":[[530,-680]]},{"id":"e54","from":"n45","to":"n26","level":"2","points":[[500,-780]]},{"id":"e55","from":"n6","to":"n11","level":"1","points":[[660,50]]},{"id":"e56","from":"n11","to":"n17","level":"1","points":[[720,-200]]},{"id":"e57","from":"n17","to":"n22","level":"1","points":[[780,-430]]},{"id":"e58","from":"n22","to":"n27","level":"1","points":[[780,-650]]},{"id":"e59","from":"n6","to":"n29","level":"1","points":[[800,120]]},{"id":"e60","from":"n29","to":"n34","level":"2","points":[[880,200]]},{"id":"e61","from":"n30","to":"n1","level":"2","points":[[-700,450]]},{"id":"e62","from":"n30","to":"n31","level":"2","points":[[-400,490]]},{"id":"e63","from":"n31","to":"n2","level":"2","points":[[-350,410]]},{"id":"e64","from":"n31","to":"n32","level":"2","points":[[0,465]]},{"id":"e65","from":"n32","to":"n4","level":"2","points":[[150,360]]},{"id":"e66","from":"n32","to":"n33","level":"2","points":[[350,425]]},{"id":"e67","from":"n33","to":"n5","level":"2","points":[[450,320]]},{"id":"e68","from":"n33","to":"n34","level":"2","points":[[680,375]]},{"id":"e69","from":"n34","to":"n6","level":"2","points":[[780,275]]},{"id":"e70","from":"n35","to":"n37","level":"2","points":[[-300,25]]},{"id":"e71","from":"n37","to":"n40","level":"2","points":[[-450,-300]]},{"id":"e72","from":"n38","to":"n39","level":"2","points":[[250,-190]]},{"id":"e73","from":"n39","to":"n11","level":"2","points":[[500,-100]]},{"id":"e74","from":"n41","to":"n42","level":"2","points":[[480,-450]]},{"id":"e75","from":"n44","to":"n45","level":"2","points":[[420,-710]]}]},"parks":[{"vertices":[[-550,180],[-420,200],[-380,280],[-400,380],[-480,400],[-580,350],[-600,250]]},{"vertices":[[-380,50],[-280,80],[-250,150],[-300,220],[-380,200],[-420,120]]},{"vertices":[[500,-550],[600,-520],[650,-580],[620,-680],[530,-700],[480,-630]]},{"vertices":[[-750,-350],[-650,-320],[-600,-400],[-680,-480],[-780,-450]]}],"zones":[{"boundary":[[-800,400],[-500,350],[-420,280],[-550,180],[-600,250],[-580,350],[-600,500],[-800,600]],"length":[12,25],"width":[10,18],"height":[15,35],"layout":"perimeter","coverage":0.45,"color":"#8B4513"},{"boundary":[[-500,350],[-200,300],[100,280],[-80,220],[-300,220],[-380,280],[-420,280]],"length":[15,30],"width":[12,22],"height":[20,50],"layout":"cluster","coverage":0.5,"color":"#CD853F"},{"boundary":[[100,280],[400,250],[500,400],[200,450],[50,150]],"length":[20,40],"width":[15,30],"height":[40,100],"layout":"grid","coverage":0.55,"color":"#696969"},{"boundary":[[400,250],[700,200],[850,350],[500,400]],"length":[18,35],"width":[14,28],"height":[30,80],"layout":"grid","coverage":0.5,"color":"#708090"},{"boundary":[[-600,100],[-300,50],[0,0],[-150,20],[-350,200],[-420,120],[-380,50]],"length":[10,20],"width":[8,16],"height":[12,30],"layout":"cluster","coverage":0.4,"color":"#A0522D"},{"boundary":[[0,0],[300,-50],[400,-200],[100,-180],[50,-90]],"length":[25,45],"width":[18,35],"height":[60,150],"layout":"grid","coverage":0.6,"color":"#4A4A4A"},{"boundary":[[300,-50],[600,-100],[720,-200],[500,-400],[400,-200]],"length":[20,38],"width":[15,28],"height":[45,120],"layout":"grid","coverage":0.55,"color":"#5A5A5A"},{"boundary":[[-700,-200],[-400,-250],[-250,-150],[-300,50],[-450,70],[-660,-50]],"length":[12,22],"width":[10,18],"height":[15,40],"layout":"perimeter","coverage":0.42,"color":"#8B7355"},{"boundary":[[-400,-250],[-100,-300],[-130,-420],[-320,-200]],"length":[14,26],"width":[11,20],"height":[18,45],"layout":"cluster","coverage":0.48,"color":"#9C8B7A"},{"boundary":[[-100,-300],[200,-350],[250,-430],[150,-430],[-130,-420]],"length":[16,30],"width":[12,24],"height":[25,60],"layout":"grid","coverage":0.52,"color":"#7A7A7A"},{"boundary":[[200,-350],[500,-400],[580,-400],[400,-200]],"length":[22,42],"width":[16,32],"height":[50,130],"layout":"grid","coverage":0.58,"color":"#606060"},{"boundary":[[500,-400],[800,-300],[780,-430],[650,-400]],"length":[18,34],"width":[14,26],"height":[35,90],"layout":"perimeter","coverage":0.45,"color":"#6B6B6B"},{"boundary":[[-650,-450],[-500,-500],[-325,-530],[-400,-750],[-650,-600],[-780,-450]],"length":[10,18],"width":[8,15],"height":[10,25],"layout":"cluster","coverage":0.35,"color":"#A67B5B"},{"boundary":[[-325,-530],[-150,-550],[0,-580],[-120,-630],[-200,-780],[-400,-750]],"length":[12,22],"width":[10,18],"height":[15,35],"layout":"perimeter","coverage":0.4,"color":"#997B66"},{"boundary":[[0,-580],[150,-600],[300,-500],[300,-630],[200,-660],[130,-760],[-50,-750],[-120,-630]],"length":[14,25],"width":[11,20],"height":[18,42],"layout":"grid","coverage":0.45,"color":"#8A7B6B"},{"boundary":[[300,-500],[450,-650],[530,-700],[600,-700],[650,-400],[500,-550]],"length":[16,28],"width":[12,22],"height":[22,55],"layout":"cluster","coverage":0.42,"color":"#7B7B7B"},{"boundary":[[600,-700],[750,-550],[800,-750],[600,-800],[500,-780]],"length":[15,26],"width":[12,20],"height":[20,50],"layout":"perimeter","coverage":0.38,"color":"#8B8B8B"}],"landmarks":[{"center":[180,50],"size":[60,50,180],"rotation":0.15},{"center":[-480,320],"size":[40,35,45],"rotation":-0.1},{"center":[550,320],"size":[55,45,140],"rotation":0.08},{"center":[50,-250],"size":[45,40,95],"rotation":-0.05},{"center":[450,-320],"size":[70,55,200],"rotation":0.12},{"center":[-350,-380],"size":[35,30,50],"rotation":0.2},{"center":[700,-180],"size":[50,45,110],"rotation":-0.08},{"center":[-150,400],"size":[40,35,65],"rotation":0.1},{"center":[300,-700],"size":[45,38,75],"rotation":-0.15}]}}`;
+      // const result = `{"thinking":"London is characterized by the River Thames flowing west to east through the city, with iconic landmarks like the Tower of London, Big Ben, St Paul's Cathedral, and the London Eye. The city has an organic, medieval street pattern in the center (City of London) with more planned areas in the West End. Key features: 1) River Thames curving through the city from west to east, 2) Historic core with irregular streets, 3) Major roads radiating from center, 4) Hyde Park and other green spaces, 5) Mix of historic and modern architecture, 6) Landmarks along the river. I'll create a layout with the Thames flowing through, major bridges, historic zones with smaller buildings, financial district (City of London), West End shopping/theatre district, and residential areas.","world":{"date":"06/22/2025, 12:00:00 PM","address":"London, United Kingdom","latitude":51.5074,"longitude":-0.1278},"city":{"rivers":[{"vertices":[[-1000,50],[-900,80],[-700,120],[-500,100],[-300,60],[-100,20],[100,-20],[300,-60],[500,-40],[700,0],[900,30],[1000,50],[1000,-50],[900,-70],[700,-100],[500,-140],[300,-160],[100,-120],[-100,-80],[-300,-40],[-500,0],[-700,20],[-900,-20],[-1000,-50]]}],"roads":{"nodes":[{"id":"n1","position":[-800,300]},{"id":"n2","position":[-500,300]},{"id":"n3","position":[-200,300]},{"id":"n4","position":[100,300]},{"id":"n5","position":[400,300]},{"id":"n6","position":[700,300]},{"id":"n7","position":[-800,500]},{"id":"n8","position":[-500,500]},{"id":"n9","position":[-200,500]},{"id":"n10","position":[100,500]},{"id":"n11","position":[400,500]},{"id":"n12","position":[700,500]},{"id":"n13","position":[-800,700]},{"id":"n14","position":[-500,700]},{"id":"n15","position":[-200,700]},{"id":"n16","position":[100,700]},{"id":"n17","position":[400,700]},{"id":"n18","position":[700,700]},{"id":"n19","position":[-800,-200]},{"id":"n20","position":[-500,-200]},{"id":"n21","position":[-200,-200]},{"id":"n22","position":[100,-200]},{"id":"n23","position":[400,-200]},{"id":"n24","position":[700,-200]},{"id":"n25","position":[-800,-400]},{"id":"n26","position":[-500,-400]},{"id":"n27","position":[-200,-400]},{"id":"n28","position":[100,-400]},{"id":"n29","position":[400,-400]},{"id":"n30","position":[700,-400]},{"id":"n31","position":[-800,-650]},{"id":"n32","position":[-500,-650]},{"id":"n33","position":[-200,-650]},{"id":"n34","position":[100,-650]},{"id":"n35","position":[400,-650]},{"id":"n36","position":[700,-650]},{"id":"n37","position":[-650,300]},{"id":"n38","position":[-350,300]},{"id":"n39","position":[-50,300]},{"id":"n40","position":[250,300]},{"id":"n41","position":[550,300]},{"id":"n42","position":[-650,500]},{"id":"n43","position":[-350,500]},{"id":"n44","position":[-50,500]},{"id":"n45","position":[250,500]},{"id":"n46","position":[550,500]},{"id":"n47","position":[-650,-400]},{"id":"n48","position":[-350,-400]},{"id":"n49","position":[-50,-400]},{"id":"n50","position":[250,-400]},{"id":"n51","position":[550,-400]},{"id":"n52","position":[-300,150]},{"id":"n53","position":[0,150]},{"id":"n54","position":[300,150]},{"id":"n55","position":[600,150]},{"id":"n56","position":[-400,-300]},{"id":"n57","position":[-100,-300]},{"id":"n58","position":[200,-300]},{"id":"n59","position":[500,-300]}],"edges":[{"id":"e1","from":"n1","to":"n2","level":"1","points":[]},{"id":"e2","from":"n2","to":"n3","level":"1","points":[]},{"id":"e3","from":"n3","to":"n4","level":"1","points":[]},{"id":"e4","from":"n4","to":"n5","level":"1","points":[]},{"id":"e5","from":"n5","to":"n6","level":"1","points":[]},{"id":"e6","from":"n7","to":"n8","level":"1","points":[]},{"id":"e7","from":"n8","to":"n9","level":"1","points":[]},{"id":"e8","from":"n9","to":"n10","level":"1","points":[]},{"id":"e9","from":"n10","to":"n11","level":"1","points":[]},{"id":"e10","from":"n11","to":"n12","level":"1","points":[]},{"id":"e11","from":"n13","to":"n14","level":"1","points":[]},{"id":"e12","from":"n14","to":"n15","level":"1","points":[]},{"id":"e13","from":"n15","to":"n16","level":"1","points":[]},{"id":"e14","from":"n16","to":"n17","level":"1","points":[]},{"id":"e15","from":"n17","to":"n18","level":"1","points":[]},{"id":"e16","from":"n19","to":"n20","level":"1","points":[]},{"id":"e17","from":"n20","to":"n21","level":"1","points":[]},{"id":"e18","from":"n21","to":"n22","level":"1","points":[]},{"id":"e19","from":"n22","to":"n23","level":"1","points":[]},{"id":"e20","from":"n23","to":"n24","level":"1","points":[]},{"id":"e21","from":"n25","to":"n26","level":"1","points":[]},{"id":"e22","from":"n26","to":"n27","level":"1","points":[]},{"id":"e23","from":"n27","to":"n28","level":"1","points":[]},{"id":"e24","from":"n28","to":"n29","level":"1","points":[]},{"id":"e25","from":"n29","to":"n30","level":"1","points":[]},{"id":"e26","from":"n31","to":"n32","level":"1","points":[]},{"id":"e27","from":"n32","to":"n33","level":"1","points":[]},{"id":"e28","from":"n33","to":"n34","level":"1","points":[]},{"id":"e29","from":"n34","to":"n35","level":"1","points":[]},{"id":"e30","from":"n35","to":"n36","level":"1","points":[]},{"id":"e31","from":"n1","to":"n7","level":"1","points":[]},{"id":"e32","from":"n7","to":"n13","level":"1","points":[]},{"id":"e33","from":"n2","to":"n8","level":"1","points":[]},{"id":"e34","from":"n8","to":"n14","level":"1","points":[]},{"id":"e35","from":"n3","to":"n9","level":"1","points":[]},{"id":"e36","from":"n9","to":"n15","level":"1","points":[]},{"id":"e37","from":"n4","to":"n10","level":"1","points":[]},{"id":"e38","from":"n10","to":"n16","level":"1","points":[]},{"id":"e39","from":"n5","to":"n11","level":"1","points":[]},{"id":"e40","from":"n11","to":"n17","level":"1","points":[]},{"id":"e41","from":"n6","to":"n12","level":"1","points":[]},{"id":"e42","from":"n12","to":"n18","level":"1","points":[]},{"id":"e43","from":"n19","to":"n25","level":"1","points":[]},{"id":"e44","from":"n25","to":"n31","level":"1","points":[]},{"id":"e45","from":"n20","to":"n26","level":"1","points":[]},{"id":"e46","from":"n26","to":"n32","level":"1","points":[]},{"id":"e47","from":"n21","to":"n27","level":"1","points":[]},{"id":"e48","from":"n27","to":"n33","level":"1","points":[]},{"id":"e49","from":"n22","to":"n28","level":"1","points":[]},{"id":"e50","from":"n28","to":"n34","level":"1","points":[]},{"id":"e51","from":"n23","to":"n29","level":"1","points":[]},{"id":"e52","from":"n29","to":"n35","level":"1","points":[]},{"id":"e53","from":"n24","to":"n30","level":"1","points":[]},{"id":"e54","from":"n30","to":"n36","level":"1","points":[]},{"id":"e55","from":"n1","to":"n37","level":"2","points":[]},{"id":"e56","from":"n37","to":"n2","level":"2","points":[]},{"id":"e57","from":"n2","to":"n38","level":"2","points":[]},{"id":"e58","from":"n38","to":"n3","level":"2","points":[]},{"id":"e59","from":"n3","to":"n39","level":"2","points":[]},{"id":"e60","from":"n39","to":"n4","level":"2","points":[]},{"id":"e61","from":"n4","to":"n40","level":"2","points":[]},{"id":"e62","from":"n40","to":"n5","level":"2","points":[]},{"id":"e63","from":"n5","to":"n41","level":"2","points":[]},{"id":"e64","from":"n41","to":"n6","level":"2","points":[]},{"id":"e65","from":"n7","to":"n42","level":"2","points":[]},{"id":"e66","from":"n42","to":"n8","level":"2","points":[]},{"id":"e67","from":"n8","to":"n43","level":"2","points":[]},{"id":"e68","from":"n43","to":"n9","level":"2","points":[]},{"id":"e69","from":"n9","to":"n44","level":"2","points":[]},{"id":"e70","from":"n44","to":"n10","level":"2","points":[]},{"id":"e71","from":"n10","to":"n45","level":"2","points":[]},{"id":"e72","from":"n45","to":"n11","level":"2","points":[]},{"id":"e73","from":"n11","to":"n46","level":"2","points":[]},{"id":"e74","from":"n46","to":"n12","level":"2","points":[]},{"id":"e75","from":"n37","to":"n42","level":"2","points":[]},{"id":"e76","from":"n38","to":"n43","level":"2","points":[]},{"id":"e77","from":"n39","to":"n44","level":"2","points":[]},{"id":"e78","from":"n40","to":"n45","level":"2","points":[]},{"id":"e79","from":"n41","to":"n46","level":"2","points":[]},{"id":"e80","from":"n25","to":"n47","level":"2","points":[]},{"id":"e81","from":"n47","to":"n26","level":"2","points":[]},{"id":"e82","from":"n26","to":"n48","level":"2","points":[]},{"id":"e83","from":"n48","to":"n27","level":"2","points":[]},{"id":"e84","from":"n27","to":"n49","level":"2","points":[]},{"id":"e85","from":"n49","to":"n28","level":"2","points":[]},{"id":"e86","from":"n28","to":"n50","level":"2","points":[]},{"id":"e87","from":"n50","to":"n29","level":"2","points":[]},{"id":"e88","from":"n29","to":"n51","level":"2","points":[]},{"id":"e89","from":"n51","to":"n30","level":"2","points":[]},{"id":"e90","from":"n3","to":"n52","level":"2","points":[]},{"id":"e91","from":"n52","to":"n21","level":"2","points":[]},{"id":"e92","from":"n4","to":"n53","level":"2","points":[]},{"id":"e93","from":"n53","to":"n22","level":"2","points":[]},{"id":"e94","from":"n5","to":"n54","level":"2","points":[]},{"id":"e95","from":"n54","to":"n23","level":"2","points":[]},{"id":"e96","from":"n6","to":"n55","level":"2","points":[]},{"id":"e97","from":"n55","to":"n24","level":"2","points":[]},{"id":"e98","from":"n20","to":"n56","level":"2","points":[]},{"id":"e99","from":"n56","to":"n26","level":"2","points":[]},{"id":"e100","from":"n21","to":"n57","level":"2","points":[]},{"id":"e101","from":"n57","to":"n27","level":"2","points":[]},{"id":"e102","from":"n22","to":"n58","level":"2","points":[]},{"id":"e103","from":"n58","to":"n28","level":"2","points":[]},{"id":"e104","from":"n23","to":"n59","level":"2","points":[]},{"id":"e105","from":"n59","to":"n29","level":"2","points":[]}]},"parks":[{"vertices":[[-750,350],[-550,350],[-550,650],[-750,650]]},{"vertices":[[150,350],[350,350],[350,480],[150,480]]},{"vertices":[[-150,-450],[50,-450],[50,-600],[-150,-600]]},{"vertices":[[500,-450],[650,-450],[650,-600],[500,-600]]}],"zones":[{"boundary":[[-800,300],[-500,300],[-500,700],[-800,700]],"length":[15,30],"width":[12,25],"height":[12,35],"layout":"perimeter","coverage":0.4,"color":"#8B7355"},{"boundary":[[-500,300],[-200,300],[-200,700],[-500,700]],"length":[20,40],"width":[15,30],"height":[20,50],"layout":"grid","coverage":0.55,"color":"#696969"},{"boundary":[[-200,300],[100,300],[100,700],[-200,700]],"length":[25,50],"width":[20,40],"height":[25,60],"layout":"grid","coverage":0.5,"color":"#5F5F5F"},{"boundary":[[100,300],[400,300],[400,700],[100,700]],"length":[18,35],"width":[14,28],"height":[15,40],"layout":"perimeter","coverage":0.45,"color":"#708090"},{"boundary":[[400,300],[700,300],[700,700],[400,700]],"length":[20,38],"width":[15,30],"height":[18,45],"layout":"grid","coverage":0.5,"color":"#6B6B6B"},{"boundary":[[-800,-200],[-500,-200],[-500,-650],[-800,-650]],"length":[12,25],"width":[10,20],"height":[10,25],"layout":"cluster","coverage":0.35,"color":"#A0522D"},{"boundary":[[-500,-200],[-200,-200],[-200,-650],[-500,-650]],"length":[15,30],"width":[12,24],"height":[12,30],"layout":"grid","coverage":0.45,"color":"#7B7B7B"},{"boundary":[[-200,-200],[100,-200],[100,-650],[-200,-650]],"length":[18,35],"width":[14,28],"height":[15,38],"layout":"grid","coverage":0.5,"color":"#666666"},{"boundary":[[100,-200],[400,-200],[400,-650],[100,-650]],"length":[20,40],"width":[16,32],"height":[18,45],"layout":"grid","coverage":0.55,"color":"#5A5A5A"},{"boundary":[[400,-200],[700,-200],[700,-650],[400,-650]],"length":[25,50],"width":[20,40],"height":[30,80],"layout":"grid","coverage":0.6,"color":"#4A4A4A"}],"landmarks":[{"center":[550,-350],"size":[60,60,180],"rotation":0},{"center":[-100,200],"size":[80,40,100],"rotation":0.1},{"center":[200,-500],"size":[50,50,135],"rotation":-0.05},{"center":[-400,450],"size":[45,70,90],"rotation":0.2},{"center":[300,550],"size":[55,55,110],"rotation":0},{"center":[-600,-350],"size":[40,60,75],"rotation":-0.15},{"center":[0,-300],"size":[70,35,65],"rotation":0.08},{"center":[600,450],"size":[50,50,95],"rotation":0.12}]}}`;
 
       if (result) {
         processResult(result);

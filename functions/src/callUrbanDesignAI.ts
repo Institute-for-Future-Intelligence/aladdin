@@ -40,200 +40,124 @@ import Anthropic from '@anthropic-ai/sdk';
 // `;
 
 const RULES = `
-你是一个城市布局生成器。根据用户描述的城市风格，生成包含道路网络和建筑布局的完整城市数据。
+你是一个城市布局生成器。根据用户描述的城市风格，生成完整的城市数据。
 
-城市包括河流（可省略），道路，公园，地标建筑，和区域。
+### 坐标系
+- 中心点：[0, 0]
+- 范围：x, y ∈ [-1000, 1000]
+- 方向：x正向东，y正向北
+- 单位：米
 
-### Location
+  
+### 数据结构
+
+{
+  "world": {
+    "date": string,
+    "address": string,
+    "latitude": number,
+    "longitude": number,
+  },
+  "city": {
+    "roads": {
+      "nodes": [
+        { "id": string, "position": [x, y] }
+      ],
+      "edges": [
+        { "id": string, "from": string, "to": string, "level": 1 | 2, "points?": [[x, y], ...] }
+      ]
+    },
+    "rivers": [
+      { "vertices": [[x, y], ...] }
+    ],
+    "parks": [
+      { "vertices": [[x, y], ...] }
+    ],
+    "landmarks": [
+      { "center": [x, y], "size": [宽, 深, 高], "rotation": number }
+    ],
+    "zones": [
+      {
+        "boundary": [[x, y], ...],
+        "length": [min, max],
+        "width": [min, max],
+        "height": [min, max],
+        "coverage": number,
+        "layout": "grid" | "perimeter" | "cluster"
+      }
+    ],
+  },
+  "thinking": string
+}
+
+### 字段说明
+
+## Location
 If not specified, the default address is New York City, USA.
   - address
   - latitude and longitude
 
-### Date and time
+## Date and time
   - a string in a format MM/dd/yyyy, hh:mm:ss a. If not specified, set the default date and time to 06/22/2025, 12:00:00 PM
 
-### 通用规则
-- 城市范围大约为：1500 x 2000， 不需要很精确
-- 城市中心落在原点[0, 0]
+## roads
+- nodes: 道路交叉点和端点
+- edges: 道路段
+  - id: 边唯一标识
+  - from: 起点节点 id
+  - to: 终点节点 id
+  - level 1 = 主干道
+  - level 2 = 支路
+  - points = 曲线中间点（可选，不含首尾）
 
-### 河流规则
-- 根据用户描述或者城市风格来确定是否需要河流，如果没有河流，返回空数组
-- vertices：河流边界多边形顶点数组 [[x1, y1], [x2, y2], ...]
-- 河流是封闭多边形，首尾顶点会自动连接
-- 河流宽度通过多边形形状表达（两岸的点）
-- 河流应自然弯曲，避免生硬的直线
-- 河流两岸应有公园
-- 河流两岸应有道路连接
-- 河流可以有支流，支流也用独立的多边形表示
+## rivers
+- 狭长多边形，可穿越城市
+- 无河流时返回空数组
 
-### 道路规则
-- 道路代表城市路网的主干道
-- 道路不要过于复杂
-- 返回值为坐标点数组
-- 2个点 = 直线，3+个点 = 折线/曲线
-- 闭合环形道路首尾坐标相同
-- 圆形用8-12个点近似
+## parks
+- 封闭多边形，数量建议 2-5 个
+- 不与河流重叠
 
-### 公园规则
-- vertices：公园边界多边形顶点数组 [[x1, y1], [x2, y2], ...]
-- 顶点按顺序连接形成公园边界
-- 可以是矩形（4个点）或任意多边形
-- 公园不要和地标以及建筑重叠
+## landmarks
+- 特殊建筑：摩天大楼、纪念碑等
+- 位置避免对称排列
+- rotation 为弧度
+- 数量建议5-10个
 
-### 建筑区域规则
-- boundary：区域边界多边形
-- 区域可以很大，跨越多条道路
-- 相邻且参数相同的区域并为一个大区域
-- 字段说明：
-  - size：建筑尺寸 [宽, 深]
-  - height：高度范围 [最小, 最大]
-  - spacing：建筑间距
-  - coverage：覆盖率 0-1
-  - layout："fill"(填充) | "perimeter"(周边) | "scatter"(分散)
-- 区域只需写与默认值不同的字段
-- 区域需要覆盖城市大部分面积
-- 区域不要相互重叠和相交
+## zones
+- boundary: 边界多边形，与道路对齐
+- length/width/height: 建筑尺寸范围
+- coverage: 建筑覆盖率 0-1
+- layout:
+  - grid = 网格排列
+  - perimeter = 沿边缘，中间留空
+  - cluster = 随机散落
 
-### 地标规则
-- 格式：[{center: [x, y], size: [宽, 深, 高度], rotation: 旋转角度}]
-- 用于摩天大楼、纪念碑等特殊建筑
-- 地标建筑位置不要相互对称排列！！！
+## thinking
+- 英文记录生成思路
 
-### 优化原则
-1. 区域数量建议5-15个
-2. 参数相似的相邻区域合并为大区域
-3. 只在需要不同参数时才拆分区域
-4. 公园数量建议2-5个
+### 生成规则
 
-### 输出格式
+## 道路
+- 主干道构成骨架
+- 支路填充，连接主干道
+- 交叉处必须有节点
+- edge 的 from/to 必须引用已有节点
 
-严格输出以下JSON结构，不要添加任何解释文字：
+## 区域
+- 根据用户描述或者城市风格将城市划分成不同区域
+- 区域之间不重叠、不相交
+- 每个区域大小没有限制，区域数量不要过多，但是总面积覆盖城市90%以上
+- 区域由道路划分
+- 建筑颜色以神色为主，不要太鲜艳
 
-{
-  "city": {
-    "world": {
-      "date": <date>,
-       "address": <address>,
-       "latitude": <lat>,
-       "longitude": <lng>,
-      },
-    },
+### 城市案例
+- 曼哈顿：河流应该是南北走向，位置应该在城市的东西两侧。应该包含broad way和中央公园
+- 巴黎：河流不要穿过正中心，应该偏离中心
 
-    "bounds": [1500, 2000],
-
-    "roads": {
-      "width": <道路宽度>,
-      "lines": [
-        [[x1, y1], [x2, y2]],
-        [[x1, y1], [x2, y2], [x3, y3], ...]
-      ]
-    },
-
-    "parks": [
-      {"vertices": [[x1, y1], [x2, y2], ...]}
-    ],
-
-    "buildings": {
-      "defaults": {
-        "size": [<宽>, <深>],
-        "height": [<最小高度>, <最大高度>],
-        "spacing": <间距>,
-        "coverage": <覆盖率0-1>,
-        "layout": "<布局模式>"
-      },
-      "blocks": [
-        {
-          "boundary": [[x1, y1], [x2, y2], ...],
-          "height": [<最小>, <最大>],
-          "coverage": <覆盖率>,
-          "layout": "<布局模式>"
-        }
-      ],
-      "landmarks": [
-        {
-          "center" : [x, y],
-          "size": [宽, 深, 高度],
-          "rotation": 旋转角度
-        }
-      ]
-    }
-  }
-}
-
+### 输出要求
+只返回纯 JSON，禁止 markdown 代码块，直接以 { 开头。
 `;
-
-// export const callUrbanDesignOpenAI = async (
-//   apiKey: string | undefined,
-//   inputMessage: [],
-//   fromBrowser = false,
-//   reasoningEffort: string,
-// ) => {
-//   const options = {
-//     endpoint,
-//     apiKey,
-//     deployment,
-//     apiVersion,
-//     dangerouslyAllowBrowser: fromBrowser,
-//     reasoning_effort: reasoningEffort,
-//   };
-
-//   const client = new AzureOpenAI(options);
-
-//   const response = await client.chat.completions.create({
-//     messages: [{ role: 'system', content: RULES }, ...inputMessage],
-//     reasoning_effort: reasoningEffort as OpenAI.ReasoningEffort,
-//     max_completion_tokens: 100000,
-//     model: modelName,
-//     response_format: {
-//       type: 'json_schema',
-//       json_schema: {
-//         name: 'UrbanDesignGenerator',
-//         strict: true,
-//         schema: {
-//           type: 'object',
-//           properties: {
-//             thinking: {
-//               type: 'string',
-//             },
-//             elements: {
-//               type: 'array',
-//               items: {
-//                 type: 'object',
-//                 anyOf: [
-//                   {
-//                     type: 'object',
-//                     properties: {
-//                       type: { type: 'string', enum: ['Foundation'] },
-//                       center: { type: 'array', items: { type: 'number' } },
-//                       size: { type: 'array', items: { type: 'number' } },
-//                       rotation: { type: 'number' },
-//                     },
-//                     required: ['type', 'center', 'size', 'rotation'],
-//                     additionalProperties: false,
-//                   },
-//                   {
-//                     type: 'object',
-//                     properties: {
-//                       type: { type: 'string', enum: ['Cuboid'] },
-//                       center: { type: 'array', items: { type: 'number' } },
-//                       size: { type: 'array', items: { type: 'number' } },
-//                       rotation: { type: 'number' },
-//                     },
-//                     required: ['type', 'center', 'size', 'rotation'],
-//                     additionalProperties: false,
-//                   },
-//                 ],
-//               },
-//             },
-//           },
-//           required: ['elements', 'thinking'],
-//           additionalProperties: false,
-//         },
-//       },
-//     },
-//   });
-//   return response;
-// };
 
 export const callUrbanDesignClaudeAI = async (apiKey: string | undefined, inputMessage: [], fromBrowser = false) => {
   const anthropic = new Anthropic({ apiKey, dangerouslyAllowBrowser: fromBrowser });
@@ -257,20 +181,20 @@ export const callUrbanDesignClaudeAI = async (apiKey: string | undefined, inputM
           thinking: {
             type: 'string',
           },
+          world: {
+            type: 'object',
+            properties: {
+              date: { type: 'string' },
+              address: { type: 'string' },
+              latitude: { type: 'number' },
+              longitude: { type: 'number' },
+            },
+            required: ['date', 'address', 'latitude', 'longitude'],
+            additionalProperties: false,
+          },
           city: {
             type: 'object',
             properties: {
-              world: {
-                type: 'object',
-                properties: {
-                  date: { type: 'string' },
-                  address: { type: 'string' },
-                  latitude: { type: 'number' },
-                  longitude: { type: 'number' },
-                },
-                required: ['date', 'address', 'latitude', 'longitude'],
-                additionalProperties: false,
-              },
               rivers: {
                 type: 'array',
                 items: {
@@ -285,13 +209,35 @@ export const callUrbanDesignClaudeAI = async (apiKey: string | undefined, inputM
               roads: {
                 type: 'object',
                 properties: {
-                  width: { type: 'number' },
-                  lines: {
+                  nodes: {
                     type: 'array',
-                    items: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+                    items: {
+                      type: 'object',
+                      required: ['id', 'position'],
+                      additionalProperties: false,
+                      properties: {
+                        id: { type: 'string' },
+                        position: { type: 'array', items: { type: 'number' } },
+                      },
+                    },
+                  },
+                  edges: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      required: ['id', 'from', 'to', 'level', 'points'],
+                      additionalProperties: false,
+                      properties: {
+                        id: { type: 'string' },
+                        from: { type: 'string' },
+                        to: { type: 'string' },
+                        level: { type: 'string', enum: ['1', '2'] },
+                        points: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+                      },
+                    },
                   },
                 },
-                required: ['width', 'lines'],
+                required: ['nodes', 'edges'],
                 additionalProperties: false,
               },
               parks: {
@@ -305,60 +251,42 @@ export const callUrbanDesignClaudeAI = async (apiKey: string | undefined, inputM
                   additionalProperties: false,
                 },
               },
-              buildings: {
-                type: 'object',
-                properties: {
-                  defaults: {
-                    type: 'object',
-                    properties: {
-                      size: { type: 'array', items: { type: 'number' } },
-                      height: { type: 'array', items: { type: 'number' } },
-                      spacing: { type: 'number' },
-                      layout: { type: 'string', enum: ['fill', 'perimeter', 'scatter'] },
-                      coverage: { type: 'number' },
-                    },
-                    required: ['size', 'height', 'spacing', 'layout', 'coverage'],
-                    additionalProperties: false,
-                  },
-                  blocks: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        boundary: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
-                        size: { type: 'array', items: { type: 'number' } },
-                        height: { type: 'array', items: { type: 'number' } },
-                        spacing: { type: 'number' },
-                        layout: { type: 'string', enum: ['fill', 'perimeter', 'scatter'] },
-                        coverage: { type: 'number' },
-                      },
-                      required: ['boundary'],
-                      additionalProperties: false,
-                    },
-                  },
-                  landmarks: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        center: { type: 'array', items: { type: 'number' } },
-                        size: { type: 'array', items: { type: 'number' } },
-                        rotation: { type: 'number' },
-                      },
-                      required: ['center', 'size', 'rotation'],
-                      additionalProperties: false,
-                    },
+              zones: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  required: ['boundary', 'length', 'width', 'height', 'coverage', 'layout', 'color'],
+                  additionalProperties: false,
+                  properties: {
+                    boundary: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+                    length: { type: 'array', items: { type: 'number' } },
+                    width: { type: 'array', items: { type: 'number' } },
+                    height: { type: 'array', items: { type: 'number' } },
+                    layout: { type: 'string', enum: ['grid', 'perimeter', 'cluster'] },
+                    coverage: { type: 'number' },
+                    color: { type: 'string' },
                   },
                 },
-                required: ['defaults', 'blocks', 'landmarks'],
-                additionalProperties: false,
+              },
+              landmarks: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  required: ['center', 'size', 'rotation'],
+                  additionalProperties: false,
+                  properties: {
+                    center: { type: 'array', items: { type: 'number' } },
+                    size: { type: 'array', items: { type: 'number' } },
+                    rotation: { type: 'number' },
+                  },
+                },
               },
             },
-            required: ['roads', 'buildings', 'parks', 'rivers', 'world'],
+            required: ['roads', 'parks', 'rivers', 'landmarks', 'zones'],
             additionalProperties: false,
           },
         },
-        required: ['city', 'thinking'],
+        required: ['city', 'thinking', 'world'],
         additionalProperties: false,
       },
     },

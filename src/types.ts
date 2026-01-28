@@ -339,11 +339,13 @@ export enum ObjectType {
   Flower = 'Flower',
   Polygon = 'Polygon',
   PolygonVertex = 'Polygon Vertex',
-  PolygonCuboid = 'Polygon Cuboid',
+  Prism = 'Prism',
   Light = 'Light',
   BatteryStorage = 'Battery Storage',
   Ruler = 'Ruler',
   Protractor = 'Protractor',
+  InstancedCuboid = 'Instanced Cuboid',
+  InstancedFoundation = 'Instanced Foundation',
   None = 'None',
 }
 
