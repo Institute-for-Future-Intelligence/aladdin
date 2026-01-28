@@ -20,10 +20,12 @@ exports.callAI = onCall(
         const reasoningEffort = req.data.reasoningEffort ?? 'medium';
         console.log('Reasoning Effort:', reasoningEffort);
         if (type === 'building') {
+          console.log('calling OpenAI...');
           const response = await callBuildingAI(azureApiKey, prompt, false, reasoningEffort);
           console.log('Returned:', response.choices[0].message.content);
           return { text: response.choices[0].message.content };
         } else if (type === 'solar power tower') {
+          console.log('calling OpenAI...');
           const response = await callSolarPowerTowerOpenAI(azureApiKey, prompt, false, reasoningEffort);
           console.log('Returned:', response.choices[0].message.content);
           return { text: response.choices[0].message.content };
@@ -31,17 +33,18 @@ exports.callAI = onCall(
       } else if (aIModel === AI_MODELS_NAME['Claude Opus-4.5']) {
         const claudeApiKey = process.env.CLAUDE_API_KEY;
         if (type === 'building') {
+          console.log('calling Claude...');
           const response = await callBuildingClaudeAI(claudeApiKey, prompt, false);
           console.log('Returned:', (response.content[0] as any).text);
           return { text: (response.content[0] as any).text };
         } else if (type === 'solar power tower') {
+          console.log('calling Claude...');
           const response = await callSolarPowerTowerClaudeAI(claudeApiKey, prompt, false);
-          console.log('Prompt:', prompt);
           console.log('Returned:', (response.content[0] as any).text);
           return { text: (response.content[0] as any).text };
         } else if (type === 'urban') {
+          console.log('calling Claude...');
           const response = await callUrbanDesignClaudeAI(claudeApiKey, prompt, false);
-          console.log('Prompt:', prompt);
           console.log('Returned:', (response.content[0] as any).text);
           return { text: (response.content[0] as any).text };
         }
