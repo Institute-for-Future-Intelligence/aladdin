@@ -71,6 +71,14 @@ export class ProjectUtil {
       if (!hidden?.includes('towerHeight')) a.push('towerHeight');
       if (!hidden?.includes('packingDensity')) a.push('packingDensity');
       return a;
+    } else if (projectType === DesignProblem.URBAN_DESIGN) {
+      const a: string[] = [];
+      if (!hidden?.includes('numberOfBuildings')) a.push('numberOfBuildings');
+      if (!hidden?.includes('packingDensity')) a.push('packingDensity');
+      if (!hidden?.includes('greenspaceRatio')) a.push('greenspaceRatio');
+      if (!hidden?.includes('totalArea')) a.push('totalArea');
+      if (!hidden?.includes('totalRoadLength')) a.push('totalRoadLength');
+      return a;
     }
     return [];
   }
@@ -111,6 +119,14 @@ export class ProjectUtil {
       if (!hidden?.includes('heliostatCount')) a.push(i18n.t('solutionSpace.heliostatCount', l));
       if (!hidden?.includes('towerHeight')) a.push(i18n.t('solutionSpace.TowerHeight', l));
       if (!hidden?.includes('packingDensity')) a.push(i18n.t('solutionSpace.PackingDensity', l));
+      return a;
+    } else if (projectType === DesignProblem.URBAN_DESIGN) {
+      const a: string[] = [];
+      if (!hidden?.includes('numberOfBuildings')) a.push(i18n.t('solutionSpace.NumberOfBuildings', l));
+      if (!hidden?.includes('packingDensity')) a.push(i18n.t('solutionSpace.PackingDensity', l));
+      if (!hidden?.includes('greenspaceRatio')) a.push(i18n.t('solutionSpace.GreenspaceRatio', l));
+      if (!hidden?.includes('totalArea')) a.push(i18n.t('solutionSpace.TotalArea', l));
+      if (!hidden?.includes('totalRoadLength')) a.push(i18n.t('solutionSpace.TotalRoadLength', l));
       return a;
     }
     return [];
@@ -153,6 +169,14 @@ export class ProjectUtil {
       if (!hidden?.includes('towerHeight')) a.push('number');
       if (!hidden?.includes('packingDensity')) a.push('number');
       return a;
+    } else if (projectType === DesignProblem.URBAN_DESIGN) {
+      const a: string[] = [];
+      if (!hidden?.includes('numberOfBuildings')) a.push('number');
+      if (!hidden?.includes('packingDensity')) a.push('number');
+      if (!hidden?.includes('greenspaceRatio')) a.push('number');
+      if (!hidden?.includes('totalArea')) a.push('number');
+      if (!hidden?.includes('totalRoadLength')) a.push('number');
+      return a;
     }
     return [];
   }
@@ -193,6 +217,14 @@ export class ProjectUtil {
       if (!hidden?.includes('heliostatCount')) a.push(0);
       if (!hidden?.includes('towerHeight')) a.push(1);
       if (!hidden?.includes('packingDensity')) a.push(0);
+      return a;
+    } else if (projectType === DesignProblem.URBAN_DESIGN) {
+      const a: number[] = [];
+      if (!hidden?.includes('numberOfBuildings')) a.push(0);
+      if (!hidden?.includes('packingDensity')) a.push(0);
+      if (!hidden?.includes('greenspaceRatio')) a.push(0);
+      if (!hidden?.includes('totalArea')) a.push(2);
+      if (!hidden?.includes('totalRoadLength')) a.push(2);
       return a;
     }
     return [];
@@ -235,6 +267,14 @@ export class ProjectUtil {
       if (!hidden?.includes('towerHeight')) a.push(false);
       if (!hidden?.includes('packingDensity')) a.push(false);
       return a;
+    } else if (projectType === DesignProblem.URBAN_DESIGN) {
+      const a: boolean[] = [];
+      if (!hidden?.includes('numberOfBuildings')) a.push(true);
+      if (!hidden?.includes('packingDensity')) a.push(false);
+      if (!hidden?.includes('greenspaceRatio')) a.push(false);
+      if (!hidden?.includes('totalArea')) a.push(false);
+      if (!hidden?.includes('totalRoadLength')) a.push(false);
+      return a;
     }
     return [];
   }
@@ -276,6 +316,14 @@ export class ProjectUtil {
       if (!hidden?.includes('towerHeight')) a.push(' ' + i18n.t('word.MeterAbbreviation', l));
       if (!hidden?.includes('packingDensity')) a.push('%');
       return a;
+    } else if (projectType === DesignProblem.URBAN_DESIGN) {
+      const a: string[] = [];
+      if (!hidden?.includes('numberOfBuildings')) a.push('');
+      if (!hidden?.includes('packingDensity')) a.push('%');
+      if (!hidden?.includes('greenspaceRatio')) a.push('%');
+      if (!hidden?.includes('totalArea')) a.push(' km²');
+      if (!hidden?.includes('totalRoadLength')) a.push(' km');
+      return a;
     }
     return [];
   }
@@ -286,10 +334,12 @@ export class ProjectUtil {
     if (variable === 'meanYearlyYield') return 'kWh';
     if (variable === 'totalYearlyCost') return 'K';
     if (variable === 'yearlyProfit') return 'K';
-    if (variable === 'floorArea') return 'm²';
-    if (variable === 'volume') return 'm³';
-    if (variable === 'surfaceArea') return 'm²';
     if (variable === 'buildingOrientation') return '°';
+    if (variable === 'volume') return 'm³';
+    if (variable === 'floorArea') return 'm²';
+    if (variable === 'surfaceArea') return 'm²';
+    if (variable === 'totalRoadLength') return 'km';
+    if (variable === 'totalArea') return 'km²';
     if (variable === 'heating') return 'kWh';
     if (variable === 'cooling') return 'kWh';
     if (variable === 'solar') return 'kWh';
@@ -301,8 +351,8 @@ export class ProjectUtil {
       case 'heliostatLength':
       case 'heliostatWidth':
       case 'towerHeight':
-        return i18n.t('word.MeterAbbreviation', l);
       case 'packingDensity':
+      case 'greenspaceRatio':
         return '%';
     }
     return '';
@@ -390,6 +440,18 @@ export class ProjectUtil {
         break;
       case 'packingDensity':
         datum[axis] = design.packingDensity;
+        break;
+      case 'numberOfBuildings':
+        datum[axis] = design.numberOfBuildings;
+        break;
+      case 'greenspaceRatio':
+        datum[axis] = design.greenspaceRatio;
+        break;
+      case 'totalArea':
+        datum[axis] = design.totalArea;
+        break;
+      case 'totalRoadLength':
+        datum[axis] = design.totalRoadLength;
         break;
     }
   }

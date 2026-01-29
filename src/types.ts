@@ -339,7 +339,9 @@ export enum ObjectType {
   Flower = 'Flower',
   Polygon = 'Polygon',
   PolygonVertex = 'Polygon Vertex',
-  Prism = 'Prism',
+  Prism = 'Prism', // obsolete, now use River or Greenspace
+  River = 'River',
+  Greenspace = 'Greenspace',
   Light = 'Light',
   BatteryStorage = 'Battery Storage',
   Ruler = 'Ruler',

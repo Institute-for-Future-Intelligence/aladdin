@@ -51,6 +51,7 @@ import { HvacSystem } from '../models/HvacSystem';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { PvModel } from '../models/PvModel';
 import { BatteryStorageModel } from 'src/models/BatteryStorageModel';
+import { PrismModel } from 'src/models/PolygonCuboidModel';
 
 export class GenAIUtil {
   static arrayCorrection(jsonElements: any[]) {
@@ -929,7 +930,95 @@ export class GenAIUtil {
     } as BatteryStorageModel;
   }
 
-  static calculateUrbanDesignSolutionSpace(design: Design) {}
+  static calculateUrbanDesignSolutionSpace(design: Design) {
+    // number of buildings
+    // total road length
+    // greenspace ratio
+    // packing density
+    // total area
+    let totalRoadLength = 0;
+    let numberOfBuildings = 0;
+    let totalGreenspaceArea = 0;
+    let totalBuildingArea = 0;
+
+    // Bounding box
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+
+    // Helper function to update bounding box with rotated rectangle corners
+    const updateBoundingBoxWithRotation = (cx: number, cy: number, lx: number, ly: number, rotation: number[]) => {
+      const angle = rotation[2] ?? 0; // rotation around z-axis
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      const halfLx = lx / 2;
+      const halfLy = ly / 2;
+
+      // 4 corners relative to center
+      const corners = [
+        { x: -halfLx, y: -halfLy },
+        { x: halfLx, y: -halfLy },
+        { x: halfLx, y: halfLy },
+        { x: -halfLx, y: halfLy },
+      ];
+
+      for (const corner of corners) {
+        // Apply rotation
+        const rotatedX = corner.x * cos - corner.y * sin;
+        const rotatedY = corner.x * sin + corner.y * cos;
+        // Translate to world coordinates
+        const worldX = cx + rotatedX;
+        const worldY = cy + rotatedY;
+        // Update bounding box
+        minX = Math.min(minX, worldX);
+        maxX = Math.max(maxX, worldX);
+        minY = Math.min(minY, worldY);
+        maxY = Math.max(maxY, worldY);
+      }
+    };
+
+    for (const e of useStore.getState().elements) {
+      if (e.type === ObjectType.Cuboid) {
+        numberOfBuildings++;
+        totalBuildingArea += e.lx * e.ly;
+        updateBoundingBoxWithRotation(e.cx, e.cy, e.lx, e.ly, e.rotation);
+      } else if (e.type === ObjectType.InstancedCuboid) {
+        numberOfBuildings++;
+        totalBuildingArea += e.lx * e.ly;
+        updateBoundingBoxWithRotation(e.cx, e.cy, e.lx, e.ly, e.rotation);
+      } else if (e.type === ObjectType.InstancedFoundation) {
+        totalRoadLength += e.lx;
+        updateBoundingBoxWithRotation(e.cx, e.cy, e.lx, e.ly, e.rotation);
+      } else if (e.type === ObjectType.Greenspace) {
+        const prism = e as PrismModel;
+        totalGreenspaceArea += Util.getPolygonArea(prism.vertices);
+        for (const v of prism.vertices) {
+          minX = Math.min(minX, v.x);
+          maxX = Math.max(maxX, v.x);
+          minY = Math.min(minY, v.y);
+          maxY = Math.max(maxY, v.y);
+        }
+      } else if (e.type === ObjectType.River) {
+        const prism = e as PrismModel;
+        for (const v of prism.vertices) {
+          minX = Math.min(minX, v.x);
+          maxX = Math.max(maxX, v.x);
+          minY = Math.min(minY, v.y);
+          maxY = Math.max(maxY, v.y);
+        }
+      }
+    }
+
+    // Calculate total area from bounding box
+    const totalArea = minX !== Infinity ? (maxX - minX) * (maxY - minY) : 1;
+
+    design['numberOfBuildings'] = numberOfBuildings;
+    design['totalRoadLength'] = totalRoadLength / 1000;
+    design['totalArea'] = totalArea / 1000000;
+    design['packingDensity'] = totalArea > 0 ? (totalBuildingArea / totalArea) * 100 : 0;
+    design['greenspaceRatio'] = totalArea > 0 ? (totalGreenspaceArea / totalArea) * 100 : 0;
+  }
 
   static calculateSolarPowerTowerSolutionSpace(design: Design) {
     let filedArea = 1;

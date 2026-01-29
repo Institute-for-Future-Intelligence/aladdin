@@ -219,6 +219,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   function getDefaultScatterPlotAxisName(projectType: DesignProblem) {
     if (projectType === DesignProblem.BUILDING_DESIGN) return 'floorArea';
     if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) return 'heliostatLength';
+    if (projectType === DesignProblem.URBAN_DESIGN) return 'numberOfBuildings';
     return 'rowWidth';
   }
 
@@ -498,6 +499,34 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           }
           data.push(d);
         }
+      } else if (projectType === DesignProblem.URBAN_DESIGN) {
+        for (const design of projectDesigns) {
+          const d = {} as DatumEntry;
+          if (!hiddenParameters?.includes('numberOfBuildings')) d['numberOfBuildings'] = design.numberOfBuildings;
+          if (!hiddenParameters?.includes('packingDensity')) d['packingDensity'] = design.packingDensity;
+          if (!hiddenParameters?.includes('greenspaceRatio')) d['greenspaceRatio'] = design.greenspaceRatio;
+          if (!hiddenParameters?.includes('totalArea')) d['totalArea'] = design.totalArea;
+          if (!hiddenParameters?.includes('totalRoadLength')) d['totalRoadLength'] = design.totalRoadLength;
+          d['group'] = projectDataColoring === DataColoring.INDIVIDUALS ? design.title : 'default';
+          d['selected'] = selectedDesign === design;
+          d['hovered'] = hoveredDesign === design;
+          d['invisible'] = design.invisible;
+          d['excluded'] = false;
+          if (projectFilters) {
+            for (const f of projectFilters) {
+              if (f.type === FilterType.Between && f.upperBound !== undefined && f.lowerBound !== undefined) {
+                const v = d[f.variable];
+                if (typeof v === 'number') {
+                  if (v > f.upperBound || v < f.lowerBound) {
+                    d['excluded'] = true;
+                    break;
+                  }
+                }
+              }
+            }
+          }
+          data.push(d);
+        }
       }
     }
     return data;
@@ -593,6 +622,14 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('towerHeight')) array.push(getMin('towerHeight', 10));
       if (!hiddenParameters?.includes('packingDensity')) array.push(getMin('packingDensity', 0));
       return array;
+    } else if (projectType === DesignProblem.URBAN_DESIGN) {
+      const array: number[] = [];
+      if (!hiddenParameters?.includes('numberOfBuildings')) array.push(getMin('numberOfBuildings', 0));
+      if (!hiddenParameters?.includes('packingDensity')) array.push(getMin('packingDensity', 0));
+      if (!hiddenParameters?.includes('greenspaceRatio')) array.push(getMin('greenspaceRatio', 0));
+      if (!hiddenParameters?.includes('totalArea')) array.push(getMin('totalArea', 0));
+      if (!hiddenParameters?.includes('totalRoadLength')) array.push(getMin('totalRoadLength', 0));
+      return array;
     }
     return [];
   }, [solarPanelArrayLayoutConstraints, projectType, projectRanges, hiddenParameters, updateHiddenFlag]);
@@ -637,6 +674,14 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('heliostatCount')) array.push(getMax('heliostatCount', 5000));
       if (!hiddenParameters?.includes('towerHeight')) array.push(getMax('towerHeight', 500));
       if (!hiddenParameters?.includes('packingDensity')) array.push(getMax('packingDensity', 100));
+      return array;
+    } else if (projectType === DesignProblem.URBAN_DESIGN) {
+      const array: number[] = [];
+      if (!hiddenParameters?.includes('numberOfBuildings')) array.push(getMax('numberOfBuildings', 3000));
+      if (!hiddenParameters?.includes('packingDensity')) array.push(getMax('packingDensity', 50));
+      if (!hiddenParameters?.includes('greenspaceRatio')) array.push(getMax('greenspaceRatio', 20));
+      if (!hiddenParameters?.includes('totalArea')) array.push(getMax('totalArea', 6));
+      if (!hiddenParameters?.includes('totalRoadLength')) array.push(getMax('totalRoadLength', 50));
       return array;
     }
     return [];
@@ -736,6 +781,14 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('towerHeight')) array.push(createFilter('towerHeight', 500, 10));
       if (!hiddenParameters?.includes('packingDensity')) array.push(createFilter('packingDensity', 100, 0));
       return array;
+    } else if (projectType === DesignProblem.URBAN_DESIGN) {
+      const array: Filter[] = [];
+      if (!hiddenParameters?.includes('numberOfBuildings')) array.push(createFilter('numberOfBuildings', 3000, 0));
+      if (!hiddenParameters?.includes('packingDensity')) array.push(createFilter('packingDensity', 50, 0));
+      if (!hiddenParameters?.includes('greenspaceRatio')) array.push(createFilter('greenspaceRatio', 20, 0));
+      if (!hiddenParameters?.includes('totalArea')) array.push(createFilter('totalArea', 6, 0));
+      if (!hiddenParameters?.includes('totalRoadLength')) array.push(createFilter('totalRoadLength', 50, 0));
+      return array;
     }
     return [];
   }, [updateHiddenFlag, projectFilters, hiddenParameters, projectType]);
@@ -776,6 +829,14 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
       if (!hiddenParameters?.includes('heliostatCount')) array.push(1);
       if (!hiddenParameters?.includes('towerHeight')) array.push(1);
       if (!hiddenParameters?.includes('packingDensity')) array.push(1);
+      return array;
+    } else if (projectType === DesignProblem.URBAN_DESIGN) {
+      const array: number[] = [];
+      if (!hiddenParameters?.includes('numberOfBuildings')) array.push(100);
+      if (!hiddenParameters?.includes('packingDensity')) array.push(1);
+      if (!hiddenParameters?.includes('greenspaceRatio')) array.push(1);
+      if (!hiddenParameters?.includes('totalArea')) array.push(0.1);
+      if (!hiddenParameters?.includes('totalRoadLength')) array.push(1);
       return array;
     }
     return [];
@@ -1309,6 +1370,66 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
         </div>
       );
     }
+    if (projectType === DesignProblem.URBAN_DESIGN) {
+      return (
+        <div>
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              selectParameter(e.target.checked, 'numberOfBuildings');
+            }}
+            checked={!hiddenParameters?.includes('numberOfBuildings')}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.NumberOfBuildings', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              selectParameter(e.target.checked, 'packingDensity');
+            }}
+            checked={!hiddenParameters?.includes('packingDensity')}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.PackingDensity', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              selectParameter(e.target.checked, 'greenspaceRatio');
+            }}
+            checked={!hiddenParameters?.includes('greenspaceRatio')}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.GreenspaceRatio', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              selectParameter(e.target.checked, 'totalArea');
+            }}
+            checked={!hiddenParameters?.includes('totalArea')}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.TotalArea', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
+              selectParameter(e.target.checked, 'totalRoadLength');
+            }}
+            checked={!hiddenParameters?.includes('totalRoadLength')}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.TotalRoadLength', lang)}</span>
+          </Checkbox>
+          <br />
+        </div>
+      );
+    }
   };
 
   const createAxisOptions = () => {
@@ -1411,28 +1532,38 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
         </>
       );
     }
+    if (projectType === DesignProblem.URBAN_DESIGN) {
+      return (
+        <>
+          <Option key={'numberOfBuildings'} value={'numberOfBuildings'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.NumberOfBuildings', lang)}</span>
+          </Option>
+          <Option key={'packingDensity'} value={'packingDensity'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.PackingDensity', lang)}</span>
+          </Option>
+          <Option key={'greenspaceRatio'} value={'greenspaceRatio'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.GreenspaceRatio', lang)}</span>
+          </Option>
+          <Option key={'totalArea'} value={'totalArea'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.TotalArea', lang)}</span>
+          </Option>
+          <Option key={'totalRoadLength'} value={'totalRoadLength'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.TotalRoadLength', lang)}</span>
+          </Option>
+        </>
+      );
+    }
   };
 
   const scatterData = useMemo(() => {
     const data: { x: number; y: number }[] = [];
     if (projectDesigns) {
-      if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
-        for (const design of projectDesigns) {
-          if (design.invisible || design === selectedDesign) continue;
-          const d = {} as { x: number; y: number };
-          ProjectUtil.setScatterData(xAxisRef.current, 'x', d, design);
-          ProjectUtil.setScatterData(yAxisRef.current, 'y', d, design);
-          data.push(d);
-        }
-      } else if (projectType === DesignProblem.BUILDING_DESIGN) {
-        for (const design of projectDesigns) {
-          if (design.invisible || design === selectedDesign) continue;
-          const d = {} as { x: number; y: number };
-          ProjectUtil.setScatterData(xAxisRef.current, 'x', d, design);
-          ProjectUtil.setScatterData(yAxisRef.current, 'y', d, design);
-          data.push(d);
-        }
-      } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
+      if (
+        projectType === DesignProblem.SOLAR_PANEL_ARRAY ||
+        projectType === DesignProblem.BUILDING_DESIGN ||
+        projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN ||
+        projectType === DesignProblem.URBAN_DESIGN
+      ) {
         for (const design of projectDesigns) {
           if (design.invisible || design === selectedDesign) continue;
           const d = {} as { x: number; y: number };
@@ -1448,23 +1579,12 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const selectedData = useMemo(() => {
     const data: { x: number; y: number }[] = [];
     if (projectDesigns) {
-      if (projectType === DesignProblem.SOLAR_PANEL_ARRAY) {
-        for (const design of projectDesigns) {
-          if (design !== selectedDesign) continue;
-          const d = {} as { x: number; y: number };
-          ProjectUtil.setScatterData(xAxisRef.current, 'x', d, design);
-          ProjectUtil.setScatterData(yAxisRef.current, 'y', d, design);
-          data.push(d);
-        }
-      } else if (projectType === DesignProblem.BUILDING_DESIGN) {
-        for (const design of projectDesigns) {
-          if (design !== selectedDesign) continue;
-          const d = {} as { x: number; y: number };
-          ProjectUtil.setScatterData(xAxisRef.current, 'x', d, design);
-          ProjectUtil.setScatterData(yAxisRef.current, 'y', d, design);
-          data.push(d);
-        }
-      } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
+      if (
+        projectType === DesignProblem.SOLAR_PANEL_ARRAY ||
+        projectType === DesignProblem.BUILDING_DESIGN ||
+        projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN ||
+        projectType === DesignProblem.URBAN_DESIGN
+      ) {
         for (const design of projectDesigns) {
           if (design !== selectedDesign) continue;
           const d = {} as { x: number; y: number };
@@ -1580,6 +1700,29 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
         case 'packingDensity':
           bound.min = getMin('packingDensity', 0);
           bound.max = getMax('packingDensity', 100);
+          break;
+      }
+    } else if (projectType === DesignProblem.URBAN_DESIGN) {
+      switch (axisName) {
+        case 'numberOfBuildings':
+          bound.min = getMin('numberOfBuildings', 0);
+          bound.max = getMax('numberOfBuildings', 3000);
+          break;
+        case 'packingDensity':
+          bound.min = getMin('packingDensity', 0);
+          bound.max = getMax('packingDensity', 50);
+          break;
+        case 'greenspaceRatio':
+          bound.min = getMin('greenspaceRatio', 0);
+          bound.max = getMax('greenspaceRatio', 20);
+          break;
+        case 'totalArea':
+          bound.min = getMin('totalArea', 0);
+          bound.max = getMax('totalArea', 6);
+          break;
+        case 'totalRoadLength':
+          bound.min = getMin('totalRoadLength', 0);
+          bound.max = getMax('totalRoadLength', 50);
           break;
       }
     }
@@ -2608,6 +2751,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
               <span>
                 {(projectType === DesignProblem.SOLAR_PANEL_ARRAY ||
                   projectType === DesignProblem.BUILDING_DESIGN ||
+                  projectType === DesignProblem.URBAN_DESIGN ||
                   projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) && (
                   <Popover
                     title={t('projectPanel.ChooseSolutionSpace', lang)}

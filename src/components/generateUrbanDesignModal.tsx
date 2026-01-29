@@ -135,7 +135,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
         for (const river of rivers) {
           const polygonCuboid = {
             id: short.generate() as string,
-            type: ObjectType.Prism,
+            type: ObjectType.River,
             vertices: river.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
             height: 0.75,
             color: '#5d97e7',
@@ -212,7 +212,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
       for (const park of city.parks) {
         const prism = {
           id: short.generate() as string,
-          type: ObjectType.Prism,
+          type: ObjectType.Greenspace,
           vertices: park.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
           height: 0.5,
           color: '#4a9700',

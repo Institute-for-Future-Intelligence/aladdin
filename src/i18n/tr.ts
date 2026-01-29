@@ -2018,6 +2018,10 @@ export const i18n_tr = {
       heliostatCount: 'Heliostat Count',
       TowerHeight: 'Tower Height',
       PackingDensity: 'Packing Density',
+      NumberOfBuildings: 'Number of Buildings',
+      GreenspaceRatio: 'Greenspace Ratio',
+      TotalArea: 'Total Area',
+      TotalRoadLength: 'Total Road Length',
     },
   },
 };
