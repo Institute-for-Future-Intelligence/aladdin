@@ -74,6 +74,7 @@ export class ProjectUtil {
     } else if (projectType === DesignProblem.URBAN_DESIGN) {
       const a: string[] = [];
       if (!hidden?.includes('numberOfBuildings')) a.push('numberOfBuildings');
+      if (!hidden?.includes('floorAreaRatio')) a.push('floorAreaRatio');
       if (!hidden?.includes('packingDensity')) a.push('packingDensity');
       if (!hidden?.includes('greenspaceRatio')) a.push('greenspaceRatio');
       if (!hidden?.includes('totalArea')) a.push('totalArea');
@@ -123,6 +124,7 @@ export class ProjectUtil {
     } else if (projectType === DesignProblem.URBAN_DESIGN) {
       const a: string[] = [];
       if (!hidden?.includes('numberOfBuildings')) a.push(i18n.t('solutionSpace.NumberOfBuildings', l));
+      if (!hidden?.includes('floorAreaRatio')) a.push(i18n.t('solutionSpace.FloorAreaRatio', l));
       if (!hidden?.includes('packingDensity')) a.push(i18n.t('solutionSpace.PackingDensity', l));
       if (!hidden?.includes('greenspaceRatio')) a.push(i18n.t('solutionSpace.GreenspaceRatio', l));
       if (!hidden?.includes('totalArea')) a.push(i18n.t('solutionSpace.TotalArea', l));
@@ -172,6 +174,7 @@ export class ProjectUtil {
     } else if (projectType === DesignProblem.URBAN_DESIGN) {
       const a: string[] = [];
       if (!hidden?.includes('numberOfBuildings')) a.push('number');
+      if (!hidden?.includes('floorAreaRatio')) a.push('number');
       if (!hidden?.includes('packingDensity')) a.push('number');
       if (!hidden?.includes('greenspaceRatio')) a.push('number');
       if (!hidden?.includes('totalArea')) a.push('number');
@@ -221,6 +224,7 @@ export class ProjectUtil {
     } else if (projectType === DesignProblem.URBAN_DESIGN) {
       const a: number[] = [];
       if (!hidden?.includes('numberOfBuildings')) a.push(0);
+      if (!hidden?.includes('floorAreaRatio')) a.push(0);
       if (!hidden?.includes('packingDensity')) a.push(0);
       if (!hidden?.includes('greenspaceRatio')) a.push(0);
       if (!hidden?.includes('totalArea')) a.push(2);
@@ -270,6 +274,7 @@ export class ProjectUtil {
     } else if (projectType === DesignProblem.URBAN_DESIGN) {
       const a: boolean[] = [];
       if (!hidden?.includes('numberOfBuildings')) a.push(true);
+      if (!hidden?.includes('floorAreaRatio')) a.push(false);
       if (!hidden?.includes('packingDensity')) a.push(false);
       if (!hidden?.includes('greenspaceRatio')) a.push(false);
       if (!hidden?.includes('totalArea')) a.push(false);
@@ -319,6 +324,7 @@ export class ProjectUtil {
     } else if (projectType === DesignProblem.URBAN_DESIGN) {
       const a: string[] = [];
       if (!hidden?.includes('numberOfBuildings')) a.push('');
+      if (!hidden?.includes('floorAreaRatio')) a.push('');
       if (!hidden?.includes('packingDensity')) a.push('%');
       if (!hidden?.includes('greenspaceRatio')) a.push('%');
       if (!hidden?.includes('totalArea')) a.push(' km²');
@@ -443,6 +449,9 @@ export class ProjectUtil {
         break;
       case 'numberOfBuildings':
         datum[axis] = design.numberOfBuildings;
+        break;
+      case 'floorAreaRatio':
+        datum[axis] = design.floorAreaRatio;
         break;
       case 'greenspaceRatio':
         datum[axis] = design.greenspaceRatio;

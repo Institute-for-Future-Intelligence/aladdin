@@ -2018,6 +2018,7 @@ export const i18n_en = {
       TowerHeight: 'Tower Height',
       PackingDensity: 'Packing Density',
       NumberOfBuildings: 'Number of Buildings',
+      FloorAreaRatio: 'Floor Area Ratio',
       GreenspaceRatio: 'Greenspace Ratio',
       TotalArea: 'Total Area',
       TotalRoadLength: 'Total Road Length',

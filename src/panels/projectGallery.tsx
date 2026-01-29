@@ -503,6 +503,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
         for (const design of projectDesigns) {
           const d = {} as DatumEntry;
           if (!hiddenParameters?.includes('numberOfBuildings')) d['numberOfBuildings'] = design.numberOfBuildings;
+          if (!hiddenParameters?.includes('floorAreaRatio')) d['floorAreaRatio'] = design.floorAreaRatio;
           if (!hiddenParameters?.includes('packingDensity')) d['packingDensity'] = design.packingDensity;
           if (!hiddenParameters?.includes('greenspaceRatio')) d['greenspaceRatio'] = design.greenspaceRatio;
           if (!hiddenParameters?.includes('totalArea')) d['totalArea'] = design.totalArea;
@@ -625,6 +626,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     } else if (projectType === DesignProblem.URBAN_DESIGN) {
       const array: number[] = [];
       if (!hiddenParameters?.includes('numberOfBuildings')) array.push(getMin('numberOfBuildings', 0));
+      if (!hiddenParameters?.includes('floorAreaRatio')) array.push(getMin('floorAreaRatio', 0));
       if (!hiddenParameters?.includes('packingDensity')) array.push(getMin('packingDensity', 0));
       if (!hiddenParameters?.includes('greenspaceRatio')) array.push(getMin('greenspaceRatio', 0));
       if (!hiddenParameters?.includes('totalArea')) array.push(getMin('totalArea', 0));
@@ -678,6 +680,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     } else if (projectType === DesignProblem.URBAN_DESIGN) {
       const array: number[] = [];
       if (!hiddenParameters?.includes('numberOfBuildings')) array.push(getMax('numberOfBuildings', 3000));
+      if (!hiddenParameters?.includes('floorAreaRatio')) array.push(getMax('floorAreaRatio', 20));
       if (!hiddenParameters?.includes('packingDensity')) array.push(getMax('packingDensity', 50));
       if (!hiddenParameters?.includes('greenspaceRatio')) array.push(getMax('greenspaceRatio', 20));
       if (!hiddenParameters?.includes('totalArea')) array.push(getMax('totalArea', 6));
@@ -784,6 +787,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     } else if (projectType === DesignProblem.URBAN_DESIGN) {
       const array: Filter[] = [];
       if (!hiddenParameters?.includes('numberOfBuildings')) array.push(createFilter('numberOfBuildings', 3000, 0));
+      if (!hiddenParameters?.includes('floorAreaRatio')) array.push(createFilter('floorAreaRatio', 20, 0));
       if (!hiddenParameters?.includes('packingDensity')) array.push(createFilter('packingDensity', 50, 0));
       if (!hiddenParameters?.includes('greenspaceRatio')) array.push(createFilter('greenspaceRatio', 20, 0));
       if (!hiddenParameters?.includes('totalArea')) array.push(createFilter('totalArea', 6, 0));
@@ -833,6 +837,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
     } else if (projectType === DesignProblem.URBAN_DESIGN) {
       const array: number[] = [];
       if (!hiddenParameters?.includes('numberOfBuildings')) array.push(100);
+      if (!hiddenParameters?.includes('floorAreaRatio')) array.push(1);
       if (!hiddenParameters?.includes('packingDensity')) array.push(1);
       if (!hiddenParameters?.includes('greenspaceRatio')) array.push(1);
       if (!hiddenParameters?.includes('totalArea')) array.push(0.1);
@@ -1387,6 +1392,17 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
           <Checkbox
             style={{ width: '100%' }}
             onChange={(e) => {
+              selectParameter(e.target.checked, 'floorAreaRatio');
+            }}
+            checked={!hiddenParameters?.includes('floorAreaRatio')}
+          >
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.FloorAreaRatio', lang)}</span>
+          </Checkbox>
+          <br />
+
+          <Checkbox
+            style={{ width: '100%' }}
+            onChange={(e) => {
               selectParameter(e.target.checked, 'packingDensity');
             }}
             checked={!hiddenParameters?.includes('packingDensity')}
@@ -1537,6 +1553,9 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
         <>
           <Option key={'numberOfBuildings'} value={'numberOfBuildings'}>
             <span style={{ fontSize: '12px' }}>{t('solutionSpace.NumberOfBuildings', lang)}</span>
+          </Option>
+          <Option key={'floorAreaRatio'} value={'floorAreaRatio'}>
+            <span style={{ fontSize: '12px' }}>{t('solutionSpace.FloorAreaRatio', lang)}</span>
           </Option>
           <Option key={'packingDensity'} value={'packingDensity'}>
             <span style={{ fontSize: '12px' }}>{t('solutionSpace.PackingDensity', lang)}</span>
@@ -1707,6 +1726,10 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
         case 'numberOfBuildings':
           bound.min = getMin('numberOfBuildings', 0);
           bound.max = getMax('numberOfBuildings', 3000);
+          break;
+        case 'floorAreaRatio':
+          bound.min = getMin('floorAreaRatio', 0);
+          bound.max = getMax('floorAreaRatio', 20);
           break;
         case 'packingDensity':
           bound.min = getMin('packingDensity', 0);

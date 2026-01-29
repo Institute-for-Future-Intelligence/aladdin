@@ -931,15 +931,12 @@ export class GenAIUtil {
   }
 
   static calculateUrbanDesignSolutionSpace(design: Design) {
-    // number of buildings
-    // total road length
-    // greenspace ratio
-    // packing density
-    // total area
     let totalRoadLength = 0;
     let numberOfBuildings = 0;
     let totalGreenspaceArea = 0;
     let totalBuildingArea = 0;
+    let totalFloorArea = 0;
+    const floorHeight = 3; // typical floor height in meters
 
     // Bounding box
     let minX = Infinity;
@@ -981,11 +978,17 @@ export class GenAIUtil {
     for (const e of useStore.getState().elements) {
       if (e.type === ObjectType.Cuboid) {
         numberOfBuildings++;
-        totalBuildingArea += e.lx * e.ly;
+        const footprint = e.lx * e.ly;
+        totalBuildingArea += footprint;
+        const floors = Math.max(1, Math.floor(e.lz / floorHeight));
+        totalFloorArea += footprint * floors;
         updateBoundingBoxWithRotation(e.cx, e.cy, e.lx, e.ly, e.rotation);
       } else if (e.type === ObjectType.InstancedCuboid) {
         numberOfBuildings++;
-        totalBuildingArea += e.lx * e.ly;
+        const footprint = e.lx * e.ly;
+        totalBuildingArea += footprint;
+        const floors = Math.max(1, Math.floor(e.lz / floorHeight));
+        totalFloorArea += footprint * floors;
         updateBoundingBoxWithRotation(e.cx, e.cy, e.lx, e.ly, e.rotation);
       } else if (e.type === ObjectType.InstancedFoundation) {
         totalRoadLength += e.lx;
@@ -1014,6 +1017,7 @@ export class GenAIUtil {
     const totalArea = minX !== Infinity ? (maxX - minX) * (maxY - minY) : 1;
 
     design['numberOfBuildings'] = numberOfBuildings;
+    design['floorAreaRatio'] = totalArea > 0 ? totalFloorArea / totalArea : 0;
     design['totalRoadLength'] = totalRoadLength / 1000;
     design['totalArea'] = totalArea / 1000000;
     design['packingDensity'] = totalArea > 0 ? (totalBuildingArea / totalArea) * 100 : 0;

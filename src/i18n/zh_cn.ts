@@ -1990,6 +1990,7 @@ export const i18n_zh_cn = {
       TowerHeight: '吸热塔高度',
       PackingDensity: '布置密度',
       NumberOfBuildings: '建筑数量',
+      FloorAreaRatio: '容积率',
       GreenspaceRatio: '绿地率',
       TotalArea: '总面积',
       TotalRoadLength: '道路总长度',
