@@ -17,7 +17,7 @@ import i18n from 'src/i18n/i18n';
 import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
-import { CuboidTexture, FoundationTexture, ObjectType } from 'src/types';
+import { CuboidTexture, FoundationTexture, ObjectType, User } from 'src/types';
 import { updateGenerateBuildingPrompt } from 'src/cloudProjectUtil';
 import { Util } from '../Util';
 import { AI_MODELS_NAME } from 'functions/src/callSolarPowerTowerAI';
@@ -52,7 +52,6 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
   const setGenerating = usePrimitiveStore(Selector.setGenerating);
   const setChanged = usePrimitiveStore(Selector.setChanged);
 
-  const aIModel = useStore(Selector.aIModel) ?? AI_MODELS_NAME['Claude Sonnet-4.5'];
   const [prompt, setPrompt] = useState<string>('Generate Urban Design');
   const [listening, setListening] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -62,6 +61,27 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
     bottom: 0,
     right: 0,
   } as DraggableBounds);
+
+  const isInternalUser = (user: User) => {
+    return user.email === 'xiaotong@intofuture.org' || user.email === 'charles@intofuture.org';
+  };
+
+  const aIModel = useStore((state) => {
+    const model = state.projectState.aIModel;
+    if (isInternalUser(state.user)) {
+      return model;
+    } else {
+      return AI_MODELS_NAME['Claude Sonnet-4.5'];
+    }
+  });
+
+  // models for internal test
+  const testModels = [];
+  const user = useStore(Selector.user);
+  if (isInternalUser(user)) {
+    testModels.push({ value: AI_MODELS_NAME['Claude Opus-4.5'], label: 'Claude Opus-4.5' });
+    testModels.push({ value: AI_MODELS_NAME['OpenAI o4-mini'], label: 'OpenAI o4-mini' });
+  }
 
   const dragRef = useRef<HTMLDivElement | null>(null);
 
@@ -316,9 +336,13 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
         const result = response.choices[0].message.content;
         console.log('OpenAI response:', response);
         return result;
-      } else if (aIModel === AI_MODELS_NAME['Claude Sonnet-4.5']) {
-        console.log('calling Claude...', input);
-        const response = await callUrbanDesignClaudeAI(import.meta.env.VITE_CLAUDE_API_KEY, input as [], true);
+      } else if (aIModel === AI_MODELS_NAME['Claude Sonnet-4.5'] || aIModel === AI_MODELS_NAME['Claude Opus-4.5']) {
+        let model = 'claude-sonnet-4-5';
+        if (aIModel === AI_MODELS_NAME['Claude Opus-4.5']) {
+          model = 'claude-opus-4-5';
+        }
+        console.log(`calling Claude ${model}...`, input);
+        const response = await callUrbanDesignClaudeAI(import.meta.env.VITE_CLAUDE_API_KEY, input as [], true, model);
         const result = (response.content[0] as any).text;
         console.log('Claude response:', response);
         return result;
@@ -510,16 +534,13 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
           {t('projectPanel.AIModel', lang) + ':'}
           <Select
             value={aIModel}
-            style={{ width: '150px', marginRight: '10px' }}
+            style={{ width: '160px', marginRight: '10px' }}
             onChange={(value) => {
               setCommonStore((state) => {
                 state.projectState.aIModel = value;
               });
             }}
-            options={[
-              // { value: AI_MODELS_NAME['OpenAI o4-mini'], label: 'OpenAI o4-mini' },
-              { value: AI_MODELS_NAME['Claude Sonnet-4.5'], label: 'Claude Sonnet-4.5' },
-            ]}
+            options={[{ value: AI_MODELS_NAME['Claude Sonnet-4.5'], label: 'Claude Sonnet-4.5' }, ...testModels]}
           />
 
           {aIModel === AI_MODELS_NAME['OpenAI o4-mini'] && (
