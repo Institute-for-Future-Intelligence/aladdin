@@ -8,6 +8,7 @@ import Anthropic from '@anthropic-ai/sdk';
 export const AI_MODELS_NAME = {
   'OpenAI o4-mini': 'OpenAI o4-mini',
   'Claude Opus-4.5': 'Claude Opus-4.5',
+  'Claude Sonnet-4.5': 'Claude Sonnet-4.5', // cheaper
 };
 
 const RULES = `

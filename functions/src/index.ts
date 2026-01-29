@@ -5,7 +5,7 @@
 import { onCall } from 'firebase-functions/v2/https';
 import { callBuildingAI, callBuildingClaudeAI } from './callBuildingAI';
 import { AI_MODELS_NAME, callSolarPowerTowerClaudeAI, callSolarPowerTowerOpenAI } from './callSolarPowerTowerAI';
-import { callUrbanDesignClaudeAI } from './callUrbanDesignAI';
+import { callUrbanDesignClaudeAI, callUrbanDesignOpenAI } from './callUrbanDesignAI';
 
 exports.callAI = onCall(
   { secrets: ['AZURE_OPENAI_API_KEY', 'CLAUDE_API_KEY'], timeoutSeconds: 300, region: 'us-east4' },
@@ -29,21 +29,29 @@ exports.callAI = onCall(
           const response = await callSolarPowerTowerOpenAI(azureApiKey, prompt, false, reasoningEffort);
           console.log('Returned:', response.choices[0].message.content);
           return { text: response.choices[0].message.content };
+        } else if (type === 'urban') {
+          console.log('calling OpenAI...');
+          const response = await callUrbanDesignOpenAI(azureApiKey, prompt, false, reasoningEffort);
+          console.log('Returned:', response.choices[0].message.content);
+          return { text: response.choices[0].message.content };
         }
       } else if (aIModel === AI_MODELS_NAME['Claude Opus-4.5']) {
         const claudeApiKey = process.env.CLAUDE_API_KEY;
         if (type === 'building') {
-          console.log('calling Claude...');
+          console.log('calling Claude Opus-4.5...');
           const response = await callBuildingClaudeAI(claudeApiKey, prompt, false);
           console.log('Returned:', (response.content[0] as any).text);
           return { text: (response.content[0] as any).text };
         } else if (type === 'solar power tower') {
-          console.log('calling Claude...');
+          console.log('calling Claude Opus-4.5...');
           const response = await callSolarPowerTowerClaudeAI(claudeApiKey, prompt, false);
           console.log('Returned:', (response.content[0] as any).text);
           return { text: (response.content[0] as any).text };
-        } else if (type === 'urban') {
-          console.log('calling Claude...');
+        }
+      } else if (aIModel === AI_MODELS_NAME['Claude Sonnet-4.5']) {
+        const claudeApiKey = process.env.CLAUDE_API_KEY;
+        if (type === 'urban') {
+          console.log('calling Claude Sonnet-4.5...');
           const response = await callUrbanDesignClaudeAI(claudeApiKey, prompt, false);
           console.log('Returned:', (response.content[0] as any).text);
           return { text: (response.content[0] as any).text };

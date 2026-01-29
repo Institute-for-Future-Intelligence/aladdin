@@ -21,7 +21,7 @@ import { CuboidTexture, FoundationTexture, ObjectType } from 'src/types';
 import { updateGenerateBuildingPrompt } from 'src/cloudProjectUtil';
 import { Util } from '../Util';
 import { AI_MODELS_NAME } from 'functions/src/callSolarPowerTowerAI';
-import { callUrbanDesignClaudeAI } from 'functions/src/callUrbanDesignAI';
+import { callUrbanDesignClaudeAI, callUrbanDesignOpenAI } from 'functions/src/callUrbanDesignAI';
 import { CuboidModel } from 'src/models/CuboidModel';
 import { PrismModel } from 'src/models/PolygonCuboidModel';
 import short from 'short-uuid';
@@ -46,14 +46,13 @@ const { TextArea } = Input;
 const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible }: GenerateUrbanDesignProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
-  // const reasoningEffort = useStore(Selector.reasoningEffort) ?? 'medium';
+  const reasoningEffort = useStore(Selector.reasoningEffort) ?? 'medium';
   const generateUrbanDesignPrompt =
     useStore(Selector.generateUrbanDesignPrompt) ?? 'Generate a city plan like Manhattan.';
   const setGenerating = usePrimitiveStore(Selector.setGenerating);
   const setChanged = usePrimitiveStore(Selector.setChanged);
 
-  // const aIModel = useStore(Selector.aIModel) ?? AI_MODELS_NAME['Claude Opus-4.5'];
-  const aIModel = AI_MODELS_NAME['Claude Opus-4.5'];
+  const aIModel = useStore(Selector.aIModel) ?? AI_MODELS_NAME['Claude Sonnet-4.5'];
   const [prompt, setPrompt] = useState<string>('Generate Urban Design');
   const [listening, setListening] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -307,18 +306,18 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
       const input = createInput();
 
       if (aIModel === AI_MODELS_NAME['OpenAI o4-mini']) {
-        // console.log('calling OpenAI...', input); // for debugging
-        // const response = await callUrbanDesignOpenAI(
-        //   import.meta.env.VITE_AZURE_API_KEY,
-        //   input as [],
-        //   true,
-        //   reasoningEffort,
-        // );
-        // const result = response.choices[0].message.content;
-        // console.log('OpenAI response:', response);
-        // return result;
-      } else if (aIModel === AI_MODELS_NAME['Claude Opus-4.5']) {
-        console.log('calling Claude...', input); // for debugging
+        console.log('calling OpenAI...', input);
+        const response = await callUrbanDesignOpenAI(
+          import.meta.env.VITE_AZURE_API_KEY,
+          input as [],
+          true,
+          reasoningEffort,
+        );
+        const result = response.choices[0].message.content;
+        console.log('OpenAI response:', response);
+        return result;
+      } else if (aIModel === AI_MODELS_NAME['Claude Sonnet-4.5']) {
+        console.log('calling Claude...', input);
         const response = await callUrbanDesignClaudeAI(import.meta.env.VITE_CLAUDE_API_KEY, input as [], true);
         const result = (response.content[0] as any).text;
         console.log('Claude response:', response);
@@ -508,21 +507,6 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
           }}
         />
         <Space>
-          {/* {t('projectPanel.ReasoningEffort', lang) + ':'}
-          <Select
-            value={reasoningEffort}
-            style={{ width: '100px', marginRight: '10px' }}
-            onChange={(value) => {
-              setCommonStore((state) => {
-                state.projectState.reasoningEffort = value;
-              });
-            }}
-            options={[
-              { value: 'low', label: t('word.Low', lang) },
-              { value: 'medium', label: t('word.Medium', lang) },
-              { value: 'high', label: t('word.High', lang) },
-            ]}
-          /> */}
           {t('projectPanel.AIModel', lang) + ':'}
           <Select
             value={aIModel}
@@ -534,9 +518,29 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
             }}
             options={[
               // { value: AI_MODELS_NAME['OpenAI o4-mini'], label: 'OpenAI o4-mini' },
-              { value: AI_MODELS_NAME['Claude Opus-4.5'], label: 'Claude Opus-4.5' },
+              { value: AI_MODELS_NAME['Claude Sonnet-4.5'], label: 'Claude Sonnet-4.5' },
             ]}
           />
+
+          {aIModel === AI_MODELS_NAME['OpenAI o4-mini'] && (
+            <>
+              {t('projectPanel.ReasoningEffort', lang) + ':'}
+              <Select
+                value={reasoningEffort}
+                style={{ width: '100px', marginRight: '10px' }}
+                onChange={(value) => {
+                  setCommonStore((state) => {
+                    state.projectState.reasoningEffort = value;
+                  });
+                }}
+                options={[
+                  { value: 'low', label: t('word.Low', lang) },
+                  { value: 'medium', label: t('word.Medium', lang) },
+                  { value: 'high', label: t('word.High', lang) },
+                ]}
+              />
+            </>
+          )}
         </Space>
 
         <span style={{ fontSize: '12px' }}>
