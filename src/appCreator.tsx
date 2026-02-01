@@ -50,6 +50,7 @@ import { useLanguage } from './hooks';
 import { AlertFilled, CloseOutlined, DoubleRightOutlined } from '@ant-design/icons';
 import { UndoableCheck } from './undo/UndoableCheck';
 import ModelTree from './modeltree/modelTree';
+// import Terrain from './terrain';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -162,6 +163,8 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
           {groundImage && <GroundImage />}
           {/* <Obj/> */}
         </Suspense>
+        {/* <Terrain /> */}
+
         <SceneRadiusCalculator />
         <Simulations />
         {evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM &&

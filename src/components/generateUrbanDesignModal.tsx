@@ -138,6 +138,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
 
     const world = json.world;
     const city = json.city;
+    // const terrain = json.terrain;
 
     useStore.getState().set((state) => {
       state.elements = [];
@@ -148,6 +149,10 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
         state.world.latitude = world.latitude === undefined ? 40.7128 : world.latitude;
         state.world.longitude = world.longitude === undefined ? -74.006 : world.longitude;
       }
+
+      // if (terrain && terrain.length > 0) {
+      //   state.terrain = [...terrain];
+      // }
 
       // generate rivers
       if (city.rivers && city.rivers.length > 0) {

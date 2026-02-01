@@ -692,6 +692,14 @@ export interface OldRooftopElementData {
   normal: number[];
 }
 
+export interface Peak {
+  H: number;
+  A: number;
+  B: number;
+  a: number;
+  b: number;
+}
+
 export type BoxArgs = [width?: number | undefined, height?: number | undefined, depth?: number | undefined];
 
 export type SolarCollector =
