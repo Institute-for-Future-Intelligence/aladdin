@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2025. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2026. Institute for Future Intelligence, Inc.
  */
 
 import { useStore } from 'src/stores/common';
@@ -18,7 +18,6 @@ const ProjectMenu = () => {
 
   const user = useStore.getState().user;
   const loggable = useStore.getState().loggable;
-  const projectState = useStore.getState().projectState;
   const projectView = useStore.getState().projectView;
 
   const setCommonStore = useStore.getState().set;
@@ -46,8 +45,13 @@ const ProjectMenu = () => {
   };
 
   const handleGenerateProjectLink = () => {
-    if (!projectState.title || !user.uid) return;
-    const url = HOME_URL + '?client=web&userid=' + user.uid + '&project=' + encodeURIComponent(projectState.title);
+    if (!useStore.getState().projectState.title || !user.uid) return;
+    const url =
+      HOME_URL +
+      '?client=web&userid=' +
+      user.uid +
+      '&project=' +
+      encodeURIComponent(useStore.getState().projectState.title as string);
     navigator.clipboard.writeText(url).then(() => {
       showSuccess(i18n.t('projectListPanel.ProjectLinkGeneratedInClipBoard', lang) + '.');
       if (loggable) {
@@ -71,10 +75,10 @@ const ProjectMenu = () => {
       <MainMenuItem onClick={handleListProject}>{i18n.t('menu.project.OpenProject', lang)}...</MainMenuItem>
 
       {/* save project as */}
-      {projectView && projectState.title && user.uid && <SaveProjectAsItem />}
+      {projectView && useStore.getState().projectState.title && user.uid && <SaveProjectAsItem />}
 
       {/* generate project link */}
-      {user.uid && projectState.title && (
+      {user.uid && useStore.getState().projectState.title && (
         <MainMenuItem onClick={handleGenerateProjectLink}>
           {i18n.t('projectListPanel.GenerateProjectLink', lang)}
         </MainMenuItem>
