@@ -802,7 +802,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.viewState = content.view;
               state.graphState = content.graphState;
               state.elements = content.elements;
-              state.terrain = content.terrain;
+              // state.terrain = content.terrain ?? [];
               state.notes = content.notes ?? [];
               state.audioTitle = content.audioTitle ?? 'Instruction';
               state.audioUrl = content.audioUrl ?? 'https://intofuture.org/podcast/aladdin.mp3';
@@ -877,7 +877,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               version: VERSION,
               world: world,
               elements: elements,
-              terrain: JSON.parse(JSON.stringify(state.terrain)),
+              // terrain: JSON.parse(JSON.stringify(state.terrain)),
               sceneRadius: state.sceneRadius,
               view: JSON.parse(JSON.stringify(state.viewState)),
               canvasPercentWidth: state.canvasPercentWidth,
@@ -5449,7 +5449,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
           showModelsToDate: state.showModelsToDate,
           world: state.world,
           elements: state.elements,
-          terrain: state.terrain,
+          // terrain: state.terrain,
           viewState: state.viewState,
           graphState: state.graphState,
           actionState: state.actionState,
