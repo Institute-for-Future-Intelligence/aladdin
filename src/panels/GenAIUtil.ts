@@ -3,23 +3,49 @@
  */
 
 import {
+  DEFAULT_DOOR_AIR_PERMEABILITY,
+  DEFAULT_DOOR_ARCH_HEIGHT,
+  DEFAULT_DOOR_COLOR,
+  DEFAULT_DOOR_FRAME_COLOR,
+  DEFAULT_DOOR_U_VALUE,
   DEFAULT_GROUND_FLOOR_R_VALUE,
+  DEFAULT_HORIZONTAL_MULLION_SPACING,
+  DEFAULT_MULLION_COLOR,
+  DEFAULT_MULLION_WIDTH,
   DEFAULT_ROOF_AIR_PERMEABILITY,
   DEFAULT_ROOF_COLOR,
   DEFAULT_ROOF_R_VALUE,
+  DEFAULT_ROOF_SIDE_COLOR,
   DEFAULT_ROOF_THICKNESS,
   DEFAULT_SOLAR_PANEL_MODEL,
   DEFAULT_SOLAR_PANEL_POLE_HEIGHT,
   DEFAULT_SOLAR_PANEL_POLE_RADIUS,
   DEFAULT_SOLAR_PANEL_POLE_SPACING,
+  DEFAULT_VERTICAL_MULLION_SPACING,
   DEFAULT_WALL_AIR_PERMEABILITY,
+  DEFAULT_WALL_EAVES_LENGTH,
   DEFAULT_WALL_HEIGHT,
+  DEFAULT_WALL_OPACITY,
   DEFAULT_WALL_R_VALUE,
+  DEFAULT_WALL_STRUCTURE_COLOR,
+  DEFAULT_WALL_STRUCTURE_SPACING,
+  DEFAULT_WALL_STRUCTURE_WIDTH,
   DEFAULT_WALL_THICKNESS,
+  DEFAULT_WALL_VOLUMETRIC_HEAT_CAPACITY,
+  DEFAULT_WINDOW_AIR_PERMEABILITY,
+  DEFAULT_WINDOW_ARCH_HEIGHT,
+  DEFAULT_WINDOW_COLOR,
+  DEFAULT_WINDOW_FRAME_WIDTH,
+  DEFAULT_WINDOW_OPACITY,
+  DEFAULT_WINDOW_SHUTTER_COLOR,
+  DEFAULT_WINDOW_SHUTTER_WIDTH,
+  DEFAULT_WINDOW_SILL_WIDTH,
+  DEFAULT_WINDOW_TINT,
+  DEFAULT_WINDOW_U_VALUE,
   GROUND_ID,
   TWO_PI,
 } from 'src/constants';
-import { DoorModel } from 'src/models/DoorModel';
+import { DoorModel, DoorType } from 'src/models/DoorModel';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { Point2 } from 'src/models/Point2';
 import {
@@ -38,6 +64,7 @@ import { useStore } from 'src/stores/common';
 import { useDataStore } from 'src/stores/commonData';
 import {
   Design,
+  DoorTexture,
   FoundationTexture,
   ObjectType,
   Orientation,
@@ -46,7 +73,7 @@ import {
   WallTexture,
 } from 'src/types';
 import { Util } from 'src/Util';
-import { RoofUtil } from 'src/views/roof/RoofUtil';
+import { DEFAULT_PARAPET_SETTINGS } from 'src/views/wall/parapet';
 import { HvacSystem } from '../models/HvacSystem';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { PvModel } from '../models/PvModel';
@@ -431,7 +458,6 @@ export class GenAIUtil {
   ) {
     const [cx = 0, cy = 0] = center;
     const [lx = 10, ly = 10, lz = 0.1] = size;
-    const actionState = useStore.getState().actionState;
     return {
       id,
       type: ObjectType.Foundation,
@@ -446,7 +472,7 @@ export class GenAIUtil {
       parentId: GROUND_ID,
       color,
       textureType: FoundationTexture.NoTexture,
-      rValue: rValue ?? actionState.groundFloorRValue ?? DEFAULT_GROUND_FLOOR_R_VALUE,
+      rValue: rValue ?? DEFAULT_GROUND_FLOOR_R_VALUE,
       solarUpdraftTower: {},
       solarAbsorberPipe: {},
       solarPowerTower: {},
@@ -474,9 +500,8 @@ export class GenAIUtil {
     leftConnectId?: string,
     rightConnectId?: string,
   ) {
-    const actionState = useStore.getState().actionState;
-    const ly = thickness ?? actionState.wallThickness ?? DEFAULT_WALL_THICKNESS;
-    const lz = height ?? actionState.wallHeight ?? DEFAULT_WALL_HEIGHT;
+    const ly = thickness ?? DEFAULT_WALL_THICKNESS;
+    const lz = height ?? DEFAULT_WALL_HEIGHT;
     const [lpx, lpy] = leftPoint;
     const [rpx, rpy] = rightPoint;
     const cx = (lpx + rpx) / 2;
@@ -494,28 +519,28 @@ export class GenAIUtil {
       lx,
       ly,
       lz,
-      parapet: actionState.wallParapet,
-      eavesLength: overhang ?? actionState.wallEavesLength,
-      rValue: rValue ?? actionState.wallRValue ?? DEFAULT_WALL_R_VALUE,
-      airPermeability: airPermeability ?? actionState.wallAirPermeability ?? DEFAULT_WALL_AIR_PERMEABILITY,
+      parapet: { ...DEFAULT_PARAPET_SETTINGS },
+      eavesLength: overhang ?? DEFAULT_WALL_EAVES_LENGTH,
+      rValue: rValue ?? DEFAULT_WALL_R_VALUE,
+      airPermeability: airPermeability ?? DEFAULT_WALL_AIR_PERMEABILITY,
       fill: WallFill.Full,
       leftUnfilledHeight: 0.5,
       rightUnfilledHeight: 0.5,
-      leftTopPartialHeight: actionState.wallHeight - 0.5,
-      rightTopPartialHeight: actionState.wallHeight - 0.5,
+      leftTopPartialHeight: DEFAULT_WALL_HEIGHT - 0.5,
+      rightTopPartialHeight: DEFAULT_WALL_HEIGHT - 0.5,
       relativeAngle: angle,
       leftPoint: [lpx, lpy, 0],
       rightPoint: [rpx, rpy, 0],
       leftJoints: leftConnectId ? [leftConnectId] : [],
       rightJoints: rightConnectId ? [rightConnectId] : [],
-      textureType: actionState.wallTexture ?? WallTexture.Default,
+      textureType: WallTexture.Default,
       color: color,
-      volumetricHeatCapacity: actionState.wallVolumetricHeatCapacity ?? 0.5,
-      wallStructure: actionState.wallStructure ?? WallStructure.Default,
-      studSpacing: actionState.wallStructureSpacing ?? 2,
-      studWidth: actionState.wallStructureWidth ?? 0.1,
-      studColor: actionState.wallStructureColor ?? '#ffffff',
-      opacity: actionState.wallOpacity !== undefined ? actionState.wallOpacity : 0.5,
+      volumetricHeatCapacity: DEFAULT_WALL_VOLUMETRIC_HEAT_CAPACITY,
+      wallStructure: WallStructure.Default,
+      studSpacing: DEFAULT_WALL_STRUCTURE_SPACING,
+      studWidth: DEFAULT_WALL_STRUCTURE_WIDTH,
+      studColor: DEFAULT_WALL_STRUCTURE_COLOR,
+      opacity: DEFAULT_WALL_OPACITY,
       lineWidth: 0.2,
       lineColor: '#000000',
       windows: [],
@@ -542,7 +567,6 @@ export class GenAIUtil {
     doorType: string,
     textureType: string,
   ) {
-    const actionState = useStore.getState().actionState;
     const [cx, cz] = center;
     const [lx, lz] = size;
     return {
@@ -553,15 +577,15 @@ export class GenAIUtil {
       lx: lx,
       ly: 0,
       lz: lz,
-      doorType: doorType ?? actionState.doorType,
-      filled: filled ?? actionState.doorFilled,
-      interior: actionState.doorInterior,
-      archHeight: actionState.doorArchHeight,
-      textureType: textureType ?? actionState.doorTexture,
-      color: color ?? actionState.doorColor,
-      frameColor: frameColor ?? actionState.doorFrameColor,
-      uValue: uValue ?? actionState.doorUValue,
-      airPermeability: airPermeability ?? actionState.doorAirPermeability,
+      doorType: doorType ?? DoorType.Default,
+      filled: filled ?? true,
+      interior: false,
+      archHeight: DEFAULT_DOOR_ARCH_HEIGHT,
+      textureType: textureType ?? DoorTexture.Texture01,
+      color: color ?? DEFAULT_DOOR_COLOR,
+      frameColor: frameColor ?? DEFAULT_DOOR_FRAME_COLOR,
+      uValue: uValue ?? DEFAULT_DOOR_U_VALUE,
+      airPermeability: airPermeability ?? DEFAULT_DOOR_AIR_PERMEABILITY,
       lineWidth: 0.2,
       lineColor: '#000000',
       showLabel: false,
@@ -583,7 +607,6 @@ export class GenAIUtil {
     rValue: number,
     airPermeability: number,
   ) {
-    const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -592,14 +615,14 @@ export class GenAIUtil {
       lx: 0,
       ly: 0,
       lz: 0,
-      ceiling: actionState.roofCeiling ?? false,
-      thickness: thickness ?? actionState.roofThickness ?? DEFAULT_ROOF_THICKNESS,
+      ceiling: false,
+      thickness: thickness ?? DEFAULT_ROOF_THICKNESS,
       rise: rise,
-      rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
-      airPermeability: airPermeability ?? actionState.roofAirPermeability ?? DEFAULT_ROOF_AIR_PERMEABILITY,
-      color: color ?? actionState.roofColor ?? DEFAULT_ROOF_COLOR,
-      sideColor: actionState.roofSideColor ?? '#ffffff',
-      textureType: actionState.roofTexture ?? RoofTexture.Default,
+      rValue: rValue ?? DEFAULT_ROOF_R_VALUE,
+      airPermeability: airPermeability ?? DEFAULT_ROOF_AIR_PERMEABILITY,
+      color: color ?? DEFAULT_ROOF_COLOR,
+      sideColor: DEFAULT_ROOF_SIDE_COLOR,
+      textureType: RoofTexture.Default,
       roofType: RoofType.Gable,
       roofStructure: RoofStructure.Default,
       wallsId: [wId],
@@ -626,7 +649,6 @@ export class GenAIUtil {
     rValue: number,
     airPermeability: number,
   ) {
-    const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -635,14 +657,14 @@ export class GenAIUtil {
       lx: 0,
       ly: 0,
       lz: 0,
-      ceiling: actionState.roofCeiling ?? false,
+      ceiling: false,
       rise: rise,
-      thickness: thickness ?? actionState.roofThickness ?? DEFAULT_ROOF_THICKNESS,
-      rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
-      airPermeability: airPermeability ?? actionState.roofAirPermeability ?? DEFAULT_ROOF_AIR_PERMEABILITY,
+      thickness: thickness ?? DEFAULT_ROOF_THICKNESS,
+      rValue: rValue ?? DEFAULT_ROOF_R_VALUE,
+      airPermeability: airPermeability ?? DEFAULT_ROOF_AIR_PERMEABILITY,
       color: color,
-      sideColor: actionState.roofSideColor ?? '#ffffff',
-      textureType: actionState.roofTexture ?? RoofTexture.Default,
+      sideColor: DEFAULT_ROOF_SIDE_COLOR,
+      textureType: RoofTexture.Default,
       roofType: RoofType.Pyramid,
       roofStructure: RoofStructure.Default,
       wallsId: [wId],
@@ -668,7 +690,6 @@ export class GenAIUtil {
     rValue: number,
     airPermeability: number,
   ) {
-    const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -677,14 +698,14 @@ export class GenAIUtil {
       lx: 0,
       ly: 0,
       lz: 0,
-      ceiling: actionState.roofCeiling ?? false,
+      ceiling: false,
       rise: rise,
-      thickness: thickness ?? actionState.roofThickness ?? DEFAULT_ROOF_THICKNESS,
-      rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
-      airPermeability: airPermeability ?? actionState.roofAirPermeability ?? DEFAULT_ROOF_AIR_PERMEABILITY,
+      thickness: thickness ?? DEFAULT_ROOF_THICKNESS,
+      rValue: rValue ?? DEFAULT_ROOF_R_VALUE,
+      airPermeability: airPermeability ?? DEFAULT_ROOF_AIR_PERMEABILITY,
       color: color,
-      sideColor: actionState.roofSideColor ?? '#ffffff',
-      textureType: actionState.roofTexture ?? RoofTexture.Default,
+      sideColor: DEFAULT_ROOF_SIDE_COLOR,
+      textureType: RoofTexture.Default,
       roofType: RoofType.Mansard,
       roofStructure: RoofStructure.Default,
       wallsId: [wId],
@@ -711,7 +732,6 @@ export class GenAIUtil {
     airPermeability: number,
   ) {
     const xPercent = 0.35;
-    const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -720,14 +740,14 @@ export class GenAIUtil {
       lx: 0,
       ly: 0,
       lz: 0,
-      ceiling: actionState.roofCeiling ?? false,
+      ceiling: false,
       rise: rise,
-      thickness: actionState.roofThickness ?? 0.2,
-      rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
-      airPermeability: airPermeability ?? actionState.roofAirPermeability ?? DEFAULT_ROOF_AIR_PERMEABILITY,
+      thickness: thickness ?? DEFAULT_ROOF_THICKNESS,
+      rValue: rValue ?? DEFAULT_ROOF_R_VALUE,
+      airPermeability: airPermeability ?? DEFAULT_ROOF_AIR_PERMEABILITY,
       color: color,
-      sideColor: actionState.roofSideColor ?? '#ffffff',
-      textureType: actionState.roofTexture ?? RoofTexture.Default,
+      sideColor: DEFAULT_ROOF_SIDE_COLOR,
+      textureType: RoofTexture.Default,
       roofType: RoofType.Gambrel,
       roofStructure: RoofStructure.Default,
       wallsId: [wId],
@@ -756,7 +776,6 @@ export class GenAIUtil {
     rValue: number,
     airPermeability: number,
   ) {
-    const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -765,14 +784,14 @@ export class GenAIUtil {
       lx: 0,
       ly: 0,
       lz: 0,
-      ceiling: actionState.roofCeiling ?? false,
+      ceiling: false,
       rise: rise,
-      thickness: actionState.roofThickness ?? 0.2,
-      rValue: rValue ?? actionState.roofRValue ?? DEFAULT_ROOF_R_VALUE,
-      airPermeability: airPermeability ?? actionState.roofAirPermeability ?? DEFAULT_ROOF_AIR_PERMEABILITY,
+      thickness: thickness ?? DEFAULT_ROOF_THICKNESS,
+      rValue: rValue ?? DEFAULT_ROOF_R_VALUE,
+      airPermeability: airPermeability ?? DEFAULT_ROOF_AIR_PERMEABILITY,
       color: color,
-      sideColor: actionState.roofSideColor ?? '#ffffff',
-      textureType: actionState.roofTexture ?? RoofTexture.Default,
+      sideColor: DEFAULT_ROOF_SIDE_COLOR,
+      textureType: RoofTexture.Default,
       roofType: RoofType.Hip,
       roofStructure: RoofStructure.Default,
       wallsId: [wId],
@@ -810,7 +829,6 @@ export class GenAIUtil {
     mullionColor: string,
     mullionWidth: number,
   ) {
-    const actionState = useStore.getState().actionState;
     const [cx, cz] = center;
     const [lx, lz] = size;
     return {
@@ -821,33 +839,33 @@ export class GenAIUtil {
       lx: lx,
       ly: 0.3,
       lz: lz,
-      leftShutter: shutter !== undefined ? shutter : actionState.windowShutterLeft,
-      rightShutter: shutter !== undefined ? shutter : actionState.windowShutterRight,
-      shutterColor: shutterColor ?? actionState.windowShutterColor,
-      shutterWidth: shutterWidth !== undefined ? shutterWidth : actionState.windowShutterWidth,
-      horizontalMullion: horizontalMullion !== undefined ? horizontalMullion : actionState.windowHorizontalMullion,
-      verticalMullion: verticalMullion !== undefined ? verticalMullion : actionState.windowVerticalMullion,
-      mullionWidth: mullionWidth !== undefined ? mullionWidth : actionState.windowMullionWidth,
+      leftShutter: shutter !== undefined ? shutter : false,
+      rightShutter: shutter !== undefined ? shutter : false,
+      shutterColor: shutterColor ?? DEFAULT_WINDOW_SHUTTER_COLOR,
+      shutterWidth: shutterWidth !== undefined ? shutterWidth : DEFAULT_WINDOW_SHUTTER_WIDTH,
+      horizontalMullion: horizontalMullion !== undefined ? horizontalMullion : true,
+      verticalMullion: verticalMullion !== undefined ? verticalMullion : true,
+      mullionWidth: mullionWidth !== undefined ? mullionWidth : DEFAULT_MULLION_WIDTH,
       horizontalMullionSpacing:
-        horizontalMullionSpacing !== undefined ? horizontalMullionSpacing : actionState.windowHorizontalMullionSpacing,
+        horizontalMullionSpacing !== undefined ? horizontalMullionSpacing : DEFAULT_HORIZONTAL_MULLION_SPACING,
       verticalMullionSpacing:
-        verticalMullionSpacing !== undefined ? verticalMullionSpacing : actionState.windowVerticalMullionSpacing,
-      mullionColor: mullionColor ?? actionState.windowMullionColor,
+        verticalMullionSpacing !== undefined ? verticalMullionSpacing : DEFAULT_VERTICAL_MULLION_SPACING,
+      mullionColor: mullionColor ?? DEFAULT_MULLION_COLOR,
       frame: true,
-      frameWidth: actionState.windowFrameWidth,
-      sillWidth: RoofUtil.isTypeRoof(ObjectType.Wall) ? 0 : actionState.windowSillWidth,
-      windowType: windowType ?? actionState.windowType,
-      empty: actionState.windowEmpty,
-      interior: actionState.windowInterior,
-      archHeight: actionState.windowArchHeight,
+      frameWidth: DEFAULT_WINDOW_FRAME_WIDTH,
+      sillWidth: DEFAULT_WINDOW_SILL_WIDTH,
+      windowType: windowType ?? WindowType.Default,
+      empty: false,
+      interior: false,
+      archHeight: DEFAULT_WINDOW_ARCH_HEIGHT,
       lineWidth: 0.2,
       lineColor: '#000000',
       showLabel: false,
-      color: color ?? actionState.windowColor, // frame color
-      tint: tint ?? actionState.windowTint, // glass color
-      opacity: opacity !== undefined ? opacity : actionState.windowOpacity,
-      uValue: uValue ?? actionState.windowUValue,
-      airPermeability: actionState.windowAirPermeability,
+      color: color ?? DEFAULT_WINDOW_COLOR, // frame color
+      tint: tint ?? DEFAULT_WINDOW_TINT, // glass color
+      opacity: opacity !== undefined ? opacity : DEFAULT_WINDOW_OPACITY,
+      uValue: uValue ?? DEFAULT_WINDOW_U_VALUE,
+      airPermeability: DEFAULT_WINDOW_AIR_PERMEABILITY,
       normal: [0, -1, 0],
       rotation: [0, 0, 0],
       parentId: pId,
@@ -867,7 +885,6 @@ export class GenAIUtil {
     size: number[],
     batteryId: string,
   ) {
-    const actionState = useStore.getState().actionState;
     const pvModules = { ...useStore.getState().supportedPvModules, ...useStore.getState().customPvModules };
     const pvModel = pvModules[pvModelName] as PvModel;
 
@@ -883,7 +900,7 @@ export class GenAIUtil {
       foundationId: fId,
       id,
       orientation: orientation as Orientation,
-      pvModelName: pvModelName ?? actionState.solarPanelModelName ?? DEFAULT_SOLAR_PANEL_MODEL,
+      pvModelName: pvModelName ?? DEFAULT_SOLAR_PANEL_MODEL,
       poleHeight: DEFAULT_SOLAR_PANEL_POLE_HEIGHT,
       normal: [0, 0, 1],
       rotation: [0, 0, 0],
