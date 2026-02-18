@@ -17,8 +17,8 @@ import i18n from 'src/i18n/i18n';
 import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
-import { CuboidTexture, FoundationTexture, ObjectType, User } from 'src/types';
-import { updateGenerateBuildingPrompt } from 'src/cloudProjectUtil';
+import { CuboidTexture, ObjectType, User } from 'src/types';
+import { updateGenerateUrbanDesignPrompt } from 'src/cloudProjectUtil';
 import { Util } from '../Util';
 import { AI_MODELS_NAME } from 'functions/src/callSolarPowerTowerAI';
 import { callUrbanDesignClaudeAI, callUrbanDesignOpenAI } from 'functions/src/callUrbanDesignAI';
@@ -33,8 +33,7 @@ import {
   generateRoads,
 } from './generateUrbanDesignCity';
 import { InstancedModel } from 'src/models/InstancedModel';
-import { Color } from 'three';
-import { FoundationModel } from 'src/models/FoundationModel';
+import { DefaultViewState } from '../stores/DefaultViewState';
 
 export interface GenerateUrbanDesignProps {
   setDialogVisible: (visible: boolean) => void;
@@ -47,8 +46,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const reasoningEffort = useStore(Selector.reasoningEffort) ?? 'medium';
-  const generateUrbanDesignPrompt =
-    useStore(Selector.generateUrbanDesignPrompt) ?? 'Generate a city plan like Manhattan.';
+  const generateUrbanDesignPrompt = useStore(Selector.generateUrbanDesignPrompt) ?? 'Generate a city like Manhattan.';
   const setGenerating = usePrimitiveStore(Selector.setGenerating);
   const setChanged = usePrimitiveStore(Selector.setChanged);
 
@@ -155,6 +153,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
         state.world.latitude = world.latitude === undefined ? 40.7128 : world.latitude;
         state.world.longitude = world.longitude === undefined ? -74.006 : world.longitude;
       }
+      state.viewState = new DefaultViewState(); // reset view state
 
       if (terrain) {
         const sea = terrain.sea;
@@ -462,7 +461,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
       setChanged(true);
       const userid = useStore.getState().user.uid;
       const projectTitle = useStore.getState().projectState.title;
-      if (userid && projectTitle) updateGenerateBuildingPrompt(userid, projectTitle, prompt);
+      if (userid && projectTitle) updateGenerateUrbanDesignPrompt(userid, projectTitle, prompt);
     });
     close();
   };

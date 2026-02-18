@@ -246,6 +246,21 @@ export const updateGenerateBuildingPrompt = async (
   }
 };
 
+export const updateGenerateUrbanDesignPrompt = async (
+  userid: string,
+  projectTitle: string,
+  generateUrbanDesignPrompt: string,
+) => {
+  const lang = { lng: useStore.getState().language };
+  try {
+    await updateDoc(doc(firestore, 'users', userid, 'projects', projectTitle), {
+      generateUrbanDesignPrompt,
+    });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
+};
+
 export const updateGenerateSolarPowerTowerPrompt = async (
   userid: string,
   projectTitle: string,

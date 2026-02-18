@@ -30,6 +30,7 @@ import {
   DEFAULT_VIEW_DIRECT_LIGHT_INTENSITY,
 } from '../constants';
 import { AI_MODELS_NAME } from 'functions/src/callSolarPowerTowerAI';
+import { DefaultViewState } from '../stores/DefaultViewState';
 
 export interface GenerateBuildingModalProps {
   setDialogVisible: (visible: boolean) => void;
@@ -109,6 +110,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
         state.world.latitude = jsonWorld.latitude === undefined ? DEFAULT_LATITUDE : jsonWorld.latitude;
         state.world.longitude = jsonWorld.longitude === undefined ? DEFAULT_LONGITUDE : jsonWorld.longitude;
       }
+      state.viewState = new DefaultViewState(); // reset view state
       if (jsonView) {
         state.viewState.directLightIntensity = jsonView.directLightIntensity ?? DEFAULT_VIEW_DIRECT_LIGHT_INTENSITY;
         state.viewState.ambientLightIntensity = jsonView.ambientLightIntensity ?? DEFAULT_VIEW_AMBIENT_LIGHT_INTENSITY;
