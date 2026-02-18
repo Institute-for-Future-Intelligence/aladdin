@@ -24,6 +24,11 @@ const RULES = `
     "latitude": number,
     "longitude": number,
   },
+  "terrain": {
+    "sea": {
+      "vertices": [[x, y], ...] 
+    },
+  },
   "city": {
     "roads": {
       "nodes": [
@@ -65,6 +70,11 @@ If not specified, the default address is New York City, USA.
 
 ## Date and time
   - a string in a format MM/dd/yyyy, hh:mm:ss a. If not specified, set the default date and time to 06/22/2025, 12:00:00 PM
+
+## terrain
+  - 海洋只包含一个端点属性，用数组表示
+  - 将整个范围分为海洋和陆地两个部分，且海洋和陆地要填满所有范围。所有城市和道路都必须建立在陆地上。
+  - 如果城市没有海洋，则用陆地填满整个范围，海洋端点返回空数组。
 
 ## roads
 - nodes: 道路交叉点和端点
@@ -121,8 +131,8 @@ If not specified, the default address is New York City, USA.
 - 曼哈顿：河流应该是南北走向，位置应该在城市的东西两侧。应该包含broad way和中央公园
 - 巴黎：河流不要穿过正中心，应该偏离中心
 
-### 输出要求
-只返回纯 JSON，禁止 markdown 代码块，直接以 { 开头。
+### 输出要求(特别重要)
+只返回纯 JSON，禁止markdown代码块！直接以 '{' 开头!!!!!
 `;
 
 export const callUrbanDesignOpenAI = async (
@@ -265,6 +275,35 @@ export const callUrbanDesignOpenAI = async (
               required: ['roads', 'parks', 'rivers', 'landmarks', 'zones'],
               additionalProperties: false,
             },
+            terrain: {
+              type: 'object',
+              properties: {
+                land: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+                    },
+                    required: ['vertices'],
+                    additionalProperties: false,
+                  },
+                },
+                sea: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+                    },
+                    required: ['vertices'],
+                    additionalProperties: false,
+                  },
+                },
+              },
+              required: ['land', 'sea'],
+              additionalProperties: false,
+            },
           },
           required: ['city', 'thinking', 'world'],
           additionalProperties: false,
@@ -290,124 +329,153 @@ export const callUrbanDesignClaudeAI = async (
     max_tokens: 10000, // require streaming API if this is large.
     system: RULES,
     messages: [...inputMessage],
-    betas: ['structured-outputs-2025-11-13'],
-    output_format: {
-      type: 'json_schema',
-      schema: {
-        type: 'object',
-        properties: {
-          thinking: {
-            type: 'string',
-          },
-          world: {
-            type: 'object',
-            properties: {
-              date: { type: 'string' },
-              address: { type: 'string' },
-              latitude: { type: 'number' },
-              longitude: { type: 'number' },
-            },
-            required: ['date', 'address', 'latitude', 'longitude'],
-            additionalProperties: false,
-          },
-          city: {
-            type: 'object',
-            properties: {
-              rivers: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
-                  },
-                  required: ['vertices'],
-                  additionalProperties: false,
-                },
-              },
-              roads: {
-                type: 'object',
-                properties: {
-                  nodes: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      required: ['id', 'position'],
-                      additionalProperties: false,
-                      properties: {
-                        id: { type: 'string' },
-                        position: { type: 'array', items: { type: 'number' } },
-                      },
-                    },
-                  },
-                  edges: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      required: ['id', 'from', 'to', 'level', 'points'],
-                      additionalProperties: false,
-                      properties: {
-                        id: { type: 'string' },
-                        from: { type: 'string' },
-                        to: { type: 'string' },
-                        level: { type: 'string', enum: ['1', '2'] },
-                        points: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
-                      },
-                    },
-                  },
-                },
-                required: ['nodes', 'edges'],
-                additionalProperties: false,
-              },
-              parks: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
-                  },
-                  required: ['vertices'],
-                  additionalProperties: false,
-                },
-              },
-              zones: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  required: ['boundary', 'length', 'width', 'height', 'coverage', 'layout', 'color'],
-                  additionalProperties: false,
-                  properties: {
-                    boundary: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
-                    length: { type: 'array', items: { type: 'number' } },
-                    width: { type: 'array', items: { type: 'number' } },
-                    height: { type: 'array', items: { type: 'number' } },
-                    layout: { type: 'string', enum: ['grid', 'perimeter', 'cluster'] },
-                    coverage: { type: 'number' },
-                    color: { type: 'string' },
-                  },
-                },
-              },
-              landmarks: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  required: ['center', 'size', 'rotation'],
-                  additionalProperties: false,
-                  properties: {
-                    center: { type: 'array', items: { type: 'number' } },
-                    size: { type: 'array', items: { type: 'number' } },
-                    rotation: { type: 'number' },
-                  },
-                },
-              },
-            },
-            required: ['roads', 'parks', 'rivers', 'landmarks', 'zones'],
-            additionalProperties: false,
-          },
-        },
-        required: ['city', 'thinking', 'world'],
-        additionalProperties: false,
-      },
-    },
+    // betas: ['structured-outputs-2025-11-13'],
+    // output_format: {
+    //   type: 'json_schema',
+    //   schema: {
+    //     type: 'object',
+    //     properties: {
+    //       thinking: {
+    //         type: 'string',
+    //       },
+    //       world: {
+    //         type: 'object',
+    //         properties: {
+    //           date: { type: 'string' },
+    //           address: { type: 'string' },
+    //           latitude: { type: 'number' },
+    //           longitude: { type: 'number' },
+    //         },
+    //         required: ['date', 'address', 'latitude', 'longitude'],
+    //         additionalProperties: false,
+    //       },
+    //       city: {
+    //         type: 'object',
+    //         properties: {
+    //           rivers: {
+    //             type: 'array',
+    //             items: {
+    //               type: 'object',
+    //               properties: {
+    //                 vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+    //               },
+    //               required: ['vertices'],
+    //               additionalProperties: false,
+    //             },
+    //           },
+    //           roads: {
+    //             type: 'object',
+    //             properties: {
+    //               nodes: {
+    //                 type: 'array',
+    //                 items: {
+    //                   type: 'object',
+    //                   required: ['id', 'position'],
+    //                   additionalProperties: false,
+    //                   properties: {
+    //                     id: { type: 'string' },
+    //                     position: { type: 'array', items: { type: 'number' } },
+    //                   },
+    //                 },
+    //               },
+    //               edges: {
+    //                 type: 'array',
+    //                 items: {
+    //                   type: 'object',
+    //                   required: ['id', 'from', 'to', 'level', 'points'],
+    //                   additionalProperties: false,
+    //                   properties: {
+    //                     id: { type: 'string' },
+    //                     from: { type: 'string' },
+    //                     to: { type: 'string' },
+    //                     level: { type: 'string', enum: ['1', '2'] },
+    //                     points: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+    //                   },
+    //                 },
+    //               },
+    //             },
+    //             required: ['nodes', 'edges'],
+    //             additionalProperties: false,
+    //           },
+    //           parks: {
+    //             type: 'array',
+    //             items: {
+    //               type: 'object',
+    //               properties: {
+    //                 vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+    //               },
+    //               required: ['vertices'],
+    //               additionalProperties: false,
+    //             },
+    //           },
+    //           zones: {
+    //             type: 'array',
+    //             items: {
+    //               type: 'object',
+    //               required: ['boundary', 'length', 'width', 'height', 'coverage', 'layout', 'color'],
+    //               additionalProperties: false,
+    //               properties: {
+    //                 boundary: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+    //                 length: { type: 'array', items: { type: 'number' } },
+    //                 width: { type: 'array', items: { type: 'number' } },
+    //                 height: { type: 'array', items: { type: 'number' } },
+    //                 layout: { type: 'string', enum: ['grid', 'perimeter', 'cluster'] },
+    //                 coverage: { type: 'number' },
+    //                 color: { type: 'string' },
+    //               },
+    //             },
+    //           },
+    //           landmarks: {
+    //             type: 'array',
+    //             items: {
+    //               type: 'object',
+    //               required: ['center', 'size', 'rotation'],
+    //               additionalProperties: false,
+    //               properties: {
+    //                 center: { type: 'array', items: { type: 'number' } },
+    //                 size: { type: 'array', items: { type: 'number' } },
+    //                 rotation: { type: 'number' },
+    //               },
+    //             },
+    //           },
+    //         },
+    //         required: ['roads', 'parks', 'rivers', 'landmarks', 'zones'],
+    //         additionalProperties: false,
+    //       },
+    //       terrain: {
+    //         type: 'object',
+    //         properties: {
+    //           land: {
+    //             type: 'array',
+    //             items: {
+    //               type: 'object',
+    //               properties: {
+    //                 vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+    //               },
+    //               required: ['vertices'],
+    //               additionalProperties: false,
+    //             },
+    //           },
+    //           sea: {
+    //             type: 'array',
+    //             items: {
+    //               type: 'object',
+    //               properties: {
+    //                 vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+    //               },
+    //               required: ['vertices'],
+    //               additionalProperties: false,
+    //             },
+    //           },
+    //         },
+    //         required: ['land', 'sea'],
+    //         additionalProperties: false,
+    //       },
+    //     },
+    //     required: ['city', 'thinking', 'world', 'terrain'],
+    //     additionalProperties: false,
+    //   },
+    // },
   });
   return res;
 };

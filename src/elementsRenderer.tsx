@@ -70,6 +70,7 @@ const ElementsRenderer: React.FC = React.memo(() => {
         switch (e.type) {
           case ObjectType.Greenspace:
           case ObjectType.River:
+          case ObjectType.Sea:
           case ObjectType.Prism:
             return <Prism key={e.id} model={e as PrismModel} />;
           case ObjectType.Protractor:

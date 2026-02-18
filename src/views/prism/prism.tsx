@@ -7,6 +7,7 @@ import { PrismModel } from '../../models/PolygonCuboidModel';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
 import { Shape, ExtrudeGeometry } from 'three';
+import { ObjectType } from 'src/types';
 
 export interface PrismProps {
   model: PrismModel;
