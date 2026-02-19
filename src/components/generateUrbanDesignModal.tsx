@@ -31,8 +31,9 @@ import {
   generateCityRivers,
   generateLandmarkBuildings,
   generateRoads,
+  generateTrees,
 } from './generateUrbanDesignCity';
-import { InstancedModel } from 'src/models/InstancedModel';
+import { InstancedModel, InstancedTree } from 'src/models/InstancedModel';
 import { DefaultViewState } from '../stores/DefaultViewState';
 
 export interface GenerateUrbanDesignProps {
@@ -316,6 +317,20 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
 
         maxX = Math.max(Math.abs(cx), maxX);
         maxY = Math.max(Math.abs(cy), maxY);
+      }
+
+      /** generate trees (park + street) */
+      const trees = generateTrees(city.parks || [], city.roads, buildings, city.rivers);
+      for (const tree of trees) {
+        const instancedTree = {
+          id: short.generate() as string,
+          type: ObjectType.InstancedTrees,
+          cx: tree.center[0],
+          cy: tree.center[1],
+          cz: 0,
+          treeType: tree.type,
+        } as InstancedTree;
+        state.elements.push(instancedTree);
       }
 
       /** update camera */

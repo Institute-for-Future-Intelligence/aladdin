@@ -2,7 +2,7 @@
  * @Copyright 2021-2024. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { ObjectType } from './types';
@@ -44,11 +44,23 @@ import InstancedCuboids from './views/cuboid/instancedCuboids';
 import { PrismModel } from './models/PolygonCuboidModel';
 import Prism from './views/prism/prism';
 import InstancedFoundations from './views/foundation/instancedFoundations';
+import InstancedTrees from './views/instancedTress';
+import { InstancedTree } from './models/InstancedModel';
 
 const ElementsRenderer: React.FC = React.memo(() => {
   const elements = useStore(Selector.elements);
-  const instancedCube = elements.filter((e) => e.type === ObjectType.InstancedCuboid);
-  const instancedFoundation = elements.filter((e) => e.type === ObjectType.InstancedFoundation);
+
+  const { instancedCube, instancedFoundation, instancedTrees } = useMemo(() => {
+    const instancedCube = [];
+    const instancedFoundation = [];
+    const instancedTrees = [];
+    for (const e of elements) {
+      if (e.type === ObjectType.InstancedCuboid) instancedCube.push(e);
+      else if (e.type === ObjectType.InstancedFoundation) instancedFoundation.push(e);
+      else if (e.type === ObjectType.InstancedTrees) instancedTrees.push(e);
+    }
+    return { instancedCube, instancedFoundation, instancedTrees };
+  }, [elements]);
 
   const groupRef = useRef<Group>(null);
 
@@ -81,16 +93,12 @@ const ElementsRenderer: React.FC = React.memo(() => {
             return <Foundation key={e.id} {...(e as FoundationModel)} />;
           case ObjectType.Sensor: {
             const sensor = e as SensorModel;
-            if (sensor.parentType === ObjectType.Cuboid) {
-              return null;
-            }
+            if (sensor.parentType === ObjectType.Cuboid) return null;
             return <Sensor key={e.id} {...sensor} />;
           }
           case ObjectType.Light: {
             const light = e as LightModel;
-            if (light.parentType === ObjectType.Cuboid) {
-              return null;
-            }
+            if (light.parentType === ObjectType.Cuboid) return null;
             return <Light key={e.id} {...light} />;
           }
           case ObjectType.Cuboid:
@@ -128,6 +136,7 @@ const ElementsRenderer: React.FC = React.memo(() => {
 
       {instancedCube.length > 0 && <InstancedCuboids cuboids={instancedCube} />}
       {instancedFoundation.length > 0 && <InstancedFoundations foundations={instancedFoundation} />}
+      {instancedTrees.length > 0 && <InstancedTrees trees={instancedTrees as InstancedTree[]} />}
       <EndWaiting />
       <ClearDeletedRoofIdSet />
     </group>

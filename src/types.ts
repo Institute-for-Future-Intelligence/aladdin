@@ -349,6 +349,7 @@ export enum ObjectType {
   Protractor = 'Protractor',
   InstancedCuboid = 'Instanced Cuboid',
   InstancedFoundation = 'Instanced Foundation',
+  InstancedTrees = 'Instanced Trees',
   None = 'None',
 }
 

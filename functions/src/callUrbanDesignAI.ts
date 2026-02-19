@@ -28,6 +28,9 @@ const RULES = `
     "sea": {
       "vertices": [[x, y], ...] 
     },
+    "land": {
+      "vertices": [[x, y], ...] 
+    }
   },
   "city": {
     "roads": {
@@ -75,6 +78,7 @@ If not specified, the default address is New York City, USA.
   - 海洋只包含一个端点属性，用数组表示
   - 将整个范围分为海洋和陆地两个部分，且海洋和陆地要填满所有范围。所有城市和道路都必须建立在陆地上。
   - 如果城市没有海洋，则用陆地填满整个范围，海洋端点返回空数组。
+  - 海洋范围不能太大，默认小于整个范围的1/3
 
 ## roads
 - nodes: 道路交叉点和端点

@@ -1125,6 +1125,198 @@ export function generateCityParks(parks: Park[]): Park[] {
   return parks || [];
 }
 
+export interface TreeInstance {
+  center: [number, number];
+  type: 'park' | 'street';
+}
+
+export function generateTrees(
+  parks: Park[],
+  roads?: RoadNetwork,
+  buildings?: Building[],
+  rivers?: River[],
+): TreeInstance[] {
+  const trees: TreeInstance[] = [];
+  const treeSpacing = 8; // minimum distance between trees
+
+  // Generate road polygons for collision detection (used by park trees)
+  const roadPolygons: Point2[][] = roads ? generateRoadPolygons(roads) : [];
+
+  // Generate river polygons for collision detection
+  const riverPolygons: Point2[][] = (rivers || []).map((r) =>
+    r.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
+  );
+
+  // Helper to check if a position is too close to existing trees
+  const isTooCloseToTrees = (x: number, y: number, minDist: number): boolean => {
+    for (const tree of trees) {
+      if (distance2D(x, y, tree.center[0], tree.center[1]) < minDist) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // Helper to check if a position is on a road
+  const isOnRoad = (x: number, y: number): boolean => {
+    for (const poly of roadPolygons) {
+      if (Util.isPointInside(x, y, poly)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // Helper to check if a position is in a river
+  const isInRiver = (x: number, y: number): boolean => {
+    for (const poly of riverPolygons) {
+      if (Util.isPointInside(x, y, poly)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // ---- Park trees ----
+  if (parks && parks.length > 0) {
+    for (const park of parks) {
+      if (!park.vertices || park.vertices.length < 3) continue;
+
+      const polygon: Point2[] = park.vertices.map((v) => ({ x: v[0], y: v[1] }));
+
+      // Inset the polygon slightly so trees aren't right on the edge
+      const innerPolygon = insetPolygon(polygon, 3);
+      if (innerPolygon.length < 3) continue;
+
+      const innerBbox = calculateBoundingBox(innerPolygon);
+
+      // Calculate park area to determine tree count
+      const area = Math.abs(Util.getPolygonArea(polygon));
+      const treeDensity = 0.003; // trees per square meter
+      const targetTreeCount = Math.max(3, Math.floor(area * treeDensity));
+
+      let placed = 0;
+      let attempts = 0;
+      const maxAttempts = targetTreeCount * 10;
+
+      while (placed < targetTreeCount && attempts < maxAttempts) {
+        attempts++;
+
+        const x = randomInRange(innerBbox.minX, innerBbox.maxX);
+        const y = randomInRange(innerBbox.minY, innerBbox.maxY);
+
+        if (!Util.isPointInside(x, y, innerPolygon)) continue;
+
+        // Skip if on a road or in a river
+        if (isOnRoad(x, y)) continue;
+        if (isInRiver(x, y)) continue;
+
+        if (!isTooCloseToTrees(x, y, treeSpacing)) {
+          trees.push({ center: [x, y], type: 'park' });
+          placed++;
+        }
+      }
+    }
+  }
+
+  // ---- Street trees (along main roads, level 1) ----
+  if (roads && roads.nodes && roads.edges) {
+    const streetTreeSpacing = 20; // distance between street trees along road
+    const roadSetback = 0.5; // distance from road edge to tree center
+
+    const nodeMap = new Map<string, [number, number]>();
+    for (const node of roads.nodes) {
+      nodeMap.set(node.id, node.position);
+    }
+
+    // Build obstacle polygons from buildings for collision avoidance
+    const buildingPolygons: Point2[][] = (buildings || []).map((b) =>
+      getBuildingCorners(b.center, b.size[0], b.size[1], b.rotation),
+    );
+
+    // Park polygons to avoid placing street trees inside parks
+    const parkPolygons: Point2[][] = (parks || []).map((p) =>
+      p.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
+    );
+
+    for (const edge of roads.edges) {
+      if (edge.level !== 1) continue; // only main roads
+
+      const fromPos = nodeMap.get(edge.from);
+      const toPos = nodeMap.get(edge.to);
+      if (!fromPos || !toPos) continue;
+
+      const roadWidth = ROAD_WIDTH[edge.level];
+      const path: [number, number][] = [fromPos, ...(edge.points || []), toPos];
+
+      for (let i = 0; i < path.length - 1; i++) {
+        const p1 = path[i];
+        const p2 = path[i + 1];
+        const segLen = distance(p1, p2);
+        if (segLen < streetTreeSpacing) continue;
+
+        const dx = p2[0] - p1[0];
+        const dy = p2[1] - p1[1];
+        const dirX = dx / segLen;
+        const dirY = dy / segLen;
+
+        // Perpendicular direction
+        const perpX = -dirY;
+        const perpY = dirX;
+
+        // Offset from road center to tree position
+        const treeOffset = roadWidth / 2 + roadSetback;
+
+        // Place trees along both sides
+        const numTrees = Math.floor(segLen / streetTreeSpacing);
+        const startOffset = (segLen - (numTrees - 1) * streetTreeSpacing) / 2;
+
+        for (let j = 0; j < numTrees; j++) {
+          const t = startOffset + j * streetTreeSpacing;
+          const baseX = p1[0] + dirX * t;
+          const baseY = p1[1] + dirY * t;
+
+          for (const side of [1, -1]) {
+            const tx = baseX + perpX * treeOffset * side;
+            const ty = baseY + perpY * treeOffset * side;
+
+            // Skip if too close to existing trees
+            if (isTooCloseToTrees(tx, ty, treeSpacing)) continue;
+
+            // Skip if inside a park (park already has its own trees)
+            let insidePark = false;
+            for (const poly of parkPolygons) {
+              if (Util.isPointInside(tx, ty, poly)) {
+                insidePark = true;
+                break;
+              }
+            }
+            if (insidePark) continue;
+
+            // Skip if overlapping with a building
+            let insideBuilding = false;
+            for (const poly of buildingPolygons) {
+              if (Util.isPointInside(tx, ty, poly)) {
+                insideBuilding = true;
+                break;
+              }
+            }
+            if (insideBuilding) continue;
+
+            // Skip if on another road or in a river
+            if (isOnRoad(tx, ty)) continue;
+            if (isInRiver(tx, ty)) continue;
+
+            trees.push({ center: [tx, ty], type: 'street' });
+          }
+        }
+      }
+    }
+  }
+
+  return trees;
+}
+
 export function generateLandmarkBuildings(city: any): Building[] {
   const landmarks: Landmark[] = city.landmarks || [];
 
