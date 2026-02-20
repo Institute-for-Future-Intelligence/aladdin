@@ -60,6 +60,7 @@ interface Building {
   size: [number, number, number];
   rotation: number;
   color: string;
+  vertices?: [number, number][]; // polygon footprint for non-rectangular corner buildings
 }
 
 // Road segment for rendering (position, length, angle format)
@@ -113,6 +114,12 @@ const ROAD_WIDTH: Record<1 | 2, number> = {
   1: 20, // 主干道 (main road)
   2: 10, // 支路 (secondary road)
 };
+
+const BUILDING_SETBACK = 3; // gap from road edge to building face
+const CORNER_BUILDING_DEPTH = 70; // arm length of corner L-building along each road
+const CORNER_WING_WIDTH = 35; // arm width of each L-building arm (perpendicular to road)
+const MIN_CORNER_ANGLE = Math.PI / 18; // 10°: skip extremely acute road pairs
+const MAX_CORNER_ANGLE = (11 * Math.PI) / 6; // 330°: skip near-full-circle gaps
 
 // ================================================================================
 // HELPER FUNCTIONS - Math & Geometry
@@ -301,6 +308,13 @@ function getBuildingCorners(
   }));
 }
 
+function getBuildingPolygon(building: Building): Point2[] {
+  if (building.vertices && building.vertices.length >= 3) {
+    return building.vertices.map(([x, y]) => ({ x, y }));
+  }
+  return getBuildingCorners(building.center, building.size[0], building.size[1], building.rotation);
+}
+
 function isBuildingInsideBoundary(
   center: [number, number],
   width: number,
@@ -318,7 +332,7 @@ function isBuildingInsideBoundary(
 }
 
 function overlapsWithPolygons(building: Building, polygons: Point2[][]): boolean {
-  const buildingPolygon = getBuildingCorners(building.center, building.size[0], building.size[1], building.rotation);
+  const buildingPolygon = getBuildingPolygon(building);
 
   for (const polygon of polygons) {
     if (polygonsOverlap(buildingPolygon, polygon)) {
@@ -537,6 +551,264 @@ function placeBuildingsAlongRoad(segment: RoadSegment, boundary: Point2[], setti
 }
 
 // ================================================================================
+// CORNER BUILDING GENERATORS
+// ================================================================================
+
+interface EdgeAtNode {
+  direction: [number, number]; // unit vector pointing AWAY from this node along the road edge
+  halfWidth: number;
+}
+
+function buildNodeEdgeMap(roads: RoadNetwork): Map<string, EdgeAtNode[]> {
+  const nodePos = new Map<string, [number, number]>();
+  for (const node of roads.nodes) {
+    nodePos.set(node.id, node.position);
+  }
+
+  const result = new Map<string, EdgeAtNode[]>();
+  for (const node of roads.nodes) {
+    result.set(node.id, []);
+  }
+
+  for (const edge of roads.edges) {
+    const from = nodePos.get(edge.from);
+    const to = nodePos.get(edge.to);
+    if (!from || !to) continue;
+
+    const halfWidth = ROAD_WIDTH[edge.level] / 2;
+    const path: [number, number][] = [from, ...(edge.points ?? []), to];
+
+    // Direction at 'from' node: toward the next path point
+    const fd = path[1];
+    const fl = path[0];
+    const fLen = Math.sqrt((fd[0] - fl[0]) ** 2 + (fd[1] - fl[1]) ** 2);
+    if (fLen > 0) {
+      result.get(edge.from)!.push({
+        direction: [(fd[0] - fl[0]) / fLen, (fd[1] - fl[1]) / fLen],
+        halfWidth,
+      });
+    }
+
+    // Direction at 'to' node: toward the previous path point (away from 'to')
+    const last = path.length - 1;
+    const td = path[last - 1];
+    const tl = path[last];
+    const tLen = Math.sqrt((td[0] - tl[0]) ** 2 + (td[1] - tl[1]) ** 2);
+    if (tLen > 0) {
+      result.get(edge.to)!.push({
+        direction: [(td[0] - tl[0]) / tLen, (td[1] - tl[1]) / tLen],
+        halfWidth,
+      });
+    }
+  }
+
+  return result;
+}
+
+function getCornerPairs(edges: EdgeAtNode[]): Array<[EdgeAtNode, EdgeAtNode]> {
+  if (edges.length < 2) return [];
+
+  const sorted = [...edges].sort(
+    (a, b) => Math.atan2(a.direction[1], a.direction[0]) - Math.atan2(b.direction[1], b.direction[0]),
+  );
+
+  const pairs: Array<[EdgeAtNode, EdgeAtNode]> = [];
+  const n = sorted.length;
+  for (let i = 0; i < n; i++) {
+    const e1 = sorted[i];
+    const e2 = sorted[(i + 1) % n];
+    let gap = Math.atan2(e2.direction[1], e2.direction[0]) - Math.atan2(e1.direction[1], e1.direction[0]);
+    if (gap < 0) gap += 2 * Math.PI;
+    if (gap >= MIN_CORNER_ANGLE && gap <= MAX_CORNER_ANGLE) {
+      pairs.push([e1, e2]);
+    }
+  }
+  return pairs;
+}
+
+function computeCornerLotPolygon(
+  nodePos: [number, number],
+  e1: EdgeAtNode,
+  e2: EdgeAtNode,
+  depth: number,
+  wingWidth: number,
+): [number, number][] | null {
+  const setback1 = e1.halfWidth + BUILDING_SETBACK;
+  const setback2 = e2.halfWidth + BUILDING_SETBACK;
+
+  // Perpendicular INTO the corner lot:
+  // e1 is first in CCW order → left perpendicular (rotate 90° CCW)
+  const perp1: [number, number] = [-e1.direction[1], e1.direction[0]];
+  // e2 is next in CCW order → right perpendicular (rotate 90° CW)
+  const perp2: [number, number] = [e2.direction[1], -e2.direction[0]];
+
+  // Setback line base points
+  const base1: Point2 = { x: nodePos[0] + perp1[0] * setback1, y: nodePos[1] + perp1[1] * setback1 };
+  const base2: Point2 = { x: nodePos[0] + perp2[0] * setback2, y: nodePos[1] + perp2[1] * setback2 };
+
+  // Extend lines to find inner corner
+  const far1: Point2 = { x: base1.x + e1.direction[0] * 2000, y: base1.y + e1.direction[1] * 2000 };
+  const far2: Point2 = { x: base2.x + e2.direction[0] * 2000, y: base2.y + e2.direction[1] * 2000 };
+
+  const innerCorner = Util.lineIntersection(base1, far1, base2, far2);
+  if (!innerCorner) return null;
+
+  // Reject degenerate cases (near-parallel roads)
+  const distToNode = Math.sqrt((innerCorner.x - nodePos[0]) ** 2 + (innerCorner.y - nodePos[1]) ** 2);
+  if (distToNode > depth * 3) return null;
+
+  // Compute the CCW angular gap between e1 and e2
+  const a1 = Math.atan2(e1.direction[1], e1.direction[0]);
+  const a2 = Math.atan2(e2.direction[1], e2.direction[0]);
+  let gap = a2 - a1;
+  if (gap < 0) gap += 2 * Math.PI;
+
+  const D = depth;
+  const W = wingWidth;
+  const ic = innerCorner;
+
+  if (gap < Math.PI / 4) {
+    // ── Triangle for acute corners (gap < 45°) ──────────────────────────────
+    //
+    //        F
+    //       / \
+    //      /   \
+    //     A-----B
+    //
+    // A = ic (road-facing tip), B = ic + e1*D, F = ic + e2*D
+
+    const a: [number, number] = [ic.x, ic.y];
+    const b: [number, number] = [ic.x + e1.direction[0] * D, ic.y + e1.direction[1] * D];
+    const f: [number, number] = [ic.x + e2.direction[0] * D, ic.y + e2.direction[1] * D];
+    return [a, b, f];
+  }
+
+  // ── L-shape for wider corners (gap ≥ 45°) ─────────────────────────────────
+  // Each arm's sides are perpendicular to its road (perp1 ⊥ e1, perp2 ⊥ e2).
+  // The elbow is the intersection of the two outer-edge lines.
+  //
+  //   F ---- E
+  //   |      |  ← sides ⊥ to e2
+  //   |      D ---- C
+  //   |             |  ← sides ⊥ to e1
+  //   A ----------- B
+
+  const a: [number, number] = [ic.x, ic.y];
+  const b: [number, number] = [ic.x + e1.direction[0] * D, ic.y + e1.direction[1] * D];
+  const c: [number, number] = [b[0] + perp1[0] * W, b[1] + perp1[1] * W];
+  const ob1: Point2 = { x: ic.x + perp1[0] * W, y: ic.y + perp1[1] * W };
+  const of1: Point2 = { x: ob1.x + e1.direction[0] * 2000, y: ob1.y + e1.direction[1] * 2000 };
+  const ob2: Point2 = { x: ic.x + perp2[0] * W, y: ic.y + perp2[1] * W };
+  const of2: Point2 = { x: ob2.x + e2.direction[0] * 2000, y: ob2.y + e2.direction[1] * 2000 };
+  const elbow = Util.lineIntersection(ob1, of1, ob2, of2);
+  if (!elbow) return null;
+  const dv: [number, number] = [elbow.x, elbow.y];
+  const f: [number, number] = [ic.x + e2.direction[0] * D, ic.y + e2.direction[1] * D];
+  const ev: [number, number] = [f[0] + perp2[0] * W, f[1] + perp2[1] * W];
+
+  return [a, b, c, dv, ev, f];
+}
+
+function lotPolygonToBuilding(
+  lotPolygon: [number, number][],
+  height: number,
+  color: string,
+  zoneBoundary: Point2[],
+): Building | null {
+  const asPoint2 = lotPolygon.map(([x, y]) => ({ x, y }));
+  const inset = insetPolygon(asPoint2, 1.5);
+  if (inset.length < 3) return null;
+
+  // All vertices must be inside the zone boundary
+  for (const p of inset) {
+    if (!Util.isPointInside(p.x, p.y, zoneBoundary)) return null;
+  }
+
+  // Compute centroid
+  const cx = inset.reduce((s, p) => s + p.x, 0) / inset.length;
+  const cy = inset.reduce((s, p) => s + p.y, 0) / inset.length;
+
+  // Bounding box for coverage accounting
+  let minX = Infinity,
+    maxX = -Infinity,
+    minY = Infinity,
+    maxY = -Infinity;
+  for (const p of inset) {
+    minX = Math.min(minX, p.x);
+    maxX = Math.max(maxX, p.x);
+    minY = Math.min(minY, p.y);
+    maxY = Math.max(maxY, p.y);
+  }
+
+  return {
+    center: [cx, cy],
+    size: [maxX - minX, maxY - minY, height],
+    rotation: 0,
+    color,
+    vertices: inset.map((p) => [p.x, p.y] as [number, number]),
+  };
+}
+
+function findCornerBuildings(
+  roads: RoadNetwork,
+  zoneBoundary: Point2[],
+  height: [number, number],
+  color: string,
+  obstaclePolygons: Point2[][],
+): Building[] {
+  if (!roads?.nodes || !roads?.edges) return [];
+
+  const nodePos = new Map<string, [number, number]>();
+  for (const node of roads.nodes) {
+    nodePos.set(node.id, node.position);
+  }
+
+  const nodeEdgeMap = buildNodeEdgeMap(roads);
+  const results: Building[] = [];
+
+  // Compute zone bounding box with a margin so nodes on the boundary are included
+  const zoneBBox = calculateBoundingBox(zoneBoundary);
+  const margin = CORNER_BUILDING_DEPTH;
+
+  for (const node of roads.nodes) {
+    const pos = nodePos.get(node.id)!;
+
+    // Broad-phase: skip nodes clearly outside the zone (with margin for boundary nodes)
+    if (
+      pos[0] < zoneBBox.minX - margin ||
+      pos[0] > zoneBBox.maxX + margin ||
+      pos[1] < zoneBBox.minY - margin ||
+      pos[1] > zoneBBox.maxY + margin
+    )
+      continue;
+
+    const edges = nodeEdgeMap.get(node.id) ?? [];
+    if (edges.length < 2) continue;
+
+    for (const [e1, e2] of getCornerPairs(edges)) {
+      const depth = randomInRange(CORNER_BUILDING_DEPTH * 0.8, CORNER_BUILDING_DEPTH * 1.2);
+      const wingWidth = randomInRange(CORNER_WING_WIDTH * 0.8, CORNER_WING_WIDTH * 1.2);
+      const lotPolygon = computeCornerLotPolygon(pos, e1, e2, depth, wingWidth);
+      if (!lotPolygon) continue;
+
+      const bHeight = randomInRange(height[0], height[1]);
+      const building = lotPolygonToBuilding(lotPolygon, bHeight, color, zoneBoundary);
+      if (!building) continue;
+
+      const poly = getBuildingPolygon(building);
+
+      // Collision check against obstacles and already-placed corner buildings
+      if (overlapsWithPolygons(building, obstaclePolygons)) continue;
+      if (results.some((r) => polygonsOverlap(poly, getBuildingPolygon(r)))) continue;
+
+      results.push(building);
+    }
+  }
+
+  return results;
+}
+
+// ================================================================================
 // LAYOUT GENERATORS
 // ================================================================================
 
@@ -556,11 +828,11 @@ function generateGridLayout(settings: ZoneSettings, roadSegments: RoadSegment[])
   // Remove overlapping road-aligned buildings
   const roadAlignedBuildings: Building[] = [];
   for (const building of buildings) {
-    const buildingPoly = getBuildingCorners(building.center, building.size[0], building.size[1], building.rotation);
+    const buildingPoly = getBuildingPolygon(building);
     let overlaps = false;
 
     for (const existing of roadAlignedBuildings) {
-      const existingPoly = getBuildingCorners(existing.center, existing.size[0], existing.size[1], existing.rotation);
+      const existingPoly = getBuildingPolygon(existing);
       if (polygonsOverlap(buildingPoly, existingPoly)) {
         overlaps = true;
         break;
@@ -585,9 +857,7 @@ function generateGridLayout(settings: ZoneSettings, roadSegments: RoadSegment[])
   const startY = bbox.minY + maxLength / 2 + spacing / 2;
 
   // Convert road-aligned buildings to polygons for collision detection
-  const roadBuildingPolygons: Point2[][] = roadAlignedBuildings.map((b) =>
-    getBuildingCorners(b.center, b.size[0], b.size[1], b.rotation),
-  );
+  const roadBuildingPolygons: Point2[][] = roadAlignedBuildings.map(getBuildingPolygon);
 
   const gridBuildings: Building[] = [];
   for (let x = startX; x < bbox.maxX - maxWidth / 2; x += stepX) {
@@ -613,10 +883,10 @@ function generateGridLayout(settings: ZoneSettings, roadSegments: RoadSegment[])
       }
 
       // Check overlap with other grid buildings
-      const testPoly = getBuildingCorners([x, y], width, length, 0);
+      const testPoly = getBuildingPolygon(testBuilding);
       let overlapsGrid = false;
       for (const existing of gridBuildings) {
-        const existingPoly = getBuildingCorners(existing.center, existing.size[0], existing.size[1], existing.rotation);
+        const existingPoly = getBuildingPolygon(existing);
         if (polygonsOverlap(testPoly, existingPoly)) {
           overlapsGrid = true;
           break;
@@ -648,11 +918,11 @@ function generatePerimeterLayout(settings: ZoneSettings, roadSegments: RoadSegme
   // Remove overlapping road-aligned buildings
   const roadAlignedBuildings: Building[] = [];
   for (const building of buildings) {
-    const buildingPoly = getBuildingCorners(building.center, building.size[0], building.size[1], building.rotation);
+    const buildingPoly = getBuildingPolygon(building);
     let overlaps = false;
 
     for (const existing of roadAlignedBuildings) {
-      const existingPoly = getBuildingCorners(existing.center, existing.size[0], existing.size[1], existing.rotation);
+      const existingPoly = getBuildingPolygon(existing);
       if (polygonsOverlap(buildingPoly, existingPoly)) {
         overlaps = true;
         break;
@@ -671,9 +941,7 @@ function generatePerimeterLayout(settings: ZoneSettings, roadSegments: RoadSegme
   const spacing = settings.spacing;
 
   // Convert road-aligned buildings to polygons for collision detection
-  const roadBuildingPolygons: Point2[][] = roadAlignedBuildings.map((b) =>
-    getBuildingCorners(b.center, b.size[0], b.size[1], b.rotation),
-  );
+  const roadBuildingPolygons: Point2[][] = roadAlignedBuildings.map(getBuildingPolygon);
 
   const allInnerBuildings: Building[] = [];
 
@@ -729,15 +997,10 @@ function generatePerimeterLayout(settings: ZoneSettings, roadSegments: RoadSegme
         }
 
         // Check overlap with other buildings in current ring
-        const testPoly = getBuildingCorners([cx, cy], width, length, edgeAngleDegrees);
+        const testPoly = getBuildingPolygon(testBuilding);
         let overlapsOther = false;
         for (const existing of allInnerBuildings) {
-          const existingPoly = getBuildingCorners(
-            existing.center,
-            existing.size[0],
-            existing.size[1],
-            existing.rotation,
-          );
+          const existingPoly = getBuildingPolygon(existing);
           if (polygonsOverlap(testPoly, existingPoly)) {
             overlapsOther = true;
             break;
@@ -793,10 +1056,7 @@ function generatePerimeterLayout(settings: ZoneSettings, roadSegments: RoadSegme
       };
 
       // Check if the center building doesn't overlap with existing buildings
-      const allExistingPolygons: Point2[][] = [
-        ...roadBuildingPolygons,
-        ...allInnerBuildings.map((b) => getBuildingCorners(b.center, b.size[0], b.size[1], b.rotation)),
-      ];
+      const allExistingPolygons: Point2[][] = [...roadBuildingPolygons, ...allInnerBuildings.map(getBuildingPolygon)];
 
       if (!overlapsWithPolygons(centerBuilding, allExistingPolygons)) {
         allInnerBuildings.push(centerBuilding);
@@ -823,11 +1083,11 @@ function generateClusterLayout(settings: ZoneSettings, roadSegments: RoadSegment
   // Remove overlapping road-aligned buildings
   const roadAlignedBuildings: Building[] = [];
   for (const building of buildings) {
-    const buildingPoly = getBuildingCorners(building.center, building.size[0], building.size[1], building.rotation);
+    const buildingPoly = getBuildingPolygon(building);
     let overlaps = false;
 
     for (const existing of roadAlignedBuildings) {
-      const existingPoly = getBuildingCorners(existing.center, existing.size[0], existing.size[1], existing.rotation);
+      const existingPoly = getBuildingPolygon(existing);
       if (polygonsOverlap(buildingPoly, existingPoly)) {
         overlaps = true;
         break;
@@ -846,9 +1106,7 @@ function generateClusterLayout(settings: ZoneSettings, roadSegments: RoadSegment
   const spacing = settings.spacing;
 
   // Convert road-aligned buildings to polygons for collision detection
-  const roadBuildingPolygons: Point2[][] = roadAlignedBuildings.map((b) =>
-    getBuildingCorners(b.center, b.size[0], b.size[1], b.rotation),
-  );
+  const roadBuildingPolygons: Point2[][] = roadAlignedBuildings.map(getBuildingPolygon);
 
   const minDist = Math.max(maxWidth, maxLength) + spacing;
   const cellSize = minDist / Math.SQRT2;
@@ -1071,6 +1329,18 @@ export function generateBuildings(city: any, processedLandmarks?: Building[]): B
     const zoneArea = Math.abs(Util.getPolygonArea(settings.boundary));
     const targetArea = zoneArea * settings.coverage;
 
+    const baseObstacles: Point2[][] = [...parkPolygons, ...riverPolygons, ...roadPolygons, ...landmarkPolygons];
+
+    // Generate corner buildings first so regular layout avoids their lots
+    const cornerBuildings = findCornerBuildings(
+      city.roads,
+      settings.boundary,
+      settings.height,
+      settings.color,
+      baseObstacles,
+    );
+    const cornerBuildingPolygons = cornerBuildings.map(getBuildingPolygon);
+
     let candidates: Building[];
     switch (settings.layout) {
       case 'grid':
@@ -1091,17 +1361,20 @@ export function generateBuildings(city: any, processedLandmarks?: Building[]): B
         !overlapsWithPolygons(b, parkPolygons) &&
         !overlapsWithPolygons(b, riverPolygons) &&
         !overlapsWithPolygons(b, roadPolygons) &&
-        !overlapsWithPolygons(b, landmarkPolygons),
+        !overlapsWithPolygons(b, landmarkPolygons) &&
+        !overlapsWithPolygons(b, cornerBuildingPolygons),
     );
 
-    const selectedBuildings = applyCoverageConstraint(validBuildings, targetArea);
+    const cornerArea = cornerBuildings.reduce((s, b) => s + b.size[0] * b.size[1], 0);
+    const selectedRegular = applyCoverageConstraint(validBuildings, Math.max(0, targetArea - cornerArea));
+    const selectedBuildings = [...cornerBuildings, ...selectedRegular];
 
     for (const building of selectedBuildings) {
-      const buildingPoly = getBuildingCorners(building.center, building.size[0], building.size[1], building.rotation);
+      const buildingPoly = getBuildingPolygon(building);
       let overlaps = false;
 
       for (const existing of buildings) {
-        const existingPoly = getBuildingCorners(existing.center, existing.size[0], existing.size[1], existing.rotation);
+        const existingPoly = getBuildingPolygon(existing);
         if (polygonsOverlap(buildingPoly, existingPoly)) {
           overlaps = true;
           break;

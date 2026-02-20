@@ -213,44 +213,44 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
       }
 
       // // show boundaries
-      // {
-      //   const getRandomColor = () => {
-      //     const color = new Color(Math.random(), Math.random(), Math.random());
-      //     return '#' + color.getHexString();
-      //   };
+      {
+        const getRandomColor = () => {
+          const color = new Color(Math.random(), Math.random(), Math.random());
+          return '#' + color.getHexString();
+        };
 
-      //   let cz = 10;
-      //   for (const zone of city.zones) {
-      //     const boundary = zone.boundary;
-      //     const color = getRandomColor();
-      //     for (let i = 0; i < boundary.length; i++) {
-      //       const start = boundary[i];
-      //       const end = boundary[(i + 1) % boundary.length];
+        let cz = 10;
+        for (const zone of city.zones) {
+          const boundary = zone.boundary;
+          const color = getRandomColor();
+          for (let i = 0; i < boundary.length; i++) {
+            const start = boundary[i];
+            const end = boundary[(i + 1) % boundary.length];
 
-      //       const center = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2];
-      //       const rotation = Math.atan2(end[1] - start[1], end[0] - start[0]);
-      //       const dist = Math.hypot(start[0] - end[0], start[1] - end[1]);
+            const center = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2];
+            const rotation = Math.atan2(end[1] - start[1], end[0] - start[0]);
+            const dist = Math.hypot(start[0] - end[0], start[1] - end[1]);
 
-      //       const foundation = {
-      //         id: short.generate() as string,
-      //         parentId: Constants.GROUND_ID,
-      //         type: ObjectType.Foundation,
-      //         cx: center[0],
-      //         cy: center[1],
-      //         cz: cz,
-      //         lx: dist,
-      //         ly: 3,
-      //         lz: 5,
-      //         rotation: [0, 0, rotation],
-      //         normal: [0, 0, 1],
-      //         color: color,
-      //         textureType: FoundationTexture.NoTexture,
-      //       } as FoundationModel;
-      //       state.elements.push(foundation);
-      //     }
-      //     cz += 5;
-      //   }
-      // }
+            const foundation = {
+              id: short.generate() as string,
+              parentId: Constants.GROUND_ID,
+              type: ObjectType.Foundation,
+              cx: center[0],
+              cy: center[1],
+              cz: cz,
+              lx: dist,
+              ly: 3,
+              lz: 5,
+              rotation: [0, 0, rotation],
+              normal: [0, 0, 1],
+              color: color,
+              textureType: FoundationTexture.NoTexture,
+            } as FoundationModel;
+            state.elements.push(foundation);
+          }
+          cz += 5;
+        }
+      }
 
       // /** generate parks */
       // const parks = generateCityParks(city.parks, roads);
@@ -301,19 +301,31 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
         const [cx, cy] = building.center;
         const [lx, ly, lz] = building.size;
 
-        const cuboid = {
-          id: short.generate() as string,
-          type: ObjectType.InstancedCuboid,
-          cx,
-          cy,
-          cz: lz / 2,
-          lx,
-          ly,
-          lz,
-          rotation: [0, 0, Util.toRadians(building.rotation ?? 0)],
-          color: building.color,
-        } as InstancedModel;
-        state.elements.push(cuboid);
+        if (building.vertices && building.vertices.length >= 3) {
+          const prism = {
+            id: short.generate() as string,
+            type: ObjectType.Prism,
+            vertices: building.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
+            height: lz,
+            color: building.color,
+            transparency: 0,
+          } as PrismModel;
+          state.elements.push(prism);
+        } else {
+          const cuboid = {
+            id: short.generate() as string,
+            type: ObjectType.InstancedCuboid,
+            cx,
+            cy,
+            cz: lz / 2,
+            lx,
+            ly,
+            lz,
+            rotation: [0, 0, Util.toRadians(building.rotation ?? 0)],
+            color: building.color,
+          } as InstancedModel;
+          state.elements.push(cuboid);
+        }
 
         maxX = Math.max(Math.abs(cx), maxX);
         maxY = Math.max(Math.abs(cy), maxY);
@@ -404,10 +416,11 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
   const handleGenerativeAI = async () => {
     setGenerating(true);
     try {
-      const result = await generate();
+      // const result = await generate();
 
       // test
       // const result = ``;
+      const result = `{"world":{"date":"06/22/2025, 12:00:00 PM","address":"Boston, Massachusetts, USA","latitude":42.3601,"longitude":-71.0589},"terrain":{"sea":{"vertices":[[1000,-1000],[1000,1000],[600,1000],[500,800],[450,500],[500,200],[550,-100],[600,-400],[700,-700],[800,-1000]]},"land":{"vertices":[[-1000,-1000],[800,-1000],[700,-700],[600,-400],[550,-100],[500,200],[450,500],[500,800],[600,1000],[-1000,1000]]}},"city":{"roads":{"nodes":[{"id":"n1","position":[-800,800]},{"id":"n2","position":[-400,750]},{"id":"n3","position":[0,700]},{"id":"n4","position":[300,650]},{"id":"n5","position":[-700,400]},{"id":"n6","position":[-300,350]},{"id":"n7","position":[100,300]},{"id":"n8","position":[350,280]},{"id":"n9","position":[-600,0]},{"id":"n10","position":[-200,-50]},{"id":"n11","position":[150,0]},{"id":"n12","position":[400,50]},{"id":"n13","position":[-500,-400]},{"id":"n14","position":[-100,-450]},{"id":"n15","position":[250,-400]},{"id":"n16","position":[500,-350]},{"id":"n17","position":[-400,-750]},{"id":"n18","position":[0,-800]},{"id":"n19","position":[350,-700]},{"id":"n20","position":[550,-600]},{"id":"n21","position":[-850,100]},{"id":"n22","position":[-150,500]},{"id":"n23","position":[200,550]},{"id":"n24","position":[-450,150]},{"id":"n25","position":[50,150]},{"id":"n26","position":[-300,-200]},{"id":"n27","position":[100,-250]},{"id":"n28","position":[-200,-650]},{"id":"n29","position":[180,-600]},{"id":"n30","position":[-700,-200]},{"id":"n31","position":[-600,600]},{"id":"n32","position":[380,450]}],"edges":[{"id":"e1","from":"n1","to":"n2","level":1},{"id":"e2","from":"n2","to":"n3","level":1},{"id":"e3","from":"n3","to":"n4","level":1},{"id":"e4","from":"n5","to":"n6","level":1},{"id":"e5","from":"n6","to":"n7","level":1},{"id":"e6","from":"n7","to":"n8","level":1},{"id":"e7","from":"n9","to":"n10","level":1},{"id":"e8","from":"n10","to":"n11","level":1},{"id":"e9","from":"n11","to":"n12","level":1},{"id":"e10","from":"n13","to":"n14","level":1},{"id":"e11","from":"n14","to":"n15","level":1},{"id":"e12","from":"n15","to":"n16","level":1},{"id":"e13","from":"n17","to":"n18","level":1},{"id":"e14","from":"n18","to":"n19","level":1},{"id":"e15","from":"n19","to":"n20","level":1},{"id":"e16","from":"n1","to":"n5","level":1},{"id":"e17","from":"n5","to":"n9","level":1},{"id":"e18","from":"n9","to":"n13","level":1},{"id":"e19","from":"n13","to":"n17","level":1},{"id":"e20","from":"n2","to":"n6","level":1},{"id":"e21","from":"n6","to":"n10","level":1},{"id":"e22","from":"n10","to":"n14","level":1},{"id":"e23","from":"n14","to":"n18","level":1},{"id":"e24","from":"n3","to":"n7","level":1},{"id":"e25","from":"n7","to":"n11","level":1},{"id":"e26","from":"n11","to":"n15","level":1},{"id":"e27","from":"n15","to":"n19","level":1},{"id":"e28","from":"n4","to":"n8","level":1},{"id":"e29","from":"n8","to":"n12","level":1},{"id":"e30","from":"n12","to":"n16","level":1},{"id":"e31","from":"n16","to":"n20","level":1},{"id":"e32","from":"n21","to":"n5","level":2},{"id":"e33","from":"n21","to":"n9","level":2},{"id":"e34","from":"n31","to":"n2","level":2},{"id":"e35","from":"n31","to":"n5","level":2},{"id":"e36","from":"n22","to":"n6","level":2},{"id":"e37","from":"n22","to":"n3","level":2},{"id":"e38","from":"n23","to":"n3","level":2},{"id":"e39","from":"n23","to":"n7","level":2},{"id":"e40","from":"n32","to":"n4","level":2},{"id":"e41","from":"n32","to":"n8","level":2},{"id":"e42","from":"n24","to":"n9","level":2},{"id":"e43","from":"n24","to":"n6","level":2},{"id":"e44","from":"n25","to":"n10","level":2},{"id":"e45","from":"n25","to":"n7","level":2},{"id":"e46","from":"n30","to":"n9","level":2},{"id":"e47","from":"n30","to":"n13","level":2},{"id":"e48","from":"n26","to":"n10","level":2},{"id":"e49","from":"n26","to":"n13","level":2},{"id":"e50","from":"n27","to":"n11","level":2},{"id":"e51","from":"n27","to":"n14","level":2},{"id":"e52","from":"n28","to":"n17","level":2},{"id":"e53","from":"n28","to":"n14","level":2},{"id":"e54","from":"n29","to":"n18","level":2},{"id":"e55","from":"n29","to":"n15","level":2}]},"rivers":[{"vertices":[[-150,1000],[-200,900],[-180,700],[-220,500],[-250,300],[-280,100],[-300,-100],[-350,-300],[-380,-500],[-400,-700],[-420,-900],[-450,-1000],[-550,-1000],[-520,-900],[-500,-700],[-480,-500],[-450,-300],[-400,-100],[-380,100],[-350,300],[-320,500],[-280,700],[-300,900],[-250,1000]]}],"parks":[{"vertices":[[-800,650],[-650,700],[-500,680],[-480,550],[-550,450],[-700,480],[-820,520]]},{"vertices":[[50,450],[180,480],[250,400],[220,300],[100,280],[30,350]]},{"vertices":[[-150,-100],[-50,-80],[50,-120],[30,-220],[-80,-250],[-180,-200]]},{"vertices":[[-650,-500],[-550,-450],[-480,-520],[-500,-620],[-600,-650],[-680,-580]]},{"vertices":[[100,-550],[200,-500],[280,-580],[250,-680],[150,-700],[80,-630]]}],"landmarks":[{"center":[50,100],"size":[60,60,180],"rotation":0.15},{"center":[-350,200],"size":[50,50,150],"rotation":-0.1},{"center":[300,150],"size":[45,55,140],"rotation":0.2},{"center":[-100,600],"size":[40,40,120],"rotation":0},{"center":[250,-200],"size":[55,45,160],"rotation":-0.15},{"center":[-500,50],"size":[35,35,100],"rotation":0.3},{"center":[150,-350],"size":[50,60,130],"rotation":0.1},{"center":[-250,-350],"size":[45,45,110],"rotation":-0.2}],"zones":[{"boundary":[[-1000,1000],[-1000,400],[-700,400],[-400,350],[-150,500],[0,700],[600,1000]],"length":[20,40],"width":[15,30],"height":[15,45],"coverage":0.45,"layout":"cluster"},{"boundary":[[-1000,400],[-1000,0],[-600,0],[-450,150],[-300,350],[-700,400]],"length":[25,45],"width":[20,35],"height":[25,70],"coverage":0.55,"layout":"grid"},{"boundary":[[-300,350],[-200,-50],[150,0],[100,300],[0,700],[-150,500]],"length":[30,50],"width":[25,40],"height":[40,120],"coverage":0.65,"layout":"grid"},{"boundary":[[100,300],[350,280],[400,50],[500,200],[450,500],[600,1000],[0,700]],"length":[25,40],"width":[20,35],"height":[30,80],"coverage":0.5,"layout":"perimeter"},{"boundary":[[-1000,0],[-1000,-400],[-500,-400],[-600,0]],"length":[20,35],"width":[18,28],"height":[12,35],"coverage":0.4,"layout":"cluster"},{"boundary":[[-600,0],[-500,-400],[-100,-450],[150,0],[-200,-50]],"length":[22,38],"width":[18,32],"height":[20,55],"coverage":0.5,"layout":"grid"},{"boundary":[[150,0],[400,50],[500,-350],[250,-400],[-100,-450],[-200,-50]],"length":[28,45],"width":[22,38],"height":[35,90],"coverage":0.6,"layout":"grid"},{"boundary":[[-1000,-400],[-1000,-1000],[-400,-750],[-500,-400]],"length":[18,32],"width":[15,28],"height":[10,30],"coverage":0.35,"layout":"cluster"},{"boundary":[[-500,-400],[-400,-750],[0,-800],[250,-400],[-100,-450]],"length":[20,35],"width":[18,30],"height":[15,40],"coverage":0.45,"layout":"grid"},{"boundary":[[250,-400],[500,-350],[550,-600],[350,-700],[0,-800]]}]},"thinking":"Boston is characterized by its irregular street pattern reflecting colonial origins, harbor location on the east, the Charles River, historic neighborhoods, and mix of old and modern architecture. I created an eastern harbor with irregular coastline, placed the Charles River flowing through the city from north to south with a meandering path typical of Boston. The road network features the characteristic non-grid pattern with diagonal connections representing Boston's organic growth. I included Boston Common-inspired parks, financial district with taller buildings downtown, and varied neighborhood zones from Back Bay style grid areas to older irregular North End style clusters. Landmarks represent buildings like the Prudential Center, Hancock Tower, and Custom House Tower with varying heights and orientations."}`;
 
       if (result) {
         // prevent markdown
