@@ -1137,7 +1137,7 @@ export function generateTrees(
   rivers?: River[],
 ): TreeInstance[] {
   const trees: TreeInstance[] = [];
-  const treeSpacing = 8; // minimum distance between trees
+  const treeSpacing = 5; // minimum distance between trees
 
   // Generate road polygons for collision detection (used by park trees)
   const roadPolygons: Point2[][] = roads ? generateRoadPolygons(roads) : [];
@@ -1192,7 +1192,7 @@ export function generateTrees(
 
       // Calculate park area to determine tree count
       const area = Math.abs(Util.getPolygonArea(polygon));
-      const treeDensity = 0.003; // trees per square meter
+      const treeDensity = 0.004; // trees per square meter
       const targetTreeCount = Math.max(3, Math.floor(area * treeDensity));
 
       let placed = 0;
@@ -1221,7 +1221,7 @@ export function generateTrees(
 
   // ---- Street trees (along main roads, level 1) ----
   if (roads && roads.nodes && roads.edges) {
-    const streetTreeSpacing = 20; // distance between street trees along road
+    const streetTreeSpacing = 12.5; // distance between street trees along road
     const roadSetback = 0.5; // distance from road edge to tree center
 
     const nodeMap = new Map<string, [number, number]>();

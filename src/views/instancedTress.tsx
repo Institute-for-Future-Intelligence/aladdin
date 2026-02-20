@@ -17,18 +17,16 @@ const PARK_TREE = {
   dodecahedronRadius: 3,
   dodecahedronDetail: 0,
   bodyScale: [1, 1, 1.8] as [number, number, number],
-  trunkColor: 'brown',
-  bodyColor: '#2c7908',
+  trunkColor: '#5c3a1e',
 };
 
 const STREET_TREE = {
   trunkWidth: 0.5,
-  trunkHeight: 5,
-  dodecahedronRadius: 2,
+  trunkHeight: 7,
+  dodecahedronRadius: 3.5,
   dodecahedronDetail: 0,
   bodyScale: [1, 1, 2] as [number, number, number],
   trunkColor: '#5c3a1e',
-  bodyColor: '#59cf1e',
 };
 
 // Simple hash to get a deterministic random number from a string id
@@ -67,17 +65,17 @@ const getParkBodyColor = (id: string, dayOfYear: number): string => {
   // Random variation on top of seasonal base
   const h = base.h + (hashToRandom(id, 1) - 0.5) * 0.1;
   const s = base.s + (hashToRandom(id, 2) - 0.5) * 0.3;
-  const l = base.l + (hashToRandom(id, 3) - 0.5) * 0.15;
+  const l = base.l * 1.3 + (hashToRandom(id, 3) - 0.5) * 0.15;
   const color = new Color();
   color.setHSL(h, Math.max(0, Math.min(1, s)), Math.max(0, Math.min(1, l)));
   return '#' + color.getHexString();
 };
 
-// Generate a seasonal color for street tree canopy (no per-tree randomness)
+// Generate a seasonal color for street tree canopy (no per-tree randomness, darker than park trees)
 const getStreetBodyColor = (dayOfYear: number): string => {
   const base = getSeasonalBaseHSL(dayOfYear);
   const color = new Color();
-  color.setHSL(base.h, Math.max(0, Math.min(1, base.s)), Math.max(0, Math.min(1, base.l)));
+  color.setHSL(base.h, Math.max(0, Math.min(1, base.s)), Math.max(0, Math.min(1, base.l * 0.7)));
   return '#' + color.getHexString();
 };
 

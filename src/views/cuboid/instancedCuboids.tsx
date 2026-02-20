@@ -64,7 +64,8 @@ const InstancedCuboids = ({ cuboids }: InstancedCuboidsProps) => {
               position={[cx, cy, cz]}
               scale={[lx, ly, lz]}
               rotation={[0, 0, rotation[2]]}
-              color={getRandomNearbyColor(model.color ?? 'grey')}
+              // color={getRandomNearbyColor(model.color ?? 'grey')}
+              color={'white'}
             />
           );
         })}
