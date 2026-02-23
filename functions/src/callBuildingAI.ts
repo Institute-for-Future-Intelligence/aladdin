@@ -16,7 +16,7 @@ The plane z = 0 represents ground.
 There should be an address for the location of houses. If not specified, the default address is Natick, Massachusetts, USA.
 Provide the latitude and longitude of the location.
 
-Date and time should be set as a string in a format MM/dd/yyyy, hh:mm:ss a. If not specified, set the default date and time to 06/22/2025, 12:00:00 PM.
+Date and time should be set as a string in a format MM/dd/yyyy, hh:mm:ss a. If not specified, set the default date and time to 06/22/2025, 14:00:00 PM.
 Direct light intensity is a number with the default value 3.5.
 Ambient light intensity is a number with the default value 0.2.
 
@@ -118,7 +118,7 @@ The orientation of a solar panel can be "Landscape" or "Portrait". The default i
 Its size is [lx, ly], it should cover the entire area of the roof segment it is mounted on.
 Its center is [cx, cy, cz], where cx and cy are relative to the foundation's center.
 "batteryId" should be the id of batter storage built on the same foundation if there is any.
-When adding a solar panel to the roof, place it at the center of the south-facing roof segment by default. 
+When adding a solar panel to the roof, place it at the center of the south-facing roof segment by default.
 If the roof is mansard roof, place solar panel at the center of the roof.
 It's important to make sure the panel stays within the building and foundation boundary!
 
