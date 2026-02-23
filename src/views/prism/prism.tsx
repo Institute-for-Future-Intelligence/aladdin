@@ -45,10 +45,11 @@ const Prism = ({ model }: PrismProps) => {
     return null;
   }
 
+  const _color = model.type === ObjectType.PrismBuilding ? 'white' : color;
   return (
     <group name={`prism ${id}`}>
       <mesh geometry={geometry} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
-        <meshStandardMaterial color={color} transparent={transparency > 0} opacity={1 - transparency} />
+        <meshStandardMaterial color={_color} transparent={transparency > 0} opacity={1 - transparency} />
       </mesh>
     </group>
   );

@@ -340,6 +340,7 @@ export enum ObjectType {
   Polygon = 'Polygon',
   PolygonVertex = 'Polygon Vertex',
   Prism = 'Prism', // obsolete, now use River or Greenspace
+  PrismBuilding = 'PrismBuilding',
   River = 'River',
   Sea = 'Sea',
   Greenspace = 'Greenspace',
