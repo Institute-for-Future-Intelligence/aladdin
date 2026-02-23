@@ -75,7 +75,7 @@ If not specified, the default address is Tucson, Arizona, USA.
   - latitude and longitude
 
 Date and time
-  - a string in a format MM/dd/yyyy, hh:mm:ss a. If not specified, set the default date and time to 06/22/2025, 14:00:00 PM
+  - a string in a format MM/dd/yyyy, hh:mm:ss a. If not specified, set the default date and time to 06/22/2025, 02:00:00 PM
 
 
 ===

@@ -72,7 +72,7 @@ If not specified, the default address is New York City, USA.
   - latitude and longitude
 
 ## Date and time
-  - a string in a format MM/dd/yyyy, hh:mm:ss a. If not specified, set the default date and time to 06/22/2025, 14:00:00 PM
+  - a string in a format MM/dd/yyyy, hh:mm:ss a. If not specified, set the default date and time to 06/22/2025, 02:00:00 PM
 
 ## terrain
   - 海洋只包含一个端点属性，用数组表示

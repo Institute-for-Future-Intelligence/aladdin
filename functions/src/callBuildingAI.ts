@@ -16,7 +16,7 @@ The plane z = 0 represents ground.
 There should be an address for the location of houses. If not specified, the default address is Natick, Massachusetts, USA.
 Provide the latitude and longitude of the location.
 
-Date and time should be set as a string in a format MM/dd/yyyy, hh:mm:ss a. If not specified, set the default date and time to 06/22/2025, 14:00:00 PM.
+Date and time should be set as a string in a format MM/dd/yyyy, hh:mm:ss a. If not specified, set the default date and time to 06/22/2025, 02:00:00 PM.
 Direct light intensity is a number with the default value 3.5.
 Ambient light intensity is a number with the default value 0.2.
 
