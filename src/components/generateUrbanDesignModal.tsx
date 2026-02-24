@@ -267,7 +267,8 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
       }
 
       // /** generate landmarks */
-      const landmarks = generateLandmarkBuildings(city);
+      const seaVerts: [number, number][] | undefined = terrain?.sea?.vertices;
+      const landmarks = generateLandmarkBuildings(city, seaVerts);
       for (const landmark of landmarks) {
         const [cx, cy] = landmark.center;
         const [lx, ly, lz] = landmark.size;
@@ -296,7 +297,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
       let maxY = 0;
 
       /** generate buildings */
-      const buildings = generateBuildings(city, landmarks);
+      const buildings = generateBuildings(city, landmarks, seaVerts);
       for (const building of buildings) {
         const [cx, cy] = building.center;
         const [lx, ly, lz] = building.size;

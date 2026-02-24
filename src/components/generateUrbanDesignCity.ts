@@ -1782,7 +1782,11 @@ export function generateRoads(network: RoadNetwork): Road[] {
   return network.edges.map((edge) => generateRoad(edge, nodeMap));
 }
 
-export function generateBuildings(city: any, processedLandmarks?: Building[]): Building[] {
+export function generateBuildings(
+  city: any,
+  processedLandmarks?: Building[],
+  seaVertices?: [number, number][],
+): Building[] {
   const buildings: Building[] = [];
   const zones = city.zones || [];
 
@@ -1793,6 +1797,9 @@ export function generateBuildings(city: any, processedLandmarks?: Building[]): B
   const riverPolygons: Point2[][] = (city.rivers || []).map((r: River) =>
     r.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
   );
+
+  const seaPolygons: Point2[][] =
+    seaVertices && seaVertices.length >= 3 ? [seaVertices.map((v) => ({ x: v[0], y: v[1] }))] : [];
 
   const roadPolygons: Point2[][] = generateRoadPolygons(city.roads);
   const roadSegments: RoadSegment[] = getRoadSegments(city.roads);
@@ -1820,7 +1827,13 @@ export function generateBuildings(city: any, processedLandmarks?: Building[]): B
     const zoneArea = Math.abs(Util.getPolygonArea(settings.boundary));
     const targetArea = zoneArea * settings.coverage;
 
-    const baseObstacles: Point2[][] = [...parkPolygons, ...riverPolygons, ...roadPolygons, ...landmarkPolygons];
+    const baseObstacles: Point2[][] = [
+      ...parkPolygons,
+      ...riverPolygons,
+      ...seaPolygons,
+      ...roadPolygons,
+      ...landmarkPolygons,
+    ];
 
     // Generate corner buildings first so regular layout avoids their lots
     const cornerBuildings = findCornerBuildings(
@@ -1851,6 +1864,7 @@ export function generateBuildings(city: any, processedLandmarks?: Building[]): B
       (b) =>
         !overlapsWithPolygons(b, parkPolygons) &&
         !overlapsWithPolygons(b, riverPolygons) &&
+        !overlapsWithPolygons(b, seaPolygons) &&
         !overlapsWithPolygons(b, roadPolygons) &&
         !overlapsWithPolygons(b, landmarkPolygons) &&
         !overlapsWithPolygons(b, cornerBuildingPolygons),
@@ -2127,7 +2141,7 @@ export function generateTrees(
   return trees;
 }
 
-export function generateLandmarkBuildings(city: any): Building[] {
+export function generateLandmarkBuildings(city: any, seaVertices?: [number, number][]): Building[] {
   const landmarks: Landmark[] = city.landmarks || [];
 
   const parkPolygons: Point2[][] = (city.parks || []).map((p: Park) =>
@@ -2138,9 +2152,12 @@ export function generateLandmarkBuildings(city: any): Building[] {
     r.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
   );
 
+  const seaPolygons: Point2[][] =
+    seaVertices && seaVertices.length >= 3 ? [seaVertices.map((v) => ({ x: v[0], y: v[1] }))] : [];
+
   const roadPolygons: Point2[][] = generateRoadPolygons(city.roads);
 
-  const allObstacles: Point2[][] = [...parkPolygons, ...riverPolygons, ...roadPolygons];
+  const allObstacles: Point2[][] = [...parkPolygons, ...riverPolygons, ...seaPolygons, ...roadPolygons];
 
   const buildings: Building[] = [];
   for (const lm of landmarks) {
