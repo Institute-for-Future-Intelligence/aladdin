@@ -78,7 +78,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
   // models for internal test
   const testModels = [];
   const user = useStore(Selector.user);
-  if (isInternalUser(user)) {
+  if (isInternalUser(user) && !import.meta.env.PROD) {
     testModels.push({ value: AI_MODELS_NAME['Claude Opus-4.5'], label: 'Claude Opus-4.5' });
     testModels.push({ value: AI_MODELS_NAME['OpenAI o4-mini'], label: 'OpenAI o4-mini' });
   }
