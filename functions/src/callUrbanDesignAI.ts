@@ -98,7 +98,7 @@ If not specified, the default address is New York City, USA.
 - 无河流时返回空数组
 
 ## ponds
-- 封闭多边形
+- 封闭多边形，默认应该包含在park范围内
 - 没有时返回空数组
 
 ## parks

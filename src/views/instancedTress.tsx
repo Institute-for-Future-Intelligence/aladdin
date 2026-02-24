@@ -5,7 +5,6 @@ import { InstancedTree } from 'src/models/InstancedModel';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { Util } from 'src/Util';
-import { Color } from 'three';
 
 interface InstancedTreesProps {
   trees: InstancedTree[];
@@ -38,45 +37,85 @@ const hashToRandom = (id: string, seed: number = 0): number => {
   return ((hash & 0x7fffffff) % 10000) / 10000; // 0~1
 };
 
-// Seasonal base colors for tree canopies (HSL)
-// dayOfYear is already adjusted for hemisphere
-const getSeasonalBaseHSL = (dayOfYear: number): { h: number; s: number; l: number } => {
-  // Spring: day 90~150, Summer: 150~270, Autumn: 270~330, Winter: 330~90
-  if (dayOfYear >= 90 && dayOfYear < 150) {
-    // Spring: fresh light green, interpolate from winter-brown to summer-green
-    const t = (dayOfYear - 90) / 60;
-    return { h: 0.2 + t * 0.1, s: 0.4 + t * 0.4, l: 0.35 + t * 0.05 };
-  } else if (dayOfYear >= 150 && dayOfYear < 270) {
-    // Summer: deep green
-    return { h: 0.3, s: 0.8, l: 0.25 };
-  } else if (dayOfYear >= 270 && dayOfYear < 330) {
-    // Autumn: green -> orange dominant
-    const t = (dayOfYear - 270) / 60;
-    return { h: 0.25 - t * 0.17, s: 0.85 - t * 0.15, l: 0.3 + t * 0.1 };
-  } else {
-    // Winter: bare brown / muted
-    return { h: 0.08, s: 0.4, l: 0.35 };
-  }
+// Green palette for spring/summer (from 240+ Shades of Green chart)
+const GREEN_PALETTE = [
+  '#90EE90', // Light Green
+  '#006400', // Dark Green
+  '#708238', // Olive Green
+  '#50C878', // Emerald Green
+  '#98FB98', // Mint Green
+  '#33B864', // Cool Green
+  '#01796F', // Pine Green
+  '#4CBB17', // Kelly Green
+  '#4B5320', // Army Green
+  '#2E8B57', // Sea Green
+  '#9ACD32', // Yellow Green
+  '#00563B', // Castleton Green
+  '#228B22', // Forest Green
+  '#355E3B', // Hunter Green
+  '#088F8F', // Blue Green
+  '#9FE2BF', // Seafoam Green
+  '#2FF924', // Lightsaber Green
+];
+
+// Orange palette for autumn (from 100+ Shades of Orange chart)
+const ORANGE_PALETTE = [
+  '#E34234', // Vermillion
+  '#F28500', // Tangerine
+  '#FF7F50', // Coral
+  '#FBCEB1', // Apricot
+  '#FFBF00', // Amber
+  '#FFE5B4', // Peach
+  '#FF7900', // Safety Orange
+  '#F4C430', // Saffron
+  '#FF7518', // Pumpkin Orange
+  '#B7410E', // Rust
+  '#FEBA4F', // Pastel Orange
+  '#F89880', // Pink Orange
+  '#FA8072', // Salmon
+  '#F04A00', // International Orange
+  '#BF5700', // Burnt Orange
+  '#FF5F1F', // Neon Orange
+];
+
+// Winter bare brown color
+const WINTER_COLOR = '#8B7355';
+
+// Determine season from dayOfYear (already adjusted for hemisphere)
+// Spring: 90~150, Summer: 150~270, Autumn: 270~330, Winter: 330~90
+const getSeason = (dayOfYear: number): 'spring' | 'summer' | 'autumn' | 'winter' => {
+  if (dayOfYear >= 90 && dayOfYear < 150) return 'spring';
+  if (dayOfYear >= 150 && dayOfYear < 270) return 'summer';
+  if (dayOfYear >= 270 && dayOfYear < 330) return 'autumn';
+  return 'winter';
 };
 
-// Generate a seasonal + random color variation for park tree canopy
+// Pick a color from palette using deterministic hash
+const pickFromPalette = (palette: string[], id: string, seed: number = 0): string => {
+  const index = Math.floor(hashToRandom(id, seed) * palette.length);
+  return palette[index];
+};
+
+// Generate a seasonal color for park tree canopy by picking from palettes
 const getParkBodyColor = (id: string, dayOfYear: number): string => {
-  const base = getSeasonalBaseHSL(dayOfYear);
-  // Random variation on top of seasonal base
-  const h = base.h + (hashToRandom(id, 1) - 0.5) * 0.1;
-  const s = base.s + (hashToRandom(id, 2) - 0.5) * 0.3;
-  const l = base.l * 1.3 + (hashToRandom(id, 3) - 0.5) * 0.15;
-  const color = new Color();
-  color.setHSL(h, Math.max(0, Math.min(1, s)), Math.max(0, Math.min(1, l)));
-  return '#' + color.getHexString();
+  const season = getSeason(dayOfYear);
+  if (season === 'spring' || season === 'summer') {
+    return pickFromPalette(GREEN_PALETTE, id, 1);
+  } else if (season === 'autumn') {
+    return pickFromPalette(ORANGE_PALETTE, id, 1);
+  }
+  return WINTER_COLOR;
 };
 
-// Generate a seasonal color for street tree canopy (no per-tree randomness, darker than park trees)
-const getStreetBodyColor = (dayOfYear: number): string => {
-  const base = getSeasonalBaseHSL(dayOfYear);
-  const color = new Color();
-  color.setHSL(base.h, Math.max(0, Math.min(1, base.s)), Math.max(0, Math.min(1, base.l * 0.7)));
-  return '#' + color.getHexString();
+// Generate a seasonal color for street tree canopy by picking from palettes
+const getStreetBodyColor = (id: string, dayOfYear: number): string => {
+  const season = getSeason(dayOfYear);
+  if (season === 'spring' || season === 'summer') {
+    return pickFromPalette(GREEN_PALETTE, id, 2);
+  } else if (season === 'autumn') {
+    return pickFromPalette(ORANGE_PALETTE, id, 2);
+  }
+  return WINTER_COLOR;
 };
 
 const InstancedTrees = ({ trees }: InstancedTreesProps) => {
@@ -114,10 +153,21 @@ const InstancedTrees = ({ trees }: InstancedTreesProps) => {
     [parkTrees, dayOfYear],
   );
 
-  const streetBodyColor = useMemo(() => getStreetBodyColor(dayOfYear), [dayOfYear]);
+  const streetTreeColors = useMemo(
+    () => streetTrees.map((t) => getStreetBodyColor(t.id, dayOfYear)),
+    [streetTrees, dayOfYear],
+  );
 
-  // Pre-compute random rotation for street trees
-  const streetTreeRotations = useMemo(() => streetTrees.map(() => Math.random() * Math.PI * 2), [streetTrees]);
+  // Pre-compute random values for street trees: rotation, height scale, radius scale
+  const streetTreeData = useMemo(
+    () =>
+      streetTrees.map((t) => ({
+        rotation: Math.random() * Math.PI * 2,
+        heightScale: 0.85 + hashToRandom(t.id, 6) * 0.3, // 0.85 ~ 1.15
+        radiusScale: 0.9 + hashToRandom(t.id, 7) * 0.2, // 0.9 ~ 1.1
+      })),
+    [streetTrees],
+  );
 
   return (
     <group name="Instanced Models">
@@ -171,14 +221,18 @@ const InstancedTrees = ({ trees }: InstancedTreesProps) => {
       <Instances limit={2000} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
         <boxGeometry />
         <meshStandardMaterial />
-        {streetTrees.map((model, i) => (
-          <Instance
-            key={model.id}
-            position={[model.cx, model.cy, STREET_TREE.trunkHeight / 2]}
-            scale={[STREET_TREE.trunkWidth, STREET_TREE.trunkWidth, STREET_TREE.trunkHeight]}
-            color={STREET_TREE.trunkColor}
-          />
-        ))}
+        {streetTrees.map((model, i) => {
+          const { heightScale } = streetTreeData[i];
+          const trunkHeight = STREET_TREE.trunkHeight * heightScale;
+          return (
+            <Instance
+              key={model.id}
+              position={[model.cx, model.cy, trunkHeight / 2]}
+              scale={[STREET_TREE.trunkWidth, STREET_TREE.trunkWidth, trunkHeight]}
+              color={STREET_TREE.trunkColor}
+            />
+          );
+        })}
       </Instances>
 
       {/* Street tree canopies */}
@@ -186,19 +240,26 @@ const InstancedTrees = ({ trees }: InstancedTreesProps) => {
         <Instances limit={2000} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
           <dodecahedronGeometry args={[STREET_TREE.dodecahedronRadius, STREET_TREE.dodecahedronDetail]} />
           <meshStandardMaterial />
-          {streetTrees.map((model, i) => (
-            <Instance
-              key={model.id}
-              scale={STREET_TREE.bodyScale}
-              position={[
-                model.cx,
-                model.cy,
-                STREET_TREE.trunkHeight + STREET_TREE.dodecahedronRadius * STREET_TREE.bodyScale[2] * 0.6,
-              ]}
-              rotation={[0, 0, streetTreeRotations[i]]}
-              color={streetBodyColor}
-            />
-          ))}
+          {streetTrees.map((model, i) => {
+            const { rotation, heightScale, radiusScale } = streetTreeData[i];
+            const trunkHeight = STREET_TREE.trunkHeight * heightScale;
+            const canopyOffsetZ = STREET_TREE.dodecahedronRadius * STREET_TREE.bodyScale[2] * heightScale * 0.6;
+            return (
+              <Instance
+                key={model.id}
+                scale={
+                  STREET_TREE.bodyScale.map((s, j) => (j === 2 ? s * heightScale : s * heightScale * radiusScale)) as [
+                    number,
+                    number,
+                    number,
+                  ]
+                }
+                position={[model.cx, model.cy, trunkHeight + canopyOffsetZ]}
+                rotation={[0, 0, rotation]}
+                color={streetTreeColors[i]}
+              />
+            );
+          })}
         </Instances>
       )}
     </group>
