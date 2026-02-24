@@ -23,6 +23,10 @@ interface River {
   vertices: [number, number][];
 }
 
+interface Ponds {
+  vertices: [number, number][];
+}
+
 interface Park {
   vertices: [number, number][];
 }
@@ -1798,6 +1802,10 @@ export function generateBuildings(
     r.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
   );
 
+  const pondPolygons: Point2[][] = (city.ponds || []).map((p: Ponds) =>
+    p.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
+  );
+
   const seaPolygons: Point2[][] =
     seaVertices && seaVertices.length >= 3 ? [seaVertices.map((v) => ({ x: v[0], y: v[1] }))] : [];
 
@@ -1830,6 +1838,7 @@ export function generateBuildings(
     const baseObstacles: Point2[][] = [
       ...parkPolygons,
       ...riverPolygons,
+      ...pondPolygons,
       ...seaPolygons,
       ...roadPolygons,
       ...landmarkPolygons,
@@ -1864,6 +1873,7 @@ export function generateBuildings(
       (b) =>
         !overlapsWithPolygons(b, parkPolygons) &&
         !overlapsWithPolygons(b, riverPolygons) &&
+        !overlapsWithPolygons(b, pondPolygons) &&
         !overlapsWithPolygons(b, seaPolygons) &&
         !overlapsWithPolygons(b, roadPolygons) &&
         !overlapsWithPolygons(b, landmarkPolygons) &&
@@ -1941,6 +1951,10 @@ export function generateBuildings(
   return buildings;
 }
 
+export function generateCityPonds(ponds: Ponds[]): Ponds[] {
+  return ponds || [];
+}
+
 export function generateCityRivers(rivers: River[]): River[] {
   return rivers || [];
 }
@@ -1959,6 +1973,7 @@ export function generateTrees(
   roads?: RoadNetwork,
   buildings?: Building[],
   rivers?: River[],
+  ponds?: Ponds[],
 ): TreeInstance[] {
   const trees: TreeInstance[] = [];
   const treeSpacing = 5; // minimum distance between trees
@@ -1969,6 +1984,11 @@ export function generateTrees(
   // Generate river polygons for collision detection
   const riverPolygons: Point2[][] = (rivers || []).map((r) =>
     r.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
+  );
+
+  // Generate pond polygons for collision detection
+  const pondPolygons: Point2[][] = (ponds || []).map((p) =>
+    p.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
   );
 
   // Helper to check if a position is too close to existing trees
@@ -1994,6 +2014,16 @@ export function generateTrees(
   // Helper to check if a position is in a river
   const isInRiver = (x: number, y: number): boolean => {
     for (const poly of riverPolygons) {
+      if (Util.isPointInside(x, y, poly)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // Helper to check if a position is in a pond
+  const isInPond = (x: number, y: number): boolean => {
+    for (const poly of pondPolygons) {
       if (Util.isPointInside(x, y, poly)) {
         return true;
       }
@@ -2031,9 +2061,10 @@ export function generateTrees(
 
         if (!Util.isPointInside(x, y, innerPolygon)) continue;
 
-        // Skip if on a road or in a river
+        // Skip if on a road, in a river, or in a pond
         if (isOnRoad(x, y)) continue;
         if (isInRiver(x, y)) continue;
+        if (isInPond(x, y)) continue;
 
         if (!isTooCloseToTrees(x, y, treeSpacing)) {
           trees.push({ center: [x, y], type: 'park' });
@@ -2127,9 +2158,10 @@ export function generateTrees(
             }
             if (insideBuilding) continue;
 
-            // Skip if on another road or in a river
+            // Skip if on another road, in a river, or in a pond
             if (isOnRoad(tx, ty)) continue;
             if (isInRiver(tx, ty)) continue;
+            if (isInPond(tx, ty)) continue;
 
             trees.push({ center: [tx, ty], type: 'street' });
           }
@@ -2152,12 +2184,22 @@ export function generateLandmarkBuildings(city: any, seaVertices?: [number, numb
     r.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
   );
 
+  const pondPolygons: Point2[][] = (city.ponds || []).map((p: Ponds) =>
+    p.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
+  );
+
   const seaPolygons: Point2[][] =
     seaVertices && seaVertices.length >= 3 ? [seaVertices.map((v) => ({ x: v[0], y: v[1] }))] : [];
 
   const roadPolygons: Point2[][] = generateRoadPolygons(city.roads);
 
-  const allObstacles: Point2[][] = [...parkPolygons, ...riverPolygons, ...seaPolygons, ...roadPolygons];
+  const allObstacles: Point2[][] = [
+    ...parkPolygons,
+    ...riverPolygons,
+    ...pondPolygons,
+    ...seaPolygons,
+    ...roadPolygons,
+  ];
 
   const buildings: Building[] = [];
   for (const lm of landmarks) {

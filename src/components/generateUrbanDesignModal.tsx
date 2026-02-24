@@ -28,6 +28,7 @@ import short from 'short-uuid';
 import * as Constants from '../constants';
 import {
   generateBuildings,
+  generateCityPonds,
   generateCityRivers,
   generateLandmarkBuildings,
   generateRoads,
@@ -143,9 +144,8 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
 
       const heights = {
         sea: 0.3,
-        land: 0.4,
-        river: 0.7,
-        park: 0.8,
+        park: 0.5,
+        river: 0.8, // river and ponds
       };
 
       if (world) {
@@ -182,6 +182,22 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
             id: short.generate() as string,
             type: ObjectType.River,
             vertices: river.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
+            height: heights.river,
+            color: '#5d97e7',
+            transparency: 0,
+          } as PrismModel;
+          state.elements.push(prism);
+        }
+      }
+
+      // generate ponds
+      if (city.ponds && city.ponds.length > 0) {
+        const ponds = generateCityPonds(city.ponds);
+        for (const pond of ponds) {
+          const prism = {
+            id: short.generate() as string,
+            type: ObjectType.River,
+            vertices: pond.vertices.map((v: [number, number]) => ({ x: v[0], y: v[1] })),
             height: heights.river,
             color: '#5d97e7',
             transparency: 0,
@@ -333,7 +349,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
       }
 
       /** generate trees (park + street) */
-      const trees = generateTrees(city.parks || [], city.roads, buildings, city.rivers);
+      const trees = generateTrees(city.parks || [], city.roads, buildings, city.rivers, city.ponds);
       for (const tree of trees) {
         const instancedTree = {
           id: short.generate() as string,

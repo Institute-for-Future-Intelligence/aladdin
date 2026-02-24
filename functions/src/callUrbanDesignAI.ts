@@ -44,6 +44,9 @@ const RULES = `
     "rivers": [
       { "vertices": [[x, y], ...] }
     ],
+    "ponds": [
+      { "vertices": [[x, y], ...] }
+    ],
     "parks": [
       { "vertices": [[x, y], ...] }
     ],
@@ -93,6 +96,10 @@ If not specified, the default address is New York City, USA.
 ## rivers
 - 狭长多边形，可穿越城市
 - 无河流时返回空数组
+
+## ponds
+- 封闭多边形
+- 没有时返回空数组
 
 ## parks
 - 封闭多边形，数量建议 2-5 个
