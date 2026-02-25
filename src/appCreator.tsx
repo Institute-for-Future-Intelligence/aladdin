@@ -421,10 +421,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                 resizeCanvas(sizes[1]);
               }}
             >
-              <Splitter.Panel
-                collapsible
-                defaultSize={projectView ? window.innerWidth * (1 - canvasPercentWidth * 0.01) : 0}
-              >
+              <Splitter.Panel collapsible defaultSize={projectView ? `${100 - canvasPercentWidth}%` : 0}>
                 <ProjectGallery canvas={canvasRef.current} relativeWidth={1 - canvasPercentWidth * 0.01} />
               </Splitter.Panel>
               <Splitter.Panel>{createCanvas()}</Splitter.Panel>
