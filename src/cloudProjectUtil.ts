@@ -529,7 +529,10 @@ export const updateDesign = async (
             // Finally, upload the updated design array back to Firestore
             try {
               const projectDocRef = doc(firestore, 'users', userid, 'projects', projectTitle);
-              await updateDoc(projectDocRef, { designs: updatedDesigns });
+              await updateDoc(projectDocRef, {
+                designs: updatedDesigns,
+                hiddenParameters: useStore.getState().projectState.hiddenParameters,
+              });
             } catch (error) {
               showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
             } finally {
