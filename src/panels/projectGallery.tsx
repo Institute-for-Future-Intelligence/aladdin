@@ -157,11 +157,10 @@ const SubContainer = styled.div`
 `;
 
 export interface ProjectGalleryProps {
-  relativeWidth: number;
   canvas: HTMLCanvasElement | null;
 }
 
-const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProps) => {
+const ProjectGallery = React.memo(({ canvas }: ProjectGalleryProps) => {
   const setCommonStore = useStore(Selector.set);
   const user = useStore(Selector.user);
   const changed = usePrimitiveStore(Selector.changed);
@@ -215,6 +214,20 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const timePassed = useRef(0);
 
   const [pop, setPop] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(window.innerWidth * 0.5);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setContainerWidth(entry.contentRect.width);
+      }
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   function getDefaultScatterPlotAxisName(projectType: DesignProblem) {
     if (projectType === DesignProblem.BUILDING_DESIGN) return 'floorArea';
@@ -384,7 +397,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
   const totalHeight = window.innerHeight;
   const imageColumns = Math.round(800 / thumbnailSizeRef.current);
   const imageGap = 48 / imageColumns;
-  const imageWidth = Math.round((relativeWidth * window.innerWidth) / imageColumns - imageGap);
+  const imageWidth = Math.round(containerWidth / imageColumns - imageGap);
 
   const [variables, titles, units, digits, tickIntegers, types] = useMemo(
     () => [
@@ -2480,6 +2493,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
 
   return (
     <Container
+      ref={containerRef}
       onContextMenu={(e) => {
         e.stopPropagation();
       }}
@@ -2834,7 +2848,7 @@ const ProjectGallery = React.memo(({ relativeWidth, canvas }: ProjectGalleryProp
             </SolutionSpaceHeader>
             <ParallelCoordinates
               id={'design-space'}
-              width={relativeWidth * window.innerWidth}
+              width={containerWidth}
               height={totalHeight / 2 - 120}
               data={solutionSpaceData}
               types={types}

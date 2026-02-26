@@ -422,7 +422,7 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
               }}
             >
               <Splitter.Panel collapsible defaultSize={projectView ? `${100 - canvasPercentWidth}%` : 0}>
-                <ProjectGallery canvas={canvasRef.current} relativeWidth={1 - canvasPercentWidth * 0.01} />
+                <ProjectGallery canvas={canvasRef.current} />
               </Splitter.Panel>
               <Splitter.Panel>{createCanvas()}</Splitter.Panel>
             </Splitter>
@@ -436,8 +436,9 @@ const AppCreator = React.memo(({ viewOnly = false }: AppCreatorProps) => {
                   }}
                 >
                   <Splitter.Panel
-                    defaultSize={Math.max(200, window.innerWidth * (1 - canvasPercentWidth * 0.01))}
-                    style={{ overflow: 'auto', zIndex: 9 }}
+                    defaultSize={`${100 - canvasPercentWidth}%`}
+                    min={200}
+                    style={{ overflow: 'auto', zIndex: 9, minWidth: '200px' }}
                   >
                     <Space
                       style={{
