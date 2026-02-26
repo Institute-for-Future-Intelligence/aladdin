@@ -351,12 +351,8 @@ export const useUpdateSegmentVerticesMap = (
 };
 
 export const useUpdateSegmentVerticesWithoutOverhangMap = (update: () => void): void => {
-  const runDailyThermalSimulation = usePrimitiveStore(Selector.runDailyThermalSimulation);
-  const runYearlyThermalSimulation = usePrimitiveStore(Selector.runYearlyThermalSimulation);
-
-  if (runDailyThermalSimulation || runYearlyThermalSimulation) {
-    update();
-  }
+  // need to update vertices for solution space surface area of AI generated design
+  update();
 };
 
 export const useUpdateOldRoofFiles = (roofModel: RoofModel, highestWallHeight: number) => {
