@@ -1,5 +1,5 @@
 /*
- * @Copyright 2025. Institute for Future Intelligence, Inc.
+ * @Copyright 2025-2026. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';

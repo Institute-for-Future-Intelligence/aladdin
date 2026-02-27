@@ -1,5 +1,5 @@
 /*
- * @Copyright 2025. Institute for Future Intelligence, Inc.
+ * @Copyright 2025-2026. Institute for Future Intelligence, Inc.
  */
 
 import Anthropic from '@anthropic-ai/sdk';
@@ -13,26 +13,25 @@ const apiVersion = '2024-12-01-preview';
 const RULES = `In 3D space, positive X-axis is east, negative X-axis is west; positive Y-axis is north, negative Y-axis is south; positive Z-axis is up.
 The plane z = 0 represents ground.
 
-There should be an address for the location of houses. If not specified, the default address is Natick, Massachusetts, USA.
-Provide the latitude and longitude of the location.
+There is a location for the house. If not specified, the default is Natick, MA. Provide the latitude and longitude.
 
-Date and time should be set as a string in a format MM/dd/yyyy, hh:mm:ss a. If not specified, set the default date and time to 06/22/2025, 02:00:00 PM.
+Date and time are set as a string in a format MM/dd/yyyy, hh:mm:ss a. If not specified, default to 06/22/2025, 02:00:00 PM.
 Direct light intensity is a number with the default value 3.5.
 Ambient light intensity is a number with the default value 0.2.
 
 There are some basic elements for building houses. Each element should have a unique id.
 
-- Foundation: position is [cx, cy], size is [lx, ly, lz]. lx is length, ly is width, lz is thickness, r is rotation.
+Foundation: position is [cx, cy], size is [lx, ly, lz]. lx is length, ly is width, lz is thickness, r is rotation.
 When foundation is part of a building, it has a property "rValue" in the unit of m²·℃/W, which defaults to 2.
 Foundation has an HVAC system.
-It has a heating set point, which defaults to 20 Celsius, and a cooling set point, which defaults to 25 Celsius.
+It has a heating setpoint, which defaults to 20 Celsius, and a cooling setpoint, which defaults to 25 Celsius.
 It has a coefficient of performance for the air conditioner, which defaults to 4.
 Default lz is 0.1 meter and color is 'grey';
 
-- Wall: Must be built on foundation. It's position is defined by two points: "leftPoint" [cx, cy] and "rightPoint" [cx, cy],
-representing the relative positions of the wall's leftmost and rightmost endpoints with respect to the foundation,
-Wall has a number property "thickness" in the unit of meter, which defaults to 0.3.
-Wall has a number property "height" in the unit of meter.
+Wall: Must be built on foundation. Its position is defined by two points: "leftPoint" [cx, cy] and "rightPoint" [cx, cy],
+representing the relative positions of its leftmost and rightmost endpoints relative to the foundation,
+Wall has a number property "thickness", which defaults to 0.3 meter.
+Wall has a number property "height" in meter.
 "pId" is the id of the foundation on which it is built.
 "leftConnectId" and "rightConnectId" represent the id of the wall that it is connected to.
 When two walls' endpoints are at the same position, they are connected.
@@ -40,11 +39,11 @@ If wall A is connected to wall B, then wall B is also connected to wall A.
 "overhang" is the roof eaves overhang length, with a default value of 0.3 meter.
 Default color is white.
 Note that "leftConnectId" can only be connected to other wall's "rightConnectId", and vise versa.
-Wall has a normal direction represented by the normal vector from "leftPoint" to "rightPoint", rotated clockwise by 90 degree.
+Wall has a normal direction represented by the normal vector from "leftPoint" to "rightPoint", rotated clockwise by 90 degrees.
 Wall has a number property "rValue" in the unit of m²·℃/W, which defaults to 2.
 Wall has a number property "airPermeability" in the unit of m³/(h·m²), which defaults to 0.
 
-- Roof: When a wall is connected to other walls and the connection forms a loop, a roof can be built on that wall.
+Roof: When a wall is connected to other walls and the connection forms a loop, a roof can be built on that wall.
 "wId" is the id of the wall that it is built on. "fId" is the id of the foundation that it is built on.
 Roof should preferably be built on the wall that faces south.
 Roof has default color: "#454769".
@@ -57,40 +56,15 @@ For Hip roof type, it has a ridgeLength, which by default should be half of the 
 For Mansard roof type, it has a ridgeLength, which by default should be 1.
 For Gambrel roof type, default rise is 3 meters.
 
-- Door: is built on a wall. "pId" is the id of the wall on which it is built. "fId" is the id of the foundation on which it is built.
+Door: is built on a wall. "pId" is the id of the wall on which it is built. "fId" is the id of the foundation on which it is built.
 Door size [lx, ly], lx is width, ly is height.
 Door center position [cx] is relative to the wall's center.
 Door should preferably be built at the center of the wall that faces south.
-Door has a boolean property "filled", which defaults to true.
 Door has a property "uValue" in the unit of W/(m²·℃), which defaults to 1.
 Door has a number property "airPermeability" in the unit of m³/(h·m²), which defaults to 0.
-Door has a string property "doorType" that can be either "Default" or "Arched", which defaults to "Default".
-Door has a string property "textureType" that can be "Door Texture #1", "Door Texture #2", ..., "Door Texture #17", "Door Texture Default", or "No Door Texture", which defaults to "Door Texture #1".
-Do not set "textureType" to "Door Texture Default" or "No Door Texture" unless explicitly specified.
-Prefer to set "textureType" to "Door Texture #1", "Door Texture #2", ..., or "Door Texture #17".
-"Door Texture #1" is a white, paneled front door with a semicircular window at the top featuring a sunburst-style grid design.
-"Door Texture #2" is a wooden Craftsman-style door featuring a grid of six small square windows at the top and three vertical recessed panels below a decorative ledge.
-"Door Texture #3" is a wooden door with a dark brown finish, two vertical panels, and a small decorative glass window at the top.
-"Door Texture #4" is a dark brown wooden door featuring two vertical panels and a rectangular decorative glass window near the top.
-"Door Texture #5" is a dark wooden door with decorative diamond-patterned glass panels, including matching sidelights and a transom window.
-"Door Texture #6" is a white door with a large, decorative leaded glass panel flanked by two matching sidelights.
-"Door Texture #7" is a brown wood-grain door with a central arched decorative glass panel flanked by two matching sidelights.
-"Door Texture #8" is a pair of ornate double doors made of dark metal or wood with iron scrollwork panels over glass.
-"Door Texture #9" is a white, traditional-style sectional garage door with raised panels and a row of four rectangular windows across the top.
-"Door Texture #10" is a white, carriage-house style garage door featuring vertically grooved panels, a top row of four 4-lite windows, and decorative black handles.
-"Door Texture #11" is a white, carriage-house style garage door featuring decorative black handles and a top section with two arched, multi-pane windows.
-"Door Texture #12" is a white, carriage-house style garage door with decorative black handles and two arched top windows featuring ornate black scrollwork inserts.
-"Door Texture #13" is a pair of natural wood double doors with large glass panels divided into small squares and ornate brass handles, set within a decorative wooden frame.
-"Door Texture #14" is a single natural wood door with a tall glass panel divided into squares and a vertical wooden panel beneath it, all set within an ornate wooden frame.
-"Door Texture #15" is a dark double door with gold hardware and a semicircular transom window featuring a fanlight design above it, all framed by light-colored molding.
-"Door Texture #16" is a panelized green single door with two vertical glass windows featuring a decorative circular design, topped by a semicircular fanlight transom, and set within a light-colored arched entryway.
-"Door Texture #17" is a panelized coral single door featuring a multi-pane glass window in the upper section and a semicircular fanlight transom above, all framed by light-colored pilasters and a pink arch.
-Only when "textureType" is "Door Texture Default" or "No Door Texture", set door's color (default to white).
-Do not change "textureType" to "Door Texture Default" or "No Door Texture" when setting color.
-When "textureType" is neither "Door Texture Default" nor "No Door Texture", consider door's color when selecting the texture type.
 Door has default frame color white.
 
-- Window: is built on a wall. "pId" is the id of the wall on which it is built. "fId" is the id of the foundation on which it is built.
+Window: is built on a wall. "pId" is the id of the wall on which it is built. "fId" is the id of the foundation on which it is built.
 Window size [lx, ly], lx is width, ly is height.
 Window position [cx, cz]. cx is relative to center of the parent wall, cz is height calculated from the bottom of the wall.
 Window has a number property "opacity", which defaults to 0.5.
@@ -99,18 +73,11 @@ Window has a number property "uValue" in the unit of W/(m²·℃), which default
 Window has a number property "airPermeability" in the unit of m³/(h·m²), which defaults to 0.
 Window has a string property "color" in HTML hex color code, which defaults to "#FFFFFF".
 Window has a string property "tint" in HTML hex color code, which defaults to "#73D8FF".
-Window has a string property "windowType" that can be either "Default" or "Arched", which defaults to "Default".
 Window has a boolean property "shutter", which defaults to false.
 Window has a string property "shutterColor", which defaults to "#808080".
-Window has a number property "shutterWidth", which defaults to 0.5 (relative to the width of window).
-Window has a boolean property "horizontalMullion", which defaults to true.
-Window has a number property "horizontalMullionSpacing", which defaults to 0.5 meter.
-Window has a boolean property "verticalMullion", which defaults to true.
-Window has a number property "verticalMullionSpacing", which defaults to 0.5 meter.
 Window has a string property "mullionColor", which defaults to "#ffffff".
-Window has a number property "mullionWidth", which defaults to 0.06 meter.
 
-- Solar panel: is mounted on roof.
+Solar panel: is mounted on roof.
 "pId" is the id of the parent roof on which it is mounted.
 "fId" is the id of the foundation on which it is belonged.
 The orientation of a solar panel can be "Landscape" or "Portrait". The default is "Landscape".
@@ -120,33 +87,33 @@ Its center is [cx, cy, cz], where cx and cy are relative to the foundation's cen
 "batteryId" should be the id of batter storage built on the same foundation if there is any.
 When adding a solar panel to the roof, place it at the center of the south-facing roof segment by default.
 If the roof is mansard roof, place solar panel at the center of the roof.
-It's important to make sure the panel stays within the building and foundation boundary!
+It's important to make sure the panel stays within the foundation's boundary.
 
-- Battery storage: is built on foundation. "pId" is the id of the foundation on which it is built.
+Battery storage: is built on foundation. "pId" is the id of the foundation on which it is built.
 "color" by default is "#C7BABE".
 "size" is [lx, ly, lz], by default is [1.5, 2, 1.5].
 "chargingEfficiency" and "dischargingEfficiency" by default is 0.95.
-"center" is [cx, cy, cz], it should be stick on the west side and outside surface of west facing wall of the building, cz should be half of the foundation lz.
+"center" is [cx, cy, cz], it is installed outside the west facing wall, cz should be half of the foundation lz.
 "hvacId" should be the same hvacId as the foundation on which it is built.
 
 When building a house, first draw a rectangle on the foundation, which defines the positions of walls, then put a wall on each side of the rectangle.
 The endpoints of the walls should be the same as the vertices of the rectangle.
 A house is built on top of one foundation, with four walls connected one by one forming a loop.
 All walls should have normal facing outside. There should be windows on each wall.
-One foundation can only have four walls, no matter what user says.
+One foundation can only have four walls.
 
 Here are some examples:
 
 - A colonial style house has four walls connected with each other in a loop. Each wall is a 5-meter high.
 The walls form a rectangular area with the size of 10 by 12 meters.
-All walls should have normal facing outside. There is a gable roof with a rise of 2.4 meters.
+All walls have normal facing outside. There is a gable roof with a rise of 2.4 meters.
 Add a door on the wall facing south with a size of 1.6 by 2.5 meters.
-On each wall, there should be a set of two windows eventually distributed in the vertical direction
+On each wall, there is a set of two windows eventually distributed in the vertical direction
 and the set should be repeated in every four meters in the horizontal direction.
 
 - A gable-and-valley roof house has two foundations, each foundation has four walls and one gable roof.
 The size of foundation A is 20 by 7 meters. The size of foundation B is 7 by 9 meters. They overlap to form a T-shape.
-The northern edge of foundation B should be align with the center of foundation A.
+The northern edge of foundation B is aligned with the center of foundation A.
 The roof on foundation A is built on wall facing south. The roof on foundation B is built on wall facing east.
 There is one door on the south wall on foundation B. The overhang is 0 on north wall of foundation B.
 Each wall has two rows of windows, and each row should has several windows.
@@ -177,7 +144,7 @@ When rotating a house, rotate by the world center position.
 Before returning the result, ensure that all the walls are connected correctly,
 the endpoints of two connected walls are at the same position, and all the walls face outward.
 
-Build houses described by the user using the defined elements and return the result in the defined format.
+Build the house described by the user using the defined elements and return the result in the defined format.
 When evaluating their energy efficiencies, consider the geographical location and climate conditions.
 Document the thinking process.
 If the user's prompts are irrelevant, just build and return a simple house.
@@ -262,13 +229,10 @@ Return strict JSON only, with this structure:
   "fId": "Foundation ID",
   "center": [x, y],
   "size": [width, height],
-  "filled": true/false,
   "color": "#RRGGBB",
   "frameColor": "#RRGGBB",
   "uValue": U-value,
   "airPermeability": air permeability,
-  "doorType": "door type",
-  "textureType": "texture type"
 }
 
 ### Window
@@ -284,16 +248,9 @@ Return strict JSON only, with this structure:
   "airPermeability": air permeability,
   "color": "#RRGGBB",
   "tint": "tint color",
-  "windowType": "window type",
   "shutter": true/false,
   "shutterColor": "#RRGGBB",
-  "shutterWidth": shutter width,
-  "horizontalMullion": true/false,
-  "horizontalMullionSpacing": horizontal mullion spacing,
-  "verticalMullion": true/false,
-  "verticalMullionSpacing": vertical mullion spacing,
   "mullionColor": "#RRGGBB",
-  "mullionWidth": mullion width
 }
 
 ### Solar Panel
@@ -492,13 +449,10 @@ export const callBuildingAI = async (
                       fId: { type: 'string' },
                       center: { type: 'array', items: { type: 'number' } },
                       size: { type: 'array', items: { type: 'number' } },
-                      filled: { type: 'boolean' },
                       color: { type: 'string' },
                       frameColor: { type: 'string' },
                       uValue: { type: 'number' },
                       airPermeability: { type: 'number' },
-                      doorType: { type: 'string' },
-                      textureType: { type: 'string' },
                     },
                     required: [
                       'type',
@@ -507,13 +461,10 @@ export const callBuildingAI = async (
                       'fId',
                       'center',
                       'size',
-                      'filled',
                       'color',
                       'frameColor',
                       'uValue',
                       'airPermeability',
-                      'doorType',
-                      'textureType',
                     ],
                     additionalProperties: false,
                   },
@@ -531,16 +482,9 @@ export const callBuildingAI = async (
                       airPermeability: { type: 'number' },
                       color: { type: 'string' },
                       tint: { type: 'string' },
-                      windowType: { type: 'string' },
                       shutter: { type: 'boolean' },
                       shutterColor: { type: 'string' },
-                      shutterWidth: { type: 'number' },
-                      horizontalMullion: { type: 'boolean' },
-                      horizontalMullionSpacing: { type: 'number' },
-                      verticalMullion: { type: 'boolean' },
-                      verticalMullionSpacing: { type: 'number' },
                       mullionColor: { type: 'string' },
-                      mullionWidth: { type: 'number' },
                     },
                     required: [
                       'type',
@@ -554,16 +498,9 @@ export const callBuildingAI = async (
                       'airPermeability',
                       'color',
                       'tint',
-                      'windowType',
                       'shutter',
                       'shutterColor',
-                      'shutterWidth',
-                      'horizontalMullion',
-                      'horizontalMullionSpacing',
-                      'verticalMullion',
-                      'verticalMullionSpacing',
                       'mullionColor',
-                      'mullionWidth',
                     ],
                     additionalProperties: false,
                   },

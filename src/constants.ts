@@ -23,7 +23,7 @@ import {
 import { Rectangle } from './models/Rectangle';
 import { GroundModel } from './models/GroundModel';
 
-export const VERSION = '2.0.2';
+export const VERSION = '2.0.3';
 
 // used for check old file that need to update light intensity.
 export const LIGHT_INTENSITY_CHANGED_VERSION = '1.5.0';
