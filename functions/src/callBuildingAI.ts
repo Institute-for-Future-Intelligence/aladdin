@@ -16,40 +16,32 @@ Location: default Natick, MA. Provide latitude/longitude.
 Date format: MM/dd/yyyy, hh:mm:ss a. Default: 06/22/2025, 02:00:00 PM.
 Light defaults: direct=3.5, ambient=0.2.
 
-## Shared properties
-- rValue (m²·℃/W): thermal resistance, default 2
-- uValue (W/(m²·℃)): thermal transmittance
-- All positions are relative to parent element unless stated otherwise
-- Each element has a unique id
-
 ## Elements
-
 Foundation: center=[cx,cy], size=[lx,ly,lz], rotation=r.
-Defaults: lz=0.1, color="grey", rValue=2, heatingSetpoint=20°C, coolingSetpoint=25°C, COP_AC=4. Has HVAC system with hvacId.
+Defaults: lz=0.1, color="grey", rValue=2m²·℃/W, heatingSetpoint=20°C, coolingSetpoint=22°C, COP_AC=4. HVAC system with hvacId.
 
 Wall: built on foundation (pId). Position: leftPoint=[cx,cy], rightPoint=[cx,cy] relative to foundation.
-Defaults: color="white", rValue=2, overhang=0.3.
+Defaults: color="white", rValue=2m²·℃/W, overhang=0.3.
 leftConnectId connects to another wall's rightConnectId and vice versa.
 Normal direction: leftPoint→rightPoint rotated 90° clockwise.
 
 Roof: built on a wall (wId) whose connections form a loop. fId=foundation id. Prefer south-facing wall.
-Defaults: color="#454769", rise=2.4, rValue=2.
+Defaults: color="#454769", rise=2.4, rValue=2(m²·℃/W).
 Types: Gable, Pyramid, Hip, Mansard, Gambrel.
 Hip: ridgeLength defaults to half the parent wall length.
 Mansard: ridgeLength defaults to 1.
 Gambrel: rise defaults to 3.
 
 Door: built on wall (pId), fId=foundation. size=[width,height], center=[cx] relative to wall center.
-Defaults: frameColor="white", uValue=1. Prefer south-facing wall center.
+Defaults: frameColor="white", uValue=1W/(m²·℃). Prefer south-facing wall center.
 
 Window: built on wall (pId), fId=foundation. size=[width,height], center=[cx,cz] where cz is height from wall bottom.
-Defaults: opacity=0.5, uValue=2, color="#FFFFFF", tint="#73D8FF".
-If SHGC specified: opacity = 1 - SHGC (0-1).
+Defaults: opacity=0.5, uValue=2W/(m²·℃), color="#FFFFFF", tint="#73D8FF".
+If SHGC specified: opacity = 1 - SHGC.
 
 Solar panel: mounted on roof (pId), fId=foundation. size=[lx,ly], center=[cx,cy,cz] relative to foundation.
 Defaults: orientation="Landscape", pvModelName="SPR-X21-335-BLK".
-Cover the roof segment it is mounted on. Must stay within foundation boundary.
-When adding a solar panel to the roof, place it at the center of the south-facing roof segment by default.
+Cover the roof segment it is mounted on. Place it at the center of the south-facing roof segment by default. Must stay within foundation boundary.
 If the roof is mansard, place solar panel at the center of the roof.
 batteryId links to battery storage on same foundation if any.
 
@@ -58,10 +50,12 @@ Defaults: color="#C7BABE", size=[1.5,2,1.5], chargingEfficiency=0.95, dischargin
 hvacId matches foundation's hvacId.
 
 ## House construction rules
+- Each element has a unique id
+- All positions are relative to parent element unless stated otherwise
 - One foundation supports four walls forming a rectangular loop, all normals facing outward.
 - Wall endpoints match foundation rectangle vertices. Each wall has windows.
 - Windows/doors must not overlap and must be within wall boundary.
-- Windows evenly distributed horizontally and vertically on each wall, symmetric to the central line of the wall. Each floor must have one window in every four meters horizontally.
+- Windows evenly distributed horizontally and vertically on each wall, symmetric to the central line of the wall. Each floor must have at least one window in every four meters horizontally.
 - Wall positions are relative to foundation. Move house by moving foundation. Rotate by world center.
 - Verify: all walls connected correctly, shared endpoints match, all normals face outward.
 
