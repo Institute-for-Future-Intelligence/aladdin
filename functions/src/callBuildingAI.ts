@@ -18,7 +18,6 @@ Light defaults: direct=3.5, ambient=0.2.
 
 ## Shared properties
 - rValue (m²·℃/W): thermal resistance, default 2
-- airPermeability (m³/(h·m²)): default 0
 - uValue (W/(m²·℃)): thermal transmittance
 - All positions are relative to parent element unless stated otherwise
 - Each element has a unique id
@@ -29,22 +28,22 @@ Foundation: center=[cx,cy], size=[lx,ly,lz], rotation=r.
 Defaults: lz=0.1, color="grey", rValue=2, heatingSetpoint=20°C, coolingSetpoint=25°C, COP_AC=4. Has HVAC system with hvacId.
 
 Wall: built on foundation (pId). Position: leftPoint=[cx,cy], rightPoint=[cx,cy] relative to foundation.
-Defaults: thickness=0.3, color="white", rValue=2, airPermeability=0, overhang=0.3.
+Defaults: thickness=0.3, color="white", rValue=2, overhang=0.3.
 leftConnectId connects to another wall's rightConnectId and vice versa.
 Normal direction: leftPoint→rightPoint rotated 90° clockwise.
 
 Roof: built on a wall (wId) whose connections form a loop. fId=foundation id. Prefer south-facing wall.
-Defaults: color="#454769", thickness=0.2, rise=2, rValue=2, airPermeability=0.
+Defaults: color="#454769", thickness=0.2, rise=2, rValue=2.
 Types: Gable, Pyramid, Hip, Mansard, Gambrel.
 Hip: ridgeLength defaults to half the parent wall length.
 Mansard: ridgeLength defaults to 1.
 Gambrel: rise defaults to 3.
 
 Door: built on wall (pId), fId=foundation. size=[width,height], center=[cx] relative to wall center.
-Defaults: frameColor="white", uValue=1, airPermeability=0. Prefer south-facing wall center.
+Defaults: frameColor="white", uValue=1. Prefer south-facing wall center.
 
 Window: built on wall (pId), fId=foundation. size=[width,height], center=[cx,cz] where cz is height from wall bottom.
-Defaults: opacity=0.5, uValue=2, airPermeability=0, color="#FFFFFF", tint="#73D8FF", shutter=false, shutterColor="#808080", mullionColor="#ffffff".
+Defaults: opacity=0.5, uValue=2, color="#FFFFFF", tint="#73D8FF", mullionColor="#ffffff".
 If SHGC specified: opacity = 1 - SHGC (0-1).
 
 Solar panel: mounted on roof (pId), fId=foundation. size=[lx,ly], center=[cx,cy,cz] relative to foundation.
@@ -74,7 +73,7 @@ Dutch gable: 2 foundations at same center. A: 13.8×11m hip roof, walls 4.1m, do
 
 Monitor: 2 foundations at same center. A: 11.3×11.3m, mansard (rise 2, ridgeLength 2.75), walls 4m, south door, 3-4 windows (0.9×1.5m). B: 6.4×6.4m, pyramid (rise 2.4), walls 7.5m, overhang 1m, east+west doors, 2 windows per wall (2×1m, cz=6.5m).
 
-Build the house as described. Consider location/climate for energy efficiency. Document thinking. If prompt is irrelevant, build a simple house.
+Build the house as described. If no style is specified, build a colonial one. Consider location/climate for energy efficiency. Document thinking. If prompt is irrelevant, build a simple house.
 `;
 
 const RULES = `In 3D space, positive X-axis is east, negative X-axis is west; positive Y-axis is north, negative Y-axis is south; positive Z-axis is up.
@@ -108,7 +107,6 @@ Default color is white.
 Note that "leftConnectId" can only be connected to other wall's "rightConnectId", and vise versa.
 Wall has a normal direction represented by the normal vector from "leftPoint" to "rightPoint", rotated clockwise by 90 degrees.
 Wall has a number property "rValue" in the unit of m²·℃/W, which defaults to 2.
-Wall has a number property "airPermeability" in the unit of m³/(h·m²), which defaults to 0.
 
 Roof: When a wall is connected to other walls and the connection forms a loop, a roof can be built on that wall.
 "wId" is the id of the wall that it is built on. "fId" is the id of the foundation that it is built on.
@@ -117,7 +115,6 @@ Roof has default color: "#454769".
 Roof has default "thickness" of 0.2 meter.
 Roof has default "rise" of 2 meters.
 Roof has a property "rValue" in the unit of m²·℃/W, which defaults to 2.
-Roof has a number property "airPermeability" in the unit of m³/(h·m²), which defaults to 0.
 Roof has "roofType" that is either "Gable", "Pyramid", "Hip", "Mansard", or "Gambrel".
 For Hip roof type, it has a ridgeLength, which by default should be half of the length of the wall that it is built on.
 For Mansard roof type, it has a ridgeLength, which by default should be 1.
@@ -128,7 +125,6 @@ Door size [lx, ly], lx is width, ly is height.
 Door center position [cx] is relative to the wall's center.
 Door should preferably be built at the center of the wall that faces south.
 Door has a property "uValue" in the unit of W/(m²·℃), which defaults to 1.
-Door has a number property "airPermeability" in the unit of m³/(h·m²), which defaults to 0.
 Door has default frame color white.
 
 Window: is built on a wall. "pId" is the id of the wall on which it is built. "fId" is the id of the foundation on which it is built.
@@ -137,11 +133,8 @@ Window position [cx, cz]. cx is relative to center of the parent wall, cz is hei
 Window has a number property "opacity", which defaults to 0.5.
 When solar heat gain coefficient (SHGC) is specified for a window, its opacity is calculated by subtracting SHGC from 1. SHGC must be a number between 0 and 1.
 Window has a number property "uValue" in the unit of W/(m²·℃), which defaults to 2.
-Window has a number property "airPermeability" in the unit of m³/(h·m²), which defaults to 0.
 Window has a string property "color" in HTML hex color code, which defaults to "#FFFFFF".
 Window has a string property "tint" in HTML hex color code, which defaults to "#73D8FF".
-Window has a boolean property "shutter", which defaults to false.
-Window has a string property "shutterColor", which defaults to "#808080".
 Window has a string property "mullionColor", which defaults to "#ffffff".
 
 Solar panel: is mounted on roof.
@@ -265,7 +258,6 @@ Return strict JSON only, with this structure:
   "height": height,
   "color": "#RRGGBB",
   "rValue": R-value,
-  "airPermeability": air permeability,
   "leftPoint": [x, y],
   "rightPoint": [x, y],
   "leftConnectId": "left connecting wall ID",
@@ -284,7 +276,6 @@ Return strict JSON only, with this structure:
   "rise": rise height,
   "color": "#RRGGBB",
   "rValue": R-value,
-  "airPermeability": air permeability,
   "ridgeLength": ridge length
 }
 
@@ -299,7 +290,6 @@ Return strict JSON only, with this structure:
   "color": "#RRGGBB",
   "frameColor": "#RRGGBB",
   "uValue": U-value,
-  "airPermeability": air permeability,
 }
 
 ### Window
@@ -312,11 +302,8 @@ Return strict JSON only, with this structure:
   "size": [width, height],
   "opacity": opacity (0-1),
   "uValue": U-value,
-  "airPermeability": air permeability,
   "color": "#RRGGBB",
   "tint": "tint color",
-  "shutter": true/false,
-  "shutterColor": "#RRGGBB",
   "mullionColor": "#RRGGBB",
 }
 
@@ -453,7 +440,6 @@ export const callBuildingAI = async (
                       height: { type: 'number' },
                       color: { type: 'string' },
                       rValue: { type: 'number' },
-                      airPermeability: { type: 'number' },
                       leftPoint: { type: 'array', items: { type: 'number' } },
                       rightPoint: { type: 'array', items: { type: 'number' } },
                       leftConnectId: { type: 'string' },
@@ -468,7 +454,6 @@ export const callBuildingAI = async (
                       'height',
                       'color',
                       'rValue',
-                      'airPermeability',
                       'leftPoint',
                       'rightPoint',
                       'leftConnectId',
@@ -489,7 +474,6 @@ export const callBuildingAI = async (
                       rise: { type: 'number' },
                       color: { type: 'string' },
                       rValue: { type: 'number' },
-                      airPermeability: { type: 'number' },
                       ridgeLength: { type: 'number' },
                     },
                     required: [
@@ -503,7 +487,6 @@ export const callBuildingAI = async (
                       'color',
                       'ridgeLength',
                       'rValue',
-                      'airPermeability',
                     ],
                     additionalProperties: false,
                   },
@@ -519,20 +502,8 @@ export const callBuildingAI = async (
                       color: { type: 'string' },
                       frameColor: { type: 'string' },
                       uValue: { type: 'number' },
-                      airPermeability: { type: 'number' },
                     },
-                    required: [
-                      'type',
-                      'id',
-                      'pId',
-                      'fId',
-                      'center',
-                      'size',
-                      'color',
-                      'frameColor',
-                      'uValue',
-                      'airPermeability',
-                    ],
+                    required: ['type', 'id', 'pId', 'fId', 'center', 'size', 'color', 'frameColor', 'uValue'],
                     additionalProperties: false,
                   },
                   {
@@ -546,11 +517,8 @@ export const callBuildingAI = async (
                       size: { type: 'array', items: { type: 'number' } },
                       opacity: { type: 'number' },
                       uValue: { type: 'number' },
-                      airPermeability: { type: 'number' },
                       color: { type: 'string' },
                       tint: { type: 'string' },
-                      shutter: { type: 'boolean' },
-                      shutterColor: { type: 'string' },
                       mullionColor: { type: 'string' },
                     },
                     required: [
@@ -562,11 +530,8 @@ export const callBuildingAI = async (
                       'size',
                       'opacity',
                       'uValue',
-                      'airPermeability',
                       'color',
                       'tint',
-                      'shutter',
-                      'shutterColor',
                       'mullionColor',
                     ],
                     additionalProperties: false,

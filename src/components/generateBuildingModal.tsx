@@ -106,7 +106,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
     const jsonView = json.view;
     const jsonElements = json.elements ? GenAIUtil.arrayCorrection(json.elements) : [];
 
-    console.log('validated:', jsonElements);
+    console.log('validated:', jsonWorld, jsonView, jsonElements);
     console.log('thinking:', json.thinking);
 
     useStore.getState().set((state) => {
