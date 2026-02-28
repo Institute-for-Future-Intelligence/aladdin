@@ -28,12 +28,12 @@ Foundation: center=[cx,cy], size=[lx,ly,lz], rotation=r.
 Defaults: lz=0.1, color="grey", rValue=2, heatingSetpoint=20°C, coolingSetpoint=25°C, COP_AC=4. Has HVAC system with hvacId.
 
 Wall: built on foundation (pId). Position: leftPoint=[cx,cy], rightPoint=[cx,cy] relative to foundation.
-Defaults: thickness=0.3, color="white", rValue=2, overhang=0.3.
+Defaults: color="white", rValue=2, overhang=0.3.
 leftConnectId connects to another wall's rightConnectId and vice versa.
 Normal direction: leftPoint→rightPoint rotated 90° clockwise.
 
 Roof: built on a wall (wId) whose connections form a loop. fId=foundation id. Prefer south-facing wall.
-Defaults: color="#454769", thickness=0.2, rise=2, rValue=2.
+Defaults: color="#454769", rise=2.4, rValue=2.
 Types: Gable, Pyramid, Hip, Mansard, Gambrel.
 Hip: ridgeLength defaults to half the parent wall length.
 Mansard: ridgeLength defaults to 1.
@@ -43,7 +43,7 @@ Door: built on wall (pId), fId=foundation. size=[width,height], center=[cx] rela
 Defaults: frameColor="white", uValue=1. Prefer south-facing wall center.
 
 Window: built on wall (pId), fId=foundation. size=[width,height], center=[cx,cz] where cz is height from wall bottom.
-Defaults: opacity=0.5, uValue=2, color="#FFFFFF", tint="#73D8FF", mullionColor="#ffffff".
+Defaults: opacity=0.5, uValue=2, color="#FFFFFF", tint="#73D8FF".
 If SHGC specified: opacity = 1 - SHGC (0-1).
 
 Solar panel: mounted on roof (pId), fId=foundation. size=[lx,ly], center=[cx,cy,cz] relative to foundation.
@@ -59,7 +59,7 @@ hvacId matches foundation's hvacId.
 - One foundation supports four walls forming a rectangular loop, all normals facing outward.
 - Wall endpoints match foundation rectangle vertices. Each wall has windows.
 - Windows/doors must not overlap and must be within wall boundary.
-- Windows evenly distributed horizontally and vertically on each wall.
+- Windows evenly distributed horizontally and vertically on each wall, symmetric to the central line of the wall. Each floor must have one window in every four meters horizontally.
 - Wall positions are relative to foundation. Move house by moving foundation. Rotate by world center.
 - Verify: all walls connected correctly, shared endpoints match, all normals face outward.
 
@@ -96,7 +96,6 @@ Default lz is 0.1 meter and color is 'grey';
 
 Wall: Must be built on foundation. Its position is defined by two points: "leftPoint" [cx, cy] and "rightPoint" [cx, cy],
 representing the relative positions of its leftmost and rightmost endpoints relative to the foundation,
-Wall has a number property "thickness", which defaults to 0.3 meter.
 Wall has a number property "height" in meter.
 "pId" is the id of the foundation on which it is built.
 "leftConnectId" and "rightConnectId" represent the id of the wall that it is connected to.
@@ -112,7 +111,6 @@ Roof: When a wall is connected to other walls and the connection forms a loop, a
 "wId" is the id of the wall that it is built on. "fId" is the id of the foundation that it is built on.
 Roof should preferably be built on the wall that faces south.
 Roof has default color: "#454769".
-Roof has default "thickness" of 0.2 meter.
 Roof has default "rise" of 2 meters.
 Roof has a property "rValue" in the unit of m²·℃/W, which defaults to 2.
 Roof has "roofType" that is either "Gable", "Pyramid", "Hip", "Mansard", or "Gambrel".
@@ -135,7 +133,6 @@ When solar heat gain coefficient (SHGC) is specified for a window, its opacity i
 Window has a number property "uValue" in the unit of W/(m²·℃), which defaults to 2.
 Window has a string property "color" in HTML hex color code, which defaults to "#FFFFFF".
 Window has a string property "tint" in HTML hex color code, which defaults to "#73D8FF".
-Window has a string property "mullionColor", which defaults to "#ffffff".
 
 Solar panel: is mounted on roof.
 "pId" is the id of the parent roof on which it is mounted.
@@ -254,7 +251,6 @@ Return strict JSON only, with this structure:
   "type": "Wall",
   "id": "unique ID",
   "pId": "parent ID (Foundation)",
-  "thickness": thickness,
   "height": height,
   "color": "#RRGGBB",
   "rValue": R-value,
@@ -272,7 +268,6 @@ Return strict JSON only, with this structure:
   "fId": "Foundation ID",
   "wId": "Wall ID",
   "roofType": "Gable" | "Pyramid" | "Hip" | "Mansard" | "Gambrel",
-  "thickness": thickness,
   "rise": rise height,
   "color": "#RRGGBB",
   "rValue": R-value,
@@ -304,7 +299,6 @@ Return strict JSON only, with this structure:
   "uValue": U-value,
   "color": "#RRGGBB",
   "tint": "tint color",
-  "mullionColor": "#RRGGBB",
 }
 
 ### Solar Panel
@@ -436,7 +430,6 @@ export const callBuildingAI = async (
                       type: { type: 'string', enum: ['Wall'] },
                       id: { type: 'string' },
                       pId: { type: 'string' },
-                      thickness: { type: 'number' },
                       height: { type: 'number' },
                       color: { type: 'string' },
                       rValue: { type: 'number' },
@@ -450,7 +443,6 @@ export const callBuildingAI = async (
                       'type',
                       'id',
                       'pId',
-                      'thickness',
                       'height',
                       'color',
                       'rValue',
@@ -470,24 +462,12 @@ export const callBuildingAI = async (
                       fId: { type: 'string' },
                       wId: { type: 'string' },
                       roofType: { type: 'string', enum: ['Gable', 'Pyramid', 'Hip', 'Mansard', 'Gambrel'] },
-                      thickness: { type: 'number' },
                       rise: { type: 'number' },
                       color: { type: 'string' },
                       rValue: { type: 'number' },
                       ridgeLength: { type: 'number' },
                     },
-                    required: [
-                      'type',
-                      'id',
-                      'fId',
-                      'wId',
-                      'roofType',
-                      'thickness',
-                      'rise',
-                      'color',
-                      'ridgeLength',
-                      'rValue',
-                    ],
+                    required: ['type', 'id', 'fId', 'wId', 'roofType', 'rise', 'color', 'ridgeLength', 'rValue'],
                     additionalProperties: false,
                   },
                   {
@@ -519,21 +499,8 @@ export const callBuildingAI = async (
                       uValue: { type: 'number' },
                       color: { type: 'string' },
                       tint: { type: 'string' },
-                      mullionColor: { type: 'string' },
                     },
-                    required: [
-                      'type',
-                      'id',
-                      'pId',
-                      'fId',
-                      'center',
-                      'size',
-                      'opacity',
-                      'uValue',
-                      'color',
-                      'tint',
-                      'mullionColor',
-                    ],
+                    required: ['type', 'id', 'pId', 'fId', 'center', 'size', 'opacity', 'uValue', 'color', 'tint'],
                     additionalProperties: false,
                   },
                   {

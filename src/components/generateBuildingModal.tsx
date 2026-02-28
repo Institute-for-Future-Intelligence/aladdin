@@ -106,8 +106,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
     const jsonView = json.view;
     const jsonElements = json.elements ? GenAIUtil.arrayCorrection(json.elements) : [];
 
-    console.log('validated:', jsonWorld, jsonView, jsonElements);
-    console.log('thinking:', json.thinking);
+    console.log(json);
 
     useStore.getState().set((state) => {
       let [minX, maxX] = [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER];
@@ -282,7 +281,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
                   horizontalMullionSpacing,
                   verticalMullion,
                   verticalMullionSpacing,
-                  mullionColor,
+                  mullionColor ?? color,
                   mullionWidth,
                 );
                 state.elements.push(w);
