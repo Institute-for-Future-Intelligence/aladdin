@@ -48,7 +48,9 @@ If SHGC specified: opacity = 1 - SHGC (0-1).
 
 Solar panel: mounted on roof (pId), fId=foundation. size=[lx,ly], center=[cx,cy,cz] relative to foundation.
 Defaults: orientation="Landscape", pvModelName="SPR-X21-335-BLK".
-Place at center of south-facing roof segment (or roof center for mansard). Must stay within foundation boundary.
+Cover the roof segment it is mounted on. Must stay within foundation boundary.
+When adding a solar panel to the roof, place it at the center of the south-facing roof segment by default.
+If the roof is mansard, place solar panel at the center of the roof.
 batteryId links to battery storage on same foundation if any.
 
 Battery storage: built on foundation (pId). center=[cx,cy,cz], installed outside west wall, cz=foundation lz/2.
