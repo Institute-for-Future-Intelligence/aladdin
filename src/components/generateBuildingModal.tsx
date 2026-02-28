@@ -76,7 +76,15 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
       for (const d of designs) {
         if (d.prompt && d.data) {
           input.push({ role: 'user', content: d.prompt });
-          input.push({ role: 'assistant', content: d.data });
+
+          const sendBackThinking = false;
+          if (sendBackThinking) {
+            input.push({ role: 'assistant', content: d.data });
+          } else {
+            const content = JSON.parse(d.data);
+            delete content.thinking;
+            input.push({ role: 'assistant', content: JSON.stringify(content) });
+          }
         }
       }
     }
