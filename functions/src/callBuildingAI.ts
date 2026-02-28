@@ -10,6 +10,73 @@ const modelName = 'o4-mini';
 const deployment = 'o4-mini';
 const apiVersion = '2024-12-01-preview';
 
+const BUILDING_RULES = `3D coordinate system: +X=east, -X=west, +Y=north, -Y=south, +Z=up. Ground plane: z=0.
+
+Location: default Natick, MA. Provide latitude/longitude.
+Date format: MM/dd/yyyy, hh:mm:ss a. Default: 06/22/2025, 02:00:00 PM.
+Light defaults: direct=3.5, ambient=0.2.
+
+## Shared properties
+- rValue (m²·℃/W): thermal resistance, default 2
+- airPermeability (m³/(h·m²)): default 0
+- uValue (W/(m²·℃)): thermal transmittance
+- All positions are relative to parent element unless stated otherwise
+- Each element has a unique id
+
+## Elements
+
+Foundation: center=[cx,cy], size=[lx,ly,lz], rotation=r.
+Defaults: lz=0.1, color="grey", rValue=2, heatingSetpoint=20°C, coolingSetpoint=25°C, COP_AC=4. Has HVAC system with hvacId.
+
+Wall: built on foundation (pId). Position: leftPoint=[cx,cy], rightPoint=[cx,cy] relative to foundation.
+Defaults: thickness=0.3, color="white", rValue=2, airPermeability=0, overhang=0.3.
+leftConnectId connects to another wall's rightConnectId and vice versa.
+Normal direction: leftPoint→rightPoint rotated 90° clockwise.
+
+Roof: built on a wall (wId) whose connections form a loop. fId=foundation id. Prefer south-facing wall.
+Defaults: color="#454769", thickness=0.2, rise=2, rValue=2, airPermeability=0.
+Types: Gable, Pyramid, Hip, Mansard, Gambrel.
+Hip: ridgeLength defaults to half the parent wall length.
+Mansard: ridgeLength defaults to 1.
+Gambrel: rise defaults to 3.
+
+Door: built on wall (pId), fId=foundation. size=[width,height], center=[cx] relative to wall center.
+Defaults: frameColor="white", uValue=1, airPermeability=0. Prefer south-facing wall center.
+
+Window: built on wall (pId), fId=foundation. size=[width,height], center=[cx,cz] where cz is height from wall bottom.
+Defaults: opacity=0.5, uValue=2, airPermeability=0, color="#FFFFFF", tint="#73D8FF", shutter=false, shutterColor="#808080", mullionColor="#ffffff".
+If SHGC specified: opacity = 1 - SHGC (0-1).
+
+Solar panel: mounted on roof (pId), fId=foundation. size=[lx,ly], center=[cx,cy,cz] relative to foundation.
+Defaults: orientation="Landscape", pvModelName="SPR-X21-335-BLK".
+Place at center of south-facing roof segment (or roof center for mansard). Must stay within foundation boundary.
+batteryId links to battery storage on same foundation if any.
+
+Battery storage: built on foundation (pId). center=[cx,cy,cz], installed outside west wall, cz=foundation lz/2.
+Defaults: color="#C7BABE", size=[1.5,2,1.5], chargingEfficiency=0.95, dischargingEfficiency=0.95.
+hvacId matches foundation's hvacId.
+
+## House construction rules
+- One foundation supports four walls forming a rectangular loop, all normals facing outward.
+- Wall endpoints match foundation rectangle vertices. Each wall has windows.
+- Windows/doors must not overlap and must be within wall boundary.
+- Windows evenly distributed horizontally and vertically on each wall.
+- Wall positions are relative to foundation. Move house by moving foundation. Rotate by world center.
+- Verify: all walls connected correctly, shared endpoints match, all normals face outward.
+
+## Examples
+
+Colonial: 4 walls (5m high) forming 10×12m rectangle, gable roof (rise 2.4m), south door (1.6×2.5m), 2 vertical rows of windows repeating every 4m horizontally.
+
+Gable-and-valley: 2 foundations overlapping as T-shape. A: 20×7m, B: 7×9m (north edge aligned to A's center). A: gable on south wall. B: gable on east wall, door on south, overhang=0 on north. 2 rows of windows per wall, count based on wall length. Height 5m, grey roof.
+
+Dutch gable: 2 foundations at same center. A: 13.8×11m hip roof, walls 4.1m, door 3.6×2.5m. B: 10.8×6.5m gable (rise 2.3m), walls 4.9m, overhang 0.1m. Both roofs on south wall. Windows per wall based on length.
+
+Monitor: 2 foundations at same center. A: 11.3×11.3m, mansard (rise 2, ridgeLength 2.75), walls 4m, south door, 3-4 windows (0.9×1.5m). B: 6.4×6.4m, pyramid (rise 2.4), walls 7.5m, overhang 1m, east+west doors, 2 windows per wall (2×1m, cz=6.5m).
+
+Build the house as described. Consider location/climate for energy efficiency. Document thinking. If prompt is irrelevant, build a simple house.
+`;
+
 const RULES = `In 3D space, positive X-axis is east, negative X-axis is west; positive Y-axis is north, negative Y-axis is south; positive Z-axis is up.
 The plane z = 0 represents ground.
 
@@ -306,7 +373,7 @@ export const callBuildingAI = async (
   const client = new AzureOpenAI(options);
 
   const response = await client.chat.completions.create({
-    messages: [{ role: 'system', content: RULES }, ...inputMessage],
+    messages: [{ role: 'system', content: BUILDING_RULES }, ...inputMessage],
     reasoning_effort: reasoningEffort as OpenAI.ReasoningEffort,
     max_completion_tokens: 100000,
     model: modelName,
