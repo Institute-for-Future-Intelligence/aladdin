@@ -41,7 +41,7 @@ If SHGC specified: opacity = 1 - SHGC.
 
 Solar panel: mounted on roof (pId), fId=foundation. size=[lx,ly], center=[cx,cy,cz] relative to foundation.
 Defaults: orientation="Landscape", pvModelName="SPR-X21-335-BLK".
-Cover the roof segment it is mounted on. Place it at the center of the south-facing roof segment by default. Must stay within foundation boundary.
+Cover the roof segment it is mounted on with a single array of solar panels. Place it at the center of the south-facing roof segment by default. Must stay within foundation boundary.
 If the roof is mansard, place solar panel at the center of the roof.
 batteryId links to battery storage on same foundation if any.
 
@@ -55,13 +55,14 @@ hvacId matches foundation's hvacId.
 - One foundation supports four walls forming a rectangular loop, all normals facing outward.
 - Wall endpoints match foundation rectangle vertices. Each wall has windows.
 - Windows/doors must not overlap and must be within wall boundary.
-- Windows evenly distributed horizontally and vertically on each wall, symmetric to the central line of the wall. Each floor must have at least one window in every four meters horizontally.
+- Windows evenly distributed horizontally and vertically on each wall. Their arrangement is symmetric about the central vertical line of the wall.
 - Wall positions are relative to foundation. Move house by moving foundation. Rotate by world center.
 - Verify: all walls connected correctly, shared endpoints match, all normals face outward.
 
 ## Examples
 
-Colonial: 4 walls (5m high) forming 10×12m rectangle, gable roof (rise 2.4m), south door (1.6×2.5m), 2 vertical rows of windows repeating every 4m horizontally.
+Colonial: 4 walls (5m high) forming 10×12m rectangle, gable roof (rise 2.4m), south door (1.6×2.5m). On each wall, add a set of two windows eventually distributed in the vertical direction and the set is repeated in every four meters horizontally.
+
 
 Gable-and-valley: 2 foundations overlapping as T-shape. A: 20×7m, B: 7×9m (north edge aligned to A's center). A: gable on south wall. B: gable on east wall, door on south, overhang=0 on north. 2 rows of windows per wall, count based on wall length. Height 5m, grey roof.
 
