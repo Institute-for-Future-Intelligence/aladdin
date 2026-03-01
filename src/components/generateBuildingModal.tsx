@@ -28,6 +28,7 @@ import {
   DEFAULT_LONGITUDE,
   DEFAULT_VIEW_AMBIENT_LIGHT_INTENSITY,
   DEFAULT_VIEW_DIRECT_LIGHT_INTENSITY,
+  DEFAULT_SHORT_TERM_MEMORY,
 } from '../constants';
 import { AI_MODELS_NAME } from 'functions/src/callSolarPowerTowerAI';
 import { DefaultViewState } from '../stores/DefaultViewState';
@@ -75,7 +76,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
     const aiMemory = projectState.aiMemory;
     const designs = projectState.designs;
     if (aiMemory !== AIMemory.NONE && designs && designs.length > 0) {
-      const memoryDesigns = aiMemory === AIMemory.SHORT_TERM ? designs.slice(-5) : designs;
+      const memoryDesigns = aiMemory === AIMemory.SHORT_TERM ? designs.slice(-DEFAULT_SHORT_TERM_MEMORY) : designs;
       for (const d of memoryDesigns) {
         if (d.prompt && d.data) {
           input.push({ role: 'user', content: d.prompt });

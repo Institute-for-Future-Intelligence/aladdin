@@ -29,6 +29,7 @@ import { HeliostatModel } from 'src/models/HeliostatModel';
 import { FoundationModel } from 'src/models/FoundationModel';
 import short from 'short-uuid';
 import { DefaultViewState } from '../stores/DefaultViewState';
+import { DEFAULT_SHORT_TERM_MEMORY } from '../constants';
 
 export interface GenerateSolarPowerTowerProps {
   setDialogVisible: (visible: boolean) => void;
@@ -86,7 +87,7 @@ const GenerateSolarPowerTowerModal = React.memo(
       const aiMemory = projectState.aiMemory;
       const designs = projectState.designs;
       if (aiMemory !== AIMemory.NONE && designs && designs.length > 0) {
-        const memoryDesigns = aiMemory === AIMemory.SHORT_TERM ? designs.slice(-5) : designs;
+        const memoryDesigns = aiMemory === AIMemory.SHORT_TERM ? designs.slice(-DEFAULT_SHORT_TERM_MEMORY) : designs;
         for (const d of memoryDesigns) {
           if (d.prompt && d.data) {
             // const parsedData = JSON.parse(d.data)
