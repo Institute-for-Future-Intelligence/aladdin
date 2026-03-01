@@ -17,7 +17,7 @@ import i18n from 'src/i18n/i18n';
 import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
-import { CuboidTexture, ObjectType, User } from 'src/types';
+import { AIMemory, CuboidTexture, ObjectType, User } from 'src/types';
 import { updateGenerateUrbanDesignPrompt } from 'src/cloudProjectUtil';
 import { Util } from '../Util';
 import { AI_MODELS_NAME } from 'functions/src/callSolarPowerTowerAI';
@@ -96,9 +96,12 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
 
   const createInput = () => {
     const input = [];
-    const designs = useStore.getState().projectState.designs;
-    if (!useStore.getState().projectState.independentPrompt && designs && designs.length > 0) {
-      for (const d of designs) {
+    const projectState = useStore.getState().projectState;
+    const aiMemory = projectState.aiMemory;
+    const designs = projectState.designs;
+    if (aiMemory !== AIMemory.NONE && designs && designs.length > 0) {
+      const memoryDesigns = aiMemory === AIMemory.SHORT_TERM ? designs.slice(-5) : designs;
+      for (const d of memoryDesigns) {
         if (d.prompt && d.data) {
           input.push({ role: 'user', content: d.prompt });
           input.push({ role: 'assistant', content: d.data });

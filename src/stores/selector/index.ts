@@ -1029,7 +1029,7 @@ export const generateSolarPowerTowerPrompt = (state: CommonStoreState) =>
 
 export const generateUrbanDesignPrompt = (state: CommonStoreState) => state.projectState.generateUrbanDesignPrompt;
 
-export const independentPrompt = (state: CommonStoreState) => state.projectState.independentPrompt;
+export const aiMemory = (state: CommonStoreState) => state.projectState.aiMemory;
 
 export const setPrimitiveStore = (state: PrimitiveStoreState) => state.setPrimitiveStore;
 

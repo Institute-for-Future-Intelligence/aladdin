@@ -159,7 +159,13 @@ export interface ProjectState {
   generateBuildingPrompt: string;
   generateSolarPowerTowerPrompt: string;
   generateUrbanDesignPrompt: string;
-  independentPrompt: boolean;
+  aiMemory: AIMemory;
+}
+
+export enum AIMemory {
+  LONG_TERM = 'Long-term',
+  SHORT_TERM = 'Short-term',
+  NONE = 'None',
 }
 
 export interface ActionInfo {

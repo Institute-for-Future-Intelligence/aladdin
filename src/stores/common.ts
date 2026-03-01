@@ -16,6 +16,7 @@ import produce, { enableMapSet } from 'immer';
 import {
   ActionInfo,
   ActionType,
+  AIMemory,
   BirdSafeDesign,
   DataColoring,
   DatumEntry,
@@ -663,7 +664,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             generateBuildingPrompt: 'Generate a colonial style house.',
             generateSolarPowerTowerPrompt: 'Generate a solar power tower with a Fermat spiral layout for heliostats.',
             generateUrbanDesignPrompt: 'Generate a city like Manhattan',
-            independentPrompt: false,
+            aiMemory: AIMemory.SHORT_TERM,
           } as ProjectState,
           projectImages: new Map<string, HTMLImageElement>(),
           designProjectType: null,
@@ -703,7 +704,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.projectState.generateSolarPowerTowerPrompt =
                 'Generate a solar power tower with a Fermat spiral layout for heliostats.';
               state.projectState.generateUrbanDesignPrompt = 'Generate a city like Manhattan';
-              state.projectState.independentPrompt = false;
+              state.projectState.aiMemory = AIMemory.SHORT_TERM;
               // when a project is closed, the current cloud file is detached
               const designs = state.projectState.designs;
               if (designs) {

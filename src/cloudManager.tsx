@@ -11,6 +11,7 @@ import dayjs from 'dayjs';
 import 'antd/dist/reset.css';
 import { showError, showInfo, showSuccess } from './helpers';
 import {
+  AIMemory,
   ClassID,
   CloudFileInfo,
   DataColoring,
@@ -268,7 +269,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             action: '',
             reasoningEffort: f.reasoningEffort,
             aIModel: f.aIModel,
-            independentPrompt: f.independentPrompt,
+            aiMemory: f.aiMemory,
             generateBuildingPrompt: f.generateBuildingPrompt,
             generateSolarPowerTowerPrompt: f.generateSolarPowerTowerPrompt,
             generateUrbanDesignPrompt: f.generateUrbanDesignPrompt,
@@ -787,7 +788,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           filters: data.filters ?? [],
           hiddenParameters: data.hiddenParameters ?? ProjectUtil.getDefaultHiddenParameters(data.type),
           counter: data.counter ?? 0,
-          independentPrompt: !!data.independentPrompt,
+          aiMemory: data.aiMemory ?? AIMemory.SHORT_TERM,
           reasoningEffort: data.reasoningEffort ?? 'medium',
           aIModel: data.aIModel ?? AI_MODELS_NAME['OpenAI o4-mini'],
           generateBuildingPrompt: data.generateBuildingPrompt ?? 'Generate a colonial style house.',
@@ -868,7 +869,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           state.projectState.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectState.type);
           state.designProjectType = null;
           state.projectView = false;
-          state.projectState.independentPrompt = false;
+          state.projectState.aiMemory = AIMemory.SHORT_TERM;
           state.projectState.reasoningEffort = 'medium';
           state.projectState.aIModel = AI_MODELS_NAME['OpenAI o4-mini'];
           state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
@@ -1540,7 +1541,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
               state.projectState.ranges = [];
               state.projectState.filters = [];
               state.projectState.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectState.type);
-              state.projectState.independentPrompt = false;
+              state.projectState.aiMemory = AIMemory.SHORT_TERM;
               state.projectState.reasoningEffort = 'medium';
               state.projectState.aIModel = AI_MODELS_NAME['OpenAI o4-mini'];
               state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
@@ -1641,7 +1642,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                   ranges: useStore.getState().projectState.ranges ?? null,
                   filters: useStore.getState().projectState.filters ?? null,
                   hiddenParameters: useStore.getState().projectState.hiddenParameters,
-                  independentPrompt: !!useStore.getState().projectState.independentPrompt,
+                  aiMemory: useStore.getState().projectState.aiMemory,
                   reasoningEffort,
                   aIModel,
                   generateBuildingPrompt: generateBuildingPrompt,

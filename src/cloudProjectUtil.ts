@@ -5,7 +5,7 @@
 import { useStore } from './stores/common';
 import { showError, showInfo } from './helpers';
 import i18n from './i18n/i18n';
-import { Design, DesignProblem, DataColoring, ProjectState, Range } from './types';
+import { AIMemory, Design, DesignProblem, DataColoring, ProjectState, Range } from './types';
 import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { Filter } from './Filter';
@@ -55,7 +55,7 @@ export const fetchProject = async (
         thumbnailWidth: data.thumbnailWidth,
         reasoningEffort: data.reasoningEffort,
         aIModel: data.aIModel,
-        independentPrompt: !!data.independentPrompt,
+        aiMemory: data.aiMemory ?? AIMemory.SHORT_TERM,
         generateBuildingPrompt: data.generateBuildingPrompt,
         generateSolarPowerTowerPrompt: data.generateSolarPowerTowerPrompt,
         generateUrbanDesignPrompt: data.generateUrbanDesignPrompt,
@@ -276,10 +276,10 @@ export const updateGenerateSolarPowerTowerPrompt = async (
   }
 };
 
-export const updateAIMemory = async (userid: string, projectTitle: string, memory: boolean) => {
+export const updateAIMemory = async (userid: string, projectTitle: string, memory: AIMemory) => {
   const lang = { lng: useStore.getState().language };
   try {
-    await updateDoc(doc(firestore, 'users', userid, 'projects', projectTitle), { independentPrompt: !memory });
+    await updateDoc(doc(firestore, 'users', userid, 'projects', projectTitle), { aiMemory: memory });
   } catch (error) {
     showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
   }

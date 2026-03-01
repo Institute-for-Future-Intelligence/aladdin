@@ -22,7 +22,7 @@ import {
   callSolarPowerTowerClaudeAI,
   AI_MODELS_NAME,
 } from 'functions/src/callSolarPowerTowerAI';
-import { FoundationTexture, ObjectType, SolarStructure } from 'src/types';
+import { AIMemory, FoundationTexture, ObjectType, SolarStructure } from 'src/types';
 import * as Constants from '../constants';
 import { updateGenerateSolarPowerTowerPrompt } from 'src/cloudProjectUtil';
 import { HeliostatModel } from 'src/models/HeliostatModel';
@@ -82,9 +82,12 @@ const GenerateSolarPowerTowerModal = React.memo(
 
     const createInput = () => {
       const input = [];
-      const designs = useStore.getState().projectState.designs;
-      if (!useStore.getState().projectState.independentPrompt && designs && designs.length > 0) {
-        for (const d of designs) {
+      const projectState = useStore.getState().projectState;
+      const aiMemory = projectState.aiMemory;
+      const designs = projectState.designs;
+      if (aiMemory !== AIMemory.NONE && designs && designs.length > 0) {
+        const memoryDesigns = aiMemory === AIMemory.SHORT_TERM ? designs.slice(-5) : designs;
+        for (const d of memoryDesigns) {
           if (d.prompt && d.data) {
             // const parsedData = JSON.parse(d.data)
             // delete parsedData.thinking;

@@ -327,8 +327,6 @@ export const i18n_zh_tw = {
       GeneratingUrbanDesignMayTakeAWhile:
         '生成一個城市設計可能需要一些時間且無法取消。在按確定鍵前請仔細考慮好給AI的輸入。',
       GeneratedResultNotAccepted: '抱歉，回傳結果無法解讀。',
-      NumberOfDesignsInProjectExceeds: '此專案的設計數目超過',
-      RemoveSomeDesignsFromProjectToContinue: '如要繼續請從此專案刪除一些設計',
     },
 
     menu: {
@@ -1687,6 +1685,8 @@ export const i18n_zh_tw = {
       ClickForMoreInfo: '點擊此處查看更多資訊。 。 。',
       ClickToClosePopup: '點擊此處關閉彈窗',
       AIMemory: 'AI記憶',
+      LongTerm: '長期',
+      ShortTerm: '短期',
       ProjectSettings: '專案設定',
       ThumbnailImageSize: '縮略圖大小',
       ProjectByOtherPeople: '別人的專案',

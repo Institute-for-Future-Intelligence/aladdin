@@ -18,7 +18,7 @@ import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
 import { callBuildingAI, callBuildingClaudeAI } from 'functions/src/callBuildingAI';
-import { ObjectType } from 'src/types';
+import { AIMemory, ObjectType } from 'src/types';
 import { GenAIUtil } from 'src/panels/GenAIUtil';
 import { RoofType } from 'src/models/RoofModel';
 import { updateGenerateBuildingPrompt } from 'src/cloudProjectUtil';
@@ -71,9 +71,12 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
 
   const createInput = () => {
     const input = [];
-    const designs = useStore.getState().projectState.designs;
-    if (!useStore.getState().projectState.independentPrompt && designs && designs.length > 0) {
-      for (const d of designs) {
+    const projectState = useStore.getState().projectState;
+    const aiMemory = projectState.aiMemory;
+    const designs = projectState.designs;
+    if (aiMemory !== AIMemory.NONE && designs && designs.length > 0) {
+      const memoryDesigns = aiMemory === AIMemory.SHORT_TERM ? designs.slice(-5) : designs;
+      for (const d of memoryDesigns) {
         if (d.prompt && d.data) {
           input.push({ role: 'user', content: d.prompt });
 

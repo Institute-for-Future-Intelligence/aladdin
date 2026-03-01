@@ -46,7 +46,7 @@ import {
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import ImageLoadFailureIcon from '../assets/image_fail_try_again.png';
 import GenaiImage from '../assets/genai.png';
-import { DataColoring, DatumEntry, Design, DesignProblem, Orientation } from '../types';
+import { AIMemory, DataColoring, DatumEntry, Design, DesignProblem, Orientation } from '../types';
 import ParallelCoordinates from '../components/parallelCoordinates';
 //@ts-expect-error ignore
 import { saveSvgAsPng } from 'save-svg-as-png';
@@ -188,7 +188,7 @@ const ProjectGallery = React.memo(({ canvas }: ProjectGalleryProps) => {
   const cloudFileBelongToProject = useStore(Selector.cloudFileBelongToProject);
   const closeProject = useStore(Selector.closeProject);
   const generating = usePrimitiveStore(Selector.generating);
-  const independentPrompt = useStore(Selector.independentPrompt);
+  const aiMemory = useStore(Selector.aiMemory) ?? AIMemory.SHORT_TERM;
 
   const [selectedDesign, setSelectedDesign] = useState<Design | undefined>();
   const [hoveredDesign, setHoveredDesign] = useState<Design | undefined>();
@@ -323,9 +323,9 @@ const ProjectGallery = React.memo(({ canvas }: ProjectGalleryProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateFlag]);
 
-  const setAIMemory = (b: boolean) => {
+  const setAIMemoryValue = (value: AIMemory) => {
     useStore.getState().set((state) => {
-      state.projectState.independentPrompt = !b;
+      state.projectState.aiMemory = value;
     });
   };
 
@@ -2007,7 +2007,7 @@ const ProjectGallery = React.memo(({ canvas }: ProjectGalleryProps) => {
 
   const createProjectSettingsContent = () => {
     return (
-      <div style={{ width: '250px' }} onClick={(e) => e.stopPropagation()}>
+      <div style={{ width: '290px' }} onClick={(e) => e.stopPropagation()}>
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col span={14} style={{ paddingTop: '5px' }}>
             <span>{t('projectPanel.AIMemory', lang)}: </span>
@@ -2015,9 +2015,9 @@ const ProjectGallery = React.memo(({ canvas }: ProjectGalleryProps) => {
           <Col span={10}>
             <Select
               style={{ width: '100%' }}
-              value={!independentPrompt}
-              onChange={async (value: boolean) => {
-                const oldValue = !independentPrompt;
+              value={aiMemory}
+              onChange={async (value: AIMemory) => {
+                const oldValue = aiMemory;
                 const newValue = value;
                 if (newValue === oldValue) return;
                 const undoableChange = {
@@ -2026,24 +2026,27 @@ const ProjectGallery = React.memo(({ canvas }: ProjectGalleryProps) => {
                   oldValue: oldValue,
                   newValue: newValue,
                   undo: () => {
-                    setAIMemory(undoableChange.oldValue as boolean);
+                    setAIMemoryValue(undoableChange.oldValue as AIMemory);
                   },
                   redo: () => {
-                    setAIMemory(undoableChange.newValue as boolean);
+                    setAIMemoryValue(undoableChange.newValue as AIMemory);
                   },
                 } as UndoableChange;
                 useStore.getState().addUndoable(undoableChange);
                 if (isOwner && user.uid && projectTitle) {
                   await updateAIMemory(user.uid, projectTitle, newValue);
                 }
-                setAIMemory(newValue);
+                setAIMemoryValue(newValue);
               }}
             >
-              <Option key={'Yes'} value={true}>
-                {t('word.Yes', lang)}
+              <Option key={AIMemory.LONG_TERM} value={AIMemory.LONG_TERM}>
+                {t('projectPanel.LongTerm', lang)}
               </Option>
-              <Option key={'No'} value={false}>
-                {t('word.No', lang)}
+              <Option key={AIMemory.SHORT_TERM} value={AIMemory.SHORT_TERM}>
+                {t('projectPanel.ShortTerm', lang)}
+              </Option>
+              <Option key={AIMemory.NONE} value={AIMemory.NONE}>
+                {t('word.None', lang)}
               </Option>
             </Select>
           </Col>
@@ -2117,43 +2120,13 @@ const ProjectGallery = React.memo(({ canvas }: ProjectGalleryProps) => {
           onClick={(e) => {
             e.stopPropagation();
             if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
-              if (projectDesigns !== null && projectDesigns?.length >= 20) {
-                showInfo(
-                  t('message.NumberOfDesignsInProjectExceeds', lang) +
-                    ' 20. ' +
-                    t('message.RemoveSomeDesignsFromProjectToContinue', lang) +
-                    '.',
-                );
-              } else {
-                setGenerateSolarPowerTowerDialogVisible(true);
-              }
+              setGenerateSolarPowerTowerDialogVisible(true);
               return;
             } else if (projectType === DesignProblem.URBAN_DESIGN) {
-              if (projectDesigns !== null && projectDesigns?.length >= 10) {
-                showInfo(
-                  t('message.NumberOfDesignsInProjectExceeds', lang) +
-                    ' 10. ' +
-                    t('message.RemoveSomeDesignsFromProjectToContinue', lang) +
-                    '.',
-                );
-              } else {
-                setGenerateUrbanDesignDialogVisible(true);
-              }
+              setGenerateUrbanDesignDialogVisible(true);
               return;
             } else if (projectType === DesignProblem.BUILDING_DESIGN) {
-              const max = 8;
-              if (projectDesigns !== null && projectDesigns?.length >= max) {
-                showInfo(
-                  t('message.NumberOfDesignsInProjectExceeds', lang) +
-                    ' ' +
-                    max +
-                    '. ' +
-                    t('message.RemoveSomeDesignsFromProjectToContinue', lang) +
-                    '.',
-                );
-              } else {
-                setGenerateBuildingDialogVisible(true);
-              }
+              setGenerateBuildingDialogVisible(true);
             }
           }}
         >
