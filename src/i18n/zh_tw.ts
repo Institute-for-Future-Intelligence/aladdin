@@ -327,6 +327,8 @@ export const i18n_zh_tw = {
       GeneratingUrbanDesignMayTakeAWhile:
         '生成一個城市設計可能需要一些時間且無法取消。在按確定鍵前請仔細考慮好給AI的輸入。',
       GeneratedResultNotAccepted: '抱歉，回傳結果無法解讀。',
+      NumberOfDesignsInProjectExceeds: '此專案的設計數目超過',
+      RemoveSomeDesignsFromProjectToContinue: '如要繼續請從此專案刪除一些設計',
     },
 
     menu: {
