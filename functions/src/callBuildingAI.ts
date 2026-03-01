@@ -14,7 +14,7 @@ const BUILDING_RULES = `3D coordinate system: +X=east, -X=west, +Y=north, -Y=sou
 
 Location: default Natick, MA. Provide latitude/longitude.
 Date format: MM/dd/yyyy, hh:mm:ss a. Default: 06/22/2025, 02:00:00 PM.
-Light defaults: direct=3.5, ambient=0.2.
+Light defaults: direct=6, ambient=0.4.
 
 ## Elements
 Foundation: center=[cx,cy], size=[lx,ly,lz], rotation=r.
@@ -36,7 +36,7 @@ Door: built on wall (pId), fId=foundation. size=[width,height], center=[cx] rela
 Defaults: frameColor="white", uValue=1W/(m²·℃). Prefer south-facing wall center.
 
 Window: built on wall (pId), fId=foundation. size=[width,height], center=[cx,cz] where cz is height from wall bottom.
-Defaults: opacity=0.5, uValue=2W/(m²·℃), color="#FFFFFF", tint="#73D8FF".
+Defaults: opacity=0.5, uValue=2W/(m²·℃), color="#FFFFFF", tint="#73D8FF", width=1, height=1.5.
 If SHGC specified: opacity = 1 - SHGC.
 
 Solar panel: mounted on roof (pId), fId=foundation. size=[lx,ly], center=[cx,cy,cz] relative to foundation.
@@ -61,8 +61,8 @@ hvacId matches foundation's hvacId.
 
 ## Examples
 
-Colonial: 4 walls (5m high) forming 10×12m rectangle, gable roof (rise 2.4m), south door (1.6×2.5m). On each wall, add a set of two windows eventually distributed in the vertical direction and the set is repeated in every four meters horizontally.
-
+Colonial: 4 walls (5.6m high) forming 12×8m rectangle, gable roof (rise 2.4m), south door (1.6×2.5m).
+On each wall, add a set of two windows evenly distributed in the vertical direction, add a vertical gap of 1 meter between them, and repeat the set every 4 meters horizontally. The horizontal distribution must be symmetric about the central line of the wall.
 
 Gable-and-valley: 2 foundations overlapping as T-shape. A: 20×7m, B: 7×9m (north edge aligned to A's center). A: gable on south wall. B: gable on east wall, door on south, overhang=0 on north. 2 rows of windows per wall, count based on wall length. Height 5m, grey roof.
 
@@ -158,11 +158,11 @@ One foundation can only have four walls.
 
 Here are some examples:
 
-- A colonial style house has four walls connected with each other in a loop. Each wall is a 5-meter high.
+- A colonial style house has four walls connected with each other in a loop. Each wall is a 5.6-meter high.
 The walls form a rectangular area with the size of 10 by 12 meters.
 All walls have normal facing outside. There is a gable roof with a rise of 2.4 meters.
 Add a door on the wall facing south with a size of 1.6 by 2.5 meters.
-On each wall, there is a set of two windows eventually distributed in the vertical direction
+On each wall, there is a set of two windows evenly distributed in the vertical direction
 and the set should be repeated in every four meters in the horizontal direction.
 
 - A gable-and-valley roof house has two foundations, each foundation has four walls and one gable roof.

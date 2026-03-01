@@ -2141,7 +2141,7 @@ const ProjectGallery = React.memo(({ canvas }: ProjectGalleryProps) => {
               }
               return;
             } else if (projectType === DesignProblem.BUILDING_DESIGN) {
-              const max = 10;
+              const max = 8;
               if (projectDesigns !== null && projectDesigns?.length >= max) {
                 showInfo(
                   t('message.NumberOfDesignsInProjectExceeds', lang) +
