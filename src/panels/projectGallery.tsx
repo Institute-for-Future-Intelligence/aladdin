@@ -680,7 +680,7 @@ const ProjectGallery = React.memo(({ canvas }: ProjectGalleryProps) => {
       if (!hiddenParameters?.includes('heating')) array.push(getMax('heating', 30000));
       if (!hiddenParameters?.includes('cooling')) array.push(getMax('cooling', 20000));
       if (!hiddenParameters?.includes('solar')) array.push(getMax('solar', 10000));
-      if (!hiddenParameters?.includes('net')) array.push(getMax('net', 20000));
+      if (!hiddenParameters?.includes('net')) array.push(getMax('net', 30000));
       return array;
     } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
       const array: number[] = [];
@@ -787,7 +787,7 @@ const ProjectGallery = React.memo(({ canvas }: ProjectGalleryProps) => {
       if (!hiddenParameters?.includes('heating')) array.push(createFilter('heating', 30000, 0));
       if (!hiddenParameters?.includes('cooling')) array.push(createFilter('cooling', 20000, 0));
       if (!hiddenParameters?.includes('solar')) array.push(createFilter('solar', 10000, 0));
-      if (!hiddenParameters?.includes('net')) array.push(createFilter('net', 200000, 0));
+      if (!hiddenParameters?.includes('net')) array.push(createFilter('net', 300000, 0));
       return array;
     } else if (projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN) {
       const array: Filter[] = [];

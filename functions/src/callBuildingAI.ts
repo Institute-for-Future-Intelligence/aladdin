@@ -13,7 +13,7 @@ const apiVersion = '2024-12-01-preview';
 const BUILDING_RULES = `3D coordinate system: +X=east, -X=west, +Y=north, -Y=south, +Z=up. Ground plane: z=0.
 
 Location: default Natick, MA. Provide latitude/longitude.
-Date format: MM/dd/yyyy, hh:mm:ss a. Default: 06/22/2025, 02:00:00 PM.
+Date format: MM/dd/yyyy, hh:mm:ss a. Default: 06/22/2026, 02:00:00 PM.
 Light defaults: direct=6, ambient=0.4.
 
 ## Elements
