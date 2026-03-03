@@ -1,12 +1,12 @@
 /*
- * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2026. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { BuildingCompletionStatus, DatumEntry, Design, DesignProblem, GraphDataType } from '../types';
+import { BuildingCompletionStatus, DatumEntry, DesignProblem, GraphDataType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Popover, Space } from 'antd';
@@ -22,9 +22,6 @@ import { Util } from '../Util';
 import { checkBuilding, CheckStatus } from '../analysis/heatTools';
 import { useDataStore } from '../stores/commonData';
 import { useLanguage, useWeather } from '../hooks';
-import { createDesign } from 'src/cloudProjectUtil';
-import { arrayRemove, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { firestore } from 'src/firebase';
 
 const Container = styled.div`
   position: fixed;
@@ -116,9 +113,6 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
   const tooltipHeaterBreakdown = useRef<string[]>([]);
   const tooltipAcBreakdown = useRef<string[]>([]);
   const tooltipSolarPanelBreakdown = useRef<string[]>([]);
-  const tooltipSummaryBreakdown = useRef<string[]>([]);
-  // const tooltipGridBreakdown = useRef<string[]>([]);
-  // const tooltipNetBreakdown = useRef<string[]>([]);
 
   useEffect(() => {
     if (runDailySimulation) {
@@ -362,18 +356,32 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
 
   const summarySection = () => {
     if (summaryMap.size === 0) return null;
-    else if (summaryMap.size === 1) {
+    if (summaryMap.size === 1) {
       if (heaterSum !== 0 || acSum !== 0) {
         for (const [key, val] of summaryMap) {
           if (key.slice(0, 3) === 'Net') {
             return (
-              <Space style={{ cursor: 'default' }}>
+              <Space
+                style={{ cursor: 'copy' }}
+                onClick={() => {
+                  navigator.clipboard.writeText(val.toFixed(1)).then(() => {
+                    showInfo(val.toFixed(1) + ' - ' + i18n.t('message.CopiedAndReadyToPaste', lang));
+                  });
+                }}
+              >
                 {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + val.toFixed(1)}
               </Space>
             );
           } else if (key.slice(0, 4) === 'Grid') {
             return (
-              <Space style={{ cursor: 'default' }}>
+              <Space
+                style={{ cursor: 'copy' }}
+                onClick={() => {
+                  navigator.clipboard.writeText(val.toFixed(1)).then(() => {
+                    showInfo(val.toFixed(1) + ' - ' + i18n.t('message.CopiedAndReadyToPaste', lang));
+                  });
+                }}
+              >
                 {i18n.t('buildingEnergyPanel.Grid', lang) + ': ' + val.toFixed(1)}
               </Space>
             );
@@ -385,7 +393,6 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
       let netSum = 0;
       let isAllGrid = true;
       let gridSum = 0;
-
       const content: string[] = [];
       for (const [key, val] of summaryMap) {
         if (key.slice(0, 3) === 'Net') {
@@ -514,7 +521,14 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
           {!simulationInProgress && (
             <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
               {tooltipHeaterBreakdown.current.length === 0 ? (
-                <Space style={{ cursor: 'default' }}>
+                <Space
+                  style={{ cursor: 'copy' }}
+                  onClick={() => {
+                    navigator.clipboard.writeText(heaterSum.toFixed(1)).then(() => {
+                      showInfo(heaterSum.toFixed(1) + ' - ' + i18n.t('message.CopiedAndReadyToPaste', lang));
+                    });
+                  }}
+                >
                   {i18n.t('buildingEnergyPanel.Heater', lang) + ': ' + heaterSum.toFixed(1)}
                 </Space>
               ) : (
@@ -529,7 +543,14 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
                 </Popover>
               )}
               {tooltipAcBreakdown.current.length === 0 ? (
-                <Space style={{ cursor: 'default' }}>
+                <Space
+                  style={{ cursor: 'copy' }}
+                  onClick={() => {
+                    navigator.clipboard.writeText(acSum.toFixed(1)).then(() => {
+                      showInfo(acSum.toFixed(1) + ' - ' + i18n.t('message.CopiedAndReadyToPaste', lang));
+                    });
+                  }}
+                >
                   {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(1)}
                 </Space>
               ) : (
@@ -546,7 +567,14 @@ const DailyBuildingEnergyPanel = React.memo(({ city }: DailyBuildingEnergyPanelP
               {solarPanelSum !== 0 && (
                 <>
                   {tooltipSolarPanelBreakdown.current.length === 0 ? (
-                    <Space style={{ cursor: 'default' }}>
+                    <Space
+                      style={{ cursor: 'copy' }}
+                      onClick={() => {
+                        navigator.clipboard.writeText(solarPanelSum.toFixed(1)).then(() => {
+                          showInfo(solarPanelSum.toFixed(1) + ' - ' + i18n.t('message.CopiedAndReadyToPaste', lang));
+                        });
+                      }}
+                    >
                       {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + solarPanelSum.toFixed(1)}
                     </Space>
                   ) : (

@@ -219,6 +219,7 @@ export const i18n_en = {
     },
 
     message: {
+      CopiedAndReadyToPaste: 'Copied and ready to paste.',
       ListenToPodcastAboutThis: 'Listen to a podcast about this',
       LabelIsAlreadyTaken: 'This label is already taken, please use another one.',
       IdIsAlreadyTaken: 'This ID is already taken, please use another one.',

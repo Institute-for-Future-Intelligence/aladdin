@@ -219,6 +219,7 @@ export const i18n_zh_cn = {
     },
 
     message: {
+      CopiedAndReadyToPaste: '现在可以粘贴了。',
       ListenToPodcastAboutThis: '听一下播客',
       LabelIsAlreadyTaken: '此标签已被占用，请更换。',
       IdIsAlreadyTaken: '此ID已被占用，请更换。',

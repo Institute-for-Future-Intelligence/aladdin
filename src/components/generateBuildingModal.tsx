@@ -80,7 +80,6 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
       for (const d of memoryDesigns) {
         if (d.prompt && d.data) {
           input.push({ role: 'user', content: d.prompt });
-
           const sendBackThinking = false;
           if (sendBackThinking) {
             input.push({ role: 'assistant', content: d.data });

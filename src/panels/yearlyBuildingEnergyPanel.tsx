@@ -1,12 +1,12 @@
 /*
- * @Copyright 2022-2025. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2026. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { BuildingCompletionStatus, DatumEntry, Design, DesignProblem, GraphDataType } from '../types';
+import { BuildingCompletionStatus, DatumEntry, DesignProblem, GraphDataType } from '../types';
 import { DEFAULT_DAYS_PER_YEAR, FLOATING_WINDOW_OPACITY, MONTHS_ABBV, Z_INDEX_FRONT_PANEL } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Popover, Space } from 'antd';
@@ -21,9 +21,6 @@ import { Util } from '../Util';
 import { checkBuilding, CheckStatus } from '../analysis/heatTools';
 import { useDataStore } from '../stores/commonData';
 import { useLanguage, useWeather } from '../hooks';
-import { arrayRemove, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { firestore } from 'src/firebase';
-import { createDesign } from 'src/cloudProjectUtil';
 
 const Container = styled.div`
   position: fixed;
@@ -533,7 +530,14 @@ const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPane
           {!simulationInProgress && (
             <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
               {tooltipHeaterBreakdown.current.length === 0 ? (
-                <Space style={{ cursor: 'default' }}>
+                <Space
+                  style={{ cursor: 'copy' }}
+                  onClick={() => {
+                    navigator.clipboard.writeText(heaterSum.toFixed(0)).then(() => {
+                      showInfo(heaterSum.toFixed(0) + ' - ' + i18n.t('message.CopiedAndReadyToPaste', lang));
+                    });
+                  }}
+                >
                   {i18n.t('buildingEnergyPanel.Heater', lang) + ': ' + heaterSum.toFixed(0)}
                 </Space>
               ) : (
@@ -548,7 +552,14 @@ const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPane
                 </Popover>
               )}
               {tooltipAcBreakdown.current.length === 0 ? (
-                <Space style={{ cursor: 'default' }}>
+                <Space
+                  style={{ cursor: 'copy' }}
+                  onClick={() => {
+                    navigator.clipboard.writeText(acSum.toFixed(0)).then(() => {
+                      showInfo(acSum.toFixed(0) + ' - ' + i18n.t('message.CopiedAndReadyToPaste', lang));
+                    });
+                  }}
+                >
                   {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(0)}
                 </Space>
               ) : (
@@ -565,7 +576,14 @@ const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPane
               {solarPanelSum !== 0 && (
                 <>
                   {tooltipSolarPanelBreakdown.current.length === 0 ? (
-                    <Space style={{ cursor: 'default' }}>
+                    <Space
+                      style={{ cursor: 'copy' }}
+                      onClick={() => {
+                        navigator.clipboard.writeText(solarPanelSum.toFixed(0)).then(() => {
+                          showInfo(solarPanelSum.toFixed(0) + ' - ' + i18n.t('message.CopiedAndReadyToPaste', lang));
+                        });
+                      }}
+                    >
                       {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + solarPanelSum.toFixed(0)}
                     </Space>
                   ) : (
@@ -582,7 +600,14 @@ const YearlyBuildingEnergyPanel = React.memo(({ city }: YearlyBuildingEnergyPane
                 </>
               )}
               {tooltipNetBreakdown.current.length === 0 ? (
-                <Space style={{ cursor: 'default' }}>
+                <Space
+                  style={{ cursor: 'copy' }}
+                  onClick={() => {
+                    navigator.clipboard.writeText(netSum.toFixed(0)).then(() => {
+                      showInfo(netSum.toFixed(0) + ' - ' + i18n.t('message.CopiedAndReadyToPaste', lang));
+                    });
+                  }}
+                >
                   {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(0)}
                 </Space>
               ) : (
