@@ -3,12 +3,14 @@
  */
 
 import { AzureOpenAI, OpenAI } from 'openai';
+import { ReasoningEffort } from 'openai/resources/shared.js';
 import Anthropic from '@anthropic-ai/sdk';
 
 export const AI_MODELS_NAME = {
-  'OpenAI o4-mini': 'OpenAI o4-mini',
+  'Azure OpenAI o4-mini': 'OpenAI o4-mini',
   'Claude Opus-4.5': 'Claude Opus-4.5',
   'Claude Sonnet-4.5': 'Claude Sonnet-4.5', // cheaper
+  'OpenAI GPT-5.2': 'OpenAI GPT-5.2',
 };
 
 const RULES = `
@@ -102,7 +104,7 @@ Must define all the variables in the JS code to avoid undefined errors.
 
 `;
 
-export const callSolarPowerTowerOpenAI = async (
+export const callSolarPowerTowerAzureAI = async (
   apiKey: string | undefined,
   inputMessage: [],
   fromBrowser = false,
@@ -137,6 +139,72 @@ export const callSolarPowerTowerOpenAI = async (
             thinking: {
               type: 'string',
             },
+            fn: { type: 'string' },
+            N: { type: 'number' },
+            world: {
+              type: 'object',
+              properties: {
+                date: { type: 'string' },
+                address: { type: 'string' },
+                latitude: { type: 'number' },
+                longitude: { type: 'number' },
+              },
+              required: ['date', 'address', 'latitude', 'longitude'],
+              additionalProperties: false,
+            },
+            heliostat: {
+              type: 'object',
+              properties: {
+                size: { type: 'array', items: { type: 'number' } },
+                poleHeight: { type: 'number' },
+                poleRadius: { type: 'number' },
+              },
+              required: ['size', 'poleHeight', 'poleRadius'],
+              additionalProperties: false,
+            },
+            tower: {
+              type: 'object',
+              properties: {
+                center: { type: 'array', items: { type: 'number' } },
+                height: { type: 'number' },
+                radius: { type: 'number' },
+              },
+              required: ['center', 'height', 'radius'],
+              additionalProperties: false,
+            },
+          },
+          required: ['fn', 'N', 'world', 'heliostat', 'tower', 'thinking'],
+          additionalProperties: false,
+        },
+      },
+    },
+  });
+  return response;
+};
+
+export const callSolarPowerTowerOpenAI = async (
+  apiKey: string | undefined,
+  inputMessage: [],
+  fromBrowser = false,
+  reasoningEffort: string,
+) => {
+  const client = new OpenAI({
+    apiKey: apiKey,
+    dangerouslyAllowBrowser: fromBrowser,
+  });
+
+  const response = await client.responses.create({
+    model: 'gpt-5.2',
+    input: [{ role: 'system', content: RULES }, ...inputMessage],
+    reasoning: { effort: reasoningEffort as ReasoningEffort },
+    text: {
+      format: {
+        type: 'json_schema',
+        name: 'CSPGenerator',
+        schema: {
+          type: 'object',
+          properties: {
+            thinking: { type: 'string' },
             fn: { type: 'string' },
             N: { type: 'number' },
             world: {

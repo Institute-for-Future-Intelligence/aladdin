@@ -2147,7 +2147,7 @@ const ProjectGallery = React.memo(({ canvas }: ProjectGalleryProps) => {
               }
               return;
             } else if (projectType === DesignProblem.BUILDING_DESIGN) {
-              const max = aiMemory === AIMemory.LONG_TERM ? 8 : 20;
+              const max = aiMemory === AIMemory.LONG_TERM ? 15 : 20;
               if (projectDesigns !== null && projectDesigns?.length >= max) {
                 showInfo(
                   t('message.NumberOfDesignsInProjectExceeds', lang) +

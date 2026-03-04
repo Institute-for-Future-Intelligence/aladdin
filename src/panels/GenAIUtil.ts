@@ -106,18 +106,22 @@ export class GenAIUtil {
         let isClosed = false;
         let counter = 0;
         let wallP = e; // pointer wall move around to check loop.
-        while (wallP.rightConnectId && counter < 4) {
+        let pCounter = 0;
+        while (wallP && wallP.rightConnectId && counter < 4 && pCounter < 10) {
+          pCounter++;
           const wallT = wallMap.get(wallP.rightConnectId); // target connected wall
-          const angleP = Util.getWallRelativeAngle(wallP.leftPoint, wallP.rightPoint);
-          const angleT = Util.getWallRelativeAngle(wallT.leftPoint, wallT.rightPoint);
-          if (angleT - angleP === Math.PI / 2 || angleT - angleP === -(3 * Math.PI) / 2) {
-            wallP = wallT;
-          } else {
-            needFlip = true;
-          }
-          if (wallP.id === startingId) {
-            counter++;
-            isClosed = true;
+          if (wallT) {
+            const angleP = Util.getWallRelativeAngle(wallP.leftPoint, wallP.rightPoint);
+            const angleT = Util.getWallRelativeAngle(wallT.leftPoint, wallT.rightPoint);
+            if (angleT - angleP === Math.PI / 2 || angleT - angleP === -(3 * Math.PI) / 2) {
+              wallP = wallT;
+            } else {
+              needFlip = true;
+            }
+            if (wallP.id === startingId) {
+              counter++;
+              isClosed = true;
+            }
           }
         }
 

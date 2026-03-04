@@ -3,37 +3,62 @@
  */
 
 import { onCall } from 'firebase-functions/v2/https';
-import { callBuildingAI, callBuildingClaudeAI } from './callBuildingAI';
-import { AI_MODELS_NAME, callSolarPowerTowerClaudeAI, callSolarPowerTowerOpenAI } from './callSolarPowerTowerAI';
-import { callUrbanDesignClaudeAI, callUrbanDesignOpenAI } from './callUrbanDesignAI';
+import { callBuildingAzureAI, callBuildingClaudeAI, callBuildingOpenAI } from './callBuildingAI';
+import {
+  AI_MODELS_NAME,
+  callSolarPowerTowerClaudeAI,
+  callSolarPowerTowerOpenAI,
+  callSolarPowerTowerAzureAI,
+} from './callSolarPowerTowerAI';
+import { callUrbanDesignClaudeAI, callUrbanDesignOpenAI, callUrbanDesignAzureAI } from './callUrbanDesignAI';
 
 exports.callAI = onCall(
-  { secrets: ['AZURE_OPENAI_API_KEY', 'CLAUDE_API_KEY'], timeoutSeconds: 300, region: 'us-east4' },
+  { secrets: ['AZURE_OPENAI_API_KEY', 'CLAUDE_API_KEY', 'OPENAI_API_KEY'], timeoutSeconds: 300, region: 'us-east4' },
   async (req) => {
     const prompt = req.data.text;
     const type = req.data.type ?? 'building';
-    const aIModel = req.data.aIModel ?? AI_MODELS_NAME['OpenAI o4-mini'];
+    const aIModel = req.data.aIModel ?? AI_MODELS_NAME['Azure OpenAI o4-mini'];
     console.log('Prompt:', prompt);
     try {
-      if (aIModel === AI_MODELS_NAME['OpenAI o4-mini']) {
+      if (aIModel === AI_MODELS_NAME['Azure OpenAI o4-mini']) {
         const azureApiKey = process.env.AZURE_OPENAI_API_KEY;
         const reasoningEffort = req.data.reasoningEffort ?? 'medium';
         console.log('Reasoning Effort:', reasoningEffort);
         if (type === 'building') {
-          console.log('calling OpenAI...');
-          const response = await callBuildingAI(azureApiKey, prompt, false, reasoningEffort);
+          console.log('calling Azure OpenAI...');
+          const response = await callBuildingAzureAI(azureApiKey, prompt, false, reasoningEffort);
           console.log('Returned:', response.choices[0].message.content);
           return { text: response.choices[0].message.content };
         } else if (type === 'solar power tower') {
           console.log('calling OpenAI...');
-          const response = await callSolarPowerTowerOpenAI(azureApiKey, prompt, false, reasoningEffort);
+          const response = await callSolarPowerTowerAzureAI(azureApiKey, prompt, false, reasoningEffort);
           console.log('Returned:', response.choices[0].message.content);
           return { text: response.choices[0].message.content };
         } else if (type === 'urban') {
           console.log('calling OpenAI...');
-          const response = await callUrbanDesignOpenAI(azureApiKey, prompt, false, reasoningEffort);
+          const response = await callUrbanDesignAzureAI(azureApiKey, prompt, false, reasoningEffort);
           console.log('Returned:', response.choices[0].message.content);
           return { text: response.choices[0].message.content };
+        }
+      } else if (aIModel === AI_MODELS_NAME['OpenAI GPT-5.2']) {
+        const openApiKey = process.env.OPENAI_API_KEY;
+        const reasoningEffort = req.data.reasoningEffort ?? 'medium';
+        console.log('Reasoning Effort:', reasoningEffort);
+        if (type === 'building') {
+          console.log('calling OpenAI...');
+          const response = await callBuildingOpenAI(openApiKey, prompt, false, reasoningEffort);
+          console.log('Returned:', response.output_text);
+          return { text: response.output_text };
+        } else if (type === 'solar power tower') {
+          console.log('calling OpenAI GPT-5.2...');
+          const response = await callSolarPowerTowerOpenAI(openApiKey, prompt, false, reasoningEffort);
+          console.log('Returned:', response.output_text);
+          return { text: response.output_text };
+        } else if (type === 'urban') {
+          console.log('calling OpenAI GPT-5.2...');
+          const response = await callUrbanDesignOpenAI(openApiKey, prompt, false, reasoningEffort);
+          console.log('Returned:', response.output_text);
+          return { text: response.output_text };
         }
       } else if (aIModel === AI_MODELS_NAME['Claude Opus-4.5']) {
         const claudeApiKey = process.env.CLAUDE_API_KEY;

@@ -4,6 +4,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import OpenAI, { AzureOpenAI } from 'openai';
+import { ReasoningEffort } from 'openai/resources/shared.js';
 
 const RULES = `
 你是一个城市布局生成器。根据用户描述的城市风格，生成完整的城市数据。
@@ -146,14 +147,13 @@ If not specified, the default address is New York City, USA.
 只返回纯 JSON，禁止markdown代码块！直接以 '{' 开头!!!!!
 `;
 
-export const callUrbanDesignOpenAI = async (
+export const callUrbanDesignAzureAI = async (
   apiKey: string | undefined,
   inputMessage: [],
   fromBrowser = false,
   reasoningEffort: string,
 ) => {
   const modelName = 'o4-mini';
-  // const modelName = 'gpt-5-mini';
 
   const options = {
     apiKey,
@@ -241,6 +241,17 @@ export const callUrbanDesignOpenAI = async (
                   required: ['nodes', 'edges'],
                   additionalProperties: false,
                 },
+                ponds: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+                    },
+                    required: ['vertices'],
+                    additionalProperties: false,
+                  },
+                },
                 parks: {
                   type: 'array',
                   items: {
@@ -256,7 +267,7 @@ export const callUrbanDesignOpenAI = async (
                   type: 'array',
                   items: {
                     type: 'object',
-                    required: ['boundary', 'length', 'width', 'height', 'coverage', 'layout', 'color'],
+                    required: ['boundary', 'length', 'width', 'height', 'coverage', 'layout'],
                     additionalProperties: false,
                     properties: {
                       boundary: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
@@ -265,7 +276,6 @@ export const callUrbanDesignOpenAI = async (
                       height: { type: 'array', items: { type: 'number' } },
                       layout: { type: 'string', enum: ['grid', 'perimeter', 'cluster'] },
                       coverage: { type: 'number' },
-                      color: { type: 'string' },
                     },
                   },
                 },
@@ -283,40 +293,204 @@ export const callUrbanDesignOpenAI = async (
                   },
                 },
               },
-              required: ['roads', 'parks', 'rivers', 'landmarks', 'zones'],
+              required: ['roads', 'ponds', 'parks', 'rivers', 'landmarks', 'zones'],
               additionalProperties: false,
             },
             terrain: {
               type: 'object',
               properties: {
                 land: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
-                    },
-                    required: ['vertices'],
-                    additionalProperties: false,
+                  type: 'object',
+                  properties: {
+                    vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
                   },
+                  required: ['vertices'],
+                  additionalProperties: false,
                 },
                 sea: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
-                    },
-                    required: ['vertices'],
-                    additionalProperties: false,
+                  type: 'object',
+                  properties: {
+                    vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
                   },
+                  required: ['vertices'],
+                  additionalProperties: false,
                 },
               },
               required: ['land', 'sea'],
               additionalProperties: false,
             },
           },
-          required: ['city', 'thinking', 'world'],
+          required: ['city', 'thinking', 'world', 'terrain'],
+          additionalProperties: false,
+        },
+      },
+    },
+  });
+  return response;
+};
+
+export const callUrbanDesignOpenAI = async (
+  apiKey: string | undefined,
+  inputMessage: [],
+  fromBrowser = false,
+  reasoningEffort: string,
+) => {
+  const client = new OpenAI({
+    apiKey: apiKey,
+    dangerouslyAllowBrowser: fromBrowser,
+  });
+
+  const response = await client.responses.create({
+    model: 'gpt-5.2',
+    input: [{ role: 'system', content: RULES }, ...inputMessage],
+    reasoning: { effort: reasoningEffort as ReasoningEffort },
+    text: {
+      format: {
+        type: 'json_schema',
+        name: 'UrbanDesign',
+        schema: {
+          type: 'object',
+          properties: {
+            thinking: { type: 'string' },
+            world: {
+              type: 'object',
+              properties: {
+                date: { type: 'string' },
+                address: { type: 'string' },
+                latitude: { type: 'number' },
+                longitude: { type: 'number' },
+              },
+              required: ['date', 'address', 'latitude', 'longitude'],
+              additionalProperties: false,
+            },
+            city: {
+              type: 'object',
+              properties: {
+                rivers: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+                    },
+                    required: ['vertices'],
+                    additionalProperties: false,
+                  },
+                },
+                roads: {
+                  type: 'object',
+                  properties: {
+                    nodes: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        required: ['id', 'position'],
+                        additionalProperties: false,
+                        properties: {
+                          id: { type: 'string' },
+                          position: { type: 'array', items: { type: 'number' } },
+                        },
+                      },
+                    },
+                    edges: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        required: ['id', 'from', 'to', 'level', 'points'],
+                        additionalProperties: false,
+                        properties: {
+                          id: { type: 'string' },
+                          from: { type: 'string' },
+                          to: { type: 'string' },
+                          level: { type: 'string', enum: ['1', '2'] },
+                          points: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+                        },
+                      },
+                    },
+                  },
+                  required: ['nodes', 'edges'],
+                  additionalProperties: false,
+                },
+                ponds: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+                    },
+                    required: ['vertices'],
+                    additionalProperties: false,
+                  },
+                },
+                parks: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+                    },
+                    required: ['vertices'],
+                    additionalProperties: false,
+                  },
+                },
+                zones: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    required: ['boundary', 'length', 'width', 'height', 'coverage', 'layout'],
+                    additionalProperties: false,
+                    properties: {
+                      boundary: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+                      length: { type: 'array', items: { type: 'number' } },
+                      width: { type: 'array', items: { type: 'number' } },
+                      height: { type: 'array', items: { type: 'number' } },
+                      layout: { type: 'string', enum: ['grid', 'perimeter', 'cluster'] },
+                      coverage: { type: 'number' },
+                    },
+                  },
+                },
+                landmarks: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    required: ['center', 'size', 'rotation'],
+                    additionalProperties: false,
+                    properties: {
+                      center: { type: 'array', items: { type: 'number' } },
+                      size: { type: 'array', items: { type: 'number' } },
+                      rotation: { type: 'number' },
+                    },
+                  },
+                },
+              },
+              required: ['roads', 'ponds', 'parks', 'rivers', 'landmarks', 'zones'],
+              additionalProperties: false,
+            },
+            terrain: {
+              type: 'object',
+              properties: {
+                land: {
+                  type: 'object',
+                  properties: {
+                    vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+                  },
+                  required: ['vertices'],
+                  additionalProperties: false,
+                },
+                sea: {
+                  type: 'object',
+                  properties: {
+                    vertices: { type: 'array', items: { type: 'array', items: { type: 'number' } } },
+                  },
+                  required: ['vertices'],
+                  additionalProperties: false,
+                },
+              },
+              required: ['land', 'sea'],
+              additionalProperties: false,
+            },
+          },
+          required: ['city', 'thinking', 'world', 'terrain'],
           additionalProperties: false,
         },
       },
@@ -334,8 +508,6 @@ export const callUrbanDesignClaudeAI = async (
   const anthropic = new Anthropic({ apiKey, dangerouslyAllowBrowser: fromBrowser });
 
   const res = await anthropic.beta.messages.create({
-    // model: 'claude-opus-4-5',
-    // model: 'claude-sonnet-4-5',
     model: aIModel,
     max_tokens: 10000, // require streaming API if this is large.
     system: RULES,

@@ -660,7 +660,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             dotSizeScatterPlot: 5,
             thumbnailWidth: 200,
             reasoningEffort: 'medium',
-            aIModel: AI_MODELS_NAME['OpenAI o4-mini'],
+            aIModel: AI_MODELS_NAME['Azure OpenAI o4-mini'],
             generateBuildingPrompt: 'Generate a colonial style house.',
             generateSolarPowerTowerPrompt: 'Generate a solar power tower with a Fermat spiral layout for heliostats.',
             generateUrbanDesignPrompt: 'Generate a city like Manhattan',
@@ -699,7 +699,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.projectState.description = null;
               state.projectState.owner = null;
               state.projectState.reasoningEffort = 'medium';
-              state.projectState.aIModel = AI_MODELS_NAME['OpenAI o4-mini'];
+              state.projectState.aIModel = AI_MODELS_NAME['Azure OpenAI o4-mini'];
               state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
               state.projectState.generateSolarPowerTowerPrompt =
                 'Generate a solar power tower with a Fermat spiral layout for heliostats.';

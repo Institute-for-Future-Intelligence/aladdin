@@ -17,7 +17,7 @@ import i18n from 'src/i18n/i18n';
 import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
-import { callBuildingAI, callBuildingClaudeAI } from 'functions/src/callBuildingAI';
+import { callBuildingAzureAI, callBuildingClaudeAI, callBuildingOpenAI } from 'functions/src/callBuildingAI';
 import { AIMemory, ObjectType } from 'src/types';
 import { GenAIUtil } from 'src/panels/GenAIUtil';
 import { RoofType } from 'src/models/RoofModel';
@@ -47,7 +47,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
   const generateBuildingPrompt = useStore(Selector.generateBuildingPrompt);
   const setGenerating = usePrimitiveStore(Selector.setGenerating);
   const setChanged = usePrimitiveStore(Selector.setChanged);
-  const aIModel = useStore(Selector.aIModel) ?? AI_MODELS_NAME['OpenAI o4-mini'];
+  const aIModel = useStore(Selector.aIModel) ?? AI_MODELS_NAME['OpenAI GPT-5.2'];
 
   const [prompt, setPrompt] = useState<string>('Generate a colonial style house');
   const [listening, setListening] = useState<boolean>(false);
@@ -109,7 +109,8 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
     const jsonView = json.view;
     const jsonElements = json.elements ? GenAIUtil.arrayCorrection(json.elements) : [];
 
-    console.log(json);
+    console.log('validated', jsonElements);
+    console.log('thinking', json.thinking);
 
     useStore.getState().set((state) => {
       let [minX, maxX] = [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER];
@@ -371,7 +372,6 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
         }
       }
 
-      console.log('bounding', minX, maxX, minY, maxY);
       const panCenter = [(minX + maxX) / 2, (minY + maxY) / 2, 0];
       const l = Math.max(maxX - minX, maxY - minY) * 1.5;
       state.viewState.cameraPosition = [panCenter[0] - l, panCenter[1] - l, l / 2];
@@ -404,12 +404,27 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
     try {
       const input = createInput();
 
-      if (aIModel === AI_MODELS_NAME['OpenAI o4-mini']) {
-        console.log('calling OpenAI...', input); // for debugging
-        const response = await callBuildingAI(import.meta.env.VITE_AZURE_API_KEY, input as [], true, reasoningEffort);
+      if (aIModel === AI_MODELS_NAME['Azure OpenAI o4-mini']) {
+        console.log('calling Azure OpenAI...', input); // for debugging
+        const response = await callBuildingAzureAI(
+          import.meta.env.VITE_AZURE_API_KEY,
+          input as [],
+          true,
+          reasoningEffort,
+        );
         const result = response.choices[0].message.content;
         console.log('OpenAI response:', response);
         return result;
+      } else if (aIModel === AI_MODELS_NAME['OpenAI GPT-5.2']) {
+        console.log('calling OpenAI...', input); // for debugging
+        const response = await callBuildingOpenAI(
+          import.meta.env.VITE_OPENAI_API_KEY,
+          input as [],
+          true,
+          reasoningEffort,
+        );
+        console.log('res', response);
+        return response.output_text;
       } else if (aIModel === AI_MODELS_NAME['Claude Opus-4.5']) {
         console.log('calling Claude...', input); // for debugging
         const response = await callBuildingClaudeAI(import.meta.env.VITE_CLAUDE_API_KEY, input as [], true);
@@ -422,20 +437,6 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
       showError('' + e, 10);
       return null;
     }
-
-    // const apiKey = import.meta.env.VITE_AZURE_API_KEY;
-    // try {
-    //   const input = createInput();
-    //   console.log('calling...', input); // for debugging
-    //   const response = await callBuildingAI(apiKey, input as [], true, reasoningEffort);
-    //   const result = response.choices[0].message.content;
-    //   console.log('res', response);
-    //   return result;
-    // } catch (e) {
-    //   console.log(e);
-    //   showError('' + e, 10);
-    //   return null;
-    // }
   };
 
   const generate = async () => {
@@ -454,7 +455,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
         processResult(result);
         useStore.getState().set((state) => {
           state.genAIData = {
-            aIModel: AI_MODELS_NAME['OpenAI o4-mini'],
+            aIModel: aIModel,
             prompt: prompt.trim(),
             data: result,
           };
@@ -617,11 +618,12 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
               });
             }}
             options={[
-              { value: AI_MODELS_NAME['OpenAI o4-mini'], label: 'OpenAI o4-mini' },
+              { value: AI_MODELS_NAME['OpenAI GPT-5.2'], label: 'OpenAI GPT-5.2' },
+              { value: AI_MODELS_NAME['Azure OpenAI o4-mini'], label: 'OpenAI o4-mini' },
               // { value: AI_MODELS_NAME['Claude Opus-4.5'], label: 'Claude Opus-4.5' },
             ]}
           />
-          {aIModel === AI_MODELS_NAME['OpenAI o4-mini'] && (
+          {(aIModel === AI_MODELS_NAME['Azure OpenAI o4-mini'] || aIModel === AI_MODELS_NAME['OpenAI GPT-5.2']) && (
             <>
               {t('projectPanel.ReasoningEffort', lang) + ':'}
               <Select

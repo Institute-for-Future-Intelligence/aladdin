@@ -4,6 +4,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import { AzureOpenAI, OpenAI } from 'openai';
+import { ReasoningEffort } from 'openai/resources/shared.js';
 
 const endpoint = 'https://ifi-aims-genai.services.ai.azure.com/';
 const modelName = 'o4-mini';
@@ -22,7 +23,7 @@ Defaults: lz=0.1, color="grey", rValue=2m²·℃/W, heatingSetpoint=20°C, cooli
 
 Wall: built on foundation (pId). Position: leftPoint=[cx,cy], rightPoint=[cx,cy] relative to foundation.
 Defaults: color="white", rValue=2m²·℃/W, overhang=0.3.
-leftConnectId connects to another wall's rightConnectId and vice versa.
+"leftConnectId" and "rightConnectId" represent the id of the wall that it is connected to.
 Normal direction: leftPoint→rightPoint rotated 90° clockwise.
 
 Roof: built on a wall (wId) whose connections form a loop. fId=foundation id. Prefer south-facing wall.
@@ -100,7 +101,6 @@ When two walls' endpoints are at the same position, they are connected.
 If wall A is connected to wall B, then wall B is also connected to wall A.
 "overhang" is the roof eaves overhang length, with a default value of 0.3 meter.
 Default color is white.
-Note that "leftConnectId" can only be connected to other wall's "rightConnectId", and vise versa.
 Wall has a normal direction represented by the normal vector from "leftPoint" to "rightPoint", rotated clockwise by 90 degrees.
 Wall has a number property "rValue" in the unit of m²·℃/W, which defaults to 2.
 
@@ -333,7 +333,221 @@ Return strict JSON only, with this structure:
 
 `;
 
-export const callBuildingAI = async (
+export const callBuildingOpenAI = async (
+  apiKey: string | undefined,
+  inputMessage: [],
+  fromBrowser = false,
+  reasoningEffort: string,
+) => {
+  const client = new OpenAI({
+    apiKey: apiKey,
+    dangerouslyAllowBrowser: fromBrowser,
+  });
+
+  const response = await client.responses.create({
+    model: 'gpt-5.2',
+    input: [{ role: 'system', content: BUILDING_RULES }, ...inputMessage],
+    reasoning: { effort: reasoningEffort as ReasoningEffort },
+    text: {
+      format: {
+        type: 'json_schema',
+        name: 'BuildingGenerator',
+        schema: {
+          type: 'object',
+          properties: {
+            thinking: { type: 'string' },
+            world: {
+              type: 'object',
+              properties: {
+                date: { type: 'string' },
+                address: { type: 'string' },
+                latitude: { type: 'number' },
+                longitude: { type: 'number' },
+              },
+              required: ['date', 'address', 'latitude', 'longitude'],
+              additionalProperties: false,
+            },
+            view: {
+              type: 'object',
+              properties: {
+                directLightIntensity: { type: 'number' },
+                ambientLightIntensity: { type: 'number' },
+              },
+              required: ['directLightIntensity', 'ambientLightIntensity'],
+              additionalProperties: false,
+            },
+            elements: {
+              type: 'array',
+              items: {
+                anyOf: [
+                  {
+                    type: 'object',
+                    properties: {
+                      type: { type: 'string', enum: ['Foundation'] },
+                      id: { type: 'string' },
+                      center: { type: 'array', items: { type: 'number' } },
+                      size: { type: 'array', items: { type: 'number' } },
+                      color: { type: 'string' },
+                      rValue: { type: 'number' },
+                      heatingSetpoint: { type: 'number' },
+                      coolingSetpoint: { type: 'number' },
+                      hvacId: { type: 'string' },
+                      coefficientOfPerformanceAC: { type: 'number' },
+                      rotation: { type: 'number' },
+                    },
+                    required: [
+                      'type',
+                      'id',
+                      'center',
+                      'size',
+                      'color',
+                      'rotation',
+                      'rValue',
+                      'heatingSetpoint',
+                      'coolingSetpoint',
+                      'coefficientOfPerformanceAC',
+                      'hvacId',
+                    ],
+                    additionalProperties: false,
+                  },
+                  {
+                    type: 'object',
+                    properties: {
+                      type: { type: 'string', enum: ['Wall'] },
+                      id: { type: 'string' },
+                      pId: { type: 'string' },
+                      height: { type: 'number' },
+                      color: { type: 'string' },
+                      rValue: { type: 'number' },
+                      leftPoint: { type: 'array', items: { type: 'number' } },
+                      rightPoint: { type: 'array', items: { type: 'number' } },
+                      leftConnectId: { type: 'string' },
+                      rightConnectId: { type: 'string' },
+                      overhang: { type: 'number' },
+                    },
+                    required: [
+                      'type',
+                      'id',
+                      'pId',
+                      'height',
+                      'color',
+                      'rValue',
+                      'leftPoint',
+                      'rightPoint',
+                      'leftConnectId',
+                      'rightConnectId',
+                      'overhang',
+                    ],
+                    additionalProperties: false,
+                  },
+                  {
+                    type: 'object',
+                    properties: {
+                      type: { type: 'string', enum: ['Roof'] },
+                      id: { type: 'string' },
+                      fId: { type: 'string' },
+                      wId: { type: 'string' },
+                      roofType: {
+                        type: 'string',
+                        enum: ['Gable', 'Pyramid', 'Hip', 'Mansard', 'Gambrel'],
+                      },
+                      rise: { type: 'number' },
+                      color: { type: 'string' },
+                      rValue: { type: 'number' },
+                      ridgeLength: { type: 'number' },
+                    },
+                    required: ['type', 'id', 'fId', 'wId', 'roofType', 'rise', 'color', 'ridgeLength', 'rValue'],
+                    additionalProperties: false,
+                  },
+                  {
+                    type: 'object',
+                    properties: {
+                      type: { type: 'string', enum: ['Door'] },
+                      id: { type: 'string' },
+                      pId: { type: 'string' },
+                      fId: { type: 'string' },
+                      center: { type: 'array', items: { type: 'number' } },
+                      size: { type: 'array', items: { type: 'number' } },
+                      color: { type: 'string' },
+                      frameColor: { type: 'string' },
+                      uValue: { type: 'number' },
+                    },
+                    required: ['type', 'id', 'pId', 'fId', 'center', 'size', 'color', 'frameColor', 'uValue'],
+                    additionalProperties: false,
+                  },
+                  {
+                    type: 'object',
+                    properties: {
+                      type: { type: 'string', enum: ['Window'] },
+                      id: { type: 'string' },
+                      pId: { type: 'string' },
+                      fId: { type: 'string' },
+                      center: { type: 'array', items: { type: 'number' } },
+                      size: { type: 'array', items: { type: 'number' } },
+                      opacity: { type: 'number' },
+                      uValue: { type: 'number' },
+                      color: { type: 'string' },
+                      tint: { type: 'string' },
+                    },
+                    required: ['type', 'id', 'pId', 'fId', 'center', 'size', 'opacity', 'uValue', 'color', 'tint'],
+                    additionalProperties: false,
+                  },
+                  {
+                    type: 'object',
+                    properties: {
+                      type: { type: 'string', enum: ['Solar Panel'] },
+                      id: { type: 'string' },
+                      pId: { type: 'string' },
+                      fId: { type: 'string' },
+                      pvModelName: { type: 'string' },
+                      orientation: { type: 'string' },
+                      center: { type: 'array', items: { type: 'number' } },
+                      size: { type: 'array', items: { type: 'number' } },
+                      batteryId: { type: 'string' },
+                    },
+                    required: ['type', 'id', 'pId', 'fId', 'pvModelName', 'orientation', 'center', 'size', 'batteryId'],
+                    additionalProperties: false,
+                  },
+                  {
+                    type: 'object',
+                    properties: {
+                      type: { type: 'string', enum: ['Battery Storage'] },
+                      id: { type: 'string' },
+                      pId: { type: 'string' },
+                      center: { type: 'array', items: { type: 'number' } },
+                      size: { type: 'array', items: { type: 'number' } },
+                      color: { type: 'string' },
+                      chargingEfficiency: { type: 'number' },
+                      dischargingEfficiency: { type: 'number' },
+                      hvacId: { type: 'string' },
+                    },
+                    required: [
+                      'type',
+                      'id',
+                      'pId',
+                      'center',
+                      'size',
+                      'color',
+                      'chargingEfficiency',
+                      'dischargingEfficiency',
+                      'hvacId',
+                    ],
+                    additionalProperties: false,
+                  },
+                ],
+              },
+            },
+          },
+          required: ['thinking', 'world', 'view', 'elements'],
+          additionalProperties: false,
+        },
+      },
+    },
+  });
+  return response;
+};
+
+export const callBuildingAzureAI = async (
   apiKey: string | undefined,
   inputMessage: [],
   fromBrowser = false,

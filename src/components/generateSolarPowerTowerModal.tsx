@@ -18,6 +18,7 @@ import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
 import {
+  callSolarPowerTowerAzureAI,
   callSolarPowerTowerOpenAI,
   callSolarPowerTowerClaudeAI,
   AI_MODELS_NAME,
@@ -51,7 +52,7 @@ const GenerateSolarPowerTowerModal = React.memo(
     const setCommonStore = useStore(Selector.set);
     const language = useStore(Selector.language);
     const reasoningEffort = useStore(Selector.reasoningEffort) ?? 'medium';
-    const aIModel = useStore(Selector.aIModel) ?? AI_MODELS_NAME['OpenAI o4-mini'];
+    const aIModel = useStore(Selector.aIModel) ?? AI_MODELS_NAME['OpenAI GPT-5.2'];
     const generatePrompt =
       useStore(Selector.generateSolarPowerTowerPrompt) ??
       'Generate a solar power tower plant with a Fermat spiral layout for heliostats';
@@ -305,9 +306,9 @@ const GenerateSolarPowerTowerModal = React.memo(
       try {
         const input = createInput();
 
-        if (aIModel === AI_MODELS_NAME['OpenAI o4-mini']) {
+        if (aIModel === AI_MODELS_NAME['Azure OpenAI o4-mini']) {
           console.log('calling OpenAI...', input); // for debugging
-          const response = await callSolarPowerTowerOpenAI(
+          const response = await callSolarPowerTowerAzureAI(
             import.meta.env.VITE_AZURE_API_KEY,
             input as [],
             true,
@@ -316,6 +317,16 @@ const GenerateSolarPowerTowerModal = React.memo(
           const result = response.choices[0].message.content;
           console.log('OpenAI response:', response);
           return result;
+        } else if (aIModel === AI_MODELS_NAME['OpenAI GPT-5.2']) {
+          console.log('calling OpenAI GPT-5.2...', input);
+          const response = await callSolarPowerTowerOpenAI(
+            import.meta.env.VITE_OPENAI_API_KEY,
+            input as [],
+            true,
+            reasoningEffort,
+          );
+          console.log('OpenAI GPT-5.2 response:', response);
+          return response.output_text;
         } else if (aIModel === AI_MODELS_NAME['Claude Opus-4.5']) {
           console.log('calling Claude...', input); // for debugging
           const response = await callSolarPowerTowerClaudeAI(import.meta.env.VITE_CLAUDE_API_KEY, input as [], true);
@@ -515,11 +526,12 @@ const GenerateSolarPowerTowerModal = React.memo(
                 });
               }}
               options={[
-                { value: AI_MODELS_NAME['OpenAI o4-mini'], label: 'OpenAI o4-mini' },
+                { value: AI_MODELS_NAME['OpenAI GPT-5.2'], label: 'OpenAI GPT-5.2' },
+                { value: AI_MODELS_NAME['Azure OpenAI o4-mini'], label: 'OpenAI o4-mini' },
                 { value: AI_MODELS_NAME['Claude Opus-4.5'], label: 'Claude Opus-4.5' },
               ]}
             />
-            {aIModel === AI_MODELS_NAME['OpenAI o4-mini'] && (
+            {(aIModel === AI_MODELS_NAME['Azure OpenAI o4-mini'] || aIModel === AI_MODELS_NAME['OpenAI GPT-5.2']) && (
               <>
                 {t('projectPanel.ReasoningEffort', lang) + ':'}
                 <Select

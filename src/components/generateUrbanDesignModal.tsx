@@ -21,7 +21,11 @@ import { AIMemory, CuboidTexture, ObjectType, User } from 'src/types';
 import { updateGenerateUrbanDesignPrompt } from 'src/cloudProjectUtil';
 import { Util } from '../Util';
 import { AI_MODELS_NAME } from 'functions/src/callSolarPowerTowerAI';
-import { callUrbanDesignClaudeAI, callUrbanDesignOpenAI } from 'functions/src/callUrbanDesignAI';
+import {
+  callUrbanDesignClaudeAI,
+  callUrbanDesignOpenAI,
+  callUrbanDesignAzureAI,
+} from 'functions/src/callUrbanDesignAI';
 import { CuboidModel } from 'src/models/CuboidModel';
 import { PrismModel } from 'src/models/PolygonCuboidModel';
 import short from 'short-uuid';
@@ -72,7 +76,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
     if (isInternalUser(state.user)) {
       return model;
     } else {
-      return AI_MODELS_NAME['Claude Sonnet-4.5'];
+      return AI_MODELS_NAME['OpenAI GPT-5.2'];
     }
   });
 
@@ -81,7 +85,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
   const user = useStore(Selector.user);
   if (isInternalUser(user) && !import.meta.env.PROD) {
     testModels.push({ value: AI_MODELS_NAME['Claude Opus-4.5'], label: 'Claude Opus-4.5' });
-    testModels.push({ value: AI_MODELS_NAME['OpenAI o4-mini'], label: 'OpenAI o4-mini' });
+    testModels.push({ value: AI_MODELS_NAME['Azure OpenAI o4-mini'], label: 'OpenAI o4-mini' });
   }
 
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -397,9 +401,9 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
     try {
       const input = createInput();
 
-      if (aIModel === AI_MODELS_NAME['OpenAI o4-mini']) {
+      if (aIModel === AI_MODELS_NAME['Azure OpenAI o4-mini']) {
         console.log('calling OpenAI...', input);
-        const response = await callUrbanDesignOpenAI(
+        const response = await callUrbanDesignAzureAI(
           import.meta.env.VITE_AZURE_API_KEY,
           input as [],
           true,
@@ -408,6 +412,16 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
         const result = response.choices[0].message.content;
         console.log('OpenAI response:', response);
         return result;
+      } else if (aIModel === AI_MODELS_NAME['OpenAI GPT-5.2']) {
+        console.log('calling OpenAI GPT-5.2...', input);
+        const response = await callUrbanDesignOpenAI(
+          import.meta.env.VITE_OPENAI_API_KEY,
+          input as [],
+          true,
+          reasoningEffort,
+        );
+        console.log('OpenAI GPT-5.2 response:', response);
+        return response.output_text;
       } else if (aIModel === AI_MODELS_NAME['Claude Sonnet-4.5'] || aIModel === AI_MODELS_NAME['Claude Opus-4.5']) {
         let model = 'claude-sonnet-4-5';
         if (aIModel === AI_MODELS_NAME['Claude Opus-4.5']) {
@@ -617,10 +631,14 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
                 state.projectState.aIModel = value;
               });
             }}
-            options={[{ value: AI_MODELS_NAME['Claude Sonnet-4.5'], label: 'Claude Sonnet-4.5' }, ...testModels]}
+            options={[
+              { value: AI_MODELS_NAME['Claude Sonnet-4.5'], label: 'Claude Sonnet-4.5' },
+              { value: AI_MODELS_NAME['OpenAI GPT-5.2'], label: 'OpenAI GPT-5.2' },
+              ...testModels,
+            ]}
           />
 
-          {aIModel === AI_MODELS_NAME['OpenAI o4-mini'] && (
+          {(aIModel === AI_MODELS_NAME['Azure OpenAI o4-mini'] || aIModel === AI_MODELS_NAME['OpenAI GPT-5.2']) && (
             <>
               {t('projectPanel.ReasoningEffort', lang) + ':'}
               <Select
