@@ -51,8 +51,10 @@ Defaults: color="#C7BABE", size=[1.5,2,1.5], chargingEfficiency=0.95, dischargin
 hvacId matches foundation's hvacId.
 
 ## House construction rules
-- Each element has a unique id
-- All positions are relative to parent element unless stated otherwise
+- Each element has a unique id.
+- Must use the default settings.
+- Must not add solar panels and battery storage unless mentioned explicitly in the prompt.
+- All positions are relative to parent element unless stated otherwise.
 - One foundation supports four walls forming a rectangular loop, all normals facing outward.
 - Wall endpoints match foundation rectangle vertices. Each wall has windows.
 - Windows/doors must not overlap and must be within wall boundary.
