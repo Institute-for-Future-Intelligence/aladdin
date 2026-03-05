@@ -1728,6 +1728,7 @@ export const i18n_zh_cn = {
       Listening: '正在倾听...',
       ReasoningEffort: '推理努力程度',
       AIModel: 'AI模型',
+      ByAIModel: '来自',
       GenAIPrompt: '生成此分子的提示',
       CopyPrompt: '拷贝此提示',
       PromptInClipBoard: '您现在可以粘贴提示了。',

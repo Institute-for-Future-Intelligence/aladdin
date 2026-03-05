@@ -2635,41 +2635,37 @@ const ProjectGallery = React.memo(({ canvas }: ProjectGalleryProps) => {
                           projectType === DesignProblem.SOLAR_POWER_TOWER_DESIGN ||
                           projectType === DesignProblem.URBAN_DESIGN) && (
                           <Space direction="vertical" style={{ width: '600px' }}>
-                            <Space style={{ fontWeight: 'bold' }}>
-                              {design.title
-                                ? design.title.length > labelDisplayLength
-                                  ? design.title.substring(0, Math.min(labelDisplayLength, lastSpaceIndex)) +
-                                    '...' +
-                                    design.title.substring(lastSpaceIndex)
-                                  : design.title
-                                : 'Unknown'}
+                            <Space>
+                              <span style={{ fontWeight: 'bold' }}>
+                                {design.title
+                                  ? design.title.length > labelDisplayLength
+                                    ? design.title.substring(0, Math.min(labelDisplayLength, lastSpaceIndex)) +
+                                      '...' +
+                                      design.title.substring(lastSpaceIndex)
+                                    : design.title
+                                  : 'Unknown'}
+                              </span>
+                              <span>{'(' + t('projectPanel.ByAIModel', lang) + ' ' + design.aIModel + ')'}</span>
                             </Space>
-
-                            {design.aIModel && (
-                              <div>
-                                <span style={{ display: 'inline', fontWeight: 'bold' }}>
-                                  {t('projectPanel.AIModel', lang)}:{' '}
-                                </span>
-                                <span style={{ display: 'inline' }}>{design.aIModel}</span>
-                              </div>
-                            )}
 
                             <div>
                               <span style={{ display: 'inline', fontWeight: 'bold' }}>
                                 {t('projectPanel.UserPrompt', lang)}:{' '}
                               </span>
-                              <span style={{ display: 'inline' }}>
+                              <span
+                                style={{ display: 'inline', cursor: 'copy' }}
+                                onClick={() => {
+                                  if (design?.prompt) {
+                                    navigator.clipboard.writeText(design.prompt).then(() => {
+                                      showInfo(t('projectPanel.PromptInClipBoard', lang));
+                                    });
+                                  }
+                                }}
+                              >
                                 {design.prompt}
                                 <CopyOutlined
-                                  style={{ paddingLeft: '10px', cursor: 'copy' }}
+                                  style={{ paddingLeft: '10px' }}
                                   title={t('projectPanel.CopyPrompt', lang)}
-                                  onClick={() => {
-                                    if (design?.prompt) {
-                                      navigator.clipboard.writeText(design.prompt).then(() => {
-                                        showInfo(t('projectPanel.PromptInClipBoard', lang));
-                                      });
-                                    }
-                                  }}
                                 />
                               </span>
                             </div>
@@ -2679,19 +2675,21 @@ const ProjectGallery = React.memo(({ canvas }: ProjectGalleryProps) => {
                                   {t('projectPanel.AIReasoning', lang)}:{' '}
                                 </span>
                                 {
-                                  <span style={{ display: 'inline' }}>
+                                  <span
+                                    style={{ display: 'inline', cursor: 'copy' }}
+                                    onClick={() => {
+                                      const thinking = JSON.parse(design.data).thinking;
+                                      if (thinking) {
+                                        navigator.clipboard.writeText(thinking).then(() => {
+                                          showInfo(t('projectPanel.ReasoningInClipBoard', lang));
+                                        });
+                                      }
+                                    }}
+                                  >
                                     {JSON.parse(design.data).thinking}
                                     <CopyOutlined
-                                      style={{ paddingLeft: '10px', cursor: 'copy' }}
+                                      style={{ paddingLeft: '10px' }}
                                       title={t('projectPanel.CopyReasoning', lang)}
-                                      onClick={() => {
-                                        const thinking = JSON.parse(design.data).thinking;
-                                        if (thinking) {
-                                          navigator.clipboard.writeText(thinking).then(() => {
-                                            showInfo(t('projectPanel.ReasoningInClipBoard', lang));
-                                          });
-                                        }
-                                      }}
                                     />
                                   </span>
                                 }

@@ -1757,6 +1757,7 @@ export const i18n_es = {
       Listening: 'Listening...',
       ReasoningEffort: 'Reasoning Effort',
       AIModel: 'AI Model',
+      ByAIModel: 'by',
       GenAIPrompt: 'Prompt used to generate this molecule',
       CopyPrompt: 'Copy this prompt',
       PromptInClipBoard: 'The prompt was copied and is ready to paste.',
