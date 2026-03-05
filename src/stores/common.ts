@@ -116,7 +116,7 @@ import { Filter } from '../Filter';
 import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 import { ContentUtil } from 'src/contentUtil';
 import { ProtractorModel } from 'src/models/ProtractorModel';
-import { AI_MODELS_NAME } from 'functions/src/callSolarPowerTowerAI';
+import { AI_MODEL_NAMES } from '../../functions/src/constants';
 
 enableMapSet();
 
@@ -596,7 +596,7 @@ export interface CommonStoreState {
   geneticAlgorithmWizardSelectedTab: string;
   particleSwarmOptimizationWizardSelectedTab: string;
 
-  genAIData: { aIModel: string; prompt: string; data: string } | null;
+  genAIData: { aiModel: string; prompt: string; data: string } | null;
 
   // the following is to fix the bug that when ctrl+o is pressed, the file dialog gets fired up multiple times
   localFileDialogRequested: boolean;
@@ -660,7 +660,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
             dotSizeScatterPlot: 5,
             thumbnailWidth: 200,
             reasoningEffort: 'medium',
-            aIModel: AI_MODELS_NAME['Azure OpenAI o4-mini'],
+            aiModel: AI_MODEL_NAMES['OpenAI GPT-5.2'],
             generateBuildingPrompt: 'Generate a colonial style house.',
             generateSolarPowerTowerPrompt: 'Generate a solar power tower with a Fermat spiral layout for heliostats.',
             generateUrbanDesignPrompt: 'Generate a city like Manhattan',
@@ -699,7 +699,7 @@ export const useStore = createWithEqualityFn<CommonStoreState>()(
               state.projectState.description = null;
               state.projectState.owner = null;
               state.projectState.reasoningEffort = 'medium';
-              state.projectState.aIModel = AI_MODELS_NAME['Azure OpenAI o4-mini'];
+              state.projectState.aiModel = AI_MODEL_NAMES['OpenAI GPT-5.2'];
               state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
               state.projectState.generateSolarPowerTowerPrompt =
                 'Generate a solar power tower with a Fermat spiral layout for heliostats.';

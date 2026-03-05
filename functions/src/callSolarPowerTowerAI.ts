@@ -6,13 +6,6 @@ import { AzureOpenAI, OpenAI } from 'openai';
 import { ReasoningEffort } from 'openai/resources/shared.js';
 import Anthropic from '@anthropic-ai/sdk';
 
-export const AI_MODELS_NAME = {
-  'Azure OpenAI o4-mini': 'OpenAI o4-mini',
-  'Claude Opus-4.5': 'Claude Opus-4.5',
-  'Claude Sonnet-4.5': 'Claude Sonnet-4.5', // cheaper
-  'OpenAI GPT-5.2': 'OpenAI GPT-5.2',
-};
-
 const RULES = `
 Role
 You are a prompt-following mathematical layout generator specialized in concentrated solar power (CSP) heliostat field design.

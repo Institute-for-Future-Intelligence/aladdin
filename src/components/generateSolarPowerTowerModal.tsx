@@ -21,16 +21,16 @@ import {
   callSolarPowerTowerAzureAI,
   callSolarPowerTowerOpenAI,
   callSolarPowerTowerClaudeAI,
-  AI_MODELS_NAME,
 } from 'functions/src/callSolarPowerTowerAI';
 import { AIMemory, FoundationTexture, ObjectType, SolarStructure } from 'src/types';
 import * as Constants from '../constants';
-import { updateGenerateSolarPowerTowerPrompt } from 'src/cloudProjectUtil';
+import { updateAIModel, updateGenerateSolarPowerTowerPrompt } from 'src/cloudProjectUtil';
 import { HeliostatModel } from 'src/models/HeliostatModel';
 import { FoundationModel } from 'src/models/FoundationModel';
 import short from 'short-uuid';
 import { DefaultViewState } from '../stores/DefaultViewState';
 import { DEFAULT_SHORT_TERM_MEMORY } from '../constants';
+import { AI_MODEL_NAMES } from 'functions/src/constants';
 
 export interface GenerateSolarPowerTowerProps {
   setDialogVisible: (visible: boolean) => void;
@@ -52,12 +52,15 @@ const GenerateSolarPowerTowerModal = React.memo(
     const setCommonStore = useStore(Selector.set);
     const language = useStore(Selector.language);
     const reasoningEffort = useStore(Selector.reasoningEffort) ?? 'medium';
-    const aIModel = useStore(Selector.aIModel) ?? AI_MODELS_NAME['OpenAI GPT-5.2'];
+    const aiModel = useStore(Selector.aiModel) ?? AI_MODEL_NAMES['OpenAI GPT-5.2'];
     const generatePrompt =
       useStore(Selector.generateSolarPowerTowerPrompt) ??
       'Generate a solar power tower plant with a Fermat spiral layout for heliostats';
     const setGenerating = usePrimitiveStore(Selector.setGenerating);
     const setChanged = usePrimitiveStore(Selector.setChanged);
+    const user = useStore(Selector.user);
+    const projectOwner = useStore(Selector.projectOwner);
+    const projectTitle = useStore(Selector.projectTitle);
 
     const [prompt, setPrompt] = useState<string>(
       'Generate a solar power tower plant with a Fermat spiral layout for heliostats',
@@ -77,6 +80,7 @@ const GenerateSolarPowerTowerModal = React.memo(
     const lang = useMemo(() => {
       return { lng: language };
     }, [language]);
+    const isOwner = user.uid === projectOwner;
 
     useEffect(() => {
       setPrompt(generatePrompt);
@@ -292,7 +296,7 @@ const GenerateSolarPowerTowerModal = React.memo(
           text: input,
           type: 'solar power tower',
           reasoningEffort,
-          aIModel,
+          aiModel,
         })) as any;
         return res.data.text;
       } catch (e) {
@@ -306,7 +310,7 @@ const GenerateSolarPowerTowerModal = React.memo(
       try {
         const input = createInput();
 
-        if (aIModel === AI_MODELS_NAME['Azure OpenAI o4-mini']) {
+        if (aiModel === AI_MODEL_NAMES['Azure OpenAI o4-mini']) {
           console.log('calling OpenAI...', input); // for debugging
           const response = await callSolarPowerTowerAzureAI(
             import.meta.env.VITE_AZURE_API_KEY,
@@ -317,7 +321,7 @@ const GenerateSolarPowerTowerModal = React.memo(
           const result = response.choices[0].message.content;
           console.log('OpenAI response:', response);
           return result;
-        } else if (aIModel === AI_MODELS_NAME['OpenAI GPT-5.2']) {
+        } else if (aiModel === AI_MODEL_NAMES['OpenAI GPT-5.2']) {
           console.log('calling OpenAI GPT-5.2...', input);
           const response = await callSolarPowerTowerOpenAI(
             import.meta.env.VITE_OPENAI_API_KEY,
@@ -327,7 +331,7 @@ const GenerateSolarPowerTowerModal = React.memo(
           );
           console.log('OpenAI GPT-5.2 response:', response);
           return response.output_text;
-        } else if (aIModel === AI_MODELS_NAME['Claude Opus-4.5']) {
+        } else if (aiModel === AI_MODEL_NAMES['Claude Opus-4.5']) {
           console.log('calling Claude...', input); // for debugging
           const response = await callSolarPowerTowerClaudeAI(import.meta.env.VITE_CLAUDE_API_KEY, input as [], true);
           const result = (response.content[0] as any).text;
@@ -360,7 +364,7 @@ const GenerateSolarPowerTowerModal = React.memo(
           if (success) {
             useStore.getState().set((state) => {
               state.genAIData = {
-                aIModel: aIModel,
+                aiModel,
                 prompt: prompt.trim(),
                 data: result,
               };
@@ -518,20 +522,24 @@ const GenerateSolarPowerTowerModal = React.memo(
           <Space>
             {t('projectPanel.AIModel', lang) + ':'}
             <Select
-              value={aIModel}
+              value={aiModel}
               style={{ width: '150px', marginRight: '10px' }}
               onChange={(value) => {
-                setCommonStore((state) => {
-                  state.projectState.aIModel = value;
-                });
+                if (isOwner && user.uid && projectTitle) {
+                  updateAIModel(user.uid, projectTitle, value).then(() => {
+                    setCommonStore((state) => {
+                      state.projectState.aiModel = value;
+                    });
+                  });
+                }
               }}
               options={[
-                { value: AI_MODELS_NAME['OpenAI GPT-5.2'], label: 'OpenAI GPT-5.2' },
-                { value: AI_MODELS_NAME['Azure OpenAI o4-mini'], label: 'OpenAI o4-mini' },
-                { value: AI_MODELS_NAME['Claude Opus-4.5'], label: 'Claude Opus-4.5' },
+                { value: AI_MODEL_NAMES['OpenAI GPT-5.2'], label: 'OpenAI GPT-5.2' },
+                { value: AI_MODEL_NAMES['Azure OpenAI o4-mini'], label: 'OpenAI o4-mini' },
+                { value: AI_MODEL_NAMES['Claude Opus-4.5'], label: 'Claude Opus-4.5' },
               ]}
             />
-            {(aIModel === AI_MODELS_NAME['Azure OpenAI o4-mini'] || aIModel === AI_MODELS_NAME['OpenAI GPT-5.2']) && (
+            {(aiModel === AI_MODEL_NAMES['Azure OpenAI o4-mini'] || aiModel === AI_MODEL_NAMES['OpenAI GPT-5.2']) && (
               <>
                 {t('projectPanel.ReasoningEffort', lang) + ':'}
                 <Select

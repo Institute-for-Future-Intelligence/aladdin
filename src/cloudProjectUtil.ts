@@ -12,6 +12,7 @@ import { Filter } from './Filter';
 import { arrayRemove, arrayUnion, deleteDoc, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { firestore } from './firebase';
 import { GenAIUtil } from './panels/GenAIUtil';
+import { AI_MODEL_NAMES } from '../functions/src/constants';
 
 export const doesProjectExist = async (uid: string, projectName: string, callbackOnError: (error: string) => void) => {
   try {
@@ -54,7 +55,7 @@ export const fetchProject = async (
         dotSizeScatterPlot: data.dotSizeScatterPlot,
         thumbnailWidth: data.thumbnailWidth,
         reasoningEffort: data.reasoningEffort,
-        aIModel: data.aIModel,
+        aiModel: data.aiModel ?? AI_MODEL_NAMES['OpenAI GPT-5.2'],
         aiMemory: data.aiMemory ?? AIMemory.SHORT_TERM,
         generateBuildingPrompt: data.generateBuildingPrompt,
         generateSolarPowerTowerPrompt: data.generateSolarPowerTowerPrompt,
@@ -276,6 +277,15 @@ export const updateGenerateSolarPowerTowerPrompt = async (
   }
 };
 
+export const updateAIModel = async (userid: string, projectTitle: string, model: string) => {
+  const lang = { lng: useStore.getState().language };
+  try {
+    await updateDoc(doc(firestore, 'users', userid, 'projects', projectTitle), { aiModel: model });
+  } catch (error) {
+    showError(i18n.t('message.CannotUpdateProject', lang) + ': ' + error);
+  }
+};
+
 export const updateAIMemory = async (userid: string, projectTitle: string, memory: AIMemory) => {
   const lang = { lng: useStore.getState().language };
   try {
@@ -323,7 +333,7 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
     case DesignProblem.BUILDING_DESIGN: {
       const genAIData = useStore.getState().genAIData;
       if (genAIData) {
-        design.aIModel = genAIData.aIModel;
+        design.aiModel = genAIData.aiModel;
         design.prompt = genAIData.prompt;
         design.data = genAIData.data;
       }
@@ -333,7 +343,7 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
     case DesignProblem.SOLAR_POWER_TOWER_DESIGN: {
       const genAIData = useStore.getState().genAIData;
       if (genAIData) {
-        design.aIModel = genAIData.aIModel;
+        design.aiModel = genAIData.aiModel;
         design.prompt = genAIData.prompt;
         design.data = genAIData.data;
       }
@@ -343,7 +353,7 @@ export const createDesign = (type: string, title: string, thumbnail: string): De
     case DesignProblem.URBAN_DESIGN: {
       const genAIData = useStore.getState().genAIData;
       if (genAIData) {
-        design.aIModel = genAIData.aIModel;
+        design.aiModel = genAIData.aiModel;
         design.prompt = genAIData.prompt;
         design.data = genAIData.data;
       }

@@ -18,9 +18,9 @@ import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
 import { AIMemory, CuboidTexture, ObjectType, User } from 'src/types';
-import { updateGenerateUrbanDesignPrompt } from 'src/cloudProjectUtil';
+import { updateAIModel, updateGenerateUrbanDesignPrompt } from 'src/cloudProjectUtil';
 import { Util } from '../Util';
-import { AI_MODELS_NAME } from 'functions/src/callSolarPowerTowerAI';
+import { AI_MODEL_NAMES } from 'functions/src/constants';
 import {
   callUrbanDesignClaudeAI,
   callUrbanDesignOpenAI,
@@ -56,6 +56,9 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
   const generateUrbanDesignPrompt = useStore(Selector.generateUrbanDesignPrompt) ?? 'Generate a city like Manhattan.';
   const setGenerating = usePrimitiveStore(Selector.setGenerating);
   const setChanged = usePrimitiveStore(Selector.setChanged);
+  const user = useStore(Selector.user);
+  const projectOwner = useStore(Selector.projectOwner);
+  const projectTitle = useStore(Selector.projectTitle);
 
   const [prompt, setPrompt] = useState<string>('Generate Urban Design');
   const [listening, setListening] = useState<boolean>(false);
@@ -71,21 +74,20 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
     return user.email === 'xiaotong@intofuture.org' || user.email === 'charles@intofuture.org';
   };
 
-  const aIModel = useStore((state) => {
-    const model = state.projectState.aIModel;
+  const aiModel = useStore((state) => {
+    const model = state.projectState.aiModel;
     if (isInternalUser(state.user)) {
       return model;
     } else {
-      return AI_MODELS_NAME['OpenAI GPT-5.2'];
+      return AI_MODEL_NAMES['OpenAI GPT-5.2'];
     }
   });
 
   // models for internal test
   const testModels = [];
-  const user = useStore(Selector.user);
   if (isInternalUser(user) && !import.meta.env.PROD) {
-    testModels.push({ value: AI_MODELS_NAME['Claude Opus-4.5'], label: 'Claude Opus-4.5' });
-    testModels.push({ value: AI_MODELS_NAME['Azure OpenAI o4-mini'], label: 'OpenAI o4-mini' });
+    testModels.push({ value: AI_MODEL_NAMES['Claude Opus-4.5'], label: 'Claude Opus-4.5' });
+    testModels.push({ value: AI_MODEL_NAMES['Azure OpenAI o4-mini'], label: 'OpenAI o4-mini' });
   }
 
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -94,6 +96,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
+  const isOwner = user.uid === projectOwner;
 
   useEffect(() => {
     setPrompt(generateUrbanDesignPrompt);
@@ -387,7 +390,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
         text: input,
         type: 'urban',
         undefined,
-        aIModel,
+        aiModel,
       })) as any;
       return res.data.text;
     } catch (e) {
@@ -401,7 +404,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
     try {
       const input = createInput();
 
-      if (aIModel === AI_MODELS_NAME['Azure OpenAI o4-mini']) {
+      if (aiModel === AI_MODEL_NAMES['Azure OpenAI o4-mini']) {
         console.log('calling OpenAI...', input);
         const response = await callUrbanDesignAzureAI(
           import.meta.env.VITE_AZURE_API_KEY,
@@ -412,7 +415,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
         const result = response.choices[0].message.content;
         console.log('OpenAI response:', response);
         return result;
-      } else if (aIModel === AI_MODELS_NAME['OpenAI GPT-5.2']) {
+      } else if (aiModel === AI_MODEL_NAMES['OpenAI GPT-5.2']) {
         console.log('calling OpenAI GPT-5.2...', input);
         const response = await callUrbanDesignOpenAI(
           import.meta.env.VITE_OPENAI_API_KEY,
@@ -422,9 +425,9 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
         );
         console.log('OpenAI GPT-5.2 response:', response);
         return response.output_text;
-      } else if (aIModel === AI_MODELS_NAME['Claude Sonnet-4.5'] || aIModel === AI_MODELS_NAME['Claude Opus-4.5']) {
+      } else if (aiModel === AI_MODEL_NAMES['Claude Sonnet-4.5'] || aiModel === AI_MODEL_NAMES['Claude Opus-4.5']) {
         let model = 'claude-sonnet-4-5';
-        if (aIModel === AI_MODELS_NAME['Claude Opus-4.5']) {
+        if (aiModel === AI_MODEL_NAMES['Claude Opus-4.5']) {
           model = 'claude-opus-4-5';
         }
         console.log(`calling Claude ${model}...`, input);
@@ -469,7 +472,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
         processResult(cleanedResult);
         useStore.getState().set((state) => {
           state.genAIData = {
-            aIModel: aIModel,
+            aiModel,
             prompt: prompt.trim(),
             data: cleanedResult,
           };
@@ -624,21 +627,25 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
         <Space>
           {t('projectPanel.AIModel', lang) + ':'}
           <Select
-            value={aIModel}
+            value={aiModel}
             style={{ width: '160px', marginRight: '10px' }}
             onChange={(value) => {
-              setCommonStore((state) => {
-                state.projectState.aIModel = value;
-              });
+              if (isOwner && user.uid && projectTitle) {
+                updateAIModel(user.uid, projectTitle, value).then(() => {
+                  setCommonStore((state) => {
+                    state.projectState.aiModel = value;
+                  });
+                });
+              }
             }}
             options={[
-              { value: AI_MODELS_NAME['Claude Sonnet-4.5'], label: 'Claude Sonnet-4.5' },
-              { value: AI_MODELS_NAME['OpenAI GPT-5.2'], label: 'OpenAI GPT-5.2' },
+              { value: AI_MODEL_NAMES['Claude Sonnet-4.5'], label: 'Claude Sonnet-4.5' },
+              { value: AI_MODEL_NAMES['OpenAI GPT-5.2'], label: 'OpenAI GPT-5.2' },
               ...testModels,
             ]}
           />
 
-          {(aIModel === AI_MODELS_NAME['Azure OpenAI o4-mini'] || aIModel === AI_MODELS_NAME['OpenAI GPT-5.2']) && (
+          {(aiModel === AI_MODEL_NAMES['Azure OpenAI o4-mini'] || aiModel === AI_MODEL_NAMES['OpenAI GPT-5.2']) && (
             <>
               {t('projectPanel.ReasoningEffort', lang) + ':'}
               <Select

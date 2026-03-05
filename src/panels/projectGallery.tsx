@@ -2645,7 +2645,11 @@ const ProjectGallery = React.memo(({ canvas }: ProjectGalleryProps) => {
                                     : design.title
                                   : 'Unknown'}
                               </span>
-                              <span>{'(' + t('projectPanel.ByAIModel', lang) + ' ' + design.aIModel + ')'}</span>
+                              {design.aiModel ? (
+                                <span>{'(' + t('projectPanel.ByAIModel', lang) + ' ' + design.aiModel + ')'}</span>
+                              ) : (
+                                <></>
+                              )}
                             </Space>
 
                             <div>

@@ -65,7 +65,7 @@ import {
 } from 'firebase/firestore';
 import { FirebaseError } from 'firebase/app';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
-import { AI_MODELS_NAME } from 'functions/src/callSolarPowerTowerAI';
+import { AI_MODEL_NAMES } from '../functions/src/constants';
 
 export interface CloudManagerProps {
   viewOnly: boolean;
@@ -268,7 +268,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             counter: f.counter,
             action: '',
             reasoningEffort: f.reasoningEffort,
-            aIModel: f.aIModel,
+            aiModel: f.aiModel,
             aiMemory: f.aiMemory,
             generateBuildingPrompt: f.generateBuildingPrompt,
             generateSolarPowerTowerPrompt: f.generateSolarPowerTowerPrompt,
@@ -790,7 +790,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           counter: data.counter ?? 0,
           aiMemory: data.aiMemory ?? AIMemory.SHORT_TERM,
           reasoningEffort: data.reasoningEffort ?? 'medium',
-          aIModel: data.aIModel ?? AI_MODELS_NAME['Azure OpenAI o4-mini'],
+          aiModel: data.aiModel ?? AI_MODEL_NAMES['OpenAI GPT-5.2'],
           generateBuildingPrompt: data.generateBuildingPrompt ?? 'Generate a colonial style house.',
           generateSolarPowerTowerPrompt:
             data.generateSolarPowerTowerPrompt ??
@@ -871,7 +871,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
           state.projectView = false;
           state.projectState.aiMemory = AIMemory.SHORT_TERM;
           state.projectState.reasoningEffort = 'medium';
-          state.projectState.aIModel = AI_MODELS_NAME['Azure OpenAI o4-mini'];
+          state.projectState.aiModel = AI_MODEL_NAMES['OpenAI GPT-5.2'];
           state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
           state.projectState.generateSolarPowerTowerPrompt =
             'Generate a solar power tower with a Fermat spiral layout for heliostats.';
@@ -1543,7 +1543,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
               state.projectState.hiddenParameters = ProjectUtil.getDefaultHiddenParameters(state.projectState.type);
               state.projectState.aiMemory = AIMemory.SHORT_TERM;
               state.projectState.reasoningEffort = 'medium';
-              state.projectState.aIModel = AI_MODELS_NAME['OpenAI GPT-5.2'];
+              state.projectState.aiModel = AI_MODEL_NAMES['OpenAI GPT-5.2'];
               state.projectState.generateBuildingPrompt = 'Generate a colonial style house.';
               state.projectState.generateSolarPowerTowerPrompt =
                 'Generate a solar power tower with a Fermat spiral layout for heliostats.';
@@ -1604,7 +1604,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
             const thumbnailWidth = useStore.getState().projectState.thumbnailWidth ?? 200;
             const newDesigns: Design[] = changeDesignTitles(t, designs) ?? [];
             const reasoningEffort = useStore.getState().projectState.reasoningEffort ?? 'medium';
-            const aIModel = useStore.getState().projectState.aIModel ?? AI_MODELS_NAME['Azure OpenAI o4-mini'];
+            const aiModel = useStore.getState().projectState.aiModel ?? AI_MODEL_NAMES['OpenAI GPT-5.2'];
             const generateBuildingPrompt =
               useStore.getState().projectState.generateBuildingPrompt ?? 'Generate a colonial style house.';
             const generateSolarPowerTowerPrompt =
@@ -1644,7 +1644,7 @@ const CloudManager = React.memo(({ viewOnly = false, canvas }: CloudManagerProps
                   hiddenParameters: useStore.getState().projectState.hiddenParameters,
                   aiMemory: useStore.getState().projectState.aiMemory,
                   reasoningEffort,
-                  aIModel,
+                  aiModel,
                   generateBuildingPrompt: generateBuildingPrompt,
                   generateSolarPowerTowerPrompt: generateSolarPowerTowerPrompt,
                   generateUrbanDesignPrompt: generateUrbanDesignPrompt,

@@ -1,26 +1,26 @@
 /*
- * @Copyright 2025. Institute for Future Intelligence, Inc.
+ * @Copyright 2025-2026. Institute for Future Intelligence, Inc.
  */
 
 import { onCall } from 'firebase-functions/v2/https';
 import { callBuildingAzureAI, callBuildingClaudeAI, callBuildingOpenAI } from './callBuildingAI';
 import {
-  AI_MODELS_NAME,
   callSolarPowerTowerClaudeAI,
   callSolarPowerTowerOpenAI,
   callSolarPowerTowerAzureAI,
 } from './callSolarPowerTowerAI';
 import { callUrbanDesignClaudeAI, callUrbanDesignOpenAI, callUrbanDesignAzureAI } from './callUrbanDesignAI';
+import { AI_MODEL_NAMES } from './constants';
 
 exports.callAI = onCall(
   { secrets: ['AZURE_OPENAI_API_KEY', 'CLAUDE_API_KEY', 'OPENAI_API_KEY'], timeoutSeconds: 300, region: 'us-east4' },
   async (req) => {
     const prompt = req.data.text;
     const type = req.data.type ?? 'building';
-    const aIModel = req.data.aIModel ?? AI_MODELS_NAME['Azure OpenAI o4-mini'];
+    const aiModel = req.data.aiModel ?? AI_MODEL_NAMES['Azure OpenAI o4-mini'];
     console.log('Prompt:', prompt);
     try {
-      if (aIModel === AI_MODELS_NAME['Azure OpenAI o4-mini']) {
+      if (aiModel === AI_MODEL_NAMES['Azure OpenAI o4-mini']) {
         const azureApiKey = process.env.AZURE_OPENAI_API_KEY;
         const reasoningEffort = req.data.reasoningEffort ?? 'medium';
         console.log('Reasoning Effort:', reasoningEffort);
@@ -40,7 +40,7 @@ exports.callAI = onCall(
           console.log('Returned:', response.choices[0].message.content);
           return { text: response.choices[0].message.content };
         }
-      } else if (aIModel === AI_MODELS_NAME['OpenAI GPT-5.2']) {
+      } else if (aiModel === AI_MODEL_NAMES['OpenAI GPT-5.2']) {
         const openApiKey = process.env.OPENAI_API_KEY;
         const reasoningEffort = req.data.reasoningEffort ?? 'medium';
         console.log('Reasoning Effort:', reasoningEffort);
@@ -60,7 +60,7 @@ exports.callAI = onCall(
           console.log('Returned:', response.output_text);
           return { text: response.output_text };
         }
-      } else if (aIModel === AI_MODELS_NAME['Claude Opus-4.5']) {
+      } else if (aiModel === AI_MODEL_NAMES['Claude Opus-4.5']) {
         const claudeApiKey = process.env.CLAUDE_API_KEY;
         if (type === 'building') {
           console.log('calling Claude Opus-4.5...');
@@ -73,7 +73,7 @@ exports.callAI = onCall(
           console.log('Returned:', (response.content[0] as any).text);
           return { text: (response.content[0] as any).text };
         }
-      } else if (aIModel === AI_MODELS_NAME['Claude Sonnet-4.5']) {
+      } else if (aiModel === AI_MODEL_NAMES['Claude Sonnet-4.5']) {
         const claudeApiKey = process.env.CLAUDE_API_KEY;
         if (type === 'urban') {
           console.log('calling Claude Sonnet-4.5...');

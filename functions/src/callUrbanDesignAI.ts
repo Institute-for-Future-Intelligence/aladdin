@@ -503,12 +503,12 @@ export const callUrbanDesignClaudeAI = async (
   apiKey: string | undefined,
   inputMessage: [],
   fromBrowser = false,
-  aIModel = 'claude-sonnet-4-5',
+  aiModel = 'claude-sonnet-4-5',
 ) => {
   const anthropic = new Anthropic({ apiKey, dangerouslyAllowBrowser: fromBrowser });
 
   const res = await anthropic.beta.messages.create({
-    model: aIModel,
+    model: aiModel,
     max_tokens: 10000, // require streaming API if this is large.
     system: RULES,
     messages: [...inputMessage],
