@@ -10,6 +10,10 @@ import { SolarAbsorberPipeModel } from './SolarAbsorberPipeModel';
 import { HvacSystem } from './HvacSystem';
 import { Groupable } from './Groupable';
 
+export interface BuildingParts {
+  foundationModel: FoundationModel;
+}
+
 export interface FoundationModel extends ElementModel, Groupable {
   textureType: FoundationTexture;
 
