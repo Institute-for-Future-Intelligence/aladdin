@@ -17,7 +17,7 @@ exports.callAI = onCall(
   async (req) => {
     const prompt = req.data.text;
     const type = req.data.type ?? 'building';
-    const aiModel = req.data.aiModel ?? AI_MODEL_NAMES['Azure OpenAI o4-mini'];
+    const aiModel = req.data.aiModel ?? AI_MODEL_NAMES['OpenAI GPT-5.2'];
     console.log('Prompt:', prompt);
     try {
       if (aiModel === AI_MODEL_NAMES['Azure OpenAI o4-mini']) {
@@ -30,12 +30,12 @@ exports.callAI = onCall(
           console.log('Returned:', response.choices[0].message.content);
           return { text: response.choices[0].message.content };
         } else if (type === 'solar power tower') {
-          console.log('calling OpenAI...');
+          console.log('calling Azure OpenAI...');
           const response = await callSolarPowerTowerAzureAI(azureApiKey, prompt, false, reasoningEffort);
           console.log('Returned:', response.choices[0].message.content);
           return { text: response.choices[0].message.content };
         } else if (type === 'urban') {
-          console.log('calling OpenAI...');
+          console.log('calling Azure OpenAI...');
           const response = await callUrbanDesignAzureAI(azureApiKey, prompt, false, reasoningEffort);
           console.log('Returned:', response.choices[0].message.content);
           return { text: response.choices[0].message.content };
@@ -45,7 +45,7 @@ exports.callAI = onCall(
         const reasoningEffort = req.data.reasoningEffort ?? 'medium';
         console.log('Reasoning Effort:', reasoningEffort);
         if (type === 'building') {
-          console.log('calling OpenAI...');
+          console.log('calling OpenAI GPT-5.2...');
           const response = await callBuildingOpenAI(openApiKey, prompt, false, reasoningEffort);
           console.log('Returned:', response.output_text);
           return { text: response.output_text };

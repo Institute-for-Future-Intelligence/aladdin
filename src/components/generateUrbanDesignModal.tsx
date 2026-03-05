@@ -405,7 +405,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
       const input = createInput();
 
       if (aiModel === AI_MODEL_NAMES['Azure OpenAI o4-mini']) {
-        console.log('calling OpenAI...', input);
+        console.log('calling Azure OpenAI...', input);
         const response = await callUrbanDesignAzureAI(
           import.meta.env.VITE_AZURE_API_KEY,
           input as [],
@@ -413,7 +413,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
           reasoningEffort,
         );
         const result = response.choices[0].message.content;
-        console.log('OpenAI response:', response);
+        console.log('Azure OpenAI response:', response);
         return result;
       } else if (aiModel === AI_MODEL_NAMES['OpenAI GPT-5.2']) {
         console.log('calling OpenAI GPT-5.2...', input);

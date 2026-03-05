@@ -50,7 +50,12 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
   const user = useStore(Selector.user);
   const projectOwner = useStore(Selector.projectOwner);
   const projectTitle = useStore(Selector.projectTitle);
-  const aiModel = useStore(Selector.aiModel) ?? AI_MODEL_NAMES['OpenAI GPT-5.2'];
+  const aiModelStored = useStore(Selector.aiModel);
+  // exclude unsupported models
+  const aiModel =
+    aiModelStored && aiModelStored !== AI_MODEL_NAMES['Claude Sonnet-4.5']
+      ? aiModelStored
+      : AI_MODEL_NAMES['OpenAI GPT-5.2'];
 
   const [prompt, setPrompt] = useState<string>('Generate a colonial style house');
   const [listening, setListening] = useState<boolean>(false);
@@ -417,7 +422,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
           reasoningEffort,
         );
         const result = response.choices[0].message.content;
-        console.log('OpenAI response:', response);
+        console.log('Azure OpenAI response:', response);
         return result;
       } else if (aiModel === AI_MODEL_NAMES['OpenAI GPT-5.2']) {
         console.log('calling OpenAI...', input); // for debugging
@@ -427,7 +432,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
           true,
           reasoningEffort,
         );
-        console.log('res', response);
+        console.log('OpenAI GPT-5.2 response:', response);
         return response.output_text;
       } else if (aiModel === AI_MODEL_NAMES['Claude Opus-4.5']) {
         console.log('calling Claude...', input); // for debugging

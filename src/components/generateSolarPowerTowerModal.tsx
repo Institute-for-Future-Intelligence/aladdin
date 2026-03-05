@@ -52,7 +52,12 @@ const GenerateSolarPowerTowerModal = React.memo(
     const setCommonStore = useStore(Selector.set);
     const language = useStore(Selector.language);
     const reasoningEffort = useStore(Selector.reasoningEffort) ?? 'medium';
-    const aiModel = useStore(Selector.aiModel) ?? AI_MODEL_NAMES['OpenAI GPT-5.2'];
+    const aiModelStored = useStore(Selector.aiModel);
+    // exclude unsupported models
+    const aiModel =
+      aiModelStored && aiModelStored !== AI_MODEL_NAMES['Claude Sonnet-4.5']
+        ? aiModelStored
+        : AI_MODEL_NAMES['OpenAI GPT-5.2'];
     const generatePrompt =
       useStore(Selector.generateSolarPowerTowerPrompt) ??
       'Generate a solar power tower plant with a Fermat spiral layout for heliostats';
@@ -311,7 +316,7 @@ const GenerateSolarPowerTowerModal = React.memo(
         const input = createInput();
 
         if (aiModel === AI_MODEL_NAMES['Azure OpenAI o4-mini']) {
-          console.log('calling OpenAI...', input); // for debugging
+          console.log('calling Azure OpenAI...', input); // for debugging
           const response = await callSolarPowerTowerAzureAI(
             import.meta.env.VITE_AZURE_API_KEY,
             input as [],
@@ -319,7 +324,7 @@ const GenerateSolarPowerTowerModal = React.memo(
             reasoningEffort,
           );
           const result = response.choices[0].message.content;
-          console.log('OpenAI response:', response);
+          console.log('Azure OpenAI response:', response);
           return result;
         } else if (aiModel === AI_MODEL_NAMES['OpenAI GPT-5.2']) {
           console.log('calling OpenAI GPT-5.2...', input);
