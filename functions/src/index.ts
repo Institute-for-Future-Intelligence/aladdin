@@ -3,17 +3,26 @@
  */
 
 import { onCall } from 'firebase-functions/v2/https';
-import { callBuildingAzureAI, callBuildingClaudeAI, callBuildingOpenAI } from './callBuildingAI';
+import { callBuildingAzureAI, callBuildingClaudeAI, callBuildingGeminiAI, callBuildingOpenAI } from './callBuildingAI';
 import {
   callSolarPowerTowerClaudeAI,
   callSolarPowerTowerOpenAI,
   callSolarPowerTowerAzureAI,
 } from './callSolarPowerTowerAI';
-import { callUrbanDesignClaudeAI, callUrbanDesignOpenAI, callUrbanDesignAzureAI } from './callUrbanDesignAI';
+import {
+  callUrbanDesignClaudeAI,
+  callUrbanDesignOpenAI,
+  callUrbanDesignAzureAI,
+  callUrbanDesignGeminiAI,
+} from './callUrbanDesignAI';
 import { AI_MODEL_NAMES } from './constants';
 
 exports.callAI = onCall(
-  { secrets: ['AZURE_OPENAI_API_KEY', 'CLAUDE_API_KEY', 'OPENAI_API_KEY'], timeoutSeconds: 300, region: 'us-east4' },
+  {
+    secrets: ['AZURE_OPENAI_API_KEY', 'CLAUDE_API_KEY', 'GEMINI_API_KEY', 'OPENAI_API_KEY'],
+    timeoutSeconds: 300,
+    region: 'us-east4',
+  },
   async (req) => {
     const prompt = req.data.text;
     const type = req.data.type ?? 'building';
@@ -80,6 +89,22 @@ exports.callAI = onCall(
           const response = await callUrbanDesignClaudeAI(claudeApiKey, prompt, false);
           console.log('Returned:', (response.content[0] as any).text);
           return { text: (response.content[0] as any).text };
+        }
+      } else if (aiModel === AI_MODEL_NAMES['Gemini 2.5-Pro']) {
+        const geminiApiKey = process.env.GEMINI_API_KEY;
+        const reasoningEffort = req.data.reasoningEffort ?? 'medium';
+        if (type === 'building') {
+          console.log('calling Gemini 2.5-Pro...');
+          const response = await callBuildingGeminiAI(geminiApiKey, prompt, reasoningEffort);
+          const text = response.text;
+          console.log('Returned:', text);
+          return { text };
+        } else if (type === 'urban') {
+          console.log('calling Gemini 2.5-Pro...');
+          const response = await callUrbanDesignGeminiAI(geminiApiKey, prompt, reasoningEffort);
+          const text = response.text;
+          console.log('Returned:', text);
+          return { text };
         }
       }
       return null;

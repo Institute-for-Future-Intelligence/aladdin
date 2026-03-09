@@ -17,7 +17,12 @@ import i18n from 'src/i18n/i18n';
 import useSpeechToText, { ResultType } from 'react-hook-speech-to-text';
 import { showError } from 'src/helpers';
 import { app } from 'src/firebase';
-import { callBuildingAzureAI, callBuildingClaudeAI, callBuildingOpenAI } from 'functions/src/callBuildingAI';
+import {
+  callBuildingAzureAI,
+  callBuildingClaudeAI,
+  callBuildingGeminiAI,
+  callBuildingOpenAI,
+} from 'functions/src/callBuildingAI';
 import { AIMemory, ObjectType } from 'src/types';
 import { GenAIUtil } from 'src/panels/GenAIUtil';
 import { RoofType } from 'src/models/RoofModel';
@@ -105,6 +110,31 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
       role: 'user',
       content: prompt.trim(),
     });
+    return input;
+  };
+
+  const createGeminiInput = () => {
+    const input = [];
+    const projectState = useStore.getState().projectState;
+    const aiMemory = projectState.aiMemory;
+    const designs = projectState.designs;
+    if (aiMemory !== AIMemory.NONE && designs && designs.length > 0) {
+      const memoryDesigns = aiMemory === AIMemory.SHORT_TERM ? designs.slice(-DEFAULT_SHORT_TERM_MEMORY) : designs;
+      for (const d of memoryDesigns) {
+        if (d.prompt && d.data) {
+          input.push({ role: 'user', parts: [{ text: d.prompt }] });
+          const sendBackThinking = false;
+          if (sendBackThinking) {
+            input.push({ role: 'model', parts: [{ text: d.data }] });
+          } else {
+            const content = JSON.parse(d.data);
+            delete content.thinking;
+            input.push({ role: 'model', parts: [{ text: JSON.stringify(content) }] });
+          }
+        }
+      }
+    }
+    input.push({ role: 'user', parts: [{ text: prompt.trim() }] });
     return input;
   };
 
@@ -440,6 +470,17 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
         const result = (response.content[0] as any).text;
         console.log('Claude response:', response);
         return result;
+      } else if (aiModel === AI_MODEL_NAMES['Gemini 2.5-Pro']) {
+        const geminiInput = createGeminiInput();
+        console.log('calling Gemini...', geminiInput); // for debugging
+        const response = await callBuildingGeminiAI(
+          import.meta.env.VITE_GEMINI_API_KEY,
+          geminiInput as [],
+          reasoningEffort,
+        );
+        const result = response.text;
+        console.log('Gemini response:', response);
+        return result;
       }
     } catch (e) {
       console.log(e);
@@ -459,7 +500,14 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
   const handleGenerativeAI = async () => {
     setGenerating(true);
     try {
-      const result = await generate();
+      const r = await generate();
+      // prevent markdown
+      const result = r
+        .trim()
+        .replace(/^```(?:json)?\s*/i, '')
+        .replace(/\s*```$/i, '')
+        .trim();
+
       if (result) {
         processResult(result);
         useStore.getState().set((state) => {
@@ -633,6 +681,7 @@ const GenerateBuildingModal = React.memo(({ setDialogVisible, isDialogVisible }:
             options={[
               { value: AI_MODEL_NAMES['OpenAI GPT-5.2'], label: 'OpenAI GPT-5.2' },
               { value: AI_MODEL_NAMES['Azure OpenAI o4-mini'], label: 'OpenAI o4-mini' },
+              { value: AI_MODEL_NAMES['Gemini 2.5-Pro'], label: 'Gemini 2.5 Pro' },
               // { value: AI_MODELS_NAME['Claude Opus-4.5'], label: 'Claude Opus-4.5' },
             ]}
           />

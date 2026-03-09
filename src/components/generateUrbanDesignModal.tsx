@@ -23,6 +23,7 @@ import { Util } from '../Util';
 import { AI_MODEL_NAMES } from 'functions/src/constants';
 import {
   callUrbanDesignClaudeAI,
+  callUrbanDesignGeminiAI,
   callUrbanDesignOpenAI,
   callUrbanDesignAzureAI,
 } from 'functions/src/callUrbanDesignAI';
@@ -101,6 +102,24 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
   useEffect(() => {
     setPrompt(generateUrbanDesignPrompt);
   }, [generateUrbanDesignPrompt]);
+
+  const createGeminiInput = () => {
+    const input = [];
+    const projectState = useStore.getState().projectState;
+    const aiMemory = projectState.aiMemory;
+    const designs = projectState.designs;
+    if (aiMemory !== AIMemory.NONE && designs && designs.length > 0) {
+      const memoryDesigns = aiMemory === AIMemory.SHORT_TERM ? designs.slice(-DEFAULT_SHORT_TERM_MEMORY) : designs;
+      for (const d of memoryDesigns) {
+        if (d.prompt && d.data) {
+          input.push({ role: 'user', parts: [{ text: d.prompt }] });
+          input.push({ role: 'model', parts: [{ text: d.data }] });
+        }
+      }
+    }
+    input.push({ role: 'user', parts: [{ text: prompt.trim() }] });
+    return input;
+  };
 
   const createInput = () => {
     const input = [];
@@ -425,6 +444,17 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
         );
         console.log('OpenAI GPT-5.2 response:', response);
         return response.output_text;
+      } else if (aiModel === AI_MODEL_NAMES['Gemini 2.5-Pro']) {
+        const geminiInput = createGeminiInput();
+        console.log('calling Gemini...', geminiInput);
+        const response = await callUrbanDesignGeminiAI(
+          import.meta.env.VITE_GEMINI_API_KEY,
+          geminiInput as [],
+          reasoningEffort,
+        );
+        const result = response.text;
+        console.log('Gemini response:', response);
+        return result;
       } else if (aiModel === AI_MODEL_NAMES['Claude Sonnet-4.5'] || aiModel === AI_MODEL_NAMES['Claude Opus-4.5']) {
         let model = 'claude-sonnet-4-5';
         if (aiModel === AI_MODEL_NAMES['Claude Opus-4.5']) {
@@ -641,6 +671,7 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
             options={[
               { value: AI_MODEL_NAMES['Claude Sonnet-4.5'], label: 'Claude Sonnet-4.5' },
               { value: AI_MODEL_NAMES['OpenAI GPT-5.2'], label: 'OpenAI GPT-5.2' },
+              { value: AI_MODEL_NAMES['Gemini 2.5-Pro'], label: 'Gemini 2.5 Pro' },
               ...testModels,
             ]}
           />

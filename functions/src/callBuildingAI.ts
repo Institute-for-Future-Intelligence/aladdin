@@ -3,6 +3,7 @@
  */
 
 import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 import { AzureOpenAI, OpenAI } from 'openai';
 import { ReasoningEffort } from 'openai/resources/shared.js';
 
@@ -779,7 +780,29 @@ export const callBuildingClaudeAI = async (apiKey: string | undefined, inputMess
     max_tokens: 10000, // require streaming API if this is large.
     system: RULES + DATA_STRUCTURE,
     messages: [...inputMessage],
-    betas: ['structured-outputs-2025-11-13'],
+    // betas: ['structured-outputs-2025-11-13'],
   });
   return res;
+};
+
+export const callBuildingGeminiAI = async (apiKey: string | undefined, inputMessage: [], reasoningEffort: string) => {
+  const ai = new GoogleGenAI({ apiKey });
+
+  // const thinkingLevel =
+  //   reasoningEffort === 'low' ? ThinkingLevel.LOW :
+  //   reasoningEffort === 'high' ? ThinkingLevel.HIGH :
+  //   ThinkingLevel.MEDIUM;
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.5-pro',
+    contents: [...inputMessage],
+    config: {
+      systemInstruction: RULES + DATA_STRUCTURE,
+      // thinkingConfig: {
+      //   thinkingLevel,
+      // },
+    },
+  });
+
+  return response;
 };

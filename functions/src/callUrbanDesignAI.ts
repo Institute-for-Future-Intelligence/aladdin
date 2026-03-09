@@ -3,6 +3,7 @@
  */
 
 import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 import OpenAI, { AzureOpenAI } from 'openai';
 import { ReasoningEffort } from 'openai/resources/shared.js';
 
@@ -661,4 +662,32 @@ export const callUrbanDesignClaudeAI = async (
     // },
   });
   return res;
+};
+
+export const callUrbanDesignGeminiAI = async (
+  apiKey: string | undefined,
+  inputMessage: [],
+  reasoningEffort: string,
+) => {
+  const ai = new GoogleGenAI({ apiKey });
+
+  // const thinkingLevel =
+  //   reasoningEffort === 'low'
+  //     ? ThinkingLevel.LOW
+  //     : reasoningEffort === 'high'
+  //     ? ThinkingLevel.HIGH
+  //     : ThinkingLevel.MEDIUM;
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.5-pro',
+    contents: [...inputMessage],
+    config: {
+      systemInstruction: RULES,
+      // thinkingConfig: {
+      //   thinkingLevel,
+      // },
+    },
+  });
+
+  return response;
 };
