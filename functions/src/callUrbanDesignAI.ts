@@ -3,7 +3,6 @@
  */
 
 import Anthropic from '@anthropic-ai/sdk';
-// @ts-expect-error ignore
 import { GoogleGenAI } from '@google/genai';
 import OpenAI, { AzureOpenAI } from 'openai';
 import { ReasoningEffort } from 'openai/resources/shared.js';
