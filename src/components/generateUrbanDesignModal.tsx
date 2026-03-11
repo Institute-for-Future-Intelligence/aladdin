@@ -403,15 +403,27 @@ const GenerateUrbanDesignModal = React.memo(({ setDialogVisible, isDialogVisible
     try {
       const functions = getFunctions(app, 'us-east4');
       const callAI = httpsCallable(functions, 'callAI', { timeout: 300000 });
-      const input = createInput();
-      console.log('calling...', input); // for debugging
-      const res = (await callAI({
-        text: input,
-        type: 'urban',
-        undefined,
-        aiModel,
-      })) as any;
-      return res.data.text;
+      if (aiModel === AI_MODEL_NAMES['Gemini 2.5-Pro']) {
+        const input = createGeminiInput();
+        console.log('calling...', input); // for debugging
+        const res = (await callAI({
+          text: input,
+          type: 'urban',
+          undefined,
+          aiModel,
+        })) as any;
+        return res.data.text;
+      } else {
+        const input = createInput();
+        console.log('calling...', input); // for debugging
+        const res = (await callAI({
+          text: input,
+          type: 'urban',
+          undefined,
+          aiModel,
+        })) as any;
+        return res.data.text;
+      }
     } catch (e) {
       console.log(e);
       showError('' + e, 10);
