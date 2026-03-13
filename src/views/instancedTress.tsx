@@ -1,5 +1,5 @@
 import { Instance, Instances } from '@react-three/drei';
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { DEFAULT_LEAF_OFF_DAY, DEFAULT_LEAF_OUT_DAY } from 'src/constants';
 import { InstancedTree } from 'src/models/InstancedModel';
 import { useStore } from 'src/stores/common';
@@ -118,7 +118,7 @@ const getStreetBodyColor = (id: string, dayOfYear: number): string => {
   return WINTER_COLOR;
 };
 
-const InstancedTrees = ({ trees }: InstancedTreesProps) => {
+const InstancedTrees = memo(({ trees }: InstancedTreesProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
@@ -145,7 +145,7 @@ const InstancedTrees = ({ trees }: InstancedTreesProps) => {
   const parkTreeData = useMemo(
     () =>
       parkTrees.map((t) => ({
-        rotation: Math.random() * Math.PI * 2,
+        rotation: hashToRandom(t.id, 3) * Math.PI * 2,
         heightScale: 0.75 + hashToRandom(t.id, 4) * 0.5, // 0.75 ~ 1.25
         radiusScale: 0.9 + hashToRandom(t.id, 5) * 0.2, // 0.9 ~ 1.1
         bodyColor: getParkBodyColor(t.id, dayOfYear),
@@ -162,7 +162,7 @@ const InstancedTrees = ({ trees }: InstancedTreesProps) => {
   const streetTreeData = useMemo(
     () =>
       streetTrees.map((t) => ({
-        rotation: Math.random() * Math.PI * 2,
+        rotation: hashToRandom(t.id, 8) * Math.PI * 2,
         heightScale: 0.85 + hashToRandom(t.id, 6) * 0.3, // 0.85 ~ 1.15
         radiusScale: 0.9 + hashToRandom(t.id, 7) * 0.2, // 0.9 ~ 1.1
       })),
@@ -264,6 +264,6 @@ const InstancedTrees = ({ trees }: InstancedTreesProps) => {
       )}
     </group>
   );
-};
+});
 
 export default InstancedTrees;

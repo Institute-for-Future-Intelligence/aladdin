@@ -34,6 +34,7 @@ import { resetView, zoomView } from './components/mainMenu/viewMenu';
 import { message } from 'antd';
 import { FoundationModel } from './models/FoundationModel';
 import { RulerModel } from './models/RulerModel';
+import { PrismModel } from './models/PolygonCuboidModel';
 
 export interface KeyboardListenerProps {
   canvas?: HTMLCanvasElement | null;
@@ -216,6 +217,8 @@ const handleKeys = [
   'f2',
   'f4',
   'ctrl',
+  'z',
+  'x',
 ];
 
 const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
@@ -240,6 +243,7 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
   const moveStep = useStore(Selector.moveStep);
 
   const lastKeyMoveTimeRef = useRef<number | null>(null);
+  const lastKeyRotateTimeRef = useRef<number | null>(null);
 
   const lang = useMemo(() => {
     return { lng: language };
@@ -501,6 +505,15 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
               e.cx = newCx;
               e.cy = newCy;
             }
+            if (e.type === ObjectType.PrismBuilding) {
+              const prism = e as PrismModel;
+              const dx = undo ? -distVector.x : distVector.x;
+              const dy = undo ? -distVector.y : distVector.y;
+              for (const v of prism.vertices) {
+                v.x += dx;
+                v.y += dy;
+              }
+            }
 
             if (e.type === ObjectType.BatteryStorage || e.type === ObjectType.SolarPanel) {
               const foundation = state.elements.find(
@@ -527,9 +540,22 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
   const updateMovementForAll = (displacement: Vector2, undo = false) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
+        if (
+          Util.isFoundationOrCuboid(e) ||
+          (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID) ||
+          e.type === ObjectType.PrismBuilding ||
+          e.type === ObjectType.InstancedCuboid
+        ) {
           e.cx = e.cx + (undo ? -displacement.x : displacement.x);
           e.cy = e.cy + (undo ? -displacement.y : displacement.y);
+          if (e.type === ObjectType.PrismBuilding) {
+            const dx = undo ? -displacement.x : displacement.x;
+            const dy = undo ? -displacement.y : displacement.y;
+            for (const v of (e as PrismModel).vertices) {
+              v.x += dx;
+              v.y += dy;
+            }
+          }
         } else if (e.type === ObjectType.Ruler) {
           const ruler = e as RulerModel;
           ruler.leftEndPoint.position[0] += undo ? -displacement.x : displacement.x;
@@ -599,6 +625,8 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
             case ObjectType.Ruler:
             case ObjectType.Foundation:
             case ObjectType.Cuboid:
+            case ObjectType.PrismBuilding:
+            case ObjectType.InstancedCuboid:
             case ObjectType.Wall:
             case ObjectType.Tree:
             case ObjectType.Flower:
@@ -686,6 +714,8 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
             case ObjectType.Ruler:
             case ObjectType.Foundation:
             case ObjectType.Cuboid:
+            case ObjectType.PrismBuilding:
+            case ObjectType.InstancedCuboid:
             case ObjectType.Wall:
             case ObjectType.Tree:
             case ObjectType.Flower:
@@ -817,6 +847,145 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
     useStore.getState().set((state) => {
       state.multiSelectionsMode = b;
     });
+  };
+
+  const ROTATION_STEP = Math.PI / 36; // 5 degrees per key press
+
+  const needUpdateUndoRotate = (elementId: string) => {
+    const lastTime = lastKeyRotateTimeRef.current;
+    lastKeyRotateTimeRef.current = Date.now();
+    const lastUndoCommand = useStore.getState().undoManager.getLastUndoCommand();
+    if (lastUndoCommand && lastUndoCommand.name === 'Rotate Element By Key') {
+      const currTime = lastKeyRotateTimeRef.current;
+      if (lastTime && currTime - lastTime > 500) return false;
+      if ((lastUndoCommand as unknown as { elementId: string }).elementId !== elementId) return false;
+      return true;
+    }
+    return false;
+  };
+
+  const rotateByKey = (clockwise: boolean) => {
+    const selectedElement = getSelectedElement();
+    const selectedElementIdSet = useStore.getState().selectedElementIdSet;
+
+    if (!selectedElement || selectedElementIdSet.size !== 1) {
+      // TODO: handle multiple selections
+      return;
+    }
+
+    const type = selectedElement.type;
+    if (type !== ObjectType.Cuboid && type !== ObjectType.InstancedCuboid && type !== ObjectType.PrismBuilding) {
+      return;
+    }
+
+    const angle = clockwise ? -ROTATION_STEP : ROTATION_STEP;
+    const elementId = selectedElement.id;
+
+    if (type === ObjectType.Cuboid || type === ObjectType.InstancedCuboid) {
+      const oldRotationZ = selectedElement.rotation[2] ?? 0;
+      const newRotationZ = oldRotationZ + angle;
+      if (needUpdateUndoRotate(elementId)) {
+        const lastUndoCommand = useStore.getState().undoManager.getLastUndoCommand() as unknown as {
+          newRotationZ: number;
+        };
+        lastUndoCommand.newRotationZ = newRotationZ;
+      } else {
+        const undoableRotate = {
+          name: 'Rotate Element By Key',
+          timestamp: Date.now(),
+          elementId,
+          oldRotationZ,
+          newRotationZ,
+          undo() {
+            setCommonStore((state) => {
+              const el = state.elements.find((e) => e.id === undoableRotate.elementId);
+              if (el) el.rotation[2] = undoableRotate.oldRotationZ;
+            });
+          },
+          redo() {
+            setCommonStore((state) => {
+              const el = state.elements.find((e) => e.id === undoableRotate.elementId);
+              if (el) el.rotation[2] = undoableRotate.newRotationZ;
+            });
+          },
+        };
+        addUndoable(undoableRotate);
+      }
+      setCommonStore((state) => {
+        const el = state.elements.find((e) => e.id === elementId);
+        if (el) el.rotation[2] = newRotationZ;
+      });
+    } else if (type === ObjectType.PrismBuilding) {
+      const prism = selectedElement as PrismModel;
+      // Compute polygon area centroid using the shoelace formula
+      const vertices = prism.vertices;
+      let area = 0;
+      let cx = 0;
+      let cy = 0;
+      for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+        const cross = vertices[j].x * vertices[i].y - vertices[i].x * vertices[j].y;
+        area += cross;
+        cx += (vertices[j].x + vertices[i].x) * cross;
+        cy += (vertices[j].y + vertices[i].y) * cross;
+      }
+      area /= 2;
+      cx /= 6 * area;
+      cy /= 6 * area;
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      const oldVertices = prism.vertices.map((v) => ({ x: v.x, y: v.y }));
+      const newVertices = oldVertices.map((v) => {
+        const dx = v.x - cx;
+        const dy = v.y - cy;
+        return { x: cx + dx * cos - dy * sin, y: cy + dx * sin + dy * cos };
+      });
+      if (needUpdateUndoRotate(elementId)) {
+        const lastUndoCommand = useStore.getState().undoManager.getLastUndoCommand() as unknown as {
+          newVertices: { x: number; y: number }[];
+        };
+        lastUndoCommand.newVertices = newVertices;
+      } else {
+        const undoableRotate = {
+          name: 'Rotate Element By Key',
+          timestamp: Date.now(),
+          elementId,
+          oldVertices,
+          newVertices,
+          undo() {
+            setCommonStore((state) => {
+              const el = state.elements.find((e) => e.id === undoableRotate.elementId) as PrismModel;
+              if (el) {
+                for (let i = 0; i < el.vertices.length; i++) {
+                  el.vertices[i].x = undoableRotate.oldVertices[i].x;
+                  el.vertices[i].y = undoableRotate.oldVertices[i].y;
+                }
+              }
+            });
+          },
+          redo() {
+            setCommonStore((state) => {
+              const el = state.elements.find((e) => e.id === undoableRotate.elementId) as PrismModel;
+              if (el) {
+                for (let i = 0; i < el.vertices.length; i++) {
+                  el.vertices[i].x = undoableRotate.newVertices[i].x;
+                  el.vertices[i].y = undoableRotate.newVertices[i].y;
+                }
+              }
+            });
+          },
+        };
+        addUndoable(undoableRotate);
+      }
+      setCommonStore((state) => {
+        const el = state.elements.find((e) => e.id === elementId) as PrismModel;
+        if (el) {
+          for (let i = 0; i < el.vertices.length; i++) {
+            el.vertices[i].x = newVertices[i].x;
+            el.vertices[i].y = newVertices[i].y;
+          }
+        }
+      });
+    }
   };
 
   const handleKeyDown = (key: string) => {
@@ -1267,6 +1436,12 @@ const KeyboardListener = React.memo(({ canvas }: KeyboardListenerProps) => {
         selectNone();
         break;
       }
+      case 'z':
+        rotateByKey(false); // counterclockwise
+        break;
+      case 'x':
+        rotateByKey(true); // clockwise
+        break;
       case 'ctrl': {
         setMultiSelectionMode(true);
         break;

@@ -3,11 +3,14 @@
  */
 
 import React from 'react';
+import { ThreeEvent } from '@react-three/fiber';
 import { Instances, Instance } from '@react-three/drei';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { Color } from 'three';
 import { InstancedModel } from 'src/models/InstancedModel';
+import { ActionType } from 'src/types';
+import { useSelected } from '../../hooks';
 
 export interface InstancedCuboidsProps {
   cuboids: InstancedModel[];
@@ -45,6 +48,35 @@ function getRandomNearbyColor(baseColor: string | Color, intensity: number = 0.2
   return new Color().setHSL(h, s, l);
 }
 
+interface CuboidInstanceProps {
+  model: InstancedModel;
+}
+
+const CuboidInstance = ({ model }: CuboidInstanceProps) => {
+  const { id, cx, cy, cz = 0, lx = 1, ly = 1, lz = 1, rotation = [0, 0, 0] } = model;
+  const selected = useSelected(id);
+  const selectMe = useStore(Selector.selectMe);
+  const isAddingElement = useStore(Selector.isAddingElement);
+
+  const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (e.button === 2) return;
+    if (!isAddingElement()) {
+      selectMe(id, e, ActionType.Select);
+    }
+  };
+
+  return (
+    <Instance
+      key={id}
+      position={[cx, cy, cz]}
+      scale={[lx, ly, lz]}
+      rotation={[0, 0, rotation[2]]}
+      color={selected ? 'yellow' : 'white'}
+      onPointerDown={handlePointerDown}
+    />
+  );
+};
+
 const InstancedCuboids = ({ cuboids }: InstancedCuboidsProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
@@ -55,20 +87,9 @@ const InstancedCuboids = ({ cuboids }: InstancedCuboidsProps) => {
         <boxGeometry />
         <meshStandardMaterial />
 
-        {cuboids.map((model) => {
-          const { id, cx, cy, cz = 0, lx = 1, ly = 1, lz = 1, rotation = [0, 0, 0] } = model;
-
-          return (
-            <Instance
-              key={id}
-              position={[cx, cy, cz]}
-              scale={[lx, ly, lz]}
-              rotation={[0, 0, rotation[2]]}
-              // color={getRandomNearbyColor(model.color ?? 'grey')}
-              color={'white'}
-            />
-          );
-        })}
+        {cuboids.map((model) => (
+          <CuboidInstance key={model.id} model={model} />
+        ))}
       </Instances>
     </group>
   );

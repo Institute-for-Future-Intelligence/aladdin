@@ -3,12 +3,14 @@
  */
 
 import React, { useMemo } from 'react';
+import { ThreeEvent } from '@react-three/fiber';
 import { PrismModel } from '../../models/PolygonCuboidModel';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
 import { Color, Shape, ExtrudeGeometry } from 'three';
-import { ObjectType } from 'src/types';
+import { ActionType, ObjectType } from 'src/types';
 import { Util } from 'src/Util';
+import { useSelected } from '../../hooks';
 
 export interface PrismProps {
   model: PrismModel;
@@ -45,8 +47,12 @@ const Prism = ({ model }: PrismProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
+  const selectMe = useStore(Selector.selectMe);
 
   const { id, vertices, height, color = 'gray', transparency = 0 } = model;
+
+  const isPrismBuilding = model.type === ObjectType.PrismBuilding;
+  const selected = useSelected(id);
 
   const dayOfYear = useMemo(() => {
     const doy = Util.dayOfYear(new Date(date));
@@ -87,10 +93,23 @@ const Prism = ({ model }: PrismProps) => {
     return null;
   }
 
-  const _color = model.type === ObjectType.PrismBuilding ? 'white' : seasonalColor ?? color;
+  const _color = isPrismBuilding ? (selected ? 'yellow' : 'white') : seasonalColor ?? color;
+
+  const handlePointerDown = isPrismBuilding
+    ? (e: ThreeEvent<PointerEvent>) => {
+        if (e.button === 2) return;
+        selectMe(id, e, ActionType.Select);
+      }
+    : undefined;
+
   return (
     <group name={`prism ${id}`}>
-      <mesh geometry={geometry} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
+      <mesh
+        geometry={geometry}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
+        onPointerDown={handlePointerDown}
+      >
         <meshStandardMaterial color={_color} transparent={transparency > 0} opacity={1 - transparency} />
       </mesh>
     </group>
