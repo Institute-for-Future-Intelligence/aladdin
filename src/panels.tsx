@@ -43,6 +43,7 @@ import DailyBatteryStoragePanel from './panels/dailyBatteryStoragePanel';
 import YearlyBatteryStoragePanel from './panels/yearlyBatteryStoragePanel';
 import EditorPanel from './panels/editorPanel';
 import AudioPlayerPanel from './panels/audioPlayerPanel';
+import HousePrintPreview from './components/housePrintPreview';
 
 const Panels = React.memo(() => {
   const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
@@ -177,6 +178,7 @@ const Panels = React.memo(() => {
       {showYearlyBatteryStorageEnergyPanel && <YearlyBatteryStoragePanel city={city} />}
       {showSolarRadiationHeatmap && <VisualizationControlPanel />}
       {showEvolutionPanel && <SolarPanelOptimizationResult />}
+      <HousePrintPreview />
     </>
   );
 });

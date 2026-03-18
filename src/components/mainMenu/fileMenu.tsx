@@ -126,6 +126,12 @@ const FileMenu = ({ viewOnly, isMac, canvas }: FileMenuProps) => {
     });
   };
 
+  const handlePrintHousePieces = () => {
+    usePrimitiveStore.getState().set((state) => {
+      state.showHousePrintPreview = true;
+    });
+  };
+
   const handleTakeScreenShot = () => {
     if (canvas) {
       saveImage('screenshot.png', canvas.toDataURL('image/png'));
@@ -196,6 +202,9 @@ const FileMenu = ({ viewOnly, isMac, canvas }: FileMenuProps) => {
 
       {/* publish on model map */}
       {!viewOnly && <PublishOnModelMapItem />}
+
+      {/* print house pieces */}
+      {!viewOnly && <MainMenuItem onClick={handlePrintHousePieces}>Print House Pieces...</MainMenuItem>}
 
       {/* take screen shot */}
       {<MainMenuItem onClick={handleTakeScreenShot}>{i18n.t('menu.file.TakeScreenshot', lang)}</MainMenuItem>}
