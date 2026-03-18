@@ -9,8 +9,9 @@ import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { Color } from 'three';
 import { InstancedModel } from 'src/models/InstancedModel';
-import { ActionType } from 'src/types';
+import { ActionType, MoveHandleType } from 'src/types';
 import { useSelected } from '../../hooks';
+import { useRefStore } from 'src/stores/commonRef';
 
 export interface InstancedCuboidsProps {
   cuboids: InstancedModel[];
@@ -56,12 +57,20 @@ const CuboidInstance = ({ model }: CuboidInstanceProps) => {
   const { id, cx, cy, cz = 0, lx = 1, ly = 1, lz = 1, rotation = [0, 0, 0] } = model;
   const selected = useSelected(id);
   const selectMe = useStore(Selector.selectMe);
+  const setCommonStore = useStore(Selector.set);
   const isAddingElement = useStore(Selector.isAddingElement);
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2) return;
     if (!isAddingElement()) {
-      selectMe(id, e, ActionType.Select);
+      if (selected) {
+        setCommonStore((state) => {
+          state.moveHandleType = MoveHandleType.Top;
+        });
+        useRefStore.getState().setEnableOrbitController(false);
+      } else {
+        selectMe(id, e, ActionType.Select);
+      }
     }
   };
 

@@ -52,6 +52,7 @@ import { SolarWaterHeaterModel } from 'src/models/SolarWaterHeaterModel';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { RulerModel, RulerGroundSnapPoint } from 'src/models/RulerModel';
 import { RulerUtil } from './ruler/RulerUtil';
+import { PrismModel } from '../models/PolygonCuboidModel';
 
 const Ground = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -121,6 +122,8 @@ const Ground = React.memo(() => {
   const moveHandleWorldDiffV3Ref = useRef(new Vector3());
 
   const [updateFlag, setUpdateFlag] = useState(false);
+  const oldPrismVerticesRef = useRef<Point2[]>([]);
+  const lastDragPointRef = useRef<Vector3>(new Vector3());
   const lang = useLanguage();
 
   // add pointer up event to window
@@ -179,8 +182,8 @@ const Ground = React.memo(() => {
   const { camera } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
-  const cosAngle = grabRef.current ? Math.cos(grabRef.current.rotation[2]) : 1;
-  const sinAngle = grabRef.current ? Math.sin(grabRef.current.rotation[2]) : 0;
+  const cosAngle = grabRef.current ? Math.cos(grabRef.current.rotation?.[2] ?? 0) : 1;
+  const sinAngle = grabRef.current ? Math.sin(grabRef.current.rotation?.[2] ?? 0) : 0;
   let intersectionPlaneType = IntersectionPlaneType.Ground;
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
   const intersectionPlaneAngle = useMemo(() => new Euler(), []);
@@ -193,10 +196,14 @@ const Ground = React.memo(() => {
       const { x: cameraX, y: cameraY } = camera.position;
       const rotation = -Math.atan2(cameraX, cameraY);
       intersectionPlaneAngle.set(a, 0, rotation, 'ZXY');
-      intersectionPlanePosition.set(grabRef.current.cx, grabRef.current.cy, 0);
+      intersectionPlanePosition.set(grabRef.current.cx ?? 0, grabRef.current.cy ?? 0, 0);
     } else if (moveHandleType === MoveHandleType.Top) {
       intersectionPlaneType = IntersectionPlaneType.Horizontal;
-      intersectionPlanePosition.set(grabRef.current.cx, grabRef.current.cy, grabRef.current.lz);
+      intersectionPlanePosition.set(
+        grabRef.current.cx ?? 0,
+        grabRef.current.cy ?? 0,
+        grabRef.current.lz ?? MOVE_HANDLE_RADIUS,
+      );
       intersectionPlaneAngle.set(0, 0, 0);
     } else if (
       Util.isMoveHandle(moveHandleType) ||
@@ -774,6 +781,49 @@ const Ground = React.memo(() => {
 
   const moveElementOnPointerUp = (elem: ElementModel, e: PointerEvent) => {
     if (elem.locked) return;
+    // PrismBuilding stores position in vertices, not cx/cy — handle separately
+    if (elem.type === ObjectType.PrismBuilding) {
+      const prism = getElementById(elem.id) as PrismModel | undefined;
+      if (prism && prism.vertices) {
+        const newVertices = prism.vertices.map((v) => ({ ...v }));
+        const oldVertices = oldPrismVerticesRef.current;
+        if (
+          oldVertices.length > 0 &&
+          newVertices.some(
+            (v, i) =>
+              Math.abs(v.x - (oldVertices[i]?.x ?? 0)) > ZERO_TOLERANCE ||
+              Math.abs(v.y - (oldVertices[i]?.y ?? 0)) > ZERO_TOLERANCE,
+          )
+        ) {
+          const undoableChange = {
+            name: 'Move PrismBuilding',
+            timestamp: Date.now(),
+            changedElementId: elem.id,
+            changedElementType: ObjectType.PrismBuilding,
+            oldValue: oldVertices,
+            newValue: newVertices,
+            undo: () => {
+              setCommonStore((state) => {
+                const p = state.elements.find((el) => el.id === undoableChange.changedElementId) as
+                  | PrismModel
+                  | undefined;
+                if (p) p.vertices = (undoableChange.oldValue as Point2[]).map((v) => ({ ...v }));
+              });
+            },
+            redo: () => {
+              setCommonStore((state) => {
+                const p = state.elements.find((el) => el.id === undoableChange.changedElementId) as
+                  | PrismModel
+                  | undefined;
+                if (p) p.vertices = (undoableChange.newValue as Point2[]).map((v) => ({ ...v }));
+              });
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+        }
+      }
+      return;
+    }
     newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
     let newHumanOrPlantParentId: string | null = oldHumanOrPlantParentIdRef.current;
     // elements modified by reference
@@ -1322,7 +1372,7 @@ const Ground = React.memo(() => {
           // save info for undo
           oldPositionRef.current.set(selectedElement.cx, selectedElement.cy, selectedElement.cz);
           oldDimensionRef.current.set(selectedElement.lx, selectedElement.ly, selectedElement.lz);
-          oldRotationRef.current = [...selectedElement.rotation];
+          oldRotationRef.current = [...(selectedElement.rotation ?? [0, 0, 0])];
 
           // store the positions of the children if the selected element may be a parent
           if (selectedElement.type === ObjectType.Foundation || selectedElement.type === ObjectType.Cuboid) {
@@ -1569,6 +1619,18 @@ const Ground = React.memo(() => {
               }
               break;
             }
+            case ObjectType.PrismBuilding: {
+              const prism = selectedElement as PrismModel;
+              if (prism.vertices) {
+                oldPrismVerticesRef.current = prism.vertices.map((v) => ({ ...v }));
+              }
+              setRayCast(e);
+              const groundIntersects = ray.intersectObjects([groundPlaneRef.current!]);
+              if (groundIntersects.length > 0) {
+                lastDragPointRef.current.copy(groundIntersects[0].point);
+              }
+              break;
+            }
           }
         } else {
           grabRef.current = null;
@@ -1764,6 +1826,36 @@ const Ground = React.memo(() => {
           }
           break;
         }
+        case ObjectType.InstancedCuboid: {
+          if (intersectionPlaneRef.current && moveHandleType) {
+            intersects = ray.intersectObjects([intersectionPlaneRef.current]);
+            if (intersects.length > 0) {
+              handleMove(intersects[0].point);
+            }
+          }
+          break;
+        }
+        case ObjectType.PrismBuilding: {
+          if (intersectionPlaneRef.current && moveHandleType) {
+            intersects = ray.intersectObjects([intersectionPlaneRef.current]);
+            if (intersects.length > 0) {
+              const p = intersects[0].point;
+              const dx = p.x - lastDragPointRef.current.x;
+              const dy = p.y - lastDragPointRef.current.y;
+              lastDragPointRef.current.copy(p);
+              setCommonStore((state) => {
+                const prism = state.elements.find((el) => el.id === grabRef.current!.id) as PrismModel | undefined;
+                if (prism && prism.vertices) {
+                  for (const v of prism.vertices) {
+                    v.x += dx;
+                    v.y += dy;
+                  }
+                }
+              });
+            }
+          }
+          break;
+        }
       }
     }
 
@@ -1917,7 +2009,9 @@ const Ground = React.memo(() => {
       type === ObjectType.Tree ||
       type === ObjectType.Flower ||
       type === ObjectType.Human ||
-      type === ObjectType.Protractor
+      type === ObjectType.Protractor ||
+      type === ObjectType.InstancedCuboid ||
+      type === ObjectType.PrismBuilding
     );
   };
 

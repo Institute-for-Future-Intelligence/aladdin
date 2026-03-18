@@ -8,9 +8,10 @@ import { PrismModel } from '../../models/PolygonCuboidModel';
 import { useStore } from '../../stores/common';
 import * as Selector from '../../stores/selector';
 import { Color, Shape, ExtrudeGeometry } from 'three';
-import { ActionType, ObjectType } from 'src/types';
+import { ActionType, MoveHandleType, ObjectType } from 'src/types';
 import { Util } from 'src/Util';
 import { useSelected } from '../../hooks';
+import { useRefStore } from '../../stores/commonRef';
 
 export interface PrismProps {
   model: PrismModel;
@@ -48,6 +49,7 @@ const Prism = ({ model }: PrismProps) => {
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
   const selectMe = useStore(Selector.selectMe);
+  const setCommonStore = useStore(Selector.set);
 
   const { id, vertices, height, color = 'gray', transparency = 0 } = model;
 
@@ -98,7 +100,14 @@ const Prism = ({ model }: PrismProps) => {
   const handlePointerDown = isPrismBuilding
     ? (e: ThreeEvent<PointerEvent>) => {
         if (e.button === 2) return;
-        selectMe(id, e, ActionType.Select);
+        if (selected) {
+          setCommonStore((state) => {
+            state.moveHandleType = MoveHandleType.Top;
+          });
+          useRefStore.getState().setEnableOrbitController(false);
+        } else {
+          selectMe(id, e, ActionType.Select);
+        }
       }
     : undefined;
 
