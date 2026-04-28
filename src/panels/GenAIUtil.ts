@@ -916,6 +916,7 @@ export class GenAIUtil {
     } as SolarPanelModel;
     sp.lx = Util.panelizeLx(sp, pvModel, lx);
     sp.ly = Util.panelizeLy(sp, pvModel, ly);
+    sp.lz = pvModel.thickness;
     return sp;
   }
 

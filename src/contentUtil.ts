@@ -1291,6 +1291,8 @@ export class ContentUtil {
     if (e.frameColor === undefined) e.frameColor = Constants.DEFAULT_SOLAR_PANEL_FRAME_COLOR;
     if (e.poleHeight === undefined) e.poleHeight = Constants.DEFAULT_SOLAR_PANEL_POLE_HEIGHT;
     if (e.poleRadius === undefined) e.poleRadius = Constants.DEFAULT_SOLAR_PANEL_POLE_RADIUS;
+    // missing lz makes simulation center.z become NaN, which silently breaks shadow ray casting
+    if (e.lz === undefined) e.lz = Constants.DEFAULT_SOLAR_PANEL_THICKNESS;
 
     if (e.drawSunBeam === undefined) e.drawSunBeam = false;
   }
