@@ -150,7 +150,7 @@ const CameraController = React.memo(() => {
           camera.rotation.fromArray([rotationNav[0], rotationNav[1], rotationNav[2], 'XYZ']);
         } else {
           const cameraPosition = getVector(viewState.cameraPosition ?? [0, 0, 20]);
-          const panCenter = getVector(viewState.panCenter ?? [0, 0, 0]);
+          const panCenter = sanitizePanCenter(cameraPosition, getVector(viewState.panCenter ?? [0, 0, 0]));
           persCameraRef.current.position.copy(cameraPosition);
           persCameraRef.current.lookAt(panCenter);
           persCameraRef.current.zoom = 1;
@@ -275,6 +275,12 @@ const CameraController = React.memo(() => {
     return new Vector3(0, 0, 5);
   };
 
+  // recover from saved files where camera and orbit target were collapsed onto each other,
+  // which makes mouse-wheel dolly multiply a near-zero radius and appear stuck
+  const sanitizePanCenter = (cameraPos: Vector3, panCenter: Vector3) => {
+    return cameraPos.distanceTo(panCenter) < 1 ? new Vector3(0, 0, 0) : panCenter;
+  };
+
   // animation
   useFrame(() => {
     if (autoRotate && orbitControlsRef.current) {
@@ -320,7 +326,7 @@ const CameraController = React.memo(() => {
     } else {
       if (orbitControlsRef.current && persCameraRef.current) {
         const cameraPosition = getVector(viewState.cameraPosition ?? [0, 0, 20]);
-        const panCenter = getVector(viewState.panCenter ?? [0, 0, 0]);
+        const panCenter = sanitizePanCenter(cameraPosition, getVector(viewState.panCenter ?? [0, 0, 0]));
         persCameraRef.current.position.copy(cameraPosition);
         persCameraRef.current.lookAt(panCenter);
         persCameraRef.current.zoom = 1;
@@ -351,6 +357,7 @@ const CameraController = React.memo(() => {
         minAzimuthAngle={-Infinity}
         maxPolarAngle={HALF_PI}
         minPolarAngle={0}
+        minDistance={1}
         moveSpeed={navigationMoveSpeed ?? 3}
         turnSpeed={navigationTurnSpeed ?? 3}
       />
