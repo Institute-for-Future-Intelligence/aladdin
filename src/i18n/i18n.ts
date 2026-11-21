@@ -11,6 +11,7 @@ import { i18n_zh_tw } from './zh_tw';
 import { i18n_es } from './es';
 import { i18n_tr } from './tr';
 import { i18n_ua } from './ua';
+import { i18n_sv } from './sv';
 
 i18n
   // detect user language
@@ -33,6 +34,7 @@ i18n
       es: i18n_es,
       tr: i18n_tr,
       ua: i18n_ua,
+      sv: i18n_sv,
     },
   });
 

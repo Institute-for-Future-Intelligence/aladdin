@@ -10,6 +10,7 @@ import esES from 'antd/lib/locale/es_ES';
 import trTR from 'antd/lib/locale/tr_TR';
 import enUS from 'antd/lib/locale/en_US';
 import ukUA from 'antd/lib/locale/uk_UA';
+import svSE from 'antd/lib/locale/sv_SE';
 import { Language } from 'src/types';
 import React from 'react';
 import * as Selector from '../../stores/selector';
@@ -42,6 +43,9 @@ export const LanguageRadioGroup = React.memo(() => {
         case 'ua':
           state.locale = ukUA;
           break;
+        case 'sv':
+          state.locale = svSE;
+          break;
         default:
           state.locale = enUS;
       }
@@ -72,6 +76,9 @@ export const LanguageRadioGroup = React.memo(() => {
         </MenuItem>
         <MenuItem type="radio" value={'ua'} onClick={onClickItem}>
           {Language.Ukrainian}
+        </MenuItem>
+        <MenuItem type="radio" value={'sv'} onClick={onClickItem}>
+          {Language.Swedish}
         </MenuItem>
       </MenuRadioGroup>
     </MainSubMenu>
