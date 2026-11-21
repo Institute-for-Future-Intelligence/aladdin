@@ -315,6 +315,7 @@ export enum Language {
   Turkish = 'Türkçe',
   Spanish = 'Español',
   Ukrainian = 'Українська',
+  Swedish = 'Svenska',
 }
 
 export enum ObjectType {
